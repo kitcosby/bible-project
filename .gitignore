@@ -6,3 +6,4 @@ website/app.db
 website/user_data/
 __pycache__/
 *.pyc
+website/secret.key
