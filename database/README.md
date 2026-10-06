@@ -1,23 +1,15 @@
-# Bible database dump
+# bible.db backup 2026-10-06
 
-`bible_dump.sql.gz` is split into 4 parts (`bible_dump.sql.gz.part-aa` …
-`.part-ad`) because GitHub's API rejects single uploads of this size.
-
-## Reassemble
-
-```sh
-cat bible_dump.sql.gz.part-* > bible_dump.sql.gz
-```
-
-## Restore
-
-```sh
-gunzip bible_dump.sql.gz
-psql -U postgres -d bible -f bible_dump.sql
-```
+SQLite database dump of the Bible research database (research complete).
 
 ## Contents
+- `bible-tables.zip.part-aa`, `bible-tables.zip.part-ab`: split zip of per-table SQL dumps (11 tables, 223MB SQL)
+- `SAD-architecture.md`: system-analysis diagrams (context, level-1 DFD, ER diagram)
+- `reassemble.sh`: reassembly script
 
-- pg_dump of the `bible` PostgreSQL database from the Toetop laptop (WSL lampy distro)
-- 23,145 YLT verses with 768-dim `nomic-embed-text` embeddings
-- Dumped 2026-09-30; original size ~229 MB, gzipped ~85 MB
+## Reassemble
+```bash
+cat bible-tables.zip.part-* > bible-tables.zip
+unzip bible-tables.zip
+for f in tables/*.sql; do sqlite3 bible.db < "$f"; done
+```
