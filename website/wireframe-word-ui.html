@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WIREFRAME — Interlinear word-level UI (Genesis 1:1)</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 1200px; margin: 0 auto; padding: 1em; color: #2a1f0d;
+    background-color: #e8d5a3; background-image: url('papyrus-tile.png'); background-repeat: repeat; }
+  .banner { background: rgba(255,243,205,.92); border: 1px solid #d9a400; padding: .6em 1em; border-radius: 6px; }
+  .heb { direction: rtl; unicode-bidi: embed; }
+  .big { font-size: 1.9em; }
+  .wpos { color: #888; font-size: .85em; }
+  .strongs { color: #666; font-size: .8em; }
+  .dim { color: #999; }
+  /* interlinear strip: Hebrew word order, RTL */
+  .interlinear { display: flex; flex-wrap: wrap; direction: rtl; gap: .6em; margin: 1em 0; align-items: stretch; padding-bottom: .5em; }
+  .icol { flex: 0 1 200px; min-width: 150px; max-width: 240px; border: 1px solid #b89b5e; border-radius: 8px; padding: .6em; background: rgba(255,252,240,.88); display: flex; flex-direction: column; gap: .35em; box-shadow: 0 2px 6px rgba(90,60,10,.18); }
+  .iheb { text-align: center; padding: .2em 0; }
+  .imeta { text-align: center; }
+  .ilabel { display: block; font-size: .82em; color: #444; }
+  .ilabel select { width: 100%; margin-top: .15em; font-size: .95em; }
+  /* English rendering */
+  .english { direction: ltr; text-align: left; background: rgba(247,247,247,.92); padding: 1em 1.2em; border-radius: 8px; margin: 1.2em 0; font-size: 1.35em; line-height: 2; border: 1px solid #b89b5e; box-shadow: 0 2px 6px rgba(90,60,10,.15); }
+  .enw { white-space: nowrap; margin-right: .15em; }
+  .wnum { font-size: .55em; color: #888; margin-left: .1em; }
+  .wnum.added { color: #b00; }
+  .legend { font-size: .9em; color: #555; margin: .5em 0 1.5em; }
+  .legend i { color: #222; }
+  .notes { margin-top: 2em; background: #f0f0f0; padding: 1em; border-radius: 6px; }
+  .notes li { margin-bottom: .4em; }
+  h2 { margin-top: 1.6em; }
+  /* navigation */
+  .nav { display: flex; flex-wrap: wrap; gap: .6em; align-items: center; background: rgba(238,238,255,.9); padding: .7em 1em; border-radius: 8px; margin: 1em 0; border: 1px solid #b89b5e; box-shadow: 0 2px 6px rgba(90,60,10,.15); }
+  .nav label { font-size: .9em; }
+  .nav select { font-size: 1em; padding: .2em .4em; }
+  .nav .prevnext { margin-left: auto; display: flex; gap: .8em; }
+  .nav .prevnext a { font-size: 1em; }
+  .details-link { font-size: .8em; }
+  .word-verses { margin: 1em 0; }
+  .word-verses li { margin-bottom: .3em; }
+</style>
+</head>
+<body>
+<div class="banner"><b>WIREFRAME / PROPOSAL ONLY</b> — not wired to the live app. Real data from bible_v2.db (Genesis 1:1, 7 words).</div>
+<h1>Genesis 1:1 — interlinear word-level UI proposal</h1>
+
+<div class="nav">
+  <label>Book <select id="nav-book"></select></label>
+  <label>Chapter <select id="nav-ch"></select></label>
+  <label>Verse <select id="nav-v"></select></label>
+  <button id="nav-go">Go</button>
+  <span class="prevnext">
+    <a href="#" id="prev-link">← Prev verse</a>
+    <a href="#" id="next-link">Next verse →</a>
+  </span>
+</div>
+
+<h2>Interlinear (Hebrew word order, right → left)</h2>
+<p>Each column is one Hebrew word: the <b>Hebrew word on top</b>, then its <b>Variant</b> dropdown, then its <b>Translation</b> dropdown below.</p>
+<div class="interlinear">
+    <div class="icol" data-wid="1">
+      <div class="iheb"><span class="heb big">בְּרֵאשִׁ֖ית</span></div>
+      <div class="imeta"><span class="wpos">#1</span> <span class="strongs">H7225</span></div><div class="imeta"><a href="#" class="details-link" data-wid="1" data-strongs="H7225">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="1">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">בראשית [בראשית] — v1-medial (spelling)</option><option value="2">בראשית [בראשית] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="1">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">In the beginning</option></optgroup><optgroup label="Young’s Literal"><option value="ylt:0">In the beginning [bridged]</option></optgroup><optgroup label="Computed (lexicon)"><option value="computed:0">beginning</option><option value="computed:1">In</option><option value="computed:2">the</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="2">
+      <div class="iheb"><span class="heb big">בָּרָ֣א</span></div>
+      <div class="imeta"><span class="wpos">#2</span> <span class="strongs">H1254</span></div><div class="imeta"><a href="#" class="details-link" data-wid="2" data-strongs="H1254">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="2">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">ברא [ברא] — v1-medial (spelling)</option><option value="2">ברא [ברא] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="2">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">created</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="3">
+      <div class="iheb"><span class="heb big">אֱלֹהִ֑ים</span></div>
+      <div class="imeta"><span class="wpos">#3</span> <span class="strongs">H430</span></div><div class="imeta"><a href="#" class="details-link" data-wid="3" data-strongs="H430">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="3">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">אלהימ [אלהימ] — v1-medial (spelling)</option><option value="2">אלהים [אלהים] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="3">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">God</option></optgroup><optgroup label="Young’s Literal"><option value="ylt:0">God&#x27;s [bridged]</option></optgroup><optgroup label="Computed (lexicon)"><option value="computed:0">God</option><option value="computed:1">of</option><option value="computed:2">gods</option><option value="computed:3">no</option><option value="computed:4">Thou</option><option value="computed:5">a</option><option value="computed:6">And</option><option value="computed:7">as</option><option value="computed:8">For</option><option value="computed:9">god</option><option value="computed:10">God&#x27;s</option><option value="computed:11">godly</option><option value="computed:12">so</option><option value="computed:13">the</option><option value="computed:14">us</option><option value="computed:15">with</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="4">
+      <div class="iheb"><span class="heb big">אֵ֥ת</span></div>
+      <div class="imeta"><span class="wpos">#4</span> <span class="strongs">H853</span></div><div class="imeta"><a href="#" class="details-link" data-wid="4" data-strongs="H853">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="4">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">את [את] — v1-medial (spelling)</option><option value="2">את [את] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="4">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">created</option><option value="kjv:1">and</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="5">
+      <div class="iheb"><span class="heb big">הַשָּׁמַ֖יִם</span></div>
+      <div class="imeta"><span class="wpos">#5</span> <span class="strongs">H8064</span></div><div class="imeta"><a href="#" class="details-link" data-wid="5" data-strongs="H8064">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="5">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">השמימ [השמימ] — v1-medial (spelling)</option><option value="2">השמים [השמים] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="5">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">the heaven</option></optgroup><optgroup label="Young’s Literal"><option value="ylt:0">the heavens [bridged]</option></optgroup><optgroup label="Computed (lexicon)"><option value="computed:0">of</option><option value="computed:1">heavens</option><option value="computed:2">the</option><option value="computed:3">And</option><option value="computed:4">O</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="6">
+      <div class="iheb"><span class="heb big">וְאֵ֥ת</span></div>
+      <div class="imeta"><span class="wpos">#6</span> <span class="strongs">H853</span></div><div class="imeta"><a href="#" class="details-link" data-wid="6" data-strongs="H853">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="6">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">ואת [ואת] — v1-medial (spelling)</option><option value="2">ואת [ואת] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="6">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">created</option><option value="kjv:1">and</option></optgroup><optgroup label="Young’s Literal"><option value="ylt:0">and [bridged]</option></optgroup><optgroup label="Computed (lexicon)"><option value="computed:0">and</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+    <div class="icol" data-wid="7">
+      <div class="iheb"><span class="heb big">הָאָֽרֶץ׃</span></div>
+      <div class="imeta"><span class="wpos">#7</span> <span class="strongs">H776</span></div><div class="imeta"><a href="#" class="details-link" data-wid="7" data-strongs="H776">details</a></div>
+      <label class="ilabel">Variant
+        <select class="variant-sel" data-wid="7">
+
+          <option value="">— default (corpus) —</option>
+          <option value="1">הארצ [הארצ] — v1-medial (spelling)</option><option value="2">הארץ [הארץ] — academic-final (spelling)</option>
+                </select></label>
+      <label class="ilabel">Translation
+        <select class="trans-sel" data-wid="7">
+
+          <option value="">— choose —</option>
+          <optgroup label="KJV"><option value="kjv:0">the earth</option></optgroup><optgroup label="Young’s Literal"><option value="ylt:0">the earth [bridged]</option></optgroup><optgroup label="Computed (lexicon)"><option value="computed:0">the</option><option value="computed:1">of</option><option value="computed:2">earth</option><option value="computed:3">land</option><option value="computed:4">from</option><option value="computed:5">and</option><option value="computed:6">off</option><option value="computed:7">between</option><option value="computed:8">For</option><option value="computed:9">Lest</option><option value="computed:10">Me</option><option value="computed:11">that</option><option value="computed:12">The</option><option value="computed:13">you</option></optgroup><optgroup label="Custom"><option value="custom:new">+ Add custom rendering…</option></optgroup>
+                </select></label>
+    </div>
+</div>
+
+<h2>English rendering (English word order, left → right)</h2>
+<p>Built from the per-word translation choices above, reordered into English syntax:</p>
+<div class="english"><span class="enw"><span class="wtext">In</span><sup class="wnum" title="Hebrew word #1">1</sup></span> <span class="enw"><span class="wtext"><i>the</i></span><sup class="wnum added" title="added for English grammar — no Hebrew counterpart">+</sup></span> <span class="enw"><span class="wtext">beginning</span><sup class="wnum" title="Hebrew word #1">1</sup></span> <span class="enw"><span class="wtext">God</span><sup class="wnum" title="Hebrew word #3">3</sup></span> <span class="enw"><span class="wtext">created</span><sup class="wnum" title="Hebrew word #2">2</sup></span> <span class="enw"><span class="wtext">the</span><sup class="wnum" title="Hebrew word #5">5</sup></span> <span class="enw"><span class="wtext">heaven</span><sup class="wnum" title="Hebrew word #5">5</sup></span> <span class="enw"><span class="wtext">and</span><sup class="wnum" title="Hebrew word #6">6</sup></span> <span class="enw"><span class="wtext">the</span><sup class="wnum" title="Hebrew word #7">7</sup></span> <span class="enw"><span class="wtext">earth</span><sup class="wnum" title="Hebrew word #7">7</sup></span>.</div>
+<div class="legend"><i>Italics</i> = word added for English grammar (no Hebrew counterpart).
+Superscript numbers = the Hebrew word-order position each English word comes from.
+אֵת (#4, direct-object marker) has no English rendering and does not appear above.</div>
+
+<div class="notes">
+<h3>Design notes</h3>
+<ul>
+<li><b>Interlinear columns</b> follow Hebrew word order (RTL). Each column stacks: Hebrew word → <b>Variant</b> dropdown (every <code>word_variants</code> row: unpointed, letters, convention, <code>variant_kind</code>) → <b>Translation</b> dropdown (KJV · Young's Literal · Computed · Custom). Blank variant = corpus default.</li>
+<li><b>English sentence</b> renders left-to-right in English syntax from the chosen translations. Words the translator must <i>add</i> for English grammar (articles, etc., with no Hebrew source word) render in <i>italics</i>, following the KJV convention of marking supplied words.</li>
+<li>Selecting <b>+ Add custom rendering…</b> would prompt login (if anonymous) then open a text box; the entry is saved per user per word (see <code>schema_custom.sql</code>).</li>
+<li>Open design question (logged as <a href="https://github.com/cosbykit-afk/bible-project/issues/5">bible-project#5</a>): should choosing a <i>variant</i> filter which translations are offered, or stay independent?</li>
+</ul>
+</div>
+<script>
+// Wireframe-only interactivity: changing a word's translation dropdown swaps
+// that word's *content* English gloss in the sentence below (last non-added
+// word per Hebrew #, e.g. #1 -> "beginning"). Structural words (In/the/and)
+// and added-for-grammar italics stay put. Wireframe approximation only.
+const contentSpan = {};
+document.querySelectorAll('.enw').forEach(sp => {
+  const sup = sp.querySelector('.wnum');
+  if (sup && !sup.classList.contains('added')) contentSpan[sup.textContent] = sp; // last wins
+});
+Object.values(contentSpan).forEach(sp => { sp.dataset.orig = sp.querySelector('.wtext').textContent; });
+document.querySelectorAll('.trans-sel').forEach(sel => {
+  sel.addEventListener('change', () => {
+    const sp = contentSpan[sel.dataset.wid];
+    if (!sp) return;
+    const wt = sp.querySelector('.wtext');
+    if (sel.value) {
+      wt.textContent = sel.options[sel.selectedIndex].text.replace(' [bridged]', '');
+    } else {
+      wt.textContent = sp.dataset.orig;
+    }
+  });
+});
+
+// --- Navigation: book/chapter/verse dropdowns (wireframe sample data) ---
+const BIBLE_NAV = {
+  "Genesis": 50, "Exodus": 40, "Leviticus": 27, "Psalms": 150, "Isaiah": 66,
+  "Matthew": 28, "Mark": 16, "John": 21, "Revelation": 22
+};
+// Sample verse counts: ch -> verses (only Genesis 1 fully specified; others use 30 as placeholder)
+const VERSES_IN_CH = { "Genesis": {1: 31, 2: 25}, "Exodus": {1: 22} };
+function versesIn(book, ch) {
+  const b = VERSES_IN_CH[book];
+  return (b && b[ch]) ? b[ch] : 30;
+}
+const bookSel = document.getElementById('nav-book');
+const chSel = document.getElementById('nav-ch');
+const vSel = document.getElementById('nav-v');
+Object.keys(BIBLE_NAV).forEach(b => {
+  const o = document.createElement('option'); o.value = b; o.textContent = b;
+  if (b === 'Genesis') o.selected = true;
+  bookSel.appendChild(o);
+});
+function fillChapters() {
+  chSel.innerHTML = '';
+  const n = BIBLE_NAV[bookSel.value];
+  for (let i = 1; i <= n; i++) {
+    const o = document.createElement('option'); o.value = i; o.textContent = i;
+    if (i === 1) o.selected = true;
+    chSel.appendChild(o);
+  }
+  fillVerses();
+}
+function fillVerses() {
+  vSel.innerHTML = '';
+  const n = versesIn(bookSel.value, parseInt(chSel.value));
+  for (let i = 1; i <= n; i++) {
+    const o = document.createElement('option'); o.value = i; o.textContent = i;
+    if (i === 1) o.selected = true;
+    vSel.appendChild(o);
+  }
+}
+bookSel.addEventListener('change', fillChapters);
+chSel.addEventListener('change', fillVerses);
+fillChapters();
+document.getElementById('nav-go').addEventListener('click', () => {
+  alert('Wireframe: would navigate to ' + bookSel.value + ' ' + chSel.value + ':' + vSel.value);
+});
+// Prev/next with rollover: next chapter when verses exhausted, next book when chapters exhausted
+function stepVerse(dir) {
+  let b = bookSel.value, c = parseInt(chSel.value), v = parseInt(vSel.value);
+  const books = Object.keys(BIBLE_NAV);
+  if (dir > 0) {
+    if (v < versesIn(b, c)) v++;
+    else if (c < BIBLE_NAV[b]) { c++; v = 1; }
+    else {
+      const bi = books.indexOf(b);
+      if (bi < books.length - 1) { b = books[bi + 1]; c = 1; v = 1; }
+      else return null; // at end of Bible
+    }
+  } else {
+    if (v > 1) v--;
+    else if (c > 1) { c--; v = versesIn(b, c); }
+    else {
+      const bi = books.indexOf(b);
+      if (bi > 0) { b = books[bi - 1]; c = BIBLE_NAV[b]; v = versesIn(b, c); }
+      else return null; // at start of Bible
+    }
+  }
+  return {book: b, ch: c, v: v};
+}
+document.getElementById('next-link').addEventListener('click', e => {
+  e.preventDefault();
+  const r = stepVerse(1);
+  alert(r ? 'Wireframe: would navigate to ' + r.book + ' ' + r.ch + ':' + r.v : 'Wireframe: at end of Bible');
+});
+document.getElementById('prev-link').addEventListener('click', e => {
+  e.preventDefault();
+  const r = stepVerse(-1);
+  alert(r ? 'Wireframe: would navigate to ' + r.book + ' ' + r.ch + ':' + r.v : 'Wireframe: at start of Bible');
+});
+// Details links → bibliomancy: list every verse using this word (wireframe sample)
+document.querySelectorAll('.details-link').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const wid = a.dataset.wid, s = a.dataset.strongs;
+    // Wireframe sample: pretend verses using this word
+    const sample = ['Genesis 1:1', 'Genesis 2:4', 'Exodus 20:11', 'Psalms 8:3', 'John 1:3'];
+    let html = '<h2>Word #' + wid + ' (' + s + ') — verses using this word <span class="dim">(bibliomancy)</span></h2>';
+    html += '<ul class="word-verses">' + sample.map(ref =>
+      '<li><a href="#" onclick="alert(\'Wireframe: would navigate to ' + ref + '\');return false;">' + ref + '</a></li>'
+    ).join('') + '</ul><p><a href="#" onclick="history.back();return false;">← back</a></p>';
+    document.body.innerHTML = '<div class="banner"><b>WIREFRAME / PROPOSAL ONLY</b></div>' + html;
+  });
+});
+</script>
+</body>
+</html>
