@@ -123,6 +123,14 @@ def appdb():
                 con.execute(ddl)
             except sqlite3.OperationalError:
                 pass  # already migrated
+        # migration (2026-10-08, Kit): per-user daily-reading position for
+        # the Read door's "continue where you left off".
+        con.execute('''CREATE TABLE IF NOT EXISTS reading_position(
+            user_id INTEGER PRIMARY KEY,
+            book_id INTEGER NOT NULL,
+            chapter INTEGER NOT NULL,
+            translation_id INTEGER NOT NULL,
+            updated TEXT NOT NULL DEFAULT (datetime('now')))''')
         con.commit()
         g.appdb = con
         _backfill_lemma_source(con)
@@ -561,8 +569,80 @@ def render(title, body, trans=None):
                                    tile=u('/papyrus-tile.png'))
 
 # ---------------------------------------------------------------- routes
+# ---------------------------------------------------------------- two doors
+# Kit 2026-10-08: the Bible website opens with two doors — Study (the
+# interlinear, brought forward) and Read (clean daily reading). The old
+# book index moves to /books.
+
+DOORS_CSS = '''
+.doors{display:flex;gap:24px;flex-wrap:wrap;margin:32px 0}
+.door{flex:1;min-width:260px;background:rgba(255,252,240,.92);border:2px solid #b89b5e;
+border-radius:12px;padding:32px 24px;text-align:center;box-shadow:0 4px 12px rgba(90,60,10,.2);
+text-decoration:none;color:#2a1f0d;display:block}
+.door:hover{border-color:#5a3c0a;box-shadow:0 6px 18px rgba(90,60,10,.3)}
+.door h2{margin:0 0 12px 0;font-size:1.8em;color:#5a3c0a}
+.door p{margin:0;color:#5a4a2a;font-size:1.05em;line-height:1.6}
+.door .heb{font-size:2em;display:block;margin-bottom:12px}
+.continue{margin:24px 0;padding:16px;background:rgba(255,252,240,.92);border:1px solid #b89b5e;
+border-radius:8px;text-align:center}
+'''
+
+def get_reading_position():
+    """(book_id, chapter, translation_id) or None. Per-user in appdb;
+    anonymous users get session storage."""
+    u = current_user()
+    if u:
+        r = appdb().execute(
+            'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=?',
+            (u['user_id'],)).fetchone()
+        if r:
+            return (r['book_id'], r['chapter'], r['translation_id'])
+    return tuple(session.get('reading_position', ())) or None
+
+def save_reading_position(n, c, tid):
+    u = current_user()
+    if u:
+        appdb().execute('''INSERT INTO reading_position (user_id, book_id, chapter, translation_id, updated)
+            VALUES (?,?,?,?,datetime('now'))
+            ON CONFLICT(user_id) DO UPDATE SET book_id=excluded.book_id, chapter=excluded.chapter,
+            translation_id=excluded.translation_id, updated=excluded.updated''',
+            (u['user_id'], n, c, tid))
+        appdb().commit()
+    else:
+        session['reading_position'] = [n, c, tid]
+
 @app.route('/')
 def index():
+    pos = get_reading_position()
+    cont = ''
+    if pos:
+        n, c, tid = pos
+        cont = (f'<div class="continue">Continue reading: '
+                f'<a href="{u("/read/" + str(n) + "/" + str(c) + "?t=" + str(tid))}">'
+                f'{html.escape(book_name(n))} {c}</a></div>')
+    body = f'''<style>{DOORS_CSS}</style>
+{cont}
+<div class="doors">
+<a class="door" href="{u("/interlinear")}">
+<span class="heb">למד</span>
+<h2>Study</h2>
+<p>The interlinear — every Hebrew word with its variants and translation
+choices, word details, and cross-references. For deep digging.</p>
+</a>
+<a class="door" href="{u("/read")}">
+<span class="heb">קרא</span>
+<h2>Read</h2>
+<p>Clean, quiet English for daily reading. Pick up where you left off,
+chapter by chapter, nothing between you and the text.</p>
+</a>
+</div>
+<p style="text-align:center"><a href="{u("/books")}">Browse all books</a> |
+<a href="{u("/variants")}">Word variants</a> |
+<a href="{u("/translations")}">My translations</a></p>'''
+    return render('Hebrew Bible', body, current_translation())
+
+@app.route('/books')
+def books():
     books = bible().execute('SELECT book_id, name_en, name_he FROM books ORDER BY book_id').fetchall()
     items = ''.join(
         f'<li><a href="{u("/book/" + str(b["book_id"]))}">{html.escape(b["name_en"])}</a> '
@@ -571,7 +651,7 @@ def index():
     body = (f'<ul>{items}</ul><p><a href="{u("/interlinear")}">Interlinear</a> | '
             f'<a href="{u("/variants")}">Word variants</a> | '
             f'<a href="{u("/translations")}">My translations</a></p>')
-    return render('Hebrew Bible — build your translation', body, current_translation())
+    return render('Hebrew Bible — books', body, current_translation())
 
 @app.route('/book/<int:n>')
 def book(n):
@@ -782,6 +862,114 @@ def reading(tid, n, c, v):
         title=f'{trans["name"]} — {book_name(n)} {c}:{v}',
         ref=f'{book_name(n)} {c}:{v} — {html.escape(trans["name"])}',
         text=' '.join(out))
+
+# ---------------------------------------------------------------- daily reading
+# Kit 2026-10-08: the Read door — chapter-at-a-time clean English for daily
+# reading, with translation picker, prev/next chapter, and per-user
+# "continue where you left off".
+
+READ_CSS = '''
+.read-chapter{max-width:640px;margin:0 auto;font-size:1.25em;line-height:1.9;color:#2a1f0d}
+.read-chapter .vnum{font-size:.7em;color:#8a6d3b;vertical-align:super;margin-right:6px}
+.read-nav{display:flex;justify-content:space-between;margin:24px 0;max-width:640px;margin-left:auto;margin-right:auto}
+.read-nav a{background:rgba(255,252,240,.92);border:1px solid #b89b5e;border-radius:8px;
+padding:10px 20px;text-decoration:none;color:#5a3c0a}
+.read-head{text-align:center;margin-bottom:8px}
+.read-head h2{margin-bottom:4px}
+.trans-picker{text-align:center;margin:16px 0}
+.trans-picker select{font-size:1em}
+'''
+
+def _chapter_verses(n, c):
+    return bible().execute('''SELECT v.verse FROM verses v
+        WHERE v.book_id=? AND v.chapter=? AND EXISTS
+        (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        ORDER BY v.verse''', (n, c)).fetchall()
+
+def _chapter_bounds(n, c):
+    """(prev, next) as (book_id, chapter) tuples or None."""
+    books = [r[0] for r in bible().execute(
+        'SELECT book_id FROM books ORDER BY book_id').fetchall()]
+    chaps = [r[0] for r in bible().execute(
+        'SELECT DISTINCT chapter FROM verses WHERE book_id=? ORDER BY chapter', (n,)).fetchall()]
+    bi, ci = books.index(n), chaps.index(c)
+    prev = (books[bi - 1], _last_chapter(books[bi - 1])) if ci == 0 and bi > 0 else \
+           (n, chaps[ci - 1]) if ci > 0 else None
+    prev = None if (ci == 0 and bi == 0) else prev
+    if ci == len(chaps) - 1:
+        nxt = (books[bi + 1], 1) if bi < len(books) - 1 else None
+    else:
+        nxt = (n, chaps[ci + 1])
+    # fix prev when at first chapter of a book
+    if ci == 0 and bi > 0:
+        prev = (books[bi - 1], _last_chapter(books[bi - 1]))
+    elif ci == 0:
+        prev = None
+    return prev, nxt
+
+def _last_chapter(n):
+    r = bible().execute('SELECT MAX(chapter) FROM verses WHERE book_id=?', (n,)).fetchone()
+    return r[0] or 1
+
+@app.route('/read')
+def read_default():
+    pos = get_reading_position()
+    if pos:
+        n, c, tid = pos
+        return redirect(u(f'/read/{n}/{c}?t={tid}'))
+    return redirect(u('/read/1/1'))
+
+@app.route('/read/<int:n>/<int:c>')
+def read_chapter(n, c):
+    trans = current_translation()
+    if not trans:
+        # default to KJV (translation_id 1)
+        trans = appdb().execute(
+            'SELECT * FROM translation WHERE translation_id=1').fetchone()
+    if not trans:
+        return 'No translations available', 500
+    tid = trans['translation_id']
+    verses = _chapter_verses(n, c)
+    if not verses:
+        return 'Unknown chapter', 404
+    save_reading_position(n, c, tid)
+    choices = read_choices(tid)
+    others = other_options(tid)
+    paras = []
+    for vr in verses:
+        v = vr['verse']
+        words = bible().execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
+            WHERE v.book_id=? AND v.chapter=? AND v.verse=? ORDER BY w.word_pos''',
+            (n, c, v)).fetchall()
+        out = []
+        for w in words:
+            txt = resolve_effective(tid, w, others, choices[w['word_id'] - 1])
+            out.append(html.escape(txt) if txt else
+                       f'[{html.escape(w["pointed"] or w["unpointed"])}]')
+        paras.append(f'<p><span class="vnum">{v}</span>{" ".join(out)}</p>')
+    prev, nxt = _chapter_bounds(n, c)
+    nav = '<div class="read-nav">'
+    nav += (f'<a href="{u(f"/read/{prev[0]}/{prev[1]}?t={tid}")}">← {html.escape(book_name(prev[0]))} {prev[1]}</a>'
+            if prev else '<span></span>')
+    nav += (f'<a href="{u(f"/read/{nxt[0]}/{nxt[1]}?t={tid}")}">{html.escape(book_name(nxt[0]))} {nxt[1]} →</a>'
+            if nxt else '<span></span>')
+    nav += '</div>'
+    # translation picker
+    alltrans = appdb().execute('SELECT translation_id, name FROM translation ORDER BY translation_id').fetchall()
+    opts = ''.join(f'<option value="{t["translation_id"]}"{" selected" if t["translation_id"] == tid else ""}>'
+                   f'{html.escape(t["name"])}</option>' for t in alltrans)
+    picker = (f'<div class="trans-picker"><label>Translation: '
+              f'<select onchange="location.href=\'{u(f"/read/{n}/{c}")}?t=\'+this.value\">'
+              f'{opts}</select></label></div>')
+    # study this chapter link
+    study = (f'<p style="text-align:center"><a href="{u(f"/interlinear/{n}/{c}/1")}">'
+             f'Study this chapter in the interlinear →</a></p>')
+    body = (f'<style>{READ_CSS}</style>{picker}'
+            f'<div class="read-head"><h2>{html.escape(book_name(n))} {c}</h2>'
+            f'<div class="dim">{html.escape(trans["name"])}</div></div>'
+            f'<div class="read-chapter">{"".join(paras)}</div>{nav}{study}'
+            f'<p style="text-align:center"><a href="{u("/")}">&larr; Study or Read</a></p>')
+    return render(f'{book_name(n)} {c} — Read', body, trans)
 
 @app.route('/export/<int:tid>')
 def export(tid):
