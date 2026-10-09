@@ -135,6 +135,16 @@ def appdb():
             is_active INTEGER NOT NULL DEFAULT 1,
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             last_login_at TIMESTAMP)''')
+        # migration (2026-10-09, Kit): normalized per-word translation choices.
+        # Replaces the translation_<id>.choices flat files (264,217 bytes each).
+        # Sparse: only non-default choices are rows; absent row = choice 0.
+        db.execute('''CREATE TABLE IF NOT EXISTS word_choice(
+            translation_id INTEGER NOT NULL,
+            word_id INTEGER NOT NULL,
+            choice SMALLINT NOT NULL CHECK (choice BETWEEN 1 AND 255),
+            PRIMARY KEY (translation_id, word_id))''')
+        db.execute('''CREATE INDEX IF NOT EXISTS idx_word_choice_trans
+            ON word_choice(translation_id)''')
         for ddl in (
             'ALTER TABLE lemma_default ADD COLUMN source INTEGER',
             'ALTER TABLE lemma_default ADD COLUMN other_option_id INTEGER',
@@ -282,28 +292,37 @@ MAX_ITEMS = 255    # must fit in one byte
 MAX_OTHERS = 230   # headroom so KJV + Young's items always fit in the byte
 
 def choices_path(tid):
+    # Legacy flat-file path (pre-2026-10-09). Choices now live in the
+    # word_choice table; this is kept for the one-time migration only.
     return os.path.join(USER_DATA, f'translation_{tid}.choices')
 
 def read_choices(tid):
-    """Whole choice file as a mutable bytearray (zeros = all default)."""
-    p = choices_path(tid)
-    if not os.path.exists(p):
-        return bytearray(N_WORDS)
-    with open(p, 'rb') as f:
-        data = f.read()
-    if len(data) < N_WORDS:
-        data += b'\x00' * (N_WORDS - len(data))
-    return bytearray(data[:N_WORDS])
+    """Whole choice set as a mutable bytearray (zeros = all default).
+    Kit 2026-10-09: normalized into the word_choice table — sparse storage,
+    only non-default choices are rows; absent = 0."""
+    data = bytearray(N_WORDS)
+    for r in appdb().execute(
+            'SELECT word_id, choice FROM word_choice WHERE translation_id=%s',
+            (tid,)).fetchall():
+        if 1 <= r['word_id'] <= N_WORDS:
+            data[r['word_id'] - 1] = r['choice'] & 0xFF
+    return data
 
 def write_choice(tid, word_id, val):
-    os.makedirs(USER_DATA, exist_ok=True)
-    p = choices_path(tid)
-    if not os.path.exists(p):
-        with open(p, 'wb') as f:
-            f.write(b'\x00' * N_WORDS)
-    with open(p, 'r+b') as f:
-        f.seek(word_id - 1)
-        f.write(bytes([val & 0xFF]))
+    """Kit 2026-10-09: UPSERT into word_choice; val=0 deletes the row
+    (sparse = default)."""
+    val = val & 0xFF
+    db = appdb()
+    if val == 0:
+        db.execute('DELETE FROM word_choice WHERE translation_id=%s AND word_id=%s',
+                   (tid, word_id))
+    else:
+        db.execute('''INSERT INTO word_choice (translation_id, word_id, choice)
+                      VALUES (%s,%s,%s)
+                      ON CONFLICT (translation_id, word_id)
+                      DO UPDATE SET choice=excluded.choice''',
+                   (tid, word_id, val))
+    db.commit()
 
 def other_options(tid):
     return appdb().execute(
@@ -842,7 +861,9 @@ def translations():
     items = []
     for r in rows:
         tid = r['translation_id']
-        n_chosen = sum(1 for x in read_choices(tid) if x) if os.path.exists(choices_path(tid)) else 0
+        n_chosen = db.execute(
+            'SELECT COUNT(*) c FROM word_choice WHERE translation_id=%s',
+            (tid,)).fetchone()['c']
         n_other = db.execute('SELECT COUNT(*) c FROM other_option WHERE translation_id=%s', (tid,)).fetchone()['c']
         owner_txt = (f' by {html.escape(r["owner_name"])}'
                      if r['owner_name'] else '')
