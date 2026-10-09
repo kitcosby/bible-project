@@ -27,13 +27,20 @@ What changed vs app.py:
 """
 import html
 import os
-import sqlite3
+import psycopg2
+import psycopg2.extras
+import psycopg2.errors
 from flask import Flask, request, redirect, render_template_string, Response, g, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-BIBLE_DB = os.environ.get('BIBLE_DB', os.path.join(os.path.dirname(BASE), 'bible_v2.db'))
-APP_DB = os.environ.get('APP_DB', os.path.join(BASE, 'app.db'))
+# PostgreSQL databases on the lampy distro (Kit 2026-10-09): the website
+# now reads from PG instead of SQLite so it can be administered via the
+# Lampy admin tool. BIBLE_DB/APP_DB env vars are kept for override.
+PG_HOST = os.environ.get('PG_HOST', '/tmp')
+PG_USER = os.environ.get('PG_USER', 'postgres')
+BIBLE_DB = os.environ.get('BIBLE_DB', 'bible')
+APP_DB = os.environ.get('APP_DB', 'bible_app')
 SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
@@ -78,62 +85,90 @@ def u(path):
     return root + path
 
 # ---------------------------------------------------------------- databases
+class PGWrapper:
+    """Thin wrapper around a psycopg2 connection mimicking the sqlite3
+    connection API used throughout the app: .execute() returns a
+    RealDictCursor, plus .commit(), .rollback(), .close()."""
+    def __init__(self, con):
+        self._con = con
+    def execute(self, *a, **kw):
+        cur = self._con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(*a, **kw)
+        return cur
+    def commit(self):
+        self._con.commit()
+    def rollback(self):
+        self._con.rollback()
+    def close(self):
+        self._con.close()
+
 def bible():
+    """Read-only corpus database (PostgreSQL `bible`). Uses RealDictCursor
+    so row['col'] access works as before. Kit 2026-10-01's fold_finals is
+    now a native PL/pgSQL function in the database."""
     if 'bible' not in g:
-        con = sqlite3.connect(f'file:{BIBLE_DB}?mode=ro', uri=True)
-        con.row_factory = sqlite3.Row
-        # Kit 2026-10-01: medial/final letterform folding as a SQL function
-        # so variant queries can de-duplicate in the database. fold_finals
-        # is defined below; the name resolves at call time.
-        con.create_function('fold_finals', 1, fold_finals)
-        g.bible = con
+        con = psycopg2.connect(dbname=BIBLE_DB, host=PG_HOST, user=PG_USER)
+        g.bible = PGWrapper(con)
     return g.bible
 
 def appdb():
+    """Application database (PostgreSQL `bible_app`): user accounts,
+    translations, lemma defaults, reading positions."""
     if 'appdb' not in g:
-        need_init = not os.path.exists(APP_DB)
-        con = sqlite3.connect(APP_DB)
-        con.row_factory = sqlite3.Row
-        if need_init:
-            con.executescript(open(SCHEMA).read())
-            con.commit()
-        # migration (2026-09-30): lemma defaults for sticky choices;
-        # idempotent so existing app.db files pick it up.
-        con.execute('''CREATE TABLE IF NOT EXISTS lemma_default(
+        con = psycopg2.connect(dbname=APP_DB, host=PG_HOST, user=PG_USER)
+        db = PGWrapper(con)
+        # migration: lemma defaults for sticky choices (2026-09-30);
+        # idempotent so existing databases pick it up.
+        db.execute('''CREATE TABLE IF NOT EXISTS lemma_default(
             translation_id INTEGER NOT NULL, lemma TEXT NOT NULL,
             rendering TEXT NOT NULL, from_word_id INTEGER NOT NULL,
             PRIMARY KEY(translation_id, lemma))''')
         # migration (2026-09-30, Kit): user accounts + translation-source
         # tracking (1=KJV, 2=Young's, 3=user-defined) + translation owners.
-        con.execute('''CREATE TABLE IF NOT EXISTS user_accounts(
-            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        # PG: AUTOINCREMENT -> SERIAL; datetime('now') -> CURRENT_TIMESTAMP.
+        db.execute('''CREATE TABLE IF NOT EXISTS user_accounts(
+            user_id SERIAL PRIMARY KEY,
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             email TEXT,
             display_name TEXT,
             is_active INTEGER NOT NULL DEFAULT 1,
-            created_at TEXT NOT NULL DEFAULT (datetime('now')),
-            last_login_at TEXT)''')
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_login_at TIMESTAMP)''')
         for ddl in (
             'ALTER TABLE lemma_default ADD COLUMN source INTEGER',
             'ALTER TABLE lemma_default ADD COLUMN other_option_id INTEGER',
             'ALTER TABLE translation ADD COLUMN owner_id INTEGER',
         ):
             try:
-                con.execute(ddl)
-            except sqlite3.OperationalError:
-                pass  # already migrated
+                db.execute(ddl)
+            except psycopg2.Error:
+                db.rollback()  # already migrated; clear the failed txn
         # migration (2026-10-08, Kit): per-user daily-reading position for
         # the Read door's "continue where you left off".
-        con.execute('''CREATE TABLE IF NOT EXISTS reading_position(
+        db.execute('''CREATE TABLE IF NOT EXISTS reading_position(
             user_id INTEGER PRIMARY KEY,
             book_id INTEGER NOT NULL,
             chapter INTEGER NOT NULL,
             translation_id INTEGER NOT NULL,
-            updated TEXT NOT NULL DEFAULT (datetime('now')))''')
-        con.commit()
-        g.appdb = con
-        _backfill_lemma_source(con)
+            updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
+        # base app tables from schema.sql if the database is fresh
+        db.execute('''CREATE TABLE IF NOT EXISTS app_user(
+            user_id SERIAL PRIMARY KEY, name TEXT NOT NULL)''')
+        db.execute('''CREATE TABLE IF NOT EXISTS translation(
+            translation_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES app_user(user_id),
+            name TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            owner_id INTEGER REFERENCES user_accounts(user_id) ON DELETE SET NULL)''')
+        db.execute('''CREATE TABLE IF NOT EXISTS other_option(
+            option_id SERIAL PRIMARY KEY,
+            translation_id INTEGER NOT NULL REFERENCES translation(translation_id),
+            idx INTEGER NOT NULL, text TEXT NOT NULL)''')
+        db.commit()
+        g.appdb = db
+        _backfill_lemma_source(db)
     return g.appdb
 
 @app.teardown_appcontext
@@ -145,13 +180,13 @@ def close_dbs(exc):
 
 # ---------------------------------------------------------------- helpers
 def book_name(n):
-    r = bible().execute('SELECT name_en FROM books WHERE book_id=?', (n,)).fetchone()
+    r = bible().execute('SELECT name_en FROM books WHERE book_id=%s', (n,)).fetchone()
     return r['name_en'] if r else f'Book {n}'
 
 def current_translation():
     tid = request.args.get('t')
     if tid and tid.isdigit():
-        r = appdb().execute('SELECT * FROM translation WHERE translation_id=?', (tid,)).fetchone()
+        r = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
         if r:
             return r
     return None
@@ -163,7 +198,7 @@ def current_user():
     if not uid:
         return None
     return appdb().execute(
-        'SELECT * FROM user_accounts WHERE user_id=? AND is_active=1',
+        'SELECT * FROM user_accounts WHERE user_id=%s AND is_active=1',
         (uid,)).fetchone()
 
 
@@ -192,16 +227,18 @@ def signup():
         try:
             cur = db.execute(
                 'INSERT INTO user_accounts(username, password_hash, display_name)'
-                ' VALUES(?,?,?)',
+                ' VALUES(%s,%s,%s) RETURNING user_id',
                 (username, generate_password_hash(password), username))
+            new_uid = cur.fetchone()['user_id']
             db.commit()
-        except sqlite3.IntegrityError:
+        except psycopg2.IntegrityError:
+            db.rollback()
             return render('Sign up',
                           '<p>That username is taken.</p>'
                           + _auth_form('/signup', 'Sign up'))
-        session['user_id'] = cur.lastrowid
-        db.execute("UPDATE user_accounts SET last_login_at=datetime('now')"
-                   ' WHERE user_id=?', (cur.lastrowid,))
+        session['user_id'] = new_uid
+        db.execute("UPDATE user_accounts SET last_login_at=now()"
+                   ' WHERE user_id=%s', (new_uid,))
         db.commit()
         return redirect(u('/'))
     return render('Sign up', _auth_form('/signup', 'Sign up'))
@@ -214,15 +251,15 @@ def login():
         password = request.form.get('password', '')
         db = appdb()
         row = db.execute(
-            'SELECT * FROM user_accounts WHERE username=? AND is_active=1',
+            'SELECT * FROM user_accounts WHERE username=%s AND is_active=1',
             (username,)).fetchone()
         if not row or not check_password_hash(row['password_hash'], password):
             return render('Login',
                           '<p>Incorrect username or password.</p>'
                           + _auth_form('/login', 'Login'))
         session['user_id'] = row['user_id']
-        db.execute("UPDATE user_accounts SET last_login_at=datetime('now')"
-                   ' WHERE user_id=?', (row['user_id'],))
+        db.execute("UPDATE user_accounts SET last_login_at=now()"
+                   ' WHERE user_id=%s', (row['user_id'],))
         db.commit()
         return redirect(u('/'))
     return render('Login', _auth_form('/login', 'Login'))
@@ -270,7 +307,7 @@ def write_choice(tid, word_id, val):
 
 def other_options(tid):
     return appdb().execute(
-        'SELECT * FROM other_option WHERE translation_id=? ORDER BY idx', (tid,)).fetchall()
+        'SELECT * FROM other_option WHERE translation_id=%s ORDER BY idx', (tid,)).fetchall()
 
 # ---------------------------------------------------------------- lexicon child tables (cached)
 _LEX_CACHE = {}
@@ -396,7 +433,7 @@ WORD_JOINS = '''FROM words w
 
 def word_with_lex(wid):
     return bible().execute(
-        f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id=?', (wid,)).fetchone()
+        f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id=%s', (wid,)).fetchone()
 
 def resolve_choice(w, others, byte):
     """Byte -> chosen rendering text, or None for default/stale."""
@@ -422,7 +459,7 @@ def effective_item(tid, w, others, byte):
     if tid:
         r = appdb().execute(
             'SELECT rendering, from_word_id FROM lemma_default'
-            ' WHERE translation_id=? AND lemma=?', (tid, lemma_key(w))).fetchone()
+            ' WHERE translation_id=%s AND lemma=%s', (tid, lemma_key(w))).fetchone()
         if r and w['word_id'] >= r['from_word_id']:
             for i in range(1, len(items)):
                 if items[i][1] == r['rendering']:
@@ -481,8 +518,8 @@ def _backfill_lemma_source(db):
             others = other_options(r['translation_id'])
             src = _source_of(w, others, r['rendering'])
             db.execute(
-                'UPDATE lemma_default SET source=?'
-                ' WHERE translation_id=? AND lemma=?',
+                'UPDATE lemma_default SET source=%s'
+                ' WHERE translation_id=%s AND lemma=%s',
                 (src, r['translation_id'], r['lemma']))
         db.commit()
     except Exception:
@@ -500,7 +537,7 @@ def record_lemma_default(tid, w, others, item, source=None, other_option_id=None
         appdb().execute(
             '''INSERT INTO lemma_default(translation_id, lemma, rendering,
                    from_word_id, source, other_option_id)
-               VALUES(?,?,?,?,?,?)
+               VALUES(%s,%s,%s,%s,%s,%s)
                ON CONFLICT(translation_id, lemma) DO UPDATE SET
                  rendering=excluded.rendering,
                  from_word_id=excluded.from_word_id,
@@ -516,7 +553,7 @@ def morph_segments_html(wid):
         FROM words w
         JOIN morph_patterns m ON m.pattern_id=w.morph_pattern_id
         JOIN morph_segments s ON s.pattern_id=m.pattern_id
-        WHERE w.word_id=? ORDER BY s.seq''', (wid,)).fetchall()
+        WHERE w.word_id=%s ORDER BY s.seq''', (wid,)).fetchall()
     if not rows:
         return ''
     if rows[0]['parse_status'] != 'parsed':
@@ -593,7 +630,7 @@ def get_reading_position():
     u = current_user()
     if u:
         r = appdb().execute(
-            'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=?',
+            'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=%s',
             (u['user_id'],)).fetchone()
         if r:
             return (r['book_id'], r['chapter'], r['translation_id'])
@@ -603,7 +640,7 @@ def save_reading_position(n, c, tid):
     u = current_user()
     if u:
         appdb().execute('''INSERT INTO reading_position (user_id, book_id, chapter, translation_id, updated)
-            VALUES (?,?,?,?,datetime('now'))
+            VALUES (%s,%s,%s,%s,now())
             ON CONFLICT(user_id) DO UPDATE SET book_id=excluded.book_id, chapter=excluded.chapter,
             translation_id=excluded.translation_id, updated=excluded.updated''',
             (u['user_id'], n, c, tid))
@@ -657,7 +694,7 @@ def books():
 def book(n):
     trans = current_translation()
     chaps = bible().execute('''SELECT DISTINCT v.chapter FROM verses v
-        WHERE v.book_id=? AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.chapter''', (n,)).fetchall()
     items = ''.join(f'<li><a href="{u("/chapter/" + str(n) + "/" + str(c["chapter"]) + tqs(trans))}">'
                     f'Chapter {c["chapter"]}</a></li>' for c in chaps)
@@ -670,7 +707,7 @@ def tqs(trans):
 def chapter(n, c):
     trans = current_translation()
     verses = bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=? AND v.chapter=? AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
     items = ''.join(
         f'<li><a href="{u("/verse/" + str(n) + "/" + str(c) + "/" + str(v["verse"]) + tqs(trans))}">Verse {v["verse"]}</a></li>'
@@ -683,7 +720,7 @@ def verse(n, c, v):
     b = bible()
     words = b.execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
         JOIN verses vv ON vv.verse_id=w.verse_id
-        WHERE vv.book_id=? AND vv.chapter=? AND vv.verse=?
+        WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse=%s
         ORDER BY w.word_pos''', (n, c, v)).fetchall()
     tid = trans['translation_id'] if trans else None
     choice_bytes = read_choices(tid) if tid else None
@@ -739,7 +776,7 @@ def choice():
             if len(others) >= MAX_OTHERS:
                 return f'Other-option limit reached ({MAX_OTHERS})', 400
             idx = max([o['idx'] for o in others] + [0]) + 1
-            db.execute('INSERT INTO other_option(translation_id, idx, text) VALUES (?,?,?)',
+            db.execute('INSERT INTO other_option(translation_id, idx, text) VALUES (%s,%s,%s)',
                        (tid, idx, new_other))
             db.commit()
             others = other_options(tid)
@@ -773,7 +810,7 @@ def choice():
             ooid = m['option_id'] if m else None
     record_lemma_default(tid, w, others, item, source=src,
                          other_option_id=ooid)
-    db.execute("UPDATE translation SET updated_at=datetime('now') WHERE translation_id=?", (tid,))
+    db.execute("UPDATE translation SET updated_at=now() WHERE translation_id=%s", (tid,))
     db.commit()
     return redirect(u(request.form.get('next', '/')))
 
@@ -785,17 +822,18 @@ def translations():
         desc = request.form.get('description', '').strip()
         urow = db.execute('SELECT user_id FROM app_user LIMIT 1').fetchone()
         if not urow:
-            cur = db.execute("INSERT INTO app_user(name) VALUES('Kit')")
-            uid = cur.lastrowid
+            cur = db.execute("INSERT INTO app_user(name) VALUES('Kit') RETURNING user_id")
+            uid = cur.fetchone()['user_id']
         else:
             uid = urow['user_id']
         owner = current_user()
         cur = db.execute(
             'INSERT INTO translation(user_id, name, description, owner_id)'
-            ' VALUES(?,?,?,?)',
+            ' VALUES(%s,%s,%s,%s) RETURNING translation_id',
             (uid, name, desc, owner['user_id'] if owner else None))
+        new_tid = cur.fetchone()['translation_id']
         db.commit()
-        return redirect(u(f'/translations?t={cur.lastrowid}'))
+        return redirect(u(f'/translations?t={new_tid}'))
     trans = current_translation()
     rows = db.execute('''SELECT t.*, a.display_name AS owner_name
         FROM translation t LEFT JOIN user_accounts a
@@ -805,7 +843,7 @@ def translations():
     for r in rows:
         tid = r['translation_id']
         n_chosen = sum(1 for x in read_choices(tid) if x) if os.path.exists(choices_path(tid)) else 0
-        n_other = db.execute('SELECT COUNT(*) c FROM other_option WHERE translation_id=?', (tid,)).fetchone()['c']
+        n_other = db.execute('SELECT COUNT(*) c FROM other_option WHERE translation_id=%s', (tid,)).fetchone()['c']
         owner_txt = (f' by {html.escape(r["owner_name"])}'
                      if r['owner_name'] else '')
         items.append(
@@ -839,13 +877,13 @@ line-height:1.9;font-size:1.3em;color:#1a1a1a;background:#fdfbf5}
 
 @app.route('/reading/<int:tid>/<int:n>/<int:c>/<int:v>')
 def reading(tid, n, c, v):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=?', (tid,)).fetchone()
+    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
     if not trans:
         return 'Unknown translation', 404
     choices = read_choices(tid)
     others = other_options(tid)
     words = bible().execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
-        WHERE v.book_id=? AND v.chapter=? AND v.verse=? ORDER BY w.word_pos''',
+        WHERE v.book_id=%s AND v.chapter=%s AND v.verse=%s ORDER BY w.word_pos''',
         (n, c, v)).fetchall()
     if not words:
         return 'Unknown verse', 404
@@ -882,16 +920,16 @@ padding:10px 20px;text-decoration:none;color:#5a3c0a}
 
 def _chapter_verses(n, c):
     return bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=? AND v.chapter=? AND EXISTS
+        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS
         (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
 
 def _chapter_bounds(n, c):
     """(prev, next) as (book_id, chapter) tuples or None."""
-    books = [r[0] for r in bible().execute(
+    books = [r['book_id'] for r in bible().execute(
         'SELECT book_id FROM books ORDER BY book_id').fetchall()]
-    chaps = [r[0] for r in bible().execute(
-        'SELECT DISTINCT chapter FROM verses WHERE book_id=? ORDER BY chapter', (n,)).fetchall()]
+    chaps = [r['chapter'] for r in bible().execute(
+        'SELECT DISTINCT chapter FROM verses WHERE book_id=%s ORDER BY chapter', (n,)).fetchall()]
     bi, ci = books.index(n), chaps.index(c)
     prev = (books[bi - 1], _last_chapter(books[bi - 1])) if ci == 0 and bi > 0 else \
            (n, chaps[ci - 1]) if ci > 0 else None
@@ -908,8 +946,8 @@ def _chapter_bounds(n, c):
     return prev, nxt
 
 def _last_chapter(n):
-    r = bible().execute('SELECT MAX(chapter) FROM verses WHERE book_id=?', (n,)).fetchone()
-    return r[0] or 1
+    r = bible().execute('SELECT MAX(chapter) AS mc FROM verses WHERE book_id=%s', (n,)).fetchone()
+    return r['mc'] or 1
 
 @app.route('/read')
 def read_default():
@@ -939,7 +977,7 @@ def read_chapter(n, c):
     for vr in verses:
         v = vr['verse']
         words = bible().execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
-            WHERE v.book_id=? AND v.chapter=? AND v.verse=? ORDER BY w.word_pos''',
+            WHERE v.book_id=%s AND v.chapter=%s AND v.verse=%s ORDER BY w.word_pos''',
             (n, c, v)).fetchall()
         out = []
         for w in words:
@@ -973,7 +1011,7 @@ def read_chapter(n, c):
 
 @app.route('/export/<int:tid>')
 def export(tid):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=?', (tid,)).fetchone()
+    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
     if not trans:
         return 'Unknown translation', 404
     choices = read_choices(tid)
@@ -993,7 +1031,7 @@ def export(tid):
         ORDER BY v.book_id, v.chapter, v.verse''').fetchall()
     for vr in verses:
         words = b.execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
-            WHERE v.book_id=? AND v.chapter=? AND v.verse=? ORDER BY w.word_pos''',
+            WHERE v.book_id=%s AND v.chapter=%s AND v.verse=%s ORDER BY w.word_pos''',
             (vr['book_id'], vr['chapter'], vr['verse'])).fetchall()
         parts = []
         for w in words:
@@ -1028,14 +1066,14 @@ def word_detail(wid):
     ylt_list = ylt_map.get(key, [])
     ctx_rows = b.execute('''SELECT vv.book_id, vv.chapter, vv.verse, c.context_text
         FROM lexicon_ylt_context c JOIN verses vv ON vv.verse_id=c.verse_id
-        WHERE c.root_id=? AND c.root_form_seq=? AND c.vowel_seq=?
+        WHERE c.root_id=%s AND c.root_form_seq=%s AND c.vowel_seq=%s
         ORDER BY c.seq''', key).fetchall()
     ylt_contexts = ' \u2016 '.join(
         f'{book_name(r["book_id"])} {r["chapter"]}:{r["verse"]} \u2014 {r["context_text"]}'
         for r in ctx_rows)
     fv_rows = b.execute('''SELECT vv.book_id, vv.chapter, vv.verse
         FROM lexicon_found_verse f JOIN verses vv ON vv.verse_id=f.verse_id
-        WHERE f.root_id=? AND f.root_form_seq=? AND f.vowel_seq=?
+        WHERE f.root_id=%s AND f.root_form_seq=%s AND f.vowel_seq=%s
         ORDER BY f.rowid''', key).fetchall()
     found_verses = '; '.join(
         f'{book_name(r["book_id"])} {r["chapter"]}:{r["verse"]}' for r in fv_rows)
@@ -1058,10 +1096,10 @@ def word_detail(wid):
     unp = w['unpointed']
     bib_cnt = b.execute('''SELECT COUNT(DISTINCT vv.verse_id)
         FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
-        WHERE w2.unpointed=?''', (unp,)).fetchone()[0]
+        WHERE w2.unpointed=%s''', (unp,)).fetchone()[0]
     bib_rows = b.execute('''SELECT DISTINCT vv.book_id, vv.chapter, vv.verse
         FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
-        WHERE w2.unpointed=?
+        WHERE w2.unpointed=%s
         ORDER BY vv.book_id, vv.chapter, vv.verse LIMIT 200''', (unp,)).fetchall()
     bib_items = ''.join(
         f'<li><a href="{u("/verse/" + str(r["book_id"]) + "/" + str(r["chapter"]) + "/" + str(r["verse"]) + tqs(trans))}">'
@@ -1092,7 +1130,7 @@ def variants():
     if q:
         qq = q.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
         words = b.execute(f'''SELECT word_id, pointed, unpointed FROM words
-            WHERE (pointed LIKE ? ESCAPE '\\' OR unpointed LIKE ? ESCAPE '\\')
+            WHERE (pointed LIKE %s ESCAPE '\\' OR unpointed LIKE %s ESCAPE '\\')
               AND word_id IN ({in_list})
             ORDER BY word_id LIMIT 500''', (f'%{qq}%', f'%{qq}%')).fetchall()
     else:
@@ -1101,7 +1139,7 @@ def variants():
     # make sure the currently selected word is in the list even when it falls
     # outside the variant-word list (direct links still resolve)
     if sel_wid and not any(w['word_id'] == sel_wid for w in words):
-        w0 = b.execute('SELECT word_id, pointed, unpointed FROM words WHERE word_id=?',
+        w0 = b.execute('SELECT word_id, pointed, unpointed FROM words WHERE word_id=%s',
                        (sel_wid,)).fetchone()
         if w0:
             words = [w0] + list(words)
@@ -1130,13 +1168,13 @@ def variants():
                  'direction; only academic/textual variants will appear here '
                  'once loaded.</i></p>')
     if sel_wid:
-        w = b.execute('SELECT word_id, pointed, unpointed FROM words WHERE word_id=?',
+        w = b.execute('SELECT word_id, pointed, unpointed FROM words WHERE word_id=%s',
                       (sel_wid,)).fetchone()
         if not w:
             body += f'<p>Unknown word id {sel_wid}.</p>'
         else:
             rows_all = b.execute('''SELECT COUNT(*) FROM word_variants
-                WHERE word_id=?''', (sel_wid,)).fetchone()[0]
+                WHERE word_id=%s''', (sel_wid,)).fetchone()[0]
             rows = word_variant_rows(sel_wid)
             heb = w['pointed'] or w['unpointed'] or ''
             body += (f'<h2><span class="heb">{html.escape(heb)}</span> '
@@ -1223,8 +1261,8 @@ _WORDS_EXIST = 'AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
 
 def verse_row(n, c, v):
     return bible().execute(
-        f'''SELECT verse_id FROM verses vv WHERE vv.book_id=? AND vv.chapter=?
-            AND vv.verse=? {_WORDS_EXIST}''', (n, c, v)).fetchone()
+        f'''SELECT verse_id FROM verses vv WHERE vv.book_id=%s AND vv.chapter=%s
+            AND vv.verse=%s {_WORDS_EXIST}''', (n, c, v)).fetchone()
 
 def adjacent_verse(n, c, v, d):
     """Prev/next verse with rollover: next chapter when the chapter's verses
@@ -1234,49 +1272,49 @@ def adjacent_verse(n, c, v, d):
     b = bible()
     if d > 0:
         r = b.execute(f'''SELECT MIN(vv.verse) m FROM verses vv
-            WHERE vv.book_id=? AND vv.chapter=? AND vv.verse>? {_WORDS_EXIST}''',
+            WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse>%s {_WORDS_EXIST}''',
             (n, c, v)).fetchone()
         if r['m']:
             return (n, c, r['m'])
         r = b.execute(f'''SELECT MIN(vv.chapter) m FROM verses vv
-            WHERE vv.book_id=? AND vv.chapter>? {_WORDS_EXIST}''', (n, c)).fetchone()
+            WHERE vv.book_id=%s AND vv.chapter>%s {_WORDS_EXIST}''', (n, c)).fetchone()
         if r['m']:
             nc = r['m']
             rv = b.execute(f'''SELECT MIN(vv.verse) m FROM verses vv
-                WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST}''', (n, nc)).fetchone()
+                WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}''', (n, nc)).fetchone()
             return (n, nc, rv['m'])
         r = b.execute(f'''SELECT MIN(vv.book_id) m FROM verses vv
-            WHERE vv.book_id>? {_WORDS_EXIST}''', (n,)).fetchone()
+            WHERE vv.book_id>%s {_WORDS_EXIST}''', (n,)).fetchone()
         if r['m']:
             nb = r['m']
             rc = b.execute(f'''SELECT MIN(vv.chapter) m FROM verses vv
-                WHERE vv.book_id=? {_WORDS_EXIST}''', (nb,)).fetchone()
+                WHERE vv.book_id=%s {_WORDS_EXIST}''', (nb,)).fetchone()
             nc = rc['m']
             rv = b.execute(f'''SELECT MIN(vv.verse) m FROM verses vv
-                WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST}''', (nb, nc)).fetchone()
+                WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}''', (nb, nc)).fetchone()
             return (nb, nc, rv['m'])
         return None
     r = b.execute(f'''SELECT MAX(vv.verse) m FROM verses vv
-        WHERE vv.book_id=? AND vv.chapter=? AND vv.verse<? {_WORDS_EXIST}''',
+        WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse<%s {_WORDS_EXIST}''',
         (n, c, v)).fetchone()
     if r['m']:
         return (n, c, r['m'])
     r = b.execute(f'''SELECT MAX(vv.chapter) m FROM verses vv
-        WHERE vv.book_id=? AND vv.chapter<? {_WORDS_EXIST}''', (n, c)).fetchone()
+        WHERE vv.book_id=%s AND vv.chapter<%s {_WORDS_EXIST}''', (n, c)).fetchone()
     if r['m']:
         nc = r['m']
         rv = b.execute(f'''SELECT MAX(vv.verse) m FROM verses vv
-            WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST}''', (n, nc)).fetchone()
+            WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}''', (n, nc)).fetchone()
         return (n, nc, rv['m'])
     r = b.execute(f'''SELECT MAX(vv.book_id) m FROM verses vv
-        WHERE vv.book_id<? {_WORDS_EXIST}''', (n,)).fetchone()
+        WHERE vv.book_id<%s {_WORDS_EXIST}''', (n,)).fetchone()
     if r['m']:
         nb = r['m']
         rc = b.execute(f'''SELECT MAX(vv.chapter) m FROM verses vv
-            WHERE vv.book_id=? {_WORDS_EXIST}''', (nb,)).fetchone()
+            WHERE vv.book_id=%s {_WORDS_EXIST}''', (nb,)).fetchone()
         nc = rc['m']
         rv = b.execute(f'''SELECT MAX(vv.verse) m FROM verses vv
-            WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST}''', (nb, nc)).fetchone()
+            WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}''', (nb, nc)).fetchone()
         return (nb, nc, rv['m'])
     return None
 
@@ -1303,9 +1341,9 @@ def word_variant_rows(wid, prefer_letters=None):
     survivors in variant_seq order."""
     rows = bible().execute('''SELECT variant_seq, variant_kind, unpointed,
         letters, variant_text, convention, source, witness, variant_type, basis
-        FROM word_variants WHERE word_id=?
-          AND basis NOT LIKE '%anomaly=%'
-          AND basis NOT LIKE '%ARTIFACT%'
+        FROM word_variants WHERE word_id=%s
+          AND basis NOT LIKE '%%anomaly=%%'
+          AND basis NOT LIKE '%%ARTIFACT%%'
         ORDER BY variant_seq''',
         (wid,)).fetchall()
     best = {}
@@ -1332,15 +1370,15 @@ def variant_word_ids():
     the corpus is read-only so the cache never goes stale."""
     if BIBLE_DB not in _VARIANT_WORD_IDS:
         rows = bible().execute('''SELECT word_id FROM word_variants
-            WHERE basis NOT LIKE '%anomaly=%'
-              AND basis NOT LIKE '%ARTIFACT%'
+            WHERE basis NOT LIKE '%%anomaly=%%'
+              AND basis NOT LIKE '%%ARTIFACT%%'
             GROUP BY word_id
             HAVING COUNT(DISTINCT
-                COALESCE(variant_kind, '') || char(31) ||
-                fold_finals(letters) || char(31) ||
+                COALESCE(variant_kind, '') || chr(31) ||
+                fold_finals(letters) || chr(31) ||
                 fold_finals(variant_text)) >= 2
             ORDER BY word_id''').fetchall()
-        _VARIANT_WORD_IDS[BIBLE_DB] = [r[0] for r in rows]
+        _VARIANT_WORD_IDS[BIBLE_DB] = [r['word_id'] for r in rows]
     return _VARIANT_WORD_IDS[BIBLE_DB]
 
 
@@ -1360,14 +1398,14 @@ def english_sentence_html(verse_id):
     superscript. Hebrew words with no KJV alignment are listed after."""
     b = bible()
     kws = b.execute('''SELECT kjv_word_id, kjv_pos, kjv_word FROM kjv_words
-        WHERE verse_id=? ORDER BY kjv_pos''', (verse_id,)).fetchall()
+        WHERE verse_id=%s ORDER BY kjv_pos''', (verse_id,)).fetchall()
     if not kws:
         return '<p><i>No KJV text for this verse.</i></p>'
     al = {r['kjv_word_id']: r['hebrew_word_id'] for r in b.execute(
         'SELECT kjv_word_id, hebrew_word_id FROM word_alignment '
-        'WHERE verse_id=? AND kjv_word_id IS NOT NULL', (verse_id,))}
+        'WHERE verse_id=%s AND kjv_word_id IS NOT NULL', (verse_id,))}
     poss = {r['word_id']: r['word_pos'] for r in b.execute(
-        'SELECT word_id, word_pos FROM words WHERE verse_id=?', (verse_id,))}
+        'SELECT word_id, word_pos FROM words WHERE verse_id=%s', (verse_id,))}
     parts = []
     for k in kws:
         wtxt = html.escape(k['kjv_word'])
@@ -1384,7 +1422,7 @@ def english_sentence_html(verse_id):
            'aligned in word_alignment (supplied for English grammar, per KJV '
            'print convention). Superscript = Hebrew word position above.</p>']
     untr = b.execute('''SELECT w.word_pos, w.pointed, w.unpointed FROM words w
-        WHERE w.verse_id=?
+        WHERE w.verse_id=%s
         AND NOT EXISTS (SELECT 1 FROM word_alignment a
             WHERE a.verse_id=w.verse_id AND a.hebrew_word_id=w.word_id
             AND a.kjv_word_id IS NOT NULL)
@@ -1407,7 +1445,7 @@ def api_books():
 def api_chapters(n):
     rows = bible().execute(
         f'''SELECT DISTINCT vv.chapter FROM verses vv
-            WHERE vv.book_id=? {_WORDS_EXIST} ORDER BY vv.chapter''',
+            WHERE vv.book_id=%s {_WORDS_EXIST} ORDER BY vv.chapter''',
         (n,)).fetchall()
     return jsonify([r['chapter'] for r in rows])
 
@@ -1415,7 +1453,7 @@ def api_chapters(n):
 def api_verses(n, c):
     rows = bible().execute(
         f'''SELECT vv.verse FROM verses vv
-            WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST}
+            WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}
             ORDER BY vv.verse''', (n, c)).fetchall()
     return jsonify([r['verse'] for r in rows])
 
@@ -1433,7 +1471,7 @@ def interlinear(n, c, v):
     verse_id = vrow['verse_id']
     words = b.execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
         JOIN verses vv ON vv.verse_id=w.verse_id
-        WHERE vv.book_id=? AND vv.chapter=? AND vv.verse=?
+        WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse=%s
         ORDER BY w.word_pos''', (n, c, v)).fetchall()
     tid = trans['translation_id'] if trans else None
     choice_bytes = read_choices(tid) if tid else None
@@ -1443,7 +1481,7 @@ def interlinear(n, c, v):
     var_text = {}
     for wid, seq in var_sel.items():
         r = b.execute('''SELECT variant_text, unpointed FROM word_variants
-            WHERE word_id=? AND variant_seq=?''', (wid, seq)).fetchone()
+            WHERE word_id=%s AND variant_seq=%s''', (wid, seq)).fetchone()
         if r:
             var_text[wid] = r['variant_text'] or r['unpointed']
     wv_qs = ''.join(f'&wv={wid}:{seq}' for wid, seq in sorted(var_sel.items()))
@@ -1451,9 +1489,9 @@ def interlinear(n, c, v):
     # nav drop-downs (server-rendered; JS re-fills chapter/verse dynamically)
     books = b.execute('SELECT book_id, name_en FROM books ORDER BY book_id').fetchall()
     chaps = b.execute(f'''SELECT DISTINCT vv.chapter FROM verses vv
-        WHERE vv.book_id=? {_WORDS_EXIST} ORDER BY vv.chapter''', (n,)).fetchall()
+        WHERE vv.book_id=%s {_WORDS_EXIST} ORDER BY vv.chapter''', (n,)).fetchall()
     vss = b.execute(f'''SELECT vv.verse FROM verses vv
-        WHERE vv.book_id=? AND vv.chapter=? {_WORDS_EXIST} ORDER BY vv.verse''',
+        WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST} ORDER BY vv.verse''',
         (n, c)).fetchall()
     bopts = ''.join(f'<option value="{r["book_id"]}"'
                     f'{" selected" if r["book_id"] == n else ""}>'
