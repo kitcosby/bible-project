@@ -6,7 +6,9 @@ Living document — update these diagrams when adding features.
 
 **v2 status (2026-09-28):** the corpus has been normalized to the v2 schema (`schema_v2.sql`, design rationale in `schema_v2.md`). `bible_v2.db` is built and verified, and the live website now serves it via `app_v2.py` — **live cutover DONE 2026-09-28 ~17:15 PDT** on Kit's authorization ("go live with it both on github and on the laptop"; schema approved by Kit: "the schema looks great"). The diagrams below describe v2, which is now the production schema.
 
-**2026-09-30 changes (this revision):** `word_variants` merged into one table tagged by `variant_kind` (`'spelling'` | `'textual'`, CHECK-enforced — Kit's decision); new `word_notes` table (one-to-many word notes, Kit 2026-09-29); `/variants` explorer route added to `app_v2.py`; `database/` now carries a 4-part pg_dump of the live `bible_v2.db`; the 129 OSHB anomaly resolutions applied to `bible_v2`. The level-1 DFD below was also corrected: the previous revision still showed the website reading the v1 `bible.db` live, which the 9/28 cutover superseded — the live site reads `bible_v2.db` via `app_v2.py`.
+**2026-10-06 changes (this revision):** the website gained a login system — new `user_accounts` table (real logins: `/signup`, `/login`, `/logout`; werkzeug salted password hashes; session cookies), `translation.owner_id` FK to `user_accounts` (NULL = legacy/anonymous; `translation.user_id` keeps its legacy `app_user` meaning), and a new `lemma_default` table (sticky/propagating lemma choices with translation-source integers 1=KJV | 2=Young's | 3=user-defined). `/variants` now serves only academic/textual variants (Kit 2026-10-01, implemented commit `f323dfca`). `website/schema_custom.sql` is a DESIGN-ONLY proposal (`custom_translations`), not applied — recorded in grounding notes, not drawn in the ERD.
+
+**2026-09-30 changes (previous revision):** `word_variants` merged into one table tagged by `variant_kind` (`'spelling'` | `'textual'`, CHECK-enforced — Kit's decision); new `word_notes` table (one-to-many word notes, Kit 2026-09-29); `/variants` explorer route added to `app_v2.py`; `database/` now carries a 4-part pg_dump of the live `bible_v2.db`; the 129 OSHB anomaly resolutions applied to `bible_v2`. The level-1 DFD below was also corrected: the previous revision still showed the website reading the v1 `bible.db` live, which the 9/28 cutover superseded — the live site reads `bible_v2.db` via `app_v2.py`.
 
 ## 1. Context diagram (level 0)
 
@@ -21,14 +23,14 @@ flowchart LR
     E7["Lexicon sources"]
     P0("Bible Project system")
     E1 -->|"runs build and migration scripts"| P0
-    E2 -->|"browses verses, picks translations"| P0
+    E2 -->|"browses verses, picks translations, signs up / logs in (optional)"| P0
     E3 -->|"Hebrew word lists"| P0
     E4 -->|"Hebrew text with Strongs and morphology"| P0
     E5 -->|"KJV words with Strongs tags"| P0
     E6 -->|"verse-level translation (USFM)"| P0
     E7 -->|"dictionary glosses (BDB, Strongs Hebrew)"| P0
     P0 -->|"built corpora, DB dump parts (database/), and verification reports"| E1
-    P0 -->|"verse reader with word dropdowns, /variants explorer"| E2
+    P0 -->|"verse reader with word dropdowns, /variants explorer, user-owned translations"| E2
 ```
 
 ## 2. Level-1 data flow diagram
@@ -78,7 +80,7 @@ flowchart LR
     P8 -->|"reader pages, /variants explorer"| E2
 ```
 
-Process grounding: 1.0 `ingest_canonical.py`; 4.0 `build_roots*.py` + `build_lexicon.py`; 5.0 `build_ylt_align.py`, `repair_u8_maqqef_kjv.py`, `repair_u8_lexicon.py`, `repair_u9_verse_remap_kjv.py`, `repair_u9_lexicon.py`; 6.0 `assemble_bible.py`; 7.0 `migrate_v2.py`, then the derived-data stage `build_alignment.py`, `build_variants.py`, `apply_morph_corrections.py`, the post-normalization fixes `apply_anomaly_resolutions.py` (129 OSHB-verified fixes, 2026-09-29) and `migrate_variants_merge.py` (word_variants variant_kind merge, 2026-09-30); 8.0 `website/app_v2.py` — the LIVE server since the 2026-09-28 ~17:15 PDT cutover (supervisord `bible`, port 5057, `BIBLE_DB=/opt/bible/bible_v2.db`, Apache `/bible`→5057). `website/app.py` (the v1 server) is retained in the repo but superseded; the pre-cutover `/bible-v2` staging copy on port 5058 was observed 2026-09-28 — its post-cutover role was not re-verified. Routes: book/chapter/verse/word/choice/translations/reading/export, plus `/variants` (added 2026-09-30, commit 3635422d).
+Process grounding: 1.0 `ingest_canonical.py`; 4.0 `build_roots*.py` + `build_lexicon.py`; 5.0 `build_ylt_align.py`, `repair_u8_maqqef_kjv.py`, `repair_u8_lexicon.py`, `repair_u9_verse_remap_kjv.py`, `repair_u9_lexicon.py`; 6.0 `assemble_bible.py`; 7.0 `migrate_v2.py`, then the derived-data stage `build_alignment.py`, `build_variants.py`, `apply_morph_corrections.py`, the post-normalization fixes `apply_anomaly_resolutions.py` (129 OSHB-verified fixes, 2026-09-29) and `migrate_variants_merge.py` (word_variants variant_kind merge, 2026-09-30); 8.0 `website/app_v2.py` — the LIVE server since the 2026-09-28 ~17:15 PDT cutover (supervisord `bible`, port 5057, `BIBLE_DB=/opt/bible/bible_v2.db`, Apache `/bible`→5057). `website/app.py` (the v1 server) is retained in the repo but superseded; the pre-cutover `/bible-v2` staging copy on port 5058 was observed 2026-09-28 — its post-cutover role was not re-verified. Routes: book/chapter/verse/word/choice/translations/reading/export, `/variants` (added 2026-09-30, commit 3635422d; academic/textual-only since commit f323dfca, 2026-10-06), `/signup`, `/login`, `/logout` (added 2026-10-06 — optional login, never required for browsing), `/interlinear`, JSON `/api/books|chapters|verses`, static `/papyrus-tile.png`. Auth: werkzeug salted password hashes, Flask session cookies; `current_user()` returns the `user_accounts` row (inactive users treated as logged out). `/choice` (POST) propagates the chosen rendering into `lemma_default` via `record_lemma_default`. Startup creates `user_accounts`/`lemma_default` IF NOT EXISTS and ALTERs legacy rows (`owner_id`, `source`, `other_option_id`).
 
 ## 3. Entity–relationship diagram (v2 schema)
 
@@ -275,6 +277,7 @@ erDiagram
     TRANSLATION {
         int translation_id PK
         int user_id FK
+        int owner_id FK
         string name
         string description
         string created_at
@@ -286,6 +289,24 @@ erDiagram
         int idx
         string text
         string created_at
+    }
+    USER_ACCOUNTS {
+        int user_id PK
+        string username
+        string password_hash
+        string email
+        string display_name
+        int is_active
+        string created_at
+        string last_login_at
+    }
+    LEMMA_DEFAULT {
+        int translation_id FK
+        string lemma
+        string rendering
+        int from_word_id
+        int source
+        int other_option_id FK
     }
     CHOICES_FILE {
         string path PK
@@ -324,12 +345,15 @@ erDiagram
     WORDS ||--o{ MORPH_VARIANTS : morph_readings
     MORPH_VARIANTS }o--|o MORPH_PATTERNS : staged_as
     APP_USER ||--o{ TRANSLATION : owns
+    USER_ACCOUNTS ||--o{ TRANSLATION : owns_as
     TRANSLATION ||--o{ OTHER_OPTION : adds
+    TRANSLATION ||--o{ LEMMA_DEFAULT : has_defaults
+    LEMMA_DEFAULT }o--|o OTHER_OPTION : links_when_custom
     TRANSLATION ||--|| CHOICES_FILE : stores_choices_in
     TRANSLATION }o--o{ WORDS : targets
 ```
 
-Notes on the ERD: composite primary keys (`ROOT_FORM`, `ROOT_VOWEL`, `LEXICON` and its children, `GLOSSES`, `WORD_VARIANTS`, `MORPH_VARIANTS`, `STRONGS_COMPONENTS`) are declared in `schema_v2.sql`; the `PK`/`FK` marks above show membership, not single-column keys. `YLT_VERSES.verse_id` is both PK and FK to `VERSES`. The `TRANSLATION }o--o{ WORDS : targets` link is logical, not a declared FK — corpus (`bible_v2.db`) and website data (`app.db`) are separate SQLite files by design; choice files index by `word_id` at byte offset `word_id - 1`.
+Notes on the ERD: composite primary keys (`ROOT_FORM`, `ROOT_VOWEL`, `LEXICON` and its children, `GLOSSES`, `WORD_VARIANTS`, `MORPH_VARIANTS`, `STRONGS_COMPONENTS`, `LEMMA_DEFAULT` on (translation_id, lemma)) are declared in `schema_v2.sql` / `website/schema.sql`; the `PK`/`FK` marks above show membership, not single-column keys. `YLT_VERSES.verse_id` is both PK and FK to `VERSES`. The `TRANSLATION }o--o{ WORDS : targets` link is logical, not a declared FK — corpus (`bible_v2.db`) and website data (`app.db`) are separate SQLite files by design; choice files index by `word_id` at byte offset `word_id - 1`. `translation.owner_id` is nullable (ON DELETE SET NULL; NULL = legacy/anonymous) while `translation.user_id` keeps its legacy `app_user` meaning; `lemma_default.other_option_id` is populated only when source=3 (user-defined). The design-only `custom_translations` proposal (`website/schema_custom.sql`) is deliberately not drawn — it is not applied.
 
 ## Grounding notes
 
@@ -346,7 +370,10 @@ Notes on the ERD: composite primary keys (`ROOT_FORM`, `ROOT_VOWEL`, `LEXICON` a
 - OBSERVED (`database/bible_dump.sql.gz.part-aa`…`.part-ad`, merged 2026-09-30): pg_dump of the live `bible_v2.db`, 4 parts, published in the repo as a distributable corpus snapshot (commit 02032780).
 - OBSERVED (`website/schema.sql`): `app_user`, `translation`, `other_option` verbatim; `website/app.py` (Flask) opens `bible.db` read-only, `app.db` read-write, `user_data/translation_<id>.choices` byte files.
 - OBSERVED: **live cutover DONE 2026-09-28 ~17:15 PDT** on Kit's authorization ("go live with it both on github and on the laptop"): supervisord `bible` runs `app_v2.py` on 5057 with `BIBLE_DB=/opt/bible/bible_v2.db`; Apache `/bible`→5057 unchanged; `/bible` + direct 5057 verified 200; word/book/verse pages 200. The 2026-09-30 laptop re-ship (anomaly-corrected `bible_v2.db`) was verified live. The previous diagram revision still showed the website reading the v1 `bible.db` live — that contradiction is corrected in this revision (8.0 reads D3 only; D2 remains the migration input).
-- PENDING (Kit 2026-10-01, not yet implemented in the repo): the website's variant readings should be the academic (textual) variants, not his manuscript variance — the manuscript variance (`v1-medial` convention rows in `word_variants`) falls to the wayside. When implemented, this changes which rows `/variants` serves, not the schema.
+- OBSERVED (`website/schema.sql` diff, commit 7b7b03e8, 2026-10-06): the website login system — new `user_accounts` table (user_id PK autoincrement, username UNIQUE, password_hash, email, display_name, is_active, created_at, last_login_at); `translation.owner_id` INTEGER REFERENCES `user_accounts(user_id)` ON DELETE SET NULL (NULL = legacy/anonymous translation). `app_v2.py` implements `/signup` (rejects passwords under 4 chars; werkzeug `generate_password_hash`), `/login` (`check_password_hash`, `last_login_at` bump), `/logout`; login state in Flask session cookies that survive restarts; browsing and translation creation work while logged out (`owner_id` then NULL). `app_user`/`translation.user_id` keep their legacy anonymous-session meaning by design.
+- OBSERVED (same commit; `app_v2.py` `record_lemma_default`): new `lemma_default` table — composite PK (translation_id, lemma): a non-default word choice propagates as that lemma's default rendering from that word_id forward (lemma = Strong's, else `root:<root_code>`); rendering TEXT stored (drop-downs are built per inflection, not per lemma); `source` 1=KJV | 2=Young's | 3=user-defined (NULL on legacy/backfilled rows); `other_option_id` FK to `other_option` populated only for source=3; an explicit per-word choice always wins; resetting one word to default does NOT clear the lemma default. Startup creates the tables IF NOT EXISTS and ALTERs legacy rows (lines 102–120).
+- OBSERVED (`website/schema_custom.sql`, added commit 7b7b03e8, 2026-10-06): DESIGN ONLY — do not apply without Kit's approval. Proposes `custom_translations` (PK (user_id, word_id): variant_seq, translation_source CHECK ('kjv'|'ylt'|'computed'|'custom'), source_index, custom_text required for 'custom') as the atomic per-(user, word) choice backing store for the word-UI wireframe (`website/wireframe-word-ui.html`); user_id FK → user_accounts ON DELETE CASCADE; cross-database word_id to the corpus left unenforced by design. Same commit also added `variant-investigation.md`, `website/papyrus-tile.png` (served at `/papyrus-tile.png`), and `website/wireframe-word-ui.html`.
+- OBSERVED (commit f323dfca, 2026-10-06 — the 2026-10-03 revision's PENDING item, now implemented): `/variants` serves only academic/textual variants per Kit's 2026-10-01 direction — v1 manuscript-variance rows (`v1-medial` convention) are excluded; medial/final-only duplicates are folded with an on-page note; while no textual rows are loaded the page states it is empty.
 - OBSERVED: v1 row counts from README — words 264,217; kjv_words 610,324; kjv_renderings 631,950; ylt_renderings 337,601; ylt_verses 23,145; glosses 17,347; books 39; root_entry 30,087; root_form 57,724; root_vowel 126,869; lexicon 126,869.
 - OBSERVED: `worker-out/` subdirectories (canon, kjv, lexicons, oshb, ylt) — the basis for D1; repair scripts named in 5.0; U-8 maqqef-component and U-9 verse-remap repairs with before/after coverage figures in README.
 - INFERRED: the numbered process boundaries 1.0–8.0 group scripts by their documented purpose; the repo documents each script's role but no explicit pipeline wiring, so boundaries are inferred.
