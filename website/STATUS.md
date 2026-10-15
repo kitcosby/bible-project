@@ -231,3 +231,29 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
 - Supervisor `bible` + `bible-v2` stopped before the move, restarted after (restart also clears the app's process-global lexicon cache, which is keyed by DB path).
 - Verified live: both programs RUNNING; 127.0.0.1:5057 and :5058 return 200; 264,217 words; `/word/51400` renders corrected `לכ-לכה-נא`; 0 FK violations.
 - Rollback: copy the pre-anomaly backup back to `/opt/bible/bible_v2.db` + restart both programs.
+
+## 2026-10-15 — KQ-NO-WORD-91: Kethiv/Qere NO_WORD recovery
+
+- `build_variants_kq.py` (only file changed) gained a verse-local
+  skeleton-search fallback: for aligner-unmapped ketivs, the verse's
+  unclaimed corpus words are searched for the ketiv's folded consonant
+  skeleton as a whole unpointed value or one maqqef-split part; only a
+  unique candidate passing the existing alignment guard is accepted —
+  the guard was not loosened. Jer 28:1 (verse_id 19780, zero corpus
+  words — versification issue) is skipped explicitly.
+- Measured result (trial run on a copy, then live; backup
+  `bible_v2.db.bak-20261015-kq-recovery`, SHA-256 `b5e517c4…d132d`):
+  1,204 pairs inserted, 77 recovered by the fallback, 14 remaining
+  NO_WORD, 23 ketiv_no_qere, 27 skipped_alignment_unverified (unchanged —
+  zero new guard failures).
+- Verified exactly: `word_variants` GROUP BY gives spelling 528,565
+  (unchanged) and textual MT qere 1,204 (= 1,127 + 77), total 529,769;
+  K/Q coverage 1,204/1,268 = 94.95% (was 88.88%); `PRAGMA
+  foreign_key_check` = 0 rows; all 77/77 recovered pairs spot-checked
+  against the OSHB XML pointed ketiv/qere text (0 old rows lost, 0
+  failures); idempotence confirmed — second live run reproduced the
+  same counts with a byte-identical `word_variants` content hash
+  `34cb7d9d…fbab4` (all columns except `created_at`).
+- Full record: `NOTATION_LEDGER.md` §10 and
+  `worker-out/kq-audit/KQ_RECOVERY_2026-10-15.md`. Committed locally
+  only — GitHub push held for the Sunday weekly push.

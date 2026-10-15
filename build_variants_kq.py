@@ -14,6 +14,18 @@ Alignment: per verse, main (non-qere) OSHB tokens are aligned to corpus
 words by position, with a difflib fallback on folded consonant skeletons
 when counts differ. Every skip is counted and reported; nothing is forced.
 
+KQ-NO-WORD-91 fallback (2026-10-15): when the position/difflib aligner
+still leaves a ketiv unmapped, a verse-local skeleton search runs over
+the verse's corpus words NOT already claimed by the aligner (or by an
+earlier fallback recovery in the same verse): a corpus word is a
+candidate when the ketiv's folded consonant skeleton equals its whole
+folded unpointed value or one of its maqqef ('-') split parts. The
+fallback fires only on a UNIQUE candidate, and the candidate must pass
+the same alignment guard as aligner-mapped words (skeleton in parts OR
+difflib ratio >= 0.6). Non-unique or guard-failing cases stay skipped.
+Jer 28:1 (verse_id 19780) is skipped explicitly: its corpus verse has
+zero words (a versification issue, not a loader fault).
+
 Idempotent: existing witness='MT' AND variant_type='qere' rows are deleted
 first. Source: sources/morphhb/wlc next to this script (persistent
 copy fetched 2026-10-14; morphhb @ 3d15126, WLC public domain, OSHB
@@ -113,7 +125,8 @@ def main():
     stats = {'verses_seen': 0, 'ketiv_total': 0, 'pairs': 0, 'inserted': 0,
              'skipped_no_word': 0, 'skipped_identical': 0,
              'orphan_qere': 0, 'ketiv_no_qere': 0,
-             'verses_count_mismatch': 0, 'pos_mismatch': 0}
+             'verses_count_mismatch': 0, 'pos_mismatch': 0,
+             'recovered_skeleton_fallback': 0}
     rows = []
     for abbr, bnum in sorted(BOOKMAP.items(), key=lambda kv: kv[1]):
         path = os.path.join(SRC, abbr + '.xml')
@@ -163,6 +176,45 @@ def main():
                         stats['ketiv_no_qere'] += 1
                         continue
                     wid = cmap.get(i)
+                    if wid is None:
+                        # Verse-local skeleton-search fallback
+                        # (KQ-NO-WORD-91, 2026-10-15): search this
+                        # verse's unclaimed corpus words for the
+                        # ketiv's folded consonant skeleton as a whole
+                        # unpointed value or one maqqef-split part.
+                        # Accept only a unique match that also passes
+                        # the alignment guard applied below (skeleton
+                        # in parts OR difflib ratio >= 0.6). Jer 28:1
+                        # (verse_id 19780) has zero corpus words — a
+                        # versification issue — and is skipped here by
+                        # design, never forced.
+                        if vid != 19780:
+                            k_fb = fold(consonants(t['pointed']))
+                            if k_fb:
+                                claimed = set(cmap.values())
+                                cands = []
+                                for c in cwords:
+                                    if c['word_id'] in claimed:
+                                        continue
+                                    cs = fold(c['unpointed'] or '')
+                                    cparts = cs.split('-')
+                                    # Candidate: skeleton is the whole
+                                    # value or one maqqef-split part.
+                                    if k_fb not in cparts:
+                                        continue
+                                    # Same guard as aligner-mapped
+                                    # words below: skeleton in parts
+                                    # OR difflib ratio >= 0.6.
+                                    if k_fb in cparts or \
+                                            difflib.SequenceMatcher(
+                                                None, k_fb,
+                                                cs).ratio() >= 0.6:
+                                        cands.append(c['word_id'])
+                                if len(cands) == 1:
+                                    wid = cands[0]
+                                    cmap[i] = wid
+                                    stats[
+                                        'recovered_skeleton_fallback'] += 1
                     if wid is None:
                         stats['skipped_no_word'] += 1
                         continue

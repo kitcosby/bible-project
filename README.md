@@ -87,6 +87,19 @@ unpushed export flag-for-research commit.)
 items in `NOTATION_LEDGER.md`; the deployment-verification gap is tracked in
 [issue #4](https://github.com/cosbykit-afk/bible-project/issues/4).
 
+**Kethiv/Qere coverage (2026-10-15, KQ-NO-WORD-91).** `word_variants` in
+`bible_v2.db` now holds 529,769 rows: 528,565 spelling variants (unchanged)
+plus 1,204 textual MT qere rows (up from 1,127). A verse-local
+skeleton-search fallback in `build_variants_kq.py` recovered 77 of the 91
+previously skipped NO_WORD Kethiv/Qere pairs — K/Q coverage is now
+1,204/1,268 = 94.95% (was 88.88%). The remaining 14 NO_WORD pairs failed
+the uniqueness rule or had no candidate (plus Jer 28:1, a zero-word
+versification case, excluded by design); the 23 NO_QERE and 27
+alignment-unverified pairs remain a documented residual. Verified exactly:
+`PRAGMA foreign_key_check` = 0 rows, all 77 recovered pairs spot-checked
+against the OSHB XML, and a second run is idempotent (byte-identical
+`word_variants` content hash). See `NOTATION_LEDGER.md` §10.
+
 ### v2 normalization (2026-09-28, implementation draft under Kit's authorization)
 
 `schema_v2.md` (design) + `schema_v2.sql` (DDL) + `migrate_v2.py` (migration, 66.9 s)
