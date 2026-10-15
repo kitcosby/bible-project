@@ -15,8 +15,9 @@ words by position, with a difflib fallback on folded consonant skeletons
 when counts differ. Every skip is counted and reported; nothing is forced.
 
 Idempotent: existing witness='MT' AND variant_type='qere' rows are deleted
-first. Source: /tmp/morphhb-check/wlc (morphhb @ 3d15126, WLC public
-domain, OSHB apparatus CC BY).
+first. Source: sources/morphhb/wlc next to this script (persistent
+copy fetched 2026-10-14; morphhb @ 3d15126, WLC public domain, OSHB
+apparatus CC BY). The old /tmp default is gone — /tmp copies vanish.
 """
 import difflib
 import json
@@ -26,7 +27,9 @@ import sqlite3
 import sys
 import xml.etree.ElementTree as ET
 
-SRC = sys.argv[1] if len(sys.argv) > 1 else '/tmp/morphhb-check/wlc'
+SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'sources', 'morphhb', 'wlc')
 DB = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'bible_v2.db')
 NS = '{http://www.bibletechnologies.net/2003/OSIS/namespace}'
@@ -57,9 +60,40 @@ def clean_pointed(text):
 
 def extract_pairs(path):
     """Yield (book, chapter, verse, tokens) where tokens is a list of
-    dicts: {pointed, ketiv: bool, qere: [pointed, ...] or None}."""
+    dicts: {pointed, ketiv: bool, qere: [pointed, ...] or None}.
+
+    In the morphhb WLC XML the qere is NOT a direct child of <verse>:
+    it sits in <note type="variant"><rdg type="x-qere"><w .../></rdg>
+    </note> immediately after its ketiv <w>. Walk the verse in document
+    order; <w> elements inside an x-qere <rdg> attach to the preceding
+    token as its qere and are not main tokens. (The original direct-
+    child walk missed every qere: a full run inserted 0 pairs with
+    ketiv_no_qere=1268 — caught on a test-copy run, 2026-10-14.)"""
     tree = ET.parse(path)
     root = tree.getroot()
+
+    def walk(node, tokens, in_qere=False):
+        for child in node:
+            if child.tag == NS + 'rdg' and child.get('type') == 'x-qere':
+                walk(child, tokens, in_qere=True)
+            elif child.tag == NS + 'w':
+                text = ''.join(child.itertext())
+                if in_qere:
+                    if tokens:
+                        if tokens[-1]['qere'] is None:
+                            tokens[-1]['qere'] = []
+                        tokens[-1]['qere'].append(text)
+                    else:
+                        tokens.append({'pointed': '', 'ketiv': False,
+                                       'qere': [text], 'orphan': True})
+                else:
+                    tokens.append({
+                        'pointed': text,
+                        'ketiv': child.get('type') == 'x-ketiv',
+                        'qere': None})
+            else:
+                walk(child, tokens, in_qere=in_qere)
+
     for chapter_el in root.iter(NS + 'chapter'):
         for verse_el in chapter_el.iter(NS + 'verse'):
             osis = verse_el.get('osisID')
@@ -69,28 +103,7 @@ def extract_pairs(path):
             book = BOOKMAP[parts[0]]
             ch, vs = int(parts[1]), int(parts[2])
             tokens = []
-            for child in verse_el:
-                if child.tag == NS + 'w':
-                    tokens.append({
-                        'pointed': ''.join(child.itertext()),
-                        'ketiv': child.get('type') == 'x-ketiv',
-                        'qere': None})
-                elif child.tag == NS + 'rdg' and child.get('type') == 'x-qere':
-                    qwords = [''.join(w.itertext())
-                              for w in child.iter(NS + 'w')]
-                    if tokens:
-                        tokens[-1]['qere'] = qwords
-                    else:
-                        tokens.append({'pointed': '', 'ketiv': False,
-                                       'qere': qwords, 'orphan': True})
-                else:
-                    # nested structures: walk descendants in doc order
-                    for el in child.iter():
-                        if el.tag == NS + 'w':
-                            tokens.append({
-                                'pointed': ''.join(el.itertext()),
-                                'ketiv': el.get('type') == 'x-ketiv',
-                                'qere': None})
+            walk(verse_el, tokens)
             yield book, ch, vs, tokens
 
 
@@ -152,6 +165,27 @@ def main():
                     wid = cmap.get(i)
                     if wid is None:
                         stats['skipped_no_word'] += 1
+                        continue
+                    # Alignment guard (2026-10-14): the corpus merges
+                    # maqqef compounds and also carries the qere as its
+                    # own word, so the difflib map can drift by one word
+                    # (verified: Jer 22:23's second qere landed on
+                    # 'in-Lebanon' instead of its ketiv). The corpus word
+                    # IS the ketiv, so only insert when the ketiv's
+                    # consonants match the mapped word whole, as one
+                    # maqqef part, or closely; otherwise count and skip
+                    # — a lost pair beats a false one.
+                    k_skel = fold(consonants(t['pointed']))
+                    c_skel = fold(next(
+                        (c['unpointed'] for c in cwords
+                         if c['word_id'] == wid), '') or '')
+                    parts = c_skel.split('-')
+                    if k_skel not in parts and \
+                            difflib.SequenceMatcher(
+                                None, k_skel, c_skel).ratio() < 0.6:
+                        stats['skipped_alignment_unverified'] = \
+                            stats.get('skipped_alignment_unverified',
+                                      0) + 1
                         continue
                     q_pointed = ' '.join(clean_pointed(q)
                                          for q in t['qere'])
