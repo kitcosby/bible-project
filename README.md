@@ -48,9 +48,20 @@ carries a `root_code` like `19247.42.1` (root מלכ, "the king" form, first
 vocalization). Strong's numbers are kept as a foreign key into the
 public-domain lexicons.
 
-Coverage: 258,209 of 264,217 words carry a Strong's number (97.7261%),
-every one of those has at least one gloss. 207,312 words (78.4628%) have a
-KJV rendering — raised from 205,511 (77.7811%) by the U-9 verse-remap repair
+Coverage: 259,743 of 264,217 words carry a Strong's number (98.3067%),
+every one of those has at least one gloss. 208,380 words (78.8670%) have a
+KJV rendering — raised from 207,312 (78.4628%) by the STRONGS-BLANK-6008
+repair (2026-10-16, NOTATION_LEDGER.md U-10): 1,534 of the 6,008
+blank-Strong's words were filled from unique OSHB evidence (16 exact
+crosswalk misses, 1,515 maqqef-split words with a sole numbered component,
+3 fallback/unique-skeleton matches) and 1,068 of them gained renderings via
+the assembler's Strong's-sharing logic (+3,330 `kjv_renderings` rows labeled
+`method='strongs-fill'`); the remaining 4,474 blank words are the documented
+unrepairable remainder — 4,280 pair to OSHB rows whose lemma is a bare
+letter (ל/ב/מ/כ prepositions with pronominal suffixes, to which OSHB assigns
+no Strong's number), 135 are maqqef-splits with multiple numbered
+components, 59 have no usable OSHB counterpart. Before that, coverage had
+been raised from 205,511 (77.7811%) by the U-9 verse-remap repair
 (2026-09-27): 1,801 words in 206 verses with MT-vs-KJV versification offsets
 (e.g. Gen 32:33 = KJV 32:32, Ex 7:26–29 = KJV 8:1–4, Joel 4 = KJV 3) gained
 renderings by pairing against the verified remap target verse with the same

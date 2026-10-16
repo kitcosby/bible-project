@@ -257,3 +257,27 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
 - Full record: `NOTATION_LEDGER.md` §10 and
   `worker-out/kq-audit/KQ_RECOVERY_2026-10-15.md`. Committed locally
   only — GitHub push held for the Sunday weekly push.
+
+## 2026-10-16 — STRONGS-BLANK-6008: blank-Strong's fill (U-10)
+
+- Diagnosis (`diagnose_strongs_blank.py`, read-only, crosswalk `align_verse`
+  re-run on current text) partitioned all 6,008 blank-Strong's words:
+  1,534 fillable from unique OSHB evidence (16 exact, 1,515 maqqef-split
+  sole-numbered-component, 3 fallback/unique-skeleton); 4,474 documented
+  remainder (4,280 OSHB letter-lemma preposition+suffix rows with no
+  Strong's number in OSHB, 135 ambiguous multi-numbered splits, 59 no
+  usable counterpart) — never guessed.
+- Repair + conversion (slice-tested on a copy; backup
+  `bible_v2.db.bak-20261016-strongs-pre`): Strong's coverage
+  258,209/264,217 = 97.7261% → 259,743/264,217 = 98.3067%; KJV coverage
+  207,312 = 78.4628% → 208,380 = 78.8670% (+3,330 rows,
+  `method='strongs-fill'`; 466 filled words match no KJV token in-verse —
+  tagger-mismatch class). Lexicon KJV groups rewritten for 944 groups
+  (942 empty→filled).
+- Verified (`verify_strongs_blank.py`, exit 0): all pre-existing
+  (word_id, strongs) pairs byte-identical; all 631,950 pre-existing
+  kjv_renderings rows preserved; 0 collisions; FK check 0 rows; 15/15
+  spot-checks against OSHB XML pointed text.
+- YLT bridge NOT re-run: `ylt_renderings` unchanged (171,065 distinct
+  words); 'computed' honesty labels unchanged. Website still opens the DB
+  read-only. Local only — no laptop ship, no push.
