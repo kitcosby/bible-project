@@ -141,3 +141,48 @@ variant_text = pointed reading, basis = evidence note). Current state:
   DROPPED by the fold (SP leg: exactly 2 pairs) — whether they should
   be marked instead is flagged for Kit (see §3).
 - Order of work by readiness: Kethiv/Qere → SP → DSS → (LXX notes).
+
+## DSS leg — ETCBC/dss (researched 2026-10-17, scope awaiting Kit)
+
+- Source: ETCBC/dss TF **2.0.1** @ ac91a97, staged `sources/dss`
+  (+ PROVENANCE.md). Abegg's concordance-based scroll transcriptions,
+  CACCHT project. License verified from the repo itself: **dataset
+  CC BY-NC 4.0** (LICENSE file + README statement), code MIT.
+- Structure: 1,001 scroll units, 500,995 words; biblical material is
+  word-flagged (`biblical` = int 1/2 — TF stores numeric features as
+  ints, a probe trap that cost one run) with per-word book/chapter/
+  verse/halfverse references in BHSA codes. 218,189 biblical words;
+  220 scrolls carry biblical material.
+- Attestation is the governing problem: certainty lives at sign level
+  (rec/unc/rem/alt flags; cor = scribal correction, treated as
+  attested text; vac = blank space). Reconstructed/uncertain material
+  is extensive: only **1,206 scroll-verse cells are fully attested**
+  (no flagged sign anywhere in the verse, no halfverse split) —
+  1,165 distinct corpus verses across 41 scrolls, dominated by
+  **1Qisaa (Great Isaiah Scroll, 851 verses)** and 11Q5 (Psalms,
+  186); 18,242 attested words. Partial verses (9,284 cells, 6,576
+  distinct verses) have a median attested share of only **22%** —
+  gap-aware alignment there would rest on reconstruction islands.
+- Recommended scope: **fully attested verses only**, SP-style
+  consonantal alignment per (scroll, verse), witness = the dataset's
+  scroll siglum (e.g. '1Qisaa', '11Q5', '4Q51'); Greek words and
+  non-glyph types excluded; Aramaic sections align as consonants like
+  Hebrew. Partial verses deferred (counted, not loaded) until a
+  gap-aware design earns its own pass.
+- BUILT 2026-10-17 (Kit picked the recommended scope):
+  `extract_dss.py` + `build_variants_dss.py` (SP alignment engine,
+  Kit's final-form marking included). 1,203 qualified cells (3 fewer
+  than the probe's 1,206 — empty-glyph words disqualify), 1,195
+  aligned; 7 cells skipped by the 2.2x length tripwire (11Q5's
+  refrain-expanded Ps 145:14–20 ×6; 1Qisaa Isa 38:20), named here
+  and printed by every loader run. **4,202 rows across 35 scroll
+  witnesses**: orthographic 2,967 (Qumran plene spelling, incl. 196
+  final-form-marked), substantive 555, additions 227 (399 words),
+  omissions 453. Spot check PASS: Isa 53:11 in 1Qisaa yields the
+  famous אור addition ('he shall see light') plus הואה / נפשוה /
+  ועוונותם orthography. Deut 32:8 has NO DSS rows — no fully attested
+  cell for it exists in this dataset (the 4QDeut fragments are
+  damaged there), an honest absence under the scope rule. Synced to
+  the website PG and verified live (Isa 53:11 interlinear +
+  /variants). The campaign is now complete as ordered: MT, SP, Syr
+  (verse notes), DSS.
