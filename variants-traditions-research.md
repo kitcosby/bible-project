@@ -56,12 +56,28 @@ variant_text = pointed reading, basis = evidence note). Current state:
   whether tradition-labeled final-form-only readings should instead
   be marked as rows.
 
-### 4b. Syriac (Peshitta) — added by Kit 2026-10-16, research running
-- Source survey + staging delegated 2026-10-16 (findings land in
-  `worker-out/peshitta/FINDINGS.md`). Standing caveat, same class as
-  the LXX: the Peshitta is a translation, so orthographic/consonantal
-  Hebrew variants are not recoverable from it; only retroversion-secure
-  substantive variants could ever become word rows.
+### 4b. Syriac (Peshitta) — added by Kit 2026-10-16; source STAGED, scope = Kit's pick
+- Survey complete 2026-10-16 (`worker-out/peshitta/FINDINGS.md`). One
+  source passes the license gate: **ETCBC/peshitta** (Text-Fabric
+  edition of the Leiden Peshitta main text; Brill apparatus expressly
+  excluded, so "Syriac" = the single Leiden text, no intra-Syriac
+  apparatus). Text data **CC BY-NC 4.0** per the repo's own
+  docs/about.md (the MIT LICENSE covers only conversion code — GitHub's
+  badge misleads here). Staged: `sources/peshitta` @ 9850f5a (v0.5,
+  TF data 0.2) + PROVENANCE.md; verified load: 426,835 words, 31,341
+  verses, 65 units (OT incl. Apocrypha), all 39 canon books.
+- Rejected: CAL (no bulk access, no redistribution), SEDRA (NT-centric,
+  no open license), STEPBible (no Syriac OT), PaTraCoSy alignment
+  (Genesis only, no license), jcogitation (CAL-derived chain).
+- Feasibility verdict: the Peshitta is a translation → Hebrew
+  orthographic variants are unrecoverable in principle (this witness
+  must never carry variant_type='orthographic'); no open scholarly
+  MT↔Peshitta word alignment exists (the hand-built ones were never
+  openly published; automatic ones are unlicensed/provisional).
+  Recommended: **verse-level apparatus notes now** (witness label
+  'Syr'); word-level rows later only for a hand-adjudicated,
+  retroversion-secure subset (realistically tens to low hundreds,
+  each with its retroversion reasoning in `basis`).
 
 
 ### 4. Septuagint — text open, Hebrew alignment NOT open
