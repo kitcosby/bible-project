@@ -78,6 +78,24 @@ variant_text = pointed reading, basis = evidence note). Current state:
   'Syr'); word-level rows later only for a hand-adjudicated,
   retroversion-secure subset (realistically tens to low hundreds,
   each with its retroversion reasoning in `basis`).
+- BUILT 2026-10-16 (Kit chose the recommended scope): `extract_syr.py`
+  + `build_notes_syr.py` (committed locally). New tables:
+  `witness_verses` (**23,006** Syr verse texts + transliterations
+  anchored to corpus verses) and `verse_notes` (**455** notes:
+  214 'no_counterpart' — reference mismatches concentrated in
+  Chronicles/Psalms, worded as versification facts, never as missing
+  text; 241 'length_divergence' — Syr/MT word-count ratio outside the
+  central 98% of the measured distribution (p1 0.714 / p99 2.000,
+  median 1.167, n=23,001) with |diff| ≥ 4 words, each note printing
+  its counts and the translation-technique caveat). The 70 Syr verses
+  with no corpus anchor (Jer 48/49 verse-0 headings; Dan 3
+  Prayer-of-Azariah pluses) are counted, not loaded. Known limit,
+  disclosed to Kit: real but modest pluses (e.g. Gen 4:8, Syr 16 words
+  vs MT 12, ratio 1.33) fall inside the band and get NO note — this
+  layer catches coverage facts and extreme divergences only; the
+  hand-adjudicated word-level subset remains the path for those.
+  Nothing renders these tables on the website yet (data layer only,
+  like the variant legs before their UI).
 
 
 ### 4. Septuagint — text open, Hebrew alignment NOT open
