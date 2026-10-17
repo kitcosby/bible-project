@@ -17,15 +17,17 @@ Alignment is per verse against the MT corpus (words table, books 1-5),
 on folded consonant skeletons ('-' maqqef joins removed), via
 difflib.SequenceMatcher. Rules (fixed from measured dry runs,
 2026-10-16; pass1/pass2 reports in worker-out/sp/):
-  equal            -> no row. Pairs whose RAW forms differ while the
-                      folded forms match are counted as
-                      final_form_only (2 in the whole Torah) — they
-                      fall away under the standing sofit-fold rule;
-                      FLAGGED for Kit (2026-10-16): whether tradition-
-                      labeled final-form-only readings should be
-                      marked instead of dropped is his call. Until he
-                      rules, they are dropped like all other
-                      medial/final differences.
+  equal            -> no row, EXCEPT pairs whose RAW forms differ
+                      while the folded forms match (final-form-only
+                      readings): Kit ruled 2026-10-17 that these are
+                      MARKED as 'orthographic' rows carrying the
+                      FF_SUFFIX basis flag (they were dropped under
+                      the sofit-fold rule in the first build; 2 such
+                      pairs in the Torah: Gen 19:38, Gen 35:18). The
+                      same marking applies to final-form-only diffs
+                      found inside equal-length replace pairs, paired
+                      remainders of complex blocks, and word-division
+                      blocks whose joined raw consonants differ.
   replace, equal length -> per-word substitution rows.
   insert           -> one 'addition' row on the preceding MT word
                       (first MT word if verse-initial).
@@ -81,6 +83,14 @@ MATRES = set('אהוי')
 BASIS = ('Samaritan Pentateuch (Schorch editio maior), DT-UCPH/sp '
          'Text-Fabric 7.2.4, CC BY-NC 4.0; per-verse consonantal '
          'alignment vs MT (WLC); matres-only difference = orthographic')
+# Kit ruling 2026-10-17: final-form-only readings (consonants identical
+# once finals fold, differing only in medial/final letterform placement)
+# are MARKED as tradition-labeled rows, not dropped.
+FF_SUFFIX = ('; final-form-only difference: consonants differ solely in '
+             'medial/final letterform placement (e.g. \u05df vs \u05e0), '
+             'identical once finals are folded; marked as a '
+             'tradition-labeled row per Kit ruling 2026-10-17 (earlier '
+             'builds dropped these under the fold rule)')
 
 
 def fold(s):
@@ -197,10 +207,13 @@ def main():
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
             if tag == 'equal':
                 for k in range(i2 - i1):
-                    st['pair_equal'] += 1
                     if mt_raw[i1 + k] != spt[j1 + k][0] and \
                             fold(mt_raw[i1 + k]) == fold(spt[j1 + k][0]):
-                        st['final_form_only_dropped'] += 1
+                        st['final_form_marked'] += 1
+                        emit(cwords[i1 + k]['word_id'],
+                             [spt[j1 + k][0]], 'orthographic', FF_SUFFIX)
+                    else:
+                        st['pair_equal'] += 1
             elif tag == 'replace' and (i2 - i1) == (j2 - j1):
                 for k in range(i2 - i1):
                     cls = classify(mt_key[i1 + k], sp_key[j1 + k])
@@ -208,6 +221,10 @@ def main():
                         st['sub_' + cls] += 1
                         emit(cwords[i1 + k]['word_id'],
                              [spt[j1 + k][0]], cls)
+                    elif mt_raw[i1 + k] != spt[j1 + k][0]:
+                        st['final_form_marked'] += 1
+                        emit(cwords[i1 + k]['word_id'],
+                             [spt[j1 + k][0]], 'orthographic', FF_SUFFIX)
                     else:
                         st['pair_equal'] += 1
             elif tag == 'insert':
@@ -225,7 +242,28 @@ def main():
                 mt_seg = mt_key[i1:i2]
                 sp_seg = sp_key[j1:j2]
                 if ''.join(mt_seg) == ''.join(sp_seg):
-                    st['division_only_blocks'] += 1
+                    mr_join = ''.join(mt_raw[i1:i2])
+                    sr_join = ''.join(r for r, _ in spt[j1:j2])
+                    ff_ok = len(mr_join) == len(sr_join) and all(
+                        FINALS.get(a, a) == FINALS.get(b, b)
+                        and (a in FINALS or b in FINALS)
+                        for a, b in zip(mr_join, sr_join)
+                        if a != b)
+                    if mr_join != sr_join and ff_ok:
+                        st['final_form_block_rows'] += 1
+                        emit(cwords[i1]['word_id'],
+                             [r for r, _ in spt[j1:j2]], 'orthographic',
+                             FF_SUFFIX + f'; word-division block '
+                             f'({len(mt_seg)} MT words vs {len(sp_seg)} '
+                             f'SP graphic words; letters identical once '
+                             f'finals fold)')
+                    elif mr_join != sr_join:
+                        # raw joins differ but NOT solely by final-form
+                        # placement — not markable; count for audit
+                        st['ff_block_rejected'] += 1
+                        st['division_only_blocks'] += 1
+                    else:
+                        st['division_only_blocks'] += 1
                     continue
                 if strip_matres(''.join(mt_seg)) == \
                         strip_matres(''.join(sp_seg)):
@@ -261,6 +299,11 @@ def main():
                             st['sub_' + cls] += 1
                             emit(cwords[i1 + a]['word_id'],
                                  [spt[j1 + b][0]], cls)
+                        elif mt_raw[i1 + a] != spt[j1 + b][0]:
+                            st['final_form_marked'] += 1
+                            emit(cwords[i1 + a]['word_id'],
+                                 [spt[j1 + b][0]], 'orthographic',
+                                 FF_SUFFIX)
                         else:
                             st['pair_equal'] += 1
                     for a in left_mt:

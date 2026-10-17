@@ -1095,7 +1095,9 @@ def word_detail(wid):
     fv_rows = b.execute('''SELECT vv.book_id, vv.chapter, vv.verse
         FROM lexicon_found_verse f JOIN verses vv ON vv.verse_id=f.verse_id
         WHERE f.root_id=%s AND f.root_form_seq=%s AND f.vowel_seq=%s
-        ORDER BY f.rowid''', key).fetchall()
+        ORDER BY vv.book_id, vv.chapter, vv.verse''', key).fetchall()
+    # (PG migration fix 2026-10-17: SQLite's implicit f.rowid — insertion
+    # order — has no PG counterpart; verse order is the same list.)
     found_verses = '; '.join(
         f'{book_name(r["book_id"])} {r["chapter"]}:{r["verse"]}' for r in fv_rows)
     rows = [
@@ -1115,9 +1117,9 @@ def word_detail(wid):
     body = '<table>' + ''.join(f'<tr><th>{k}</th><td>{v or "(none)"}</td></tr>' for k, v in rows) + '</table>'
     # bibliomancy: every verse using this word form, each linking to its verse page
     unp = w['unpointed']
-    bib_cnt = b.execute('''SELECT COUNT(DISTINCT vv.verse_id)
+    bib_cnt = b.execute('''SELECT COUNT(DISTINCT vv.verse_id) AS count
         FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
-        WHERE w2.unpointed=%s''', (unp,)).fetchone()[0]
+        WHERE w2.unpointed=%s''', (unp,)).fetchone()['count']
     bib_rows = b.execute('''SELECT DISTINCT vv.book_id, vv.chapter, vv.verse
         FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
         WHERE w2.unpointed=%s
@@ -1194,8 +1196,8 @@ def variants():
         if not w:
             body += f'<p>Unknown word id {sel_wid}.</p>'
         else:
-            rows_all = b.execute('''SELECT COUNT(*) FROM word_variants
-                WHERE word_id=%s''', (sel_wid,)).fetchone()[0]
+            rows_all = b.execute('''SELECT COUNT(*) AS count FROM word_variants
+                WHERE word_id=%s''', (sel_wid,)).fetchone()['count']
             rows = word_variant_rows(sel_wid)
             heb = w['pointed'] or w['unpointed'] or ''
             body += (f'<h2><span class="heb">{html.escape(heb)}</span> '
@@ -1377,6 +1379,76 @@ def word_variant_rows(wid, prefer_letters=None):
               and best[key]['letters'] != prefer_letters):
             best[key] = r
     return sorted(best.values(), key=lambda r: r['variant_seq'])
+
+_WITNESS_LABELS = {'Syr': 'Syriac (Peshitta)',
+                   'SP': 'Samaritan Pentateuch', 'MT': 'Masoretic Text'}
+_NOTE_KIND_LABELS = {'no_counterpart': 'reference note',
+                     'length_divergence': 'length divergence'}
+
+
+def verse_witness_rows(verse_id):
+    """Verse-scale witness texts (variants campaign, Kit 2026-10-17):
+    the full text of a verse in a witness tradition (today: the Syriac
+    Peshitta), from witness_verses. The table arrives with the campaign
+    data sync; on installs without it, no rows — and the request
+    transaction is rolled back so later queries are unaffected."""
+    try:
+        return bible().execute(
+            'SELECT witness, words, text_syr, text_translit'
+            ' FROM witness_verses WHERE verse_id=%s ORDER BY witness',
+            (verse_id,)).fetchall()
+    except Exception:
+        try:
+            bible().rollback()
+        except Exception:
+            pass
+        return []
+
+
+def verse_note_rows(verse_id):
+    """Verse-scale apparatus notes (verse_notes): measured facts about
+    a witness at this verse (reference mismatches, length divergence).
+    Same absent-table behavior as verse_witness_rows."""
+    try:
+        return bible().execute(
+            'SELECT witness, note_kind, note_text FROM verse_notes'
+            ' WHERE verse_id=%s ORDER BY witness, note_kind',
+            (verse_id,)).fetchall()
+    except Exception:
+        try:
+            bible().rollback()
+        except Exception:
+            pass
+        return []
+
+
+def verse_scale_html(verse_id):
+    """The verse-scale block for the interlinear page: witness verse
+    texts + verse notes. Word-scale variants live in the word frames;
+    this is the verse scale (Kit 2026-10-17)."""
+    wits = verse_witness_rows(verse_id)
+    notes = verse_note_rows(verse_id)
+    if not wits and not notes:
+        return ''
+    out = ['<h2>Verse scale — witnesses &amp; notes</h2>']
+    for wr in wits:
+        label = _WITNESS_LABELS.get(wr['witness'], wr['witness'])
+        out.append(
+            '<div class="witness-verse"><div>'
+            f'<b>{html.escape(label)}</b> · {wr["words"]} words</div>'
+            '<div class="syr" dir="rtl" lang="syc"'
+            ' style="font-size:1.25em">'
+            f'{html.escape(wr["text_syr"] or "")}</div>'
+            '<div class="translit" style="color:#444">'
+            f'{html.escape(wr["text_translit"] or "")}</div></div>')
+    for nr in notes:
+        label = _WITNESS_LABELS.get(nr['witness'], nr['witness'])
+        kind = _NOTE_KIND_LABELS.get(nr['note_kind'], nr['note_kind'])
+        out.append(
+            f'<p class="verse-note"><b>{html.escape(label)} — '
+            f'{html.escape(kind)}:</b> '
+            f'{html.escape(nr["note_text"])}</p>')
+    return ''.join(out)
 
 # Kit 2026-10-01: the /variants drop-down must list only words that actually
 # HAVE variance — two or more distinct readings after the medial/final
@@ -1592,6 +1664,7 @@ def interlinear(n, c, v):
 </div>''')
     parts.append('</div>')
     parts.append(english_sentence_html(verse_id))
+    parts.append(verse_scale_html(verse_id))
     js = '''
 var nbar = document.querySelector('.nbar');
 var APIR = nbar ? nbar.dataset.root : '';

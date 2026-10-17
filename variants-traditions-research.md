@@ -96,6 +96,27 @@ variant_text = pointed reading, basis = evidence note). Current state:
   hand-adjudicated word-level subset remains the path for those.
   Nothing renders these tables on the website yet (data layer only,
   like the variant legs before their UI).
+- FINAL-FORM RULING + WEBSITE SYNC 2026-10-17 (Kit: 'Yes... add and
+  sync with website, both word and verse scale variations'): the 2
+  final-form-only SP pairs are now MARKED rows, and the marking was
+  extended by the same rule to equal-length replace pairs, complex-
+  block pairs, and word-division blocks — measured total **8 marked
+  rows** (2 pairs: Gen 19:38, 35:18; 6 division blocks: Gen 18:21;
+  46:20; Exod 12:39; Num 33:35; 33:36; Deut 4:32), each verified
+  strictly final/medial-only by character diff (a strict guard now
+  lives in the loader; 0 rejections). SP total 8,574 -> **8,582**.
+  All campaign data synced to the website's PostgreSQL `bible` DB
+  (export_sync.py + COPY): textual word_variants MT 1,204 + SP 8,582,
+  witness_verses 23,006, verse_notes 455 (the PG DB previously held
+  ONLY the 528,565 spelling rows — the textual legs had never been
+  synced). app_v2.py renders the verse scale on the interlinear page
+  ('Verse scale — witnesses & notes' block: Syriac text +
+  transliteration + verse notes) and the /variants explorer is live
+  with real entries. The sync exposed and we fixed three latent
+  PG-migration bugs in app_v2.py (fetchone()[0] KeyError x2 on
+  /variants detail + word bibliomancy; ORDER BY f.rowid on the word
+  page). 15 live route checks pass (verified through the stack's own
+  Apache on the laptop).
 
 
 ### 4. Septuagint — text open, Hebrew alignment NOT open
