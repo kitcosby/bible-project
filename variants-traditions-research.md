@@ -27,13 +27,42 @@ variant_text = pointed reading, basis = evidence note). Current state:
   differing word division are the known costs. Witness = scroll siglum
   (1QIsa-a, 4QDeut-j, …), tradition label DSS.
 
-### 3. Samaritan Pentateuch — open data exists, Torah only
-- DT-UCPH `sp` Text-Fabric dataset (Zenodo 10.5281/zenodo.7734632,
-  **CC BY-NC 4.0** — non-commercial use, attribution required).
+### 3. Samaritan Pentateuch — LOADED 2026-10-16 (8,574 rows)
+- DT-UCPH `sp` Text-Fabric dataset **v7.2.4** (Zenodo 10.5281/zenodo.7734632,
+  **CC BY-NC 4.0** — non-commercial use, attribution required), staged at
+  `sources/sp` (untracked, like the morphhb fetch).
 - Text: Schorch editio maior transcription (MS Dublin Chester Beatty
-  751 + MS Garizim 1). Word features mirror BHSA → word-level alignment
-  against MT Torah feasible. ~6,000 SP-vs-MT differences expected
-  (standard scholarly count; most orthographic).
+  751 + MS Garizim 1). Loader: `extract_sp.py` (analytic words joined
+  to graphic words on the ETCBC trailer feature; shin/sin presentation
+  forms normalized) → `build_variants_sp.py` (per-verse consonantal
+  alignment vs MT; matres-only difference = orthographic).
+- Result (verified by direct query of bible_v2.db): **8,574 rows**,
+  witness='SP' — orthographic 5,357, substantive 1,721, addition 1,048
+  (3,827 words), omission 448. All 5,841 SP verses aligned; 51,277 word
+  pairs identical; 6,514 word-division-only blocks (no row).
+- Accounting of non-loads: MT Exod 30:1–10 have no same-reference SP
+  verse — SP places the incense-altar pericope after Exod 26:35 and
+  the dataset groups it into that verse node, where it loads as one
+  628-char addition row; Deut 34:2–3 have no SP verse node in this
+  dataset. Dataset additions after Gen 30:36 are grouped under v36
+  (not 36a/b/c) and surface as additions there (2 rows).
+- Spot checks PASS: Gen 1:1 zero rows (identical); Gen 2:2 השביעי →
+  הששי (substantive); Gen 4:8 addition נלכה השדה; Gen 5:20 chronology
+  numbers (substantive). Loader idempotent.
+- OPEN (flagged for Kit, 2026-10-16): exactly **2** word pairs in the
+  Torah differ ONLY by final letterform (Gen 19:38, 35:18: בן־עמי /
+  בן־אוני vs SP בנעמי / בנאוני — an ן/נ metathesis the fold masks).
+  Under the standing sofit-fold rule they are dropped. Kit to confirm
+  whether tradition-labeled final-form-only readings should instead
+  be marked as rows.
+
+### 4b. Syriac (Peshitta) — added by Kit 2026-10-16, research running
+- Source survey + staging delegated 2026-10-16 (findings land in
+  `worker-out/peshitta/FINDINGS.md`). Standing caveat, same class as
+  the LXX: the Peshitta is a translation, so orthographic/consonantal
+  Hebrew variants are not recoverable from it; only retroversion-secure
+  substantive variants could ever become word rows.
+
 
 ### 4. Septuagint — text open, Hebrew alignment NOT open
 - Greek text: Swete (public domain); Rahlfs 1935 still in copyright.
@@ -52,7 +81,8 @@ variant_text = pointed reading, basis = evidence note). Current state:
   variant_kind='textual', witness = tradition siglum, variant_type
   ('orthographic' | 'substantive' | 'qere' | 'addition' | 'omission'),
   basis = dataset + version citation. Existing display code already
-  renders witness/source/basis columns; sofit-folding still applies
-  (orthographic-only differences that fold away are marked, not dropped,
-  when they carry a tradition label — Kit to confirm).
+  renders witness/source/basis columns; sofit-folding still applies.
+  Final-form-only differences under a tradition label are currently
+  DROPPED by the fold (SP leg: exactly 2 pairs) — whether they should
+  be marked instead is flagged for Kit (see §3).
 - Order of work by readiness: Kethiv/Qere → SP → DSS → (LXX notes).
