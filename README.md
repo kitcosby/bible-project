@@ -175,6 +175,16 @@ mapped (56.4850%), 171,065/252,495 Hebrew words hit (67.7499%), per-book
 41.25%–77.81%; `lexicon.ylt_renderings_computed` populated on 95,967/126,869
 rows (75.6426%). Computed best-effort, NOT authoritative.
 
+**YLT bridge re-run after U-10 (2026-10-17, YLT-BRIDGE-RERUN-AFTER-U10) —
+ABORTED AT GATE, no DB change.** `build_ylt_align.py` was ported to the v2
+schema, but the gold-set gate eval on `bible_v2.db` scored anchored precision
+0.7923 (351/443), recall 0.4558 — below the required 0.7941 (one extra
+predicted pair vs the v1 351/442; H3068 drift 0). The re-run was therefore
+not performed: `ylt_renderings` in `bible_v2.db` is unchanged at 337,601 rows
+/ 171,065 distinct Hebrew words hit, and all YLT coverage numbers above stand
+unchanged. Needs Kit's call (accept 0.7923 as the new v2 baseline, investigate
+the extra pair, or leave YLT as-is) — see `NOTATION_LEDGER.md` §10.
+
 ## Website (built 2026-09-22, Flask + SQLite)
 
 - Over each Hebrew word: a drop-down box for choosing that word's rendering.

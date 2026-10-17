@@ -281,3 +281,27 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
 - YLT bridge NOT re-run: `ylt_renderings` unchanged (171,065 distinct
   words); 'computed' honesty labels unchanged. Website still opens the DB
   read-only. Local only — no laptop ship, no push.
+
+## 2026-10-17 — YLT-BRIDGE-RERUN-AFTER-U10: anchored YLT bridge re-run aborted at gate
+
+- Item: re-run the anchored YLT bridge on `bible_v2.db` after the U-10
+  Strong's fill (1,534 words no longer blank). Baseline measured on
+  `bible_v2.db`: 337,601 `ylt_renderings` rows, 171,065 distinct Hebrew
+  words hit; backup `bible_v2.db.bak-ylt-rerun-pre` written and verified
+  md5-identical to the live DB after the abort
+  (`7eed0ef3449a641a38864a94d1815b06` both).
+- `build_ylt_align.py` ported to the v2 schema (TEMP-view `load_data`
+  exposing the v1 column shape over `verse_id`/`verses` joins, `--db`
+  flag, v2 write path preserving the `schema_v2` `ylt_renderings` table);
+  the anchored Needleman-Wunsch algorithm/parameters are verbatim.
+- Gate eval on `eval/ylt_gold.tsv` (30 verses, 335 words, 770 pairs)
+  against `bible_v2.db`: anchored precision 0.7923 (tp 351 / pred 443),
+  recall 0.4558 — below the required >= 0.7941 (v1: 351/442; the v2 data
+  changes since, incl. U-10 fills and anomaly corrections, cost one extra
+  predicted pair). H3068 drift for anchored = 0.
+- Because precision < 0.7941, the trial run, real re-run, lexicon and
+  word-alignment rebuilds were NOT performed and the DB is unchanged.
+  Website impact: none — YLT data and 'computed' labels unchanged.
+  Needs Kit's call: accept 0.7923 as the new v2 gate baseline, investigate
+  the one extra predicted pair, or leave YLT as-is. Committed locally
+  only — GitHub push held for the Sunday weekly push.

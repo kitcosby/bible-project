@@ -103,7 +103,28 @@ def align(ys, ks):
     return pairs
 
 # ---------------------------------------------------------------- data ----
+def is_v2(cur):
+    return 'verse_id' in [x[1] for x in cur.execute('PRAGMA table_info(words)')]
+
 def load_data(cur):
+    # v2 (bible_v2.db): everything joins through verse_id/verses. Expose the
+    # v1 column shape through TEMP views so the queries below are unchanged.
+    if is_v2(cur):
+        cur.execute('''CREATE TEMP VIEW ylt_verses AS
+            SELECT v.book_id AS book, v.chapter AS chapter, v.verse AS verse,
+                   y.text AS text FROM main.ylt_verses y
+            JOIN main.verses v ON v.verse_id = y.verse_id''')
+        cur.execute('''CREATE TEMP VIEW kjv_words AS
+            SELECT v.book_id AS book, v.chapter AS chapter, v.verse AS verse,
+                   k.kjv_pos AS kjv_pos, k.kjv_word AS kjv_word,
+                   k.strongs AS strongs FROM main.kjv_words k
+            JOIN main.verses v ON v.verse_id = k.verse_id''')
+        cur.execute('''CREATE TEMP VIEW words AS
+            SELECT w.word_id AS word_id, v.book_id AS book,
+                   v.chapter AS chapter, v.verse AS verse,
+                   w.word_pos AS word_pos, w.strongs AS strongs,
+                   w.root_id AS root_id, w.root_form_seq AS root_form_seq
+            FROM main.words w JOIN main.verses v ON v.verse_id = w.verse_id''')
     ylt = {(r['book'], r['chapter'], r['verse']): r['text']
            for r in cur.execute('SELECT book, chapter, verse, text FROM ylt_verses')}
     kjv = defaultdict(list)
@@ -372,6 +393,7 @@ def run_full(method, limit=None, write=True):
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
     cur = con.cursor()
+    v2 = is_v2(cur)   # before load_data installs its TEMP views
     ylt, kjv, heb = load_data(cur)
     rows = []
     stats = dict(verses=0, ylt_toks=0, ylt_aligned=0, heb_words=0, heb_hit=0,
@@ -396,13 +418,21 @@ def run_full(method, limit=None, write=True):
         stats['heb_hit'] += len(hit)
         rows.extend(vr)
     if write:
-        cur.executescript('''
+        if v2:
+            # v2: preserve the schema_v2.sql table (rendering_id PK, FKs,
+            # NOT NULL); replace rows in place in the same insertion order.
+            cur.execute('DELETE FROM ylt_renderings')
+            cur.executemany('INSERT INTO ylt_renderings'
+                            ' (word_id, ylt_word, ylt_word_pos, label)'
+                            ' VALUES (?,?,?,?)', rows)
+        else:
+            cur.executescript('''
 DROP TABLE IF EXISTS ylt_renderings;
 CREATE TABLE ylt_renderings(
   word_id INTEGER, ylt_word TEXT, ylt_word_pos INTEGER, label TEXT);
 CREATE INDEX idx_ylt_renderings_wid ON ylt_renderings(word_id);
 ''')
-        cur.executemany('INSERT INTO ylt_renderings VALUES (?,?,?,?)', rows)
+            cur.executemany('INSERT INTO ylt_renderings VALUES (?,?,?,?)', rows)
         con.commit()
     print('method:', method)
     print('verses aligned:', stats['verses'])
@@ -422,6 +452,8 @@ CREATE INDEX idx_ylt_renderings_wid ON ylt_renderings(word_id);
     print('done')
 
 if __name__ == '__main__':
+    if '--db' in sys.argv:
+        DB = sys.argv[sys.argv.index('--db') + 1]
     if '--eval' in sys.argv:
         gp = sys.argv[sys.argv.index('--eval') + 1] \
             if len(sys.argv) > sys.argv.index('--eval') + 1 and \
