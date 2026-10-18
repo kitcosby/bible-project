@@ -176,14 +176,17 @@ mapped (56.4850%), 171,065/252,495 Hebrew words hit (67.7499%), per-book
 rows (75.6426%). Computed best-effort, NOT authoritative.
 
 **YLT bridge re-run after U-10 (2026-10-17, YLT-BRIDGE-RERUN-AFTER-U10) —
-ABORTED AT GATE, no DB change.** `build_ylt_align.py` was ported to the v2
-schema, but the gold-set gate eval on `bible_v2.db` scored anchored precision
-0.7923 (351/443), recall 0.4558 — below the required 0.7941 (one extra
-predicted pair vs the v1 351/442; H3068 drift 0). The re-run was therefore
-not performed: `ylt_renderings` in `bible_v2.db` is unchanged at 337,601 rows
-/ 171,065 distinct Hebrew words hit, and all YLT coverage numbers above stand
-unchanged. Needs Kit's call (accept 0.7923 as the new v2 baseline, investigate
-the extra pair, or leave YLT as-is) — see `NOTATION_LEDGER.md` §10.
+gate abort, then RESOLVED by Kit's ruling the same day.** `build_ylt_align.py`
+was ported to the v2 schema; the gold-set gate eval on `bible_v2.db` scored
+anchored precision 0.7923 (351/443), recall 0.4558, H3068 drift 0 — initially
+held against the v1 requirement of 0.7941. A pair-by-pair re-eval corrected
+the comparison (v1: 347/437; v2 gained 4 true pairs, lost none), and Kit
+accepted **0.7923 as the new v2 baseline**. The re-run was then applied:
+`ylt_renderings` in `bible_v2.db` is now **339,153 rows / 171,911 distinct
+Hebrew words hit** (+1,635 / −83 pairs vs the previous table), the lexicon
+YLT renderings were rebuilt from it, and both tables were synced to the
+website database. YLT remains computed best-effort, NOT authoritative — see
+`NOTATION_LEDGER.md` §10 for the full record.
 
 ## Website (built 2026-09-22, Flask + SQLite)
 

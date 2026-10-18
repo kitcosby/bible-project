@@ -296,12 +296,17 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   the anchored Needleman-Wunsch algorithm/parameters are verbatim.
 - Gate eval on `eval/ylt_gold.tsv` (30 verses, 335 words, 770 pairs)
   against `bible_v2.db`: anchored precision 0.7923 (tp 351 / pred 443),
-  recall 0.4558 — below the required >= 0.7941 (v1: 351/442; the v2 data
-  changes since, incl. U-10 fills and anomaly corrections, cost one extra
-  predicted pair). H3068 drift for anchored = 0.
-- Because precision < 0.7941, the trial run, real re-run, lexicon and
-  word-alignment rebuilds were NOT performed and the DB is unchanged.
-  Website impact: none — YLT data and 'computed' labels unchanged.
-  Needs Kit's call: accept 0.7923 as the new v2 gate baseline, investigate
-  the one extra predicted pair, or leave YLT as-is. Committed locally
-  only — GitHub push held for the Sunday weekly push.
+  recall 0.4558 — below the required >= 0.7941 as first recorded
+  (the abort entry's "v1: 351/442, one extra predicted pair" framing is
+  superseded by the pair-by-pair re-eval: v1 was 347/437; v2 gained
+  4 true pairs, lost none, +3 false pairs, −1 old false pair).
+  H3068 drift for anchored = 0.
+- At the gate, the trial run, real re-run, and lexicon rebuild were
+  initially NOT performed. **Resolution (2026-10-17): Kit ruled to
+  accept 0.7923 as the new v2 baseline.** The anchored re-run was then
+  applied to `bible_v2.db` (`ylt_renderings` 337,601 -> 339,153 rows,
+  distinct words hit 171,065 -> 171,911), `lexicon_ylt_rendering` was
+  rebuilt from the new table, and both tables were synced to the
+  website PostgreSQL DB. YLT data and 'computed' labels otherwise
+  unchanged in kind — still COMPUTED best-effort, NOT authoritative.
+  Committed locally only — GitHub push held for the Sunday weekly push.
