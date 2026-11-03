@@ -1675,7 +1675,7 @@ def _api_verse(n, c, v, with_variants=True):
 def api_verse(n, c, v):
     data = _api_verse(n, c, v)
     if data is None:
-        return _api_json({'error': 'unknown verse'}, 404)
+        return _api_json({'error': 'not found', 'detail': 'unknown verse'}, 404)
     return _api_json(data)
 
 
@@ -1686,7 +1686,7 @@ def api_chapter(n, c):
             WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}
             ORDER BY vv.verse''', (n, c)).fetchall()
     if not rows:
-        return _api_json({'error': 'unknown chapter'}, 404)
+        return _api_json({'error': 'not found', 'detail': 'unknown chapter'}, 404)
     # per-word variants omitted in chapter payloads (size); the verse
     # endpoint carries them
     return _api_json({
@@ -1706,7 +1706,7 @@ def api_word(strongs):
         w = b.execute(f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.strongs=%s '
                       'ORDER BY w.word_id LIMIT 1', (s,)).fetchone()
     if not w:
-        return _api_json({'error': 'unknown strongs'}, 404)
+        return _api_json({'error': 'not found', 'detail': 'unknown strongs'}, 404)
     kjv_lp, _, ylt_lp, _ = lemma_phrases()
     lk = lemma_key(w)
     gloss = _api_gloss(w)
