@@ -98,6 +98,26 @@ h1,h2,h3{font-family:"Frank Ruhl Libre",serif}
 .frame-foot button:disabled{opacity:.45}
 .toc{margin-top:1.6rem}
 .seealso li{margin:.25rem 0}
+.wcard{background:var(--card);border:1px solid var(--bronze);border-radius:14px;
+  padding:1.1rem 1.2rem;box-shadow:0 1px 3px rgba(43,33,24,.08)}
+.wcard .heb-big{font-family:"Frank Ruhl Libre",serif;font-size:2.9rem;line-height:1.15;
+  direction:rtl;text-align:right;color:var(--ink)}
+.wcard .meta{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;margin-top:.3rem}
+.wcard .meta .tr{font-size:1.15rem;font-weight:600}
+.wcard .meta .snum{color:var(--gold);font-weight:600}
+.wcard .glossline{font-size:1.05rem;margin-top:.2rem}
+.wcard .grammar{color:var(--slate);font-size:.9rem;margin-top:.15rem}
+.wcard .controls{border-top:1px solid var(--line);margin-top:.9rem;padding-top:.8rem;
+  display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.wcard .controls label{font-size:.8rem;color:var(--slate);text-transform:uppercase;letter-spacing:.05em}
+.wcard .controls select,.wcard .controls input[type=text]{font:inherit;font-size:.92rem;
+  padding:.35rem;border:1px solid var(--line);border-radius:6px;background:#fff}
+.panel{border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;margin-top:1rem;background:#fff}
+.panel h3{margin:.1rem 0 .5rem;font-size:1.02rem}
+.panel p{margin:.2rem 0}
+.rchips{display:flex;flex-wrap:wrap;gap:.35rem}
+.rchip{background:#F4EDD8;border:1px solid var(--line);border-radius:999px;padding:.15rem .7rem;font-size:.92rem}
+.rlab{font-size:.75rem;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin:.5rem 0 .3rem}
 select.inline{font:inherit;padding:.35rem;border:1px solid var(--bronze);border-radius:6px;background:#fff}
 input.custom-in{font:inherit;padding:.35rem .6rem;border:1px solid var(--bronze);border-radius:6px}
 footer{color:var(--slate);font-size:.82rem;text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--line)}
@@ -266,11 +286,11 @@ function applyScroll(){
 }
 
 /* ============ SHARED PIECES ============ */
-function renderingControls(word, ctx){
+function renderingControls(word, ctx, bare){
   const mode = choiceMode(word);
   const c = store.get(word.s);
   const customVal = c && c.mode==="custom" ? c.text : effective(word, ctx);
-  return `<label>Translation</label>
+  return `${bare?"":"<label>Translation</label>"}` + `
     <select data-act="tsel" data-s="${word.s}" data-ctx="${ctx}">
       <option value="youngs" ${mode==="youngs"?"selected":""}>Young's (computed)</option>
       <option value="kjv" ${mode==="kjv"?"selected":""}>King James</option>
@@ -354,15 +374,15 @@ function viewStudy(){
   const v = CORPUS.verses[n-1];
   return `<h1>Study — Genesis 1:${v.n}</h1>
     <section class="verse-sec" id="v${v.n}" style="border-top:none;margin-top:.6rem;padding-top:0">
-      <div class="verse-head"><span class="verse-num">${v.n}</span><h2>One sentence — Genesis 1:${v.n}</h2></div>
+      <div class="verse-head"><span class="verse-num">${v.n}</span><h2>Genesis 1:${v.n}</h2></div>
       <div class="word-row">${v.words.map((w,i)=>wordCard(w, v.n, i)).join("")}</div>
       <div class="sentence"><span class="cap">Your translation — Young's (computed) base, your choices applied</span><br>${esc(assemble(v,"yp","study"))}</div>
       ${witnessBlock(v.notes)}
     </section>
     <div class="frame-foot">
-      <button class="btn" data-act="sprev" ${n<=1?"disabled":""}>‹ Prev sentence</button>
-      <span class="pos">Sentence ${n} of ${total} · Genesis 1</span>
-      <button class="btn" data-act="snext" ${n>=total?"disabled":""}>Next sentence ›</button>
+      <button class="btn" data-act="sprev" ${n<=1?"disabled":""}>‹ Prev</button>
+      <span class="pos">Verse ${n} of ${total} · Genesis 1</span>
+      <button class="btn" data-act="snext" ${n>=total?"disabled":""}>Next ›</button>
     </div>`;
 }
 function readSegments(verse){
@@ -407,8 +427,6 @@ function viewWordPage(slug){
   const kjvList = curated ? curated.kjvList : [...new Set(hits.map(x=>x.w.kjv))];
   const yltList = curated ? curated.yltList : [...new Set(hits.map(x=>x.w.ylt))];
   const forms = [...new Map(hits.map(x=>[x.w.h, x])).values()];
-  const formsHtml = forms.length>1
-    ? `<h3>Forms in the sample</h3><p>${forms.map(x=>`<span lang="he" dir="rtl">${x.w.h}</span> (${esc(x.w.t)}, Genesis 1:${x.v.n})`).join(" · ")}</p>` : "";
   const notes = curated ? curated.notes : [];
   let occItems;
   if(curated){
@@ -422,19 +440,22 @@ function viewWordPage(slug){
   }
   const w = curated || first;
   const pseudo = {s:strongs, kjv:first.kjv, ylt:first.ylt, g:first.g};
-  const occ = occItems;
+  const chips = list => list.map(x=>`<span class="rchip">${esc(x)}</span>`).join("");
   return `<div class="wordpage">
-    <div class="heb-big" lang="he">${w.h}</div>
-    <h1>${esc(w.t)} · ${strongs}</h1>
-    <p class="note">${esc(pos)}</p>
-    ${formsHtml}
-    <h3>Your rendering</h3>
-    <p class="note">Sets the default for this word everywhere; per-verse choices override it.</p>
-    ${renderingControls(pseudo, "study")}
-    <h3>King James renderings</h3><p>${kjvList.join(", ")}</p>
-    <h3>Young's (computed) renderings</h3><p>${yltList.join(", ")}</p>
-    <h3>Variants</h3>${witnessBlock(notes)}
-    <h3>See also — where this word is also used</h3><ul class="seealso">${occ}</ul>
+    <div class="wcard">
+      <div class="heb-big" lang="he">${w.h}</div>
+      <div class="meta"><span class="tr">${esc(w.t)}</span><span class="snum">${strongs}</span></div>
+      <div class="glossline">${esc(first.g)}</div>
+      <div class="grammar">${esc(pos)}</div>
+      <div class="controls"><label>Your rendering</label>${renderingControls(pseudo, "study", true)}</div>
+    </div>
+    ${forms.length>1 ? `<div class="panel"><h3>Forms in the sample</h3><p>${forms.map(x=>`<span lang="he" dir="rtl">${x.w.h}</span> (${esc(x.w.t)}, Genesis 1:${x.v.n})`).join(" · ")}</p></div>` : ""}
+    <div class="panel"><h3>Renderings</h3>
+      <div class="rlab">King James</div><div class="rchips">${chips(kjvList)}</div>
+      <div class="rlab">Young's (computed)</div><div class="rchips">${chips(yltList)}</div>
+    </div>
+    ${notes.length ? `<div class="panel"><h3>Variants</h3>${witnessBlock(notes)}</div>` : ""}
+    <div class="panel"><h3>See also — where this word is also used</h3><ul class="seealso">${occItems}</ul></div>
   </div>`;
 }
 function viewSearch(q){
