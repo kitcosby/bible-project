@@ -23,6 +23,16 @@ JOBS = [
     ('verse_notes.csv',
      'SELECT verse_id, witness, note_kind, note_text, basis, created_at '
      'FROM verse_notes ORDER BY verse_id'),
+    # YLT computed renderings + lexicon, added 2026-11-03 for the
+    # grammar-repair application sync (companion loader:
+    # load_sync_ylt.py, full-table replace).
+    ('ylt_renderings.csv',
+     'SELECT rendering_id, word_id, ylt_word, ylt_word_pos, label '
+     'FROM ylt_renderings ORDER BY rendering_id'),
+    ('lexicon_ylt_rendering.csv',
+     'SELECT root_id, root_form_seq, vowel_seq, seq, rendering '
+     'FROM lexicon_ylt_rendering '
+     'ORDER BY root_id, root_form_seq, vowel_seq, seq'),
 ]
 for fname, sql in JOBS:
     rows = db.execute(sql).fetchall()
