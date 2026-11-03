@@ -337,16 +337,24 @@ def lex_renderings():
     if BIBLE_DB not in _LEX_CACHE:
         kjv, ylt = {}, {}
         db = bible()
-        for rid, fs, vs, t in db.execute(
+        # PG rows are dicts — read fields by name (the tuple unpack
+        # originally used here silently unpacked dict keys and left
+        # these maps keyed by column names; same bug class as
+        # _build_phrase_map, found 2026-11-03).
+        for r in db.execute(
                 'SELECT root_id, root_form_seq, vowel_seq, rendering'
                 ' FROM lexicon_kjv_rendering'
                 ' ORDER BY root_id, root_form_seq, vowel_seq, seq'):
-            kjv.setdefault((rid, fs, vs), []).append(t)
-        for rid, fs, vs, t in db.execute(
+            kjv.setdefault(
+                (r['root_id'], r['root_form_seq'], r['vowel_seq']),
+                []).append(r['rendering'])
+        for r in db.execute(
                 'SELECT root_id, root_form_seq, vowel_seq, rendering'
                 ' FROM lexicon_ylt_rendering'
                 ' ORDER BY root_id, root_form_seq, vowel_seq, seq'):
-            ylt.setdefault((rid, fs, vs), []).append(t)
+            ylt.setdefault(
+                (r['root_id'], r['root_form_seq'], r['vowel_seq']),
+                []).append(r['rendering'])
         _LEX_CACHE[BIBLE_DB] = (kjv, ylt)
     return _LEX_CACHE[BIBLE_DB]
 
@@ -384,10 +392,16 @@ def _build_phrase_map(db, table, wcol, poscol):
     word_phrase = {}
     cur_wid, cur, cur_key = None, [], None
     q = (f'SELECT w.word_id, w.strongs,'
-         f' (w.root_id || \'.\' || w.root_form_seq || \'.\' || w.root_vowel_seq),'
-         f' r.{wcol} FROM words w JOIN {table} r ON r.word_id=w.word_id'
+         f' (w.root_id || \'.\' || w.root_form_seq || \'.\' || w.root_vowel_seq) AS rc,'
+         f' r.{wcol} AS txt FROM words w JOIN {table} r ON r.word_id=w.word_id'
          f' ORDER BY w.word_id, r.{poscol}')
-    for wid, strongs, rc, txt in db.execute(q):
+    # PG rows are dicts (the sqlite3-tuple unpack this loop originally
+    # used silently unpacked dict KEYS — the phrase maps came out as
+    # garbage and every KJV/Young's drop-down on the site was empty;
+    # found 2026-11-03 building the BYOT API). Read fields by name.
+    for row in db.execute(q):
+        wid, strongs, rc, txt = (row['word_id'], row['strongs'],
+                                 row['rc'], row['txt'])
         if wid != cur_wid:
             if cur_wid is not None:
                 phrase = ' '.join(cur)
@@ -1549,6 +1563,219 @@ def api_verses(n, c):
             WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}
             ORDER BY vv.verse''', (n, c)).fetchall()
     return jsonify([r['verse'] for r in rows])
+
+# ---------------------------------------------------------------- BYOT PWA JSON API
+# Phase 3 (2026-11-03): content endpoints for the Build Your Own
+# Translation PWA, built to the contract in
+# round4-proto/DATABASE_PROMPT_CODESNACK.md. Read-only. Data assembly
+# reuses the interlinear page's own machinery (WORD_COLS queries,
+# lemma_phrases per-occurrence KJV/Young's phrases, word_variant_rows,
+# verse witness/note rows) so the API can never drift from the site.
+# Honesty rules: the corpus carries no Hebrew transliteration, so
+# 'xlit' is null rather than invented; Young's renderings are COMPUTED
+# and stay labeled as such; search snippets are the computed YLT verse
+# text the embeddings were built over, labeled via 'source'.
+
+def _api_json(data, status=200):
+    resp = jsonify(data)
+    resp.status_code = status
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+def _api_gloss(w):
+    """Short rendering for the word: the lemma's most frequent KJV
+    phrase, else its most frequent computed-Young's phrase, else the
+    lexicon's first KJV fragment, else ''. (Lexicon fragments rank
+    last: they split phrases like "In the beginning" into pieces —
+    the fragmentation Kit's 2026-10-01 phrase ruling removed.)"""
+    kjv_lp, _, ylt_lp, _ = lemma_phrases()
+    lk = lemma_key(w)
+    if kjv_lp.get(lk):
+        return kjv_lp[lk][0]
+    if ylt_lp.get(lk):
+        return ylt_lp[lk][0]
+    frag_map, _ = lex_renderings()
+    frag = frag_map.get(
+        (w['root_id'], w['root_form_seq'], w['root_vowel_seq']), [])
+    return frag[0] if frag else ''
+
+
+def _api_word(w, kjv_wp, ylt_wp, with_variants=True):
+    gloss = _api_gloss(w)
+    out = {
+        'wid': w['word_id'], 'pos': w['word_pos'],
+        'hebrew': w['pointed'] or w['unpointed'],
+        'unpointed': w['unpointed'],
+        'xlit': None,
+        'strongs': w['strongs'],
+        'gloss': gloss,
+        'morph': w['morph'],
+        'root': w['base_word'],
+        'kjv': kjv_wp.get(w['word_id']),
+        'ylt': ylt_wp.get(w['word_id']),
+        'ylt_computed': True,
+    }
+    if with_variants:
+        vrows = word_variant_rows(w['word_id'], w['letters'])
+        out['variants'] = [
+            {'seq': r['variant_seq'], 'kind': r['variant_kind'],
+             'type': r['variant_type'], 'witness': r['witness'],
+             'convention': r['convention'],
+             'text': r['variant_text'] or r['unpointed']}
+            for r in vrows] if len(vrows) > 1 else []
+    return out
+
+
+def _api_verse(n, c, v, with_variants=True):
+    vrow = verse_row(n, c, v)
+    if not vrow:
+        return None
+    verse_id = vrow['verse_id']
+    b = bible()
+    words = b.execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
+        JOIN verses vv ON vv.verse_id=w.verse_id
+        WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse=%s
+        ORDER BY w.word_pos''', (n, c, v)).fetchall()
+    _, kjv_wp, _, ylt_wp = lemma_phrases()
+    # KJV sentence in English word order; supplied = no Hebrew alignment
+    al = {r['kjv_word_id']: r['hebrew_word_id'] for r in b.execute(
+        'SELECT kjv_word_id, hebrew_word_id FROM word_alignment '
+        'WHERE verse_id=%s AND kjv_word_id IS NOT NULL', (verse_id,))}
+    poss = {r['word_id']: r['word_pos'] for r in words}
+    kjv_sentence = [
+        {'word': k['kjv_word'],
+         'supplied': k['kjv_word_id'] not in al,
+         'heb_pos': poss.get(al.get(k['kjv_word_id']))}
+        for k in b.execute(
+            'SELECT kjv_word_id, kjv_word FROM kjv_words '
+            'WHERE verse_id=%s ORDER BY kjv_pos', (verse_id,)).fetchall()]
+    witnesses = [
+        {'witness': r['witness'],
+         'label': _WITNESS_LABELS.get(r['witness'], r['witness']),
+         'kind': 'verse_text', 'words': r['words'],
+         'note': r['text_translit'] or ''}
+        for r in verse_witness_rows(verse_id)]
+    witnesses += [
+        {'witness': r['witness'],
+         'label': _WITNESS_LABELS.get(r['witness'], r['witness']),
+         'kind': r['note_kind'], 'note': r['note_text']}
+        for r in verse_note_rows(verse_id)]
+    return {
+        'book_id': n, 'book_name': book_name(n), 'chapter': c, 'verse': v,
+        'ref': f'{book_name(n)} {c}:{v}',
+        'words': [_api_word(w, kjv_wp, ylt_wp, with_variants)
+                  for w in words],
+        'kjv_sentence': kjv_sentence,
+        'witnesses': witnesses,
+    }
+
+
+@app.route('/api/verse/<int:n>/<int:c>/<int:v>')
+def api_verse(n, c, v):
+    data = _api_verse(n, c, v)
+    if data is None:
+        return _api_json({'error': 'unknown verse'}, 404)
+    return _api_json(data)
+
+
+@app.route('/api/chapter/<int:n>/<int:c>')
+def api_chapter(n, c):
+    rows = bible().execute(
+        f'''SELECT vv.verse FROM verses vv
+            WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}
+            ORDER BY vv.verse''', (n, c)).fetchall()
+    if not rows:
+        return _api_json({'error': 'unknown chapter'}, 404)
+    # per-word variants omitted in chapter payloads (size); the verse
+    # endpoint carries them
+    return _api_json({
+        'book_id': n, 'book_name': book_name(n), 'chapter': c,
+        'verses': [_api_verse(n, c, r['verse'], with_variants=False)
+                   for r in rows]})
+
+
+@app.route('/api/word/<strongs>')
+def api_word(strongs):
+    b = bible()
+    s = strongs.strip()
+    w = b.execute(f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.strongs=%s '
+                  'ORDER BY w.word_id LIMIT 1', (s,)).fetchone()
+    if not w and s.isdigit():
+        s = 'H' + s
+        w = b.execute(f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.strongs=%s '
+                      'ORDER BY w.word_id LIMIT 1', (s,)).fetchone()
+    if not w:
+        return _api_json({'error': 'unknown strongs'}, 404)
+    kjv_lp, _, ylt_lp, _ = lemma_phrases()
+    lk = lemma_key(w)
+    gloss = _api_gloss(w)
+    occ = b.execute('''SELECT COUNT(DISTINCT vv.verse_id) AS n
+        FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
+        WHERE w2.strongs=%s''', (s,)).fetchone()['n']
+    occ_rows = b.execute('''SELECT DISTINCT vv.book_id, vv.chapter, vv.verse
+        FROM words w2 JOIN verses vv ON vv.verse_id=w2.verse_id
+        WHERE w2.strongs=%s
+        ORDER BY vv.book_id, vv.chapter, vv.verse LIMIT 500''',
+        (s,)).fetchall()
+    return _api_json({
+        'strongs': s,
+        'hebrew': w['pointed'] or w['unpointed'],
+        'unpointed': w['unpointed'],
+        'xlit': None,
+        'gloss': gloss,
+        'morph': w['morph'],
+        'root': w['base_word'],
+        'kjv_phrases': kjv_lp.get(lk, [])[:12],
+        'ylt_phrases': ylt_lp.get(lk, [])[:12],
+        'ylt_computed': True,
+        'occurrence_count': occ,
+        'occurrences': [
+            {'book_id': r['book_id'], 'chapter': r['chapter'],
+             'verse': r['verse'],
+             'ref': f"{book_name(r['book_id'])} {r['chapter']}:{r['verse']}"}
+            for r in occ_rows]})
+
+
+@app.route('/api/search')
+def api_search():
+    import json as _json
+    import urllib.request
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return _api_json({'error': 'q required'}, 400)
+    try:
+        limit = max(1, min(25, int(request.args.get('limit', 10))))
+    except ValueError:
+        limit = 10
+    try:
+        req = urllib.request.Request(
+            'http://127.0.0.1:11434/api/embeddings',
+            data=_json.dumps({'model': 'nomic-embed-text',
+                              'prompt': q}).encode(),
+            headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            emb = _json.loads(resp.read())['embedding']
+    except Exception:
+        return _api_json(
+            {'error': 'embedding service unavailable'}, 503)
+    vec = '[' + ','.join(repr(float(x)) for x in emb) + ']'
+    rows = bible().execute('''SELECT s.verse_id, s.chunk,
+            1 - (s.embedding <=> %s::vector) AS score,
+            vv.book_id, vv.chapter, vv.verse, bk.name_en
+        FROM ylt_verses_embedding_store s
+        JOIN verses vv ON vv.verse_id=s.verse_id
+        JOIN books bk ON bk.book_id=vv.book_id
+        ORDER BY s.embedding <=> %s::vector LIMIT %s''',
+        (vec, vec, limit)).fetchall()
+    return _api_json([
+        {'book_id': r['book_id'], 'chapter': r['chapter'],
+         'verse': r['verse'],
+         'ref': f"{r['name_en']} {r['chapter']}:{r['verse']}",
+         'score': round(float(r['score']), 4),
+         'snippet': r['chunk'], 'source': 'ylt-computed'}
+        for r in rows])
+
 
 @app.route('/interlinear')
 def interlinear_default():

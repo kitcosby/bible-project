@@ -117,3 +117,19 @@ these shapes now, with the mock/fallback below:
 - Choices persist across reloads and apply to live data.
 - Work in small commits. At the end, summarize what you changed and how
   the fallback behaves.
+
+## Addendum (2026-11-03) — the server side is LIVE
+
+All four content endpoints now exist on the Lampy server, verified
+against the real corpus (Genesis 1:1, Isaiah 53:11, Psalm 23, H430,
+semantic search). Two contract realities to code against:
+
+- `xlit` is **null** for Hebrew words — the corpus carries no Hebrew
+  transliteration, and none will be invented. Design the word card so a
+  null transliteration simply doesn't render.
+- Chapter payloads (`/api/chapter/...`) **omit per-word `variants`** for
+  size; the verse endpoint (`/api/verse/...`) carries them. Everything
+  else matches the shapes above. Search results include
+  `"source": "ylt-computed"` because the snippets are the computed
+  Young's verse text the embeddings were built over — keep that label
+  wherever snippets are shown.
