@@ -93,6 +93,11 @@ h1,h2,h3{font-family:"Frank Ruhl Libre",serif}
 .result .txt{font-family:"Frank Ruhl Libre",serif;font-size:1.08rem}
 .result .score{color:var(--slate);font-size:.85rem}
 .wordpage .heb-big{font-family:"Frank Ruhl Libre",serif;font-size:3rem;direction:rtl;text-align:right}
+.frame-foot{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-top:1.4rem;flex-wrap:wrap}
+.frame-foot .pos{color:var(--slate);font-size:.9rem}
+.frame-foot button:disabled{opacity:.45}
+.toc{margin-top:1.6rem}
+.seealso li{margin:.25rem 0}
 select.inline{font:inherit;padding:.35rem;border:1px solid var(--bronze);border-radius:6px;background:#fff}
 input.custom-in{font:inherit;padding:.35rem .6rem;border:1px solid var(--bronze);border-radius:6px}
 footer{color:var(--slate);font-size:.82rem;text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--line)}
@@ -194,8 +199,8 @@ const CORPUS = {
       kjvList:["God","god","gods","judges","angels"], yltList:["God","gods"],
       notes:[{witness:"1QIsa-a", text:"Addition: אוֹר 'light' after יִרְאֶה — Dead Sea Scrolls, Isaiah 53:11."}],
       occurrences:[{ref:"Genesis 1:1",verse:1},{ref:"Genesis 1:2",verse:2},
-        {ref:"Genesis 1:3",verse:3},{ref:"Genesis 1:4",verse:null},
-        {ref:"Genesis 1:5",verse:null},{ref:"Genesis 1:6",verse:null}] }
+        {ref:"Genesis 1:3",verse:3},{ref:"Genesis 1:4",read:4},
+        {ref:"Genesis 1:5",read:5},{ref:"Genesis 1:6",verse:null}] }
   },
   books: ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth",
     "1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah",
@@ -294,8 +299,8 @@ function witnessBlock(notes){
     notes.map(n=>`<div class="wnote"><span class="chip">${esc(n.witness)}</span><span>${esc(n.text)}</span></div>`).join("") +
     `</div>`;
 }
-function textNav(kind, verses){
-  const opts = verses.map(n=>`<option value="${n}">Genesis 1:${n}</option>`).join("");
+function textNav(kind, verses, current){
+  const opts = verses.map(n=>`<option value="${n}" ${n===current?"selected":""}>Genesis 1:${n}</option>`).join("");
   return `<div class="text-nav">
     <strong>${kind==="study"?"Study":"Read"}</strong>
     <select disabled><option>Genesis</option></select>
@@ -327,19 +332,38 @@ function viewHome(){
       <div class="heb">קָרָא</div><h2>Read</h2>
       <p>Clean chapter reading — English only, no apparatus, in the translation you are building.</p>
     </a>
+  </div>
+  <div class="splash toc">
+    <h2 style="margin-top:0">Table of contents</h2>
+    <div class="anchors">
+      <label>Book <select disabled><option>Genesis</option></select></label>
+      <label>Chapter <select disabled><option>1</option></select></label>
+      <label>Verse <select id="splash-verse">${Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join("")}</select></label>
+      <button class="btn" data-act="splashgo" type="button">Go</button>
+      <span class="note" id="splash-note"></span>
+    </div>
+    <div class="book-grid">${CORPUS.books.map(b => b==="Genesis"
+      ? `<a href="#/read">Genesis</a>`
+      : `<span>${b}<span class="tag">not in sample</span></span>`).join("")}</div>
   </div>`;
 }
 function viewStudy(){
-  const secs = CORPUS.verses.map(v=>`
-    <section class="verse-sec" id="v${v.n}">
-      <div class="verse-head"><span class="verse-num">${v.n}</span><h2>Genesis 1:${v.n}</h2></div>
+  const total = CORPUS.verses.length;
+  const n = Math.max(1, Math.min(total, curVerse.study));
+  curVerse.study = n;
+  const v = CORPUS.verses[n-1];
+  return `<h1>Study — Genesis 1:${v.n}</h1>
+    <section class="verse-sec" id="v${v.n}" style="border-top:none;margin-top:.6rem;padding-top:0">
+      <div class="verse-head"><span class="verse-num">${v.n}</span><h2>One sentence — Genesis 1:${v.n}</h2></div>
       <div class="word-row">${v.words.map((w,i)=>wordCard(w, v.n, i)).join("")}</div>
       <div class="sentence"><span class="cap">Your translation — Young's (computed) base, your choices applied</span><br>${esc(assemble(v,"yp","study"))}</div>
       ${witnessBlock(v.notes)}
-    </section>`).join("");
-  return `<h1>Study — Genesis 1</h1>
-    <div class="jump-row">${CORPUS.verses.map(v=>`<button data-act="jump" data-t="v${v.n}">Verse ${v.n}</button>`).join("")}</div>
-    ${secs}`;
+    </section>
+    <div class="frame-foot">
+      <button class="btn" data-act="sprev" ${n<=1?"disabled":""}>‹ Prev sentence</button>
+      <span class="pos">Sentence ${n} of ${total} · Genesis 1</span>
+      <button class="btn" data-act="snext" ${n>=total?"disabled":""}>Next sentence ›</button>
+    </div>`;
 }
 function readSegments(verse){
   /* Build linked segments from the KJV text using each word's kp phrase. */
@@ -352,59 +376,65 @@ function readSegments(verse){
     html += esc(rest.slice(0, idx));
     const c = store.get(w.s);
     const disp = c ? effective(w, "read") : w.kp;
-    if(w.s==="H430")
-      html += `<a href="#/word/elohim">${esc(disp)}</a>`;
-    else
-      html += `<a href="#/interlinear" data-scroll="card-${w.s}-${verse.n}-${i}">${esc(disp)}</a>`;
+    html += `<a href="#/word/${w.s}">${esc(disp)}</a>`;
     rest = rest.slice(idx + w.kp.length);
   }
   return html + esc(rest);
 }
 function viewRead(){
-  const grid = CORPUS.books.map(b => b==="Genesis"
-    ? `<a href="#rv1" data-act="booklink">Genesis</a>`
-    : `<span>${b}<span class="tag">not in sample</span></span>`).join("");
   const paras = CORPUS.verses.map(v =>
     `<p id="rv${v.n}"><span class="vn">${v.n}</span>${readSegments(v)}</p>`).join("") +
     CORPUS.readExtra.map(v =>
       `<p id="rv${v.n}"><span class="vn">${v.n}</span>${v.segs.map(seg=>{
-          if(!seg.href) return esc(seg.x);
-          const c = seg.s ? store.get(seg.s) : null;
+          if(!seg.s) return esc(seg.x);
+          const c = store.get(seg.s);
           const disp = (c && c.mode==="custom") ? c.text : seg.x;
-          const href = seg.scroll ? `href="#/interlinear" data-scroll="${seg.scroll}"` : `href="${seg.href}"`;
-          return `<a ${href}>${esc(disp)}</a>`;
+          return `<a href="#/word/${seg.s}">${esc(disp)}</a>`;
         }).join("")}</p>`).join("");
   return `<h1>Read — Genesis 1 (King James base)</h1>
-  <div class="splash">
-    <div class="anchors">
-      <label>Book <select disabled><option>Genesis</option></select></label>
-      <label>Chapter <select disabled><option>1</option></select></label>
-      <label>Verse <select id="splash-verse">${Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join("")}</select></label>
-      <button class="btn" data-act="splashgo" type="button">Go</button>
-      <span class="note" id="splash-note"></span>
-    </div>
-    <div class="book-grid">${grid}</div>
-  </div>
   <div class="read-text">${paras}</div>
-  <p class="note">Words and phrases link to their word cards. Your rendering choices apply here too — Read defaults: your choice, then King James.</p>`;
+  <p class="note">Every word or phrase links to its Hebrew card, where a “See also” list shows where the same word is also used. Your rendering choices apply here too — Read defaults: your choice, then King James.</p>`;
 }
-function viewWord(){
-  const w = CORPUS.wordPages.elohim;
-  const pseudo = {s:w.s, kjv:"God", ylt:"God", g:"God"};
-  const occ = w.occurrences.map(o => o.verse
-    ? `<li><a href="#/interlinear" data-scroll="v${o.verse}">${o.ref}</a></li>`
-    : `<li>${o.ref} <span class="note">(not in sample)</span></li>`).join("");
+function viewWordPage(slug){
+  const strongs = slug==="elohim" ? "H430" : slug;
+  const curated = slug==="elohim" ? CORPUS.wordPages.elohim : null;
+  const hits = [];
+  for(const v of CORPUS.verses) for(const w of v.words) if(w.s===strongs) hits.push({v, w});
+  if(!curated && !hits.length)
+    return `<h1>Word not in sample</h1><p class="note">This word's card arrives with the full corpus.</p>`;
+  const first = curated || hits[0].w;
+  const pos = curated ? curated.pos : first.gr;
+  const kjvList = curated ? curated.kjvList : [...new Set(hits.map(x=>x.w.kjv))];
+  const yltList = curated ? curated.yltList : [...new Set(hits.map(x=>x.w.ylt))];
+  const forms = [...new Map(hits.map(x=>[x.w.h, x])).values()];
+  const formsHtml = forms.length>1
+    ? `<h3>Forms in the sample</h3><p>${forms.map(x=>`<span lang="he" dir="rtl">${x.w.h}</span> (${esc(x.w.t)}, Genesis 1:${x.v.n})`).join(" · ")}</p>` : "";
+  const notes = curated ? curated.notes : [];
+  let occItems;
+  if(curated){
+    occItems = curated.occurrences.map(o => o.verse
+      ? `<li><a href="#/interlinear" data-study="${o.verse}">${o.ref}</a></li>`
+      : (o.read ? `<li><a href="#/read" data-scroll="rv${o.read}">${o.ref}</a></li>`
+                 : `<li>${o.ref} <span class="note">(not in sample)</span></li>`)).join("");
+  } else {
+    const byVerse = [...new Map(hits.map(x=>[x.v.n, x])).values()];
+    occItems = byVerse.map(x=>`<li><a href="#/interlinear" data-study="${x.v.n}">Genesis 1:${x.v.n}</a> — <span lang="he" dir="rtl">${x.w.h}</span> “${esc(x.w.g)}”</li>`).join("");
+  }
+  const w = curated || first;
+  const pseudo = {s:strongs, kjv:first.kjv, ylt:first.ylt, g:first.g};
+  const occ = occItems;
   return `<div class="wordpage">
     <div class="heb-big" lang="he">${w.h}</div>
-    <h1>${esc(w.t)} · ${w.s}</h1>
-    <p class="note">${esc(w.pos)}</p>
+    <h1>${esc(w.t)} · ${strongs}</h1>
+    <p class="note">${esc(pos)}</p>
+    ${formsHtml}
     <h3>Your rendering</h3>
     <p class="note">Sets the default for this word everywhere; per-verse choices override it.</p>
     ${renderingControls(pseudo, "study")}
-    <h3>King James renderings</h3><p>${w.kjvList.join(", ")}</p>
-    <h3>Young's (computed) renderings</h3><p>${w.yltList.join(", ")}</p>
-    <h3>Variants</h3>${witnessBlock(w.notes)}
-    <h3>Occurrences</h3><ul>${occ}</ul>
+    <h3>King James renderings</h3><p>${kjvList.join(", ")}</p>
+    <h3>Young's (computed) renderings</h3><p>${yltList.join(", ")}</p>
+    <h3>Variants</h3>${witnessBlock(notes)}
+    <h3>See also — where this word is also used</h3><ul class="seealso">${occ}</ul>
   </div>`;
 }
 function viewSearch(q){
@@ -451,12 +481,12 @@ function render(){
   textnavEl.innerHTML = "";
   if(h.startsWith("#/interlinear")){
     viewEl.innerHTML = viewStudy();
-    textnavEl.innerHTML = textNav("study",[1,2,3]);
+    textnavEl.innerHTML = textNav("study",[1,2,3],curVerse.study);
   } else if(h.startsWith("#/read")){
     viewEl.innerHTML = viewRead();
-    textnavEl.innerHTML = textNav("read",[1,2,3,4,5]);
-  } else if(h.startsWith("#/word/elohim")){
-    viewEl.innerHTML = viewWord();
+    textnavEl.innerHTML = textNav("read",[1,2,3,4,5],curVerse.read);
+  } else if(h.startsWith("#/word/")){
+    viewEl.innerHTML = viewWordPage(h.slice("#/word/".length));
   } else if(h.startsWith("#/search")){
     let q = lastQuery;
     try{ const p = sessionStorage.getItem("byotPendingQuery");
@@ -481,21 +511,31 @@ document.addEventListener("click", e=>{
   const sg = e.target.closest("[data-act='splashgo']");
   if(sg){ const v = +document.getElementById("splash-verse").value;
           const note = document.getElementById("splash-note");
-          if(v<=5){ const el = document.getElementById("rv"+v);
-                    if(el) el.scrollIntoView({behavior:"smooth"}); note.textContent=""; }
+          if(v<=5){ curVerse.read = v; go("#/read", "rv"+v); }
           else note.textContent = "Verse "+v+" is beyond the sample verses (1–5)."; }
+  const st = e.target.closest("[data-study]");
+  if(st){ curVerse.study = +st.getAttribute("data-study");
+          if(location.hash.startsWith("#/interlinear")) render(); }
+  const sf = e.target.closest("[data-act='sprev'],[data-act='snext']");
+  if(sf){ const total = CORPUS.verses.length;
+          curVerse.study += sf.getAttribute("data-act")==="snext" ? 1 : -1;
+          curVerse.study = Math.max(1, Math.min(total, curVerse.study));
+          render(); }
   const pv = e.target.closest("[data-act='vprev'],[data-act='vnext']");
   if(pv){
     const kind = location.hash.startsWith("#/read") ? "read" : "study";
-    const list = kind==="read" ? [1,2,3,4,5] : [1,2,3];
+    const list = kind==="read" ? [1,2,3,4,5] : CORPUS.verses.map(x=>x.n);
     let i = list.indexOf(curVerse[kind]);
     i += pv.getAttribute("data-act")==="vnext" ? 1 : -1;
     i = Math.max(0, Math.min(list.length-1, i));
     curVerse[kind] = list[i];
-    const sel = textnavEl.querySelector("[data-act='vsel']");
-    if(sel) sel.value = String(list[i]);
-    const el = document.getElementById((kind==="read"?"rv":"v")+list[i]);
-    if(el) el.scrollIntoView({behavior:"smooth"});
+    if(kind==="study"){ render(); }
+    else {
+      const sel = textnavEl.querySelector("[data-act='vsel']");
+      if(sel) sel.value = String(list[i]);
+      const el = document.getElementById("rv"+list[i]);
+      if(el) el.scrollIntoView({behavior:"smooth"});
+    }
   }
 });
 document.addEventListener("change", e=>{
@@ -518,8 +558,9 @@ document.addEventListener("change", e=>{
   if(t.matches("[data-act='vsel']")){
     const kind = location.hash.startsWith("#/read") ? "read" : "study";
     curVerse[kind] = +t.value;
-    const el = document.getElementById((kind==="read"?"rv":"v")+t.value);
-    if(el) el.scrollIntoView({behavior:"smooth"});
+    if(kind==="study"){ render(); }
+    else { const el = document.getElementById("rv"+t.value);
+           if(el) el.scrollIntoView({behavior:"smooth"}); }
   }
 });
 document.addEventListener("input", e=>{
