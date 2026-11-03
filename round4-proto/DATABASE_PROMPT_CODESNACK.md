@@ -3,11 +3,21 @@
 Paste this whole file into CodeSnack as the task. It continues the PWA you
 already built; it does not start over.
 
-## Repos
+## Repos (status verified 2026-11-03)
 
-- **Work in:** https://github.com/kitcosby/BibleApp-pwa (branch `main`) —
-  the finished PWA (single `index.html` + `manifest.webmanifest` + `sw.js`
-  + icons), currently running on baked-in sample data for Genesis 1:1–5.
+- **Work in:** https://github.com/kitcosby/BibleApp-pwa (public, branch
+  `main`, starting commit `aff8289`) — the finished PWA (single
+  `index.html` + `manifest.webmanifest` + `sw.js` + icons), currently
+  running on baked-in sample data for Genesis 1:1–5. This repo is the
+  one canonical home of the app; commit your work here.
+- **Do NOT work in** https://github.com/kitcosby/BibleApp — its `main`
+  is an unrelated Replit app (leave it untouched), and its `pwa` branch
+  is only a snapshot copy of the same `aff8289` tree. Nothing you build
+  belongs in that repo.
+- **Deployed state:** those same `aff8289` files are already live on the
+  owner's server at `https://laptop.taila7a335.ts.net/byot/` — which is
+  why the relative `API_BASE` below works: the app and the API are
+  served by the same host.
 - **Reference:** https://github.com/kitcosby/bible-project — the corpus
   project. In particular `website/app_v2.py` is the live server app whose
   JSON routes are listed below; the corpus schema is in `schema_v2.md`.
