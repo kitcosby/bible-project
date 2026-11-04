@@ -83,6 +83,16 @@ project's public-domain / openly-licensed-only rule):
 
 Structural facts the build must absorb (not optional):
 
+**Rulings (Kit, 2026-11-03):** canon scope = **the full Greek canon,
+deuterocanon included**. Daniel: **whichever tradition matches the
+role that was found** — Kit's gloss: the archaeological cylinder (the
+Nabonidus cylinders, Ur 1854) found Belshazzar's role — eldest son,
+co-regent, second in the kingdom — which is why Daniel was made
+*third* ruler (Dan 5:29), exactly as his printed King James reads; the
+discovery vindicated the KJV's Daniel. The Greek Daniel matching that
+found, MT-shaped Daniel is **Theodotion (DanTh)** — primary; the Old
+Greek (Dan) is carried as the alternate tradition.
+
 - **Verse crosswalk.** LXX numbering differs from MT (Psalms are offset
   by one through most of the book; Jeremiah's chapters are reordered and
   shorter; Daniel carries additions). A verse-mapping table is a
