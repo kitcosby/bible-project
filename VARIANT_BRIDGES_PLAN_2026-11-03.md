@@ -64,4 +64,20 @@ KJV/Young's base toggle.
    own KJV/Young's in the Translation select.
 
 ## Status
-- 2026-11-03: commissioned; plan written; Byzantine prototype in build.
+- 2026-11-03: commissioned; plan written.
+- 2026-11-03: **Byzantine bridge BUILT and WRITTEN** (build_gntb_bridge.py;
+  backup bible_v2.db.bak-gntb-bridge-pre; PG synced, counts equal).
+  gntb_alignment 200,422 rows; gntb_ylt_renderings 141,902 rows.
+  Gates: same-verse self-consistency 7,560/7,560 = 100% (sampled every
+  15th 'same' verse); silver agreement on variant verses
+  15,033/15,264 = 98.49% (floor 0.7923). Coverage: KJV phrases for
+  132,755/140,149 Byzantine words (94.7%); computed-Young's for
+  106,433 (75.9% -- bounded by the TR bridge's own 76.2% ceiling).
+  Hand-read disagreement sample: silver occurrence ambiguity (Matt
+  7:2), word-order swaps a monotone aligner cannot cross -> honest
+  gaps (Matt 15:5, 21:14), article-folding near-misses. No systematic
+  garbage found. Known thin spot: YLT flavor at Comma-type verses
+  (1 John 5:7 gets only 'are') -- inherited from the TR bridge's own
+  sparse mapping there, not a Byzantine-side defect.
+- Next: SBL bridge (same pipeline, form/lemma scorer), then API +
+  app surfacing.
