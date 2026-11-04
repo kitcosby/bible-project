@@ -34,6 +34,25 @@ Work items, in dependency order:
    renderings; word-card grammar presentation (parse spelled out, not
    just the morph code). Feeds both the site and the app.
 
+### Addendum (2026-11-03, Kit): resolve the Elohim class by form
+
+Kit: "Waters and Egypt and the third dual pair use the transliteration
+to resolve the Elohim plural." Reading (his confirmation pending on the
+third item): the plural-form / singular-sense nouns — Elohim, mayim
+(waters), Mitzrayim (Egypt), and a third -ayim dual (best reading:
+shamayim, heavens; other candidate: Yerushalayim) — are to be resolved
+by their transliterated **form** (the recognizable -im / -ayim shape),
+not by the morphology number tag. Corpus evidence for why the tag
+cannot do it (verified 2026-11-03): Elohim is tagged plural 2,577x;
+mayim plural 562x; shamayim is split (dual 7x / plural 413x);
+**Mitzrayim and Yerushalayim carry no noun number tag at all** (635 /
+643 occurrences, number NULL). The form is uniform where the tag is
+absent or inconsistent. Mechanism when built: a form-keyed registry of
+sense-number (elohim/mayim/mitzrayim/shamayim -> singular sense) that
+the gloss layer consults before morph number; true body-pair duals
+(eynayim eyes 762, yadayim hands 249, raglayim feet 166 — the three
+most frequent dual lemmas) resolve to ordinary English plurals.
+
 ## Prong 2 — Greek: the Septuagint (LXX)
 
 No Greek data exists in the corpus yet (`sources/` holds dss, morphhb,
