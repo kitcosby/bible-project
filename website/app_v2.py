@@ -2039,10 +2039,13 @@ def _api_verse(n, c, v, with_variants=True):
     lxx, lxx_alt = (_api_lxx_field(verse_id) if with_variants
                     else (None, None))
     sent_text = ' '.join(k['word'] for k in kjv_sentence).lower()
+    ylt_row = b.execute('SELECT text FROM ylt_verses WHERE verse_id=%s',
+                        (verse_id,)).fetchone()
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c, 'verse': v,
         'ref': f'{book_name(n)} {c}:{v}',
         'testament': 'OT',
+        'ylt_text': ylt_row['text'] if ylt_row else None,
         'words': [_api_word(w, kjv_wp, ylt_wp, with_variants,
                             noun_num.get(w['word_id']), sent_text)
                   for w in words],
