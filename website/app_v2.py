@@ -1842,6 +1842,64 @@ def _greek_lex():
     return best
 
 
+_GREEK_PHRASES = None
+
+
+def _greek_phrases():
+    """Strong's -> {'kjv': [phrases by frequency], 'ylt': [...]} for NT
+    words, aggregated corpus-wide from the CrossWire alignment (KJV)
+    and the computed bridge (Young's). Feeds the word page's Renderings
+    panel so it no longer depends on which verses the reader happened
+    to open first (Kit's 1 Cor 1:11 screenshot, 2026-11-03: G4012's
+    Young's panel was empty although the word occurs 304 times)."""
+    global _GREEK_PHRASES
+    if _GREEK_PHRASES is not None:
+        return _GREEK_PHRASES
+    from collections import Counter, defaultdict
+    b = bible()
+    kjv_acc = defaultdict(Counter)
+    slots = defaultdict(list)
+    s_of = {}
+    for r in b.execute(
+            'SELECT a.corpus_verse_id AS vid, a.gnt_position AS pos, '
+            'a.kjv_pos AS kp, k.kjv_word AS word, gw.strongs AS s '
+            'FROM gnt_alignment a '
+            'JOIN kjv_words k ON k.verse_id=a.corpus_verse_id '
+            'AND k.kjv_pos=a.kjv_pos '
+            'JOIN gnt_verses gv ON gv.corpus_verse_id=a.corpus_verse_id '
+            'JOIN gnt_words gw ON gw.gnt_verse_id=gv.gnt_verse_id '
+            'AND gw.position=a.gnt_position'):
+        slots[(r['vid'], r['pos'])].append((r['kp'], r['word']))
+        s_of[(r['vid'], r['pos'])] = r['s']
+    for key, toks in slots.items():
+        phrase = ' '.join(w for _kp, w in sorted(toks))
+        if phrase:
+            kjv_acc[s_of[key]][phrase] += 1
+    ylt_acc = defaultdict(Counter)
+    slots = defaultdict(list)
+    s_of = {}
+    for r in b.execute(
+            'SELECT y.gnt_verse_id AS gid, y.gnt_position AS pos, '
+            'y.ylt_word_pos AS yp, y.ylt_word AS word, gw.strongs AS s '
+            'FROM gnt_ylt_renderings y '
+            'JOIN gnt_words gw ON gw.gnt_verse_id=y.gnt_verse_id '
+            'AND gw.position=y.gnt_position'):
+        slots[(r['gid'], r['pos'])].append((r['yp'], r['word']))
+        s_of[(r['gid'], r['pos'])] = r['s']
+    for key, toks in slots.items():
+        phrase = ' '.join(w for _yp, w in sorted(toks))
+        if phrase:
+            ylt_acc[s_of[key]][phrase] += 1
+    out = {}
+    for s in set(kjv_acc) | set(ylt_acc):
+        out[s] = {
+            'kjv': [p for p, _n in kjv_acc[s].most_common(12)],
+            'ylt': [p for p, _n in ylt_acc[s].most_common(12)],
+        }
+    _GREEK_PHRASES = out
+    return out
+
+
 def _api_verse_nt(n, c, v, vrow, with_variants=True):
     verse_id = vrow['verse_id']
     b = bible()
@@ -2108,11 +2166,15 @@ def api_word(strongs):
         lxx_n = b.execute(
             'SELECT COUNT(*) AS n FROM lxx_words WHERE strongs=%s',
             (s,)).fetchone()['n']
+        gph = _greek_phrases().get(s, {})
         return _api_json({
             'strongs': s,
             'greek': surf['surface'] if surf else None,
             'lemma': entry.get('lemma'),
             'gloss': entry.get('gloss', ''),
+            'kjv_phrases': gph.get('kjv', []),
+            'ylt_phrases': gph.get('ylt', []),
+            'ylt_computed': True,
             'greek_lexicon': 'derived from LXX word data (most '
                              'frequent lemma/gloss per Strong\'s '
                              'number)',
