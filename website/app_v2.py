@@ -27,6 +27,7 @@ What changed vs app.py:
 """
 import html
 import os
+import re
 import psycopg2
 import psycopg2.extras
 import psycopg2.errors
@@ -1601,8 +1602,138 @@ def _api_gloss(w):
     return frag[0] if frag else ''
 
 
-def _api_word(w, kjv_wp, ylt_wp, with_variants=True):
-    gloss = _api_gloss(w)
+
+# ---------------------------------------------------------------- gloss number
+# Kit flagged Eccl 1:2 in the BYOT app (2026-11-03): the Study frame for
+# the plural form of H1892 showed the singular gloss "vanity". The lemma gloss
+# (_api_gloss) is number-blind; this layer inflects it for plural nouns
+# only, and only when the gloss's last word is an allowlisted countable
+# noun. The unrestricted version was censused and rejected: it would
+# corrupt Elohim ("God"), panim ("before"), mayim ("water") and the
+# pluralia tantum. Prototype + census: gloss_plural_proto.py.
+
+_PLURAL_ALLOW = {
+    # curated 2026-11-03 from the plural-noun gloss census: ordinary
+    # countable common nouns only. Divine names (God, Lord), mass nouns
+    # (water, blood, bread), pluralia tantum with singular sense (life,
+    # heaven, youth), proper/ethnic names, adjectives, and already-
+    # plural forms (men, children, brethren) are deliberately absent.
+    'adder', 'altar', 'ant', 'arm', 'arrow', 'basket', 'bason', 'bat',
+    'beast', 'bed', 'bell', 'blessing', 'board', 'bolster',
+    'book', 'border', 'bowl', 'breach', 'breast', 'brick', 'bullock',
+    'buryingplace', 'cake', 'calf', 'camp', 'captain', 'cedar', 'censer',
+    'chamber', 'chariot', 'child', 'city', 'cloud', 'coat', 'congregation',
+    'corner', 'cornet', 'course', 'court', 'crown', 'cup', 'curse',
+    'damsel', 'decree', 'disease', 'dog', 'door', 'dream', 'duke',
+    'dunghill', 'eagle', 'enemy', 'feast', 'field', 'finger', 'fir',
+    'firebrand', 'flame', 'flock', 'flower', 'fool', 'forest', 'fountain',
+    'garden', 'garment', 'gate', 'goat', 'governor', 'grasshopper',
+    'hammer', 'hand', 'handmaid', 'hart', 'heap', 'heel', 'heifer',
+    'helmet', 'highway', 'hill', 'house', 'image', 'judgment', 'kid',
+    'king', 'knife', 'knop', 'land', 'laver', 'law', 'lion', 'locust',
+    'lot', 'magician', 'man', 'moment', 'month', 'mouse', 'multitude',
+    'neighbour', 'nest', 'net', 'network', 'night', 'oak', 'offering',
+    'olive', 'oppressor', 'oven', 'ox', 'parable', 'parlour', 'part',
+    'passover', 'path', 'piece', 'pigeon', 'pillar', 'pitcher', 'pit',
+    'place', 'plain', 'plant', 'plague', 'pool', 'portion', 'pound',
+    'priest', 'prince', 'queen', 'raven', 'reproach', 'riddle', 'river',
+    'robber', 'rock', 'roof', 'ruler', 'sabbath', 'sacrifice', 'sanctuary',
+    'scribe', 'secret', 'serpent', 'sheaf', 'shield', 'shoe',
+    'side', 'sign', 'sin', 'sister', 'snare', 'sojourner', 'spear',
+    'spoon', 'spot', 'spouse', 'standard', 'stranger', 'sword', 'table',
+    'tabernacle', 'temple', 'thanksgiving', 'thief', 'threshingfloor',
+    'thistle', 'throne', 'time', 'tithe', 'tongue', 'top', 'tortoise',
+    'tower', 'treasure', 'tree', 'tribe', 'trumpet', 'unicorn', 'vanity',
+    'vow', 'wafer', 'wall', 'watch', 'web', 'well', 'whirlwind', 'widow',
+    'wife', 'wolf', 'wound', 'whelp', 'year', 'yoke',
+    # abstract but regularly counted in KJV English
+    'abomination', 'calamity', 'charge', 'generation', 'iniquity',
+    'kingdom', 'soul', 'vision',
+}
+_PLURAL_IRREG = {
+    'man': 'men', 'child': 'children', 'ox': 'oxen', 'mouse': 'mice',
+    'wife': 'wives', 'hoof': 'hoofs',
+}
+_F_VES = {'calf', 'wolf', 'leaf', 'loaf', 'shelf', 'half', 'sheaf',
+          'thief', 'knife', 'life'}
+
+
+def _plural_word(word):
+    low = word.lower()
+    if low in _PLURAL_IRREG:
+        pl = _PLURAL_IRREG[low]
+    elif low.endswith(('s', 'x', 'z', 'ch', 'sh')):
+        pl = low + 'es'
+    elif low.endswith('y') and low[-2:-1] not in ('a', 'e', 'i', 'o', 'u'):
+        pl = low[:-1] + 'ies'
+    elif low.endswith('fe') and low in _F_VES:
+        pl = low[:-2] + 'ves'
+    elif low.endswith('f') and low in _F_VES:
+        pl = low[:-1] + 'ves'
+    else:
+        pl = low + 's'
+    return pl.capitalize() if word[:1].isupper() else pl
+
+
+_POSSESSIVE_HEADS = {'my', 'thy', 'his', 'her', 'our', 'your', 'their'}
+
+
+def _gloss_for_number(gloss, noun_number):
+    """Plural-aware gloss: only for plural nouns, only when the gloss's
+    last word is allowlisted. Dual is untouched (body-pair duals carry
+    idiomatic glosses). Returns the gloss unchanged otherwise.
+
+    Guards from the 2026-11-03 change census:
+    - possessive-headed glosses are skipped ("my soul" is a phrase from
+      singular contexts; "my souls" would be wrong);
+    - a gloss whose last word also appears earlier is an idiom or a
+      junk repeated phrase ("from generation to generation",
+      "boards board board") — skipped;
+    - an indefinite article governing the head is dropped when
+      pluralizing ("a sign" -> "signs", "for a sin offering" ->
+      "for sin offerings")."""
+    if noun_number != 'plural' or not gloss:
+        return gloss
+    m = re.search(r"([A-Za-z']+)([^A-Za-z']*)$", gloss)
+    if not m or m.group(1).lower() not in _PLURAL_ALLOW:
+        return gloss
+    words = re.findall(r"[A-Za-z']+", gloss)
+    lows = [w.lower() for w in words]
+    if words and lows[0] in _POSSESSIVE_HEADS:
+        return gloss
+    if sum(1 for w in lows if w == m.group(1).lower()) > 1:
+        return gloss
+    # plural form already present in the gloss ("firebrands firebrand",
+    # "the thrones his throne") — junk phrase, leave it alone
+    if _plural_word(m.group(1)).lower() in lows:
+        return gloss
+    # a determiner that forces singular directly before the head
+    # ("every corner", "this disease", "the other side", "the same time")
+    if len(lows) >= 2 and lows[-2] in ('every', 'this', 'that', 'same',
+                                       'other'):
+        return gloss
+    # predicative singular ("thou art a stranger") — pluralizing the
+    # complement breaks subject agreement
+    if re.search(r"\b(art|is|was|am)\s+(a|an)\s+[A-Za-z']+$", gloss):
+        return gloss
+    # an indefinite article must sit within the final three words to be
+    # the head's own article ("for a sin offering"); a distant one
+    # belongs to another noun ("the tithes a tenth of the tithe") —
+    # skip the change entirely in that case
+    if any(w in ('a', 'an') for w in lows[:-3]):
+        return gloss
+    out = gloss[:m.start(1)] + _plural_word(m.group(1)) + m.group(2)
+    # drop the indefinite article that governs the final noun phrase:
+    # the last ' a '/' an ' before the pluralized word
+    head_at = out.rfind(_plural_word(m.group(1)))
+    arts = [a for a in re.finditer(r'\b(a|an)\s+', out[:head_at])]
+    if arts:
+        a = arts[-1]
+        out = out[:a.start()] + out[a.end():]
+    return out
+
+def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None):
+    gloss = _gloss_for_number(_api_gloss(w), noun_number)
     out = {
         'wid': w['word_id'], 'pos': w['word_pos'],
         'hebrew': w['pointed'] or w['unpointed'],
@@ -1638,6 +1769,17 @@ def _api_verse(n, c, v, with_variants=True):
         WHERE vv.book_id=%s AND vv.chapter=%s AND vv.verse=%s
         ORDER BY w.word_pos''', (n, c, v)).fetchall()
     _, kjv_wp, _, ylt_wp = lemma_phrases()
+    # noun number per word (for the number-aware gloss), one query
+    noun_num = {}
+    if words:
+        ids = [w['word_id'] for w in words]
+        ph = ', '.join(['%s'] * len(ids))
+        for r in b.execute(
+                'SELECT w.word_id, s.number_name FROM words w '
+                'JOIN morph_segments s ON s.pattern_id=w.morph_pattern_id '
+                f'WHERE s.pos_name=%s AND w.word_id IN ({ph})',
+                ['noun'] + ids):
+            noun_num[r['word_id']] = r['number_name']
     # KJV sentence in English word order; supplied = no Hebrew alignment
     al = {r['kjv_word_id']: r['hebrew_word_id'] for r in b.execute(
         'SELECT kjv_word_id, hebrew_word_id FROM word_alignment '
@@ -1664,7 +1806,8 @@ def _api_verse(n, c, v, with_variants=True):
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c, 'verse': v,
         'ref': f'{book_name(n)} {c}:{v}',
-        'words': [_api_word(w, kjv_wp, ylt_wp, with_variants)
+        'words': [_api_word(w, kjv_wp, ylt_wp, with_variants,
+                            noun_num.get(w['word_id']))
                   for w in words],
         'kjv_sentence': kjv_sentence,
         'witnesses': witnesses,
