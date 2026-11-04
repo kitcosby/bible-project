@@ -1295,7 +1295,9 @@ def papyrus_tile():
     with open(p, 'rb') as f:
         return Response(f.read(), mimetype='image/png')
 
-_WORDS_EXIST = 'AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
+_WORDS_EXIST = ('AND (EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
+                ' OR EXISTS (SELECT 1 FROM gnt_verses gv'
+                ' WHERE gv.corpus_verse_id=vv.verse_id))')
 
 def verse_row(n, c, v):
     return bible().execute(
@@ -1546,7 +1548,8 @@ def english_sentence_html(verse_id):
 def api_books():
     rows = bible().execute(
         'SELECT book_id, name_en FROM books ORDER BY book_id').fetchall()
-    return jsonify([{'book_id': r['book_id'], 'name_en': r['name_en']}
+    return jsonify([{'book_id': r['book_id'], 'name_en': r['name_en'],
+                     'testament': 'OT' if r['book_id'] <= 39 else 'NT'}
                     for r in rows])
 
 @app.route('/api/chapters/<int:n>')
@@ -1758,10 +1761,157 @@ def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None):
     return out
 
 
+# ---------------------------------------------------------------- Greek / NT API
+# Added 2026-11-03 with the NT extension (TR primary; Byzantine + SBL
+# witnesses; LXX on OT verses). Greek lemma/gloss are DERIVED from the
+# LXX word data (most frequent lemma/gloss per Strong's G number) --
+# computed reference data, labeled by the 'greek_lexicon' note in the
+# payloads, never presented as a published lexicon.
+
+_GREEK_LEX = None
+
+
+def _greek_lex():
+    global _GREEK_LEX
+    if _GREEK_LEX is not None:
+        return _GREEK_LEX
+    from collections import Counter
+    b = bible()
+    best = {}
+    for col in ('lemma', 'gloss'):
+        cnt = {}
+        for r in b.execute(
+                f'SELECT strongs, {col} AS val, COUNT(*) AS n '
+                f'FROM lxx_words WHERE strongs IS NOT NULL '
+                f'AND {col} IS NOT NULL AND {col} <> %s '
+                f'GROUP BY strongs, {col}', ('',)):
+            key = (r['strongs'], col)
+            if key not in cnt or r['n'] > cnt[key][0]:
+                cnt[key] = (r['n'], r['val'])
+        for (strongs, _c), (_n, val) in cnt.items():
+            best.setdefault(strongs, {})[col] = val
+    _GREEK_LEX = best
+    return best
+
+
+def _api_verse_nt(n, c, v, vrow, with_variants=True):
+    verse_id = vrow['verse_id']
+    b = bible()
+    gv = b.execute(
+        'SELECT gnt_verse_id, text FROM gnt_verses '
+        'WHERE corpus_verse_id=%s', (verse_id,)).fetchone()
+    greek_words = []
+    kjv_sentence = []
+    variants = []
+    if gv:
+        gid = gv['gnt_verse_id']
+        al = {}
+        for r in b.execute(
+                'SELECT a.gnt_position, k.kjv_word FROM gnt_alignment a '
+                'JOIN kjv_words k ON k.verse_id=a.corpus_verse_id '
+                'AND k.kjv_pos=a.kjv_pos WHERE a.corpus_verse_id=%s '
+                'ORDER BY a.gnt_position, k.kjv_pos', (verse_id,)):
+            al.setdefault(r['gnt_position'], []).append(r['kjv_word'])
+        yl = {}
+        for r in b.execute(
+                'SELECT gnt_position, ylt_word FROM gnt_ylt_renderings '
+                'WHERE gnt_verse_id=%s ORDER BY gnt_position, '
+                'ylt_word_pos', (gid,)):
+            yl.setdefault(r['gnt_position'], []).append(r['ylt_word'])
+        lex = _greek_lex()
+        for w in b.execute(
+                'SELECT position, surface, beta, strongs, morph '
+                'FROM gnt_words WHERE gnt_verse_id=%s ORDER BY position',
+                (gid,)):
+            entry = lex.get(w['strongs'], {})
+            greek_words.append({
+                'pos': w['position'], 'greek': w['surface'],
+                'translit': w['beta'], 'strongs': w['strongs'],
+                'morph': w['morph'], 'lemma': entry.get('lemma'),
+                'gloss': entry.get('gloss', ''),
+                'kjv': ' '.join(al.get(w['position'], [])) or None,
+                'ylt': ' '.join(yl.get(w['position'], [])) or None,
+                'ylt_computed': True})
+        gal = {}
+        for r in b.execute(
+                'SELECT kjv_pos, MIN(gnt_position) AS gp '
+                'FROM gnt_alignment WHERE corpus_verse_id=%s '
+                'GROUP BY kjv_pos', (verse_id,)):
+            gal[r['kjv_pos']] = r['gp']
+        kjv_sentence = [
+            {'word': k['kjv_word'],
+             'supplied': k['kjv_pos'] not in gal,
+             'greek_pos': gal.get(k['kjv_pos'])}
+            for k in b.execute(
+                'SELECT kjv_pos, kjv_word FROM kjv_words '
+                'WHERE verse_id=%s ORDER BY kjv_pos',
+                (verse_id,)).fetchall()]
+        if with_variants:
+            texts = {}
+            for tbl, trad in (('gntb_verses', 'byz'),
+                              ('gnts_verses', 'sbl')):
+                r = b.execute(
+                    f'SELECT text FROM {tbl} WHERE corpus_verse_id=%s',
+                    (verse_id,)).fetchone()
+                texts[trad] = r['text'] if r else None
+            for r in b.execute(
+                    'SELECT tradition, status, detail FROM gnt_variants '
+                    'WHERE corpus_verse_id=%s ORDER BY tradition',
+                    (verse_id,)):
+                variants.append({
+                    'tradition': r['tradition'], 'status': r['status'],
+                    'detail': r['detail'],
+                    'text': texts.get(r['tradition'])
+                    if r['status'] == 'variant' else None})
+    ylt_row = b.execute('SELECT text FROM ylt_verses WHERE verse_id=%s',
+                        (verse_id,)).fetchone()
+    return {
+        'book_id': n, 'book_name': book_name(n), 'chapter': c,
+        'verse': v, 'ref': f'{book_name(n)} {c}:{v}',
+        'testament': 'NT',
+        'words': [],
+        'greek_tradition': 'TR',
+        'greek_text': gv['text'] if gv else None,
+        'greek_words': greek_words,
+        'greek_lexicon': 'derived from LXX word data (most frequent '
+                         'lemma/gloss per Strong\'s number)',
+        'kjv_sentence': kjv_sentence,
+        'ylt_text': ylt_row['text'] if ylt_row else None,
+        'greek_variants': variants,
+        'witnesses': [],
+    }
+
+
+def _api_lxx_field(verse_id):
+    """LXX witness for an OT verse via the numbering crosswalk.
+    Daniel (book 27) has two mapped traditions: DanTh is primary
+    (Kit's ruling), the Old Greek rides as 'lxx_alt'."""
+    b = bible()
+    rows = b.execute(
+        'SELECT x.osis, x.lxx_verse_id, lb.tradition, lv.text '
+        'FROM lxx_crosswalk x '
+        'JOIN lxx_books lb ON lb.osis = x.osis '
+        'JOIN lxx_verses lv ON lv.verse_id = x.lxx_verse_id '
+        'WHERE x.mt_verse_id=%s AND x.relation=%s',
+        (verse_id, 'same')).fetchall()
+    if not rows:
+        return None, None
+    primary = next((r for r in rows if r['osis'] == 'DanTh'), rows[0])
+    alt = next((r for r in rows if r is not primary), None)
+
+    def pack(r):
+        return {'osis': r['osis'], 'tradition': r['tradition'],
+                'text': r['text'],
+                'text_note': 'assembled from word surfaces'}
+    return pack(primary), (pack(alt) if alt else None)
+
+
 def _api_verse(n, c, v, with_variants=True):
     vrow = verse_row(n, c, v)
     if not vrow:
         return None
+    if n >= 40:
+        return _api_verse_nt(n, c, v, vrow, with_variants)
     verse_id = vrow['verse_id']
     b = bible()
     words = b.execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
@@ -1803,14 +1953,19 @@ def _api_verse(n, c, v, with_variants=True):
          'label': _WITNESS_LABELS.get(r['witness'], r['witness']),
          'kind': r['note_kind'], 'note': r['note_text']}
         for r in verse_note_rows(verse_id)]
+    lxx, lxx_alt = (_api_lxx_field(verse_id) if with_variants
+                    else (None, None))
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c, 'verse': v,
         'ref': f'{book_name(n)} {c}:{v}',
+        'testament': 'OT',
         'words': [_api_word(w, kjv_wp, ylt_wp, with_variants,
                             noun_num.get(w['word_id']))
                   for w in words],
         'kjv_sentence': kjv_sentence,
         'witnesses': witnesses,
+        'lxx': lxx,
+        'lxx_alt': lxx_alt,
     }
 
 
@@ -1842,6 +1997,46 @@ def api_chapter(n, c):
 def api_word(strongs):
     b = bible()
     s = strongs.strip()
+    if s.upper().startswith('G') and s[1:].isdigit():
+        s = 'G' + s[1:]
+        entry = _greek_lex().get(s, {})
+        occ_rows = b.execute(
+            'SELECT gv.book_id, gv.chapter, gv.verse, COUNT(*) AS n '
+            'FROM gnt_words w JOIN gnt_verses gv '
+            'ON gv.gnt_verse_id = w.gnt_verse_id '
+            'WHERE w.strongs=%s GROUP BY gv.book_id, gv.chapter, '
+            'gv.verse ORDER BY gv.book_id, gv.chapter, gv.verse '
+            'LIMIT 500', (s,)).fetchall()
+        if not occ_rows:
+            return _api_json({'error': 'not found',
+                              'detail': 'unknown strongs'}, 404)
+        surf = b.execute(
+            'SELECT surface, COUNT(*) AS n FROM gnt_words '
+            'WHERE strongs=%s GROUP BY surface ORDER BY n DESC '
+            'LIMIT 1', (s,)).fetchone()
+        total = b.execute(
+            'SELECT COUNT(DISTINCT gv.gnt_verse_id) AS n FROM gnt_words w '
+            'JOIN gnt_verses gv ON gv.gnt_verse_id = w.gnt_verse_id '
+            'WHERE w.strongs=%s', (s,)).fetchone()['n']
+        lxx_n = b.execute(
+            'SELECT COUNT(*) AS n FROM lxx_words WHERE strongs=%s',
+            (s,)).fetchone()['n']
+        return _api_json({
+            'strongs': s,
+            'greek': surf['surface'] if surf else None,
+            'lemma': entry.get('lemma'),
+            'gloss': entry.get('gloss', ''),
+            'greek_lexicon': 'derived from LXX word data (most '
+                             'frequent lemma/gloss per Strong\'s '
+                             'number)',
+            'occurrence_count': total,
+            'lxx_occurrence_count': lxx_n,
+            'occurrences': [
+                {'book_id': r['book_id'], 'chapter': r['chapter'],
+                 'verse': r['verse'],
+                 'ref': f"{book_name(r['book_id'])} {r['chapter']}:"
+                        f"{r['verse']}"}
+                for r in occ_rows]})
     w = b.execute(f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.strongs=%s '
                   'ORDER BY w.word_id LIMIT 1', (s,)).fetchone()
     if not w and s.isdigit():

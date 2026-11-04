@@ -115,6 +115,12 @@ def kjv_verse_words(text, stats):
     t = re.sub(r"<divineName>(.*?)</divineName>",
                lambda m: unescape(m.group(1)).upper(), t, flags=re.S | re.I)
     t = re.sub(r"<milestone[^>]*/>", " ", t, flags=re.I)
+    # Self-closing <w/> stubs (Greek words with no English here) MUST be
+    # removed before the <w>...</w> pass: the lazy content regex would
+    # otherwise pair a stub's attributes with the NEXT element's text,
+    # silently shifting that word's Strong's (found at Matt 1:7, where
+    # 'And' G1161 was overwritten by a stub's G3588).
+    t = re.sub(r"<w\b[^>]*/>", " ", t)
     t = re.sub(r'<div\b[^>]*type="x-milestone"[^>]*/>', " ", t, flags=re.I)
     t = re.sub(r"<chapter\b[^>]*>", " ", t, flags=re.I)
     t = re.sub(r'<div\b[^>]*type="book"[^>]*>', " ", t, flags=re.I)

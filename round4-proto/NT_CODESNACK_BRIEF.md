@@ -75,3 +75,32 @@ Confirm back: (a) the 66-book canon order you will use, (b) where
 the testament split lives in the TOC/splash, (c) that NT books with
 no API data yet will show the honest fallback. Then do task 1 only,
 and wait.
+
+---
+
+## SHIPPED — server side complete (2026-11-03, Muse)
+
+The Lampy API now serves everything in the draft contract, plus more.
+Follow these shipped shapes where they differ from the draft:
+
+- `/api/books` — 66 books, each with `"testament": "OT" | "NT"`.
+- NT `/api/verse/<b>/<c>/<v>` payload adds: `testament: "NT"`,
+  `greek_tradition: "TR"`, `greek_text` (TR, assembled from word
+  surfaces), `greek_words[]` = `{pos, greek, translit, strongs,
+  morph, lemma, gloss, kjv, ylt, ylt_computed}` where `kjv` is the
+  English phrase aligned to that Greek word (source-encoded CrossWire
+  alignment), `ylt` is the COMPUTED Young's phrase (live already --
+  not a later phase), and `lemma`/`gloss` are derived from the LXX
+  word data (payload carries a `greek_lexicon` note saying so).
+  `kjv_sentence[]` = `{word, supplied, greek_pos}` in English order.
+  `ylt_text` = the verse's actual YLT text. `words` is `[]` for NT.
+- `greek_variants[]` = `{tradition: "byz"|"sbl", status:
+  "same"|"variant"|"absent", detail, text}` -- `text` carries the
+  variant tradition's verse text when status is "variant".
+- OT verse payloads add `testament: "OT"`, `lxx` and `lxx_alt`:
+  `{osis, tradition, text, text_note}` (Daniel: DanTh primary, the
+  Old Greek in `lxx_alt`; null where no crosswalk verse exists).
+- `/api/word/G<digits>` works like the H form: `{strongs, greek,
+  lemma, gloss, occurrence_count, lxx_occurrence_count,
+  occurrences[]}`.
+- Chapter payloads work for NT books (25 verses for Matthew 1).
