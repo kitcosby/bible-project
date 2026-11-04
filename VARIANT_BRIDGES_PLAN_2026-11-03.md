@@ -79,5 +79,27 @@ KJV/Young's base toggle.
   garbage found. Known thin spot: YLT flavor at Comma-type verses
   (1 John 5:7 gets only 'are') -- inherited from the TR bridge's own
   sparse mapping there, not a Byzantine-side defect.
-- Next: SBL bridge (same pipeline, form/lemma scorer), then API +
-  app surfacing.
+- 2026-11-04: **SBLGNT bridge BUILT and WRITTEN** (build_gnts_bridge.py;
+  backup bible_v2.db.bak-gnts-bridge-pre; trial run on a DB copy
+  first, live output identical). gnts_alignment 191,378 rows;
+  gnts_ylt_renderings 135,971 rows (label 'ylt-bridge-sbl'). Scorer
+  per this plan: accent-stripped form equality 2.0, then lemma /
+  gloss-token overlap 1.0 (no Strong's scorer reused; gloss tokens
+  from lxx_words by Greek form for SBL, by Strong's for TR). Gates:
+  same-verse self-consistency 41,441/41,441 = 100% over ALL 2,718
+  SBL 'same' verses (target >=99%); silver agreement on variant
+  verses 71,125/71,972 = 98.82% (silver = occurrence-unambiguous
+  form copy; floor 0.7923). Coverage: KJV phrases for
+  126,556/137,554 SBL words (92.0%); computed-Young's for 101,981
+  (74.1%) — cf. Byz 94.7% / 75.9%. Hand gold read against the Greek:
+  1 John 5:7-8 correct (Comma absent), Matt 17:21 / John 5:4 /
+  Acts 8:37 absent -> zero rows, Mark 16:19-20 correct, Rev 22:19
+  'tree' (xylou) honestly unphrased rather than inheriting 'book'.
+  FK check: 176,042 violations before and after, all pre-existing
+  in kjv_words (NT G-Strong's absent from the H-only strongs
+  table); the bridge tables add 0. TR/Byz/OT tables hash-identical.
+  Sync: export route extended + loaders written, CSV counts ==
+  SQLite; the PG load itself is the laptop ship step (Kit's
+  authorization), not yet run.
+- Next: API + app surfacing; PG load of both bridge pairs at the
+  next authorized laptop ship.

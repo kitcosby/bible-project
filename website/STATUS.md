@@ -310,3 +310,39 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   website PostgreSQL DB. YLT data and 'computed' labels otherwise
   unchanged in kind — still COMPUTED best-effort, NOT authoritative.
   Committed locally only — GitHub push held for the Sunday weekly push.
+
+## 2026-11-04 — SBL-BRIDGE: SBLGNT variant alignment bridge built (SQLite; PG load pending)
+
+- Item: step 2 of Kit's commissioned variant-bridges sequence (after the
+  Byzantine bridge, 2026-11-03). `build_gnts_bridge.py` mirrors the
+  Byzantine bridge with the plan's SBL scorer — accent-stripped form
+  equality 2.0, then lemma/gloss-token overlap 1.0 from `lxx_words`
+  glosses; the Byzantine Strong's scorer was NOT reused (SBLGNT carries
+  no Strong's). Phrase inheritance from the TR bridge plus a
+  gloss-token residue pass; honest gaps left unphrased.
+- Wrote `gnts_alignment` 191,378 rows and `gnts_ylt_renderings` 135,971
+  rows (label `ylt-bridge-sbl`) in `bible_v2.db`; backup
+  `bible_v2.db.bak-gnts-bridge-pre` taken, trial run on a DB copy first
+  with live output identical. TR/Byz tables untouched (12 pre-existing
+  tables hash-identical before/after; `quick_check` ok).
+- Gates PASS: same-verse self-consistency 41,441/41,441 = 100% over all
+  2,718 SBL 'same' verses (target >= 99%); silver agreement on variant
+  verses 71,125/71,972 = 98.82% vs the 0.7923 floor (graded
+  136,834/143,944). Hand gold read against the Greek: 1 John 5:7-8
+  correct (Comma absent), Matt 17:21 / John 5:4 / Acts 8:37 absent in
+  SBL -> zero rows, Mark 16:19-20 correct, Rev 22:19 'tree' (xylou)
+  honestly unphrased rather than inheriting 'book'.
+- Coverage: KJV phrases for 126,556/137,554 SBL words = 92.0%;
+  computed-Young's for 101,981 = 74.1% (Byzantine reference 94.7% /
+  75.9%). YLT remains COMPUTED best-effort; honesty labels unchanged.
+- FK disclosure: `PRAGMA foreign_key_check` is 176,042 rows before AND
+  after — all pre-existing `kjv_words` rows (NT G-Strong's absent from
+  the H-only strongs table); the new tables declare no FKs (same as
+  `gntb_*`) and add 0.
+- Sync plumbing done: `export_sync_gnt.py` extended with both bridge
+  pairs, `load_sync_gnt.py` gained DDL + replace jobs, companion loader
+  `load_gnts_bridge.py` written, CSVs exported with counts == SQLite
+  (191,378 / 135,971). The PostgreSQL load itself has NOT run — PG lives
+  on the laptop and the standing rule bars a laptop ship without Kit's
+  authorization; PG counts are the one remaining step.
+- Committed locally only — GitHub push held for the Sunday weekly push.

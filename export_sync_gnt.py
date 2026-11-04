@@ -24,6 +24,8 @@ TABLES = [
     'gntb_books', 'gntb_verses', 'gntb_words',
     'gnts_books', 'gnts_verses', 'gnts_words',
     'gnt_variants', 'gnt_alignment', 'gnt_ylt_renderings',
+    'gntb_alignment', 'gntb_ylt_renderings',
+    'gnts_alignment', 'gnts_ylt_renderings',
 ]
 for t in TABLES:
     cols = [r[1] for r in db.execute(f"PRAGMA table_info({t})")]
