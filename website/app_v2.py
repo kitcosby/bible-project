@@ -1587,16 +1587,31 @@ def _api_json(data, status=200):
     return resp
 
 
-def _api_gloss(w):
+def _api_gloss(w, sent_text=None):
     """Short rendering for the word: the lemma's most frequent KJV
     phrase, else its most frequent computed-Young's phrase, else the
     lexicon's first KJV fragment, else ''. (Lexicon fragments rank
     last: they split phrases like "In the beginning" into pieces —
-    the fragmentation Kit's 2026-10-01 phrase ruling removed.)"""
+    the fragmentation Kit's 2026-10-01 phrase ruling removed.)
+
+    When the verse's KJV sentence text is given, the lemma's phrase
+    candidates are context-ranked: the first candidate that actually
+    appears in this verse's sentence wins over the bare frequency
+    winner (CodeSnack audit 2026-11-03: H7225's lemma gloss is "the
+    firstfruits" from offering contexts, but Gen 1:1 needs the
+    candidate "In the beginning" that the verse itself contains)."""
     kjv_lp, _, ylt_lp, _ = lemma_phrases()
     lk = lemma_key(w)
     if kjv_lp.get(lk):
-        return kjv_lp[lk][0]
+        cands = kjv_lp[lk]
+        if sent_text:
+            import re as _re
+            for cand in cands:
+                pat = _re.escape(cand.lower())
+                if _re.search(r'(?<![a-z])' + pat + r'(?![a-z])',
+                               sent_text):
+                    return cand
+        return cands[0]
     if ylt_lp.get(lk):
         return ylt_lp[lk][0]
     frag_map, _ = lex_renderings()
@@ -1735,8 +1750,20 @@ def _gloss_for_number(gloss, noun_number):
         out = out[:a.start()] + out[a.end():]
     return out
 
-def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None):
-    gloss = _gloss_for_number(_api_gloss(w), noun_number)
+def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None,
+              sent_text=None):
+    gloss = _gloss_for_number(_api_gloss(w, sent_text), noun_number)
+    kjv_phrase = kjv_wp.get(w['word_id'])
+    if w['strongs'] == 'H853':
+        # The definite object marker is untranslated; the corpus's
+        # automatic KJV alignment misanchors it (Gen 1:1 aligns it to
+        # "and") and phrase expansion then lends it a neighbour's
+        # words ("created and" — CodeSnack audit 2026-11-03). Its
+        # computed-Young's rows are the gated bridge's own (sparse:
+        # 10 in the corpus) and stay. The parenthesised gloss makes
+        # the Study sentence skip it, as it should.
+        gloss = '(object marker)'
+        kjv_phrase = None
     out = {
         'wid': w['word_id'], 'pos': w['word_pos'],
         'hebrew': w['pointed'] or w['unpointed'],
@@ -1746,7 +1773,7 @@ def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None):
         'gloss': gloss,
         'morph': w['morph'],
         'root': w['base_word'],
-        'kjv': kjv_wp.get(w['word_id']),
+        'kjv': kjv_phrase,
         'ylt': ylt_wp.get(w['word_id']),
         'ylt_computed': True,
     }
@@ -2011,12 +2038,13 @@ def _api_verse(n, c, v, with_variants=True):
         for r in verse_note_rows(verse_id)]
     lxx, lxx_alt = (_api_lxx_field(verse_id) if with_variants
                     else (None, None))
+    sent_text = ' '.join(k['word'] for k in kjv_sentence).lower()
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c, 'verse': v,
         'ref': f'{book_name(n)} {c}:{v}',
         'testament': 'OT',
         'words': [_api_word(w, kjv_wp, ylt_wp, with_variants,
-                            noun_num.get(w['word_id']))
+                            noun_num.get(w['word_id']), sent_text)
                   for w in words],
         'kjv_sentence': kjv_sentence,
         'witnesses': witnesses,
