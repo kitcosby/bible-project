@@ -1768,6 +1768,27 @@ def _api_word(w, kjv_wp, ylt_wp, with_variants=True, noun_number=None):
 # computed reference data, labeled by the 'greek_lexicon' note in the
 # payloads, never presented as a published lexicon.
 
+_GREEK_LEMMA_GLOSS = None
+
+
+def _greek_lemma_gloss():
+    """lemma -> most frequent LXX gloss (for SBLGNT words, which carry
+    lemmas but no Strong's numbers)."""
+    global _GREEK_LEMMA_GLOSS
+    if _GREEK_LEMMA_GLOSS is not None:
+        return _GREEK_LEMMA_GLOSS
+    b = bible()
+    best = {}
+    for r in b.execute(
+            'SELECT lemma, gloss, COUNT(*) AS n FROM lxx_words '
+            'WHERE lemma IS NOT NULL AND gloss IS NOT NULL '
+            'AND gloss <> %s GROUP BY lemma, gloss', ('',)):
+        if r['lemma'] not in best or r['n'] > best[r['lemma']][0]:
+            best[r['lemma']] = (r['n'], r['gloss'])
+    _GREEK_LEMMA_GLOSS = {k: v[1] for k, v in best.items()}
+    return _GREEK_LEMMA_GLOSS
+
+
 _GREEK_LEX = None
 
 
@@ -1865,6 +1886,40 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
                     if r['status'] == 'variant' else None})
     ylt_row = b.execute('SELECT text FROM ylt_verses WHERE verse_id=%s',
                         (verse_id,)).fetchone()
+    greek_words_variants = None
+    if gv and with_variants:
+        greek_words_variants = {}
+        lex = _greek_lex()
+        lemma_gloss = _greek_lemma_gloss()
+        for tbl, key in (('gntb', 'byz'), ('gnts', 'sbl')):
+            vr = b.execute(
+                f'SELECT gnt_verse_id FROM {tbl}_verses '
+                'WHERE corpus_verse_id=%s', (verse_id,)).fetchone()
+            if not vr:
+                greek_words_variants[key] = None
+                continue
+            if key == 'byz':
+                rows = b.execute(
+                    'SELECT position, surface, strongs, morph '
+                    'FROM gntb_words WHERE gnt_verse_id=%s '
+                    'ORDER BY position', (vr['gnt_verse_id'],)).fetchall()
+                greek_words_variants[key] = [
+                    {'pos': w['position'], 'greek': w['surface'],
+                     'translit': None, 'strongs': w['strongs'],
+                     'morph': w['morph'], 'lemma': None,
+                     'gloss': lex.get(w['strongs'], {}).get('gloss', '')}
+                    for w in rows]
+            else:
+                rows = b.execute(
+                    'SELECT position, surface, lemma, morph '
+                    'FROM gnts_words WHERE gnt_verse_id=%s '
+                    'ORDER BY position', (vr['gnt_verse_id'],)).fetchall()
+                greek_words_variants[key] = [
+                    {'pos': w['position'], 'greek': w['surface'],
+                     'translit': None, 'strongs': None,
+                     'morph': w['morph'], 'lemma': w['lemma'],
+                     'gloss': lemma_gloss.get(w['lemma'], '')}
+                    for w in rows]
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c,
         'verse': v, 'ref': f'{book_name(n)} {c}:{v}',
@@ -1873,6 +1928,7 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
         'greek_tradition': 'TR',
         'greek_text': gv['text'] if gv else None,
         'greek_words': greek_words,
+        'greek_words_variants': greek_words_variants,
         'greek_lexicon': 'derived from LXX word data (most frequent '
                          'lemma/gloss per Strong\'s number)',
         'kjv_sentence': kjv_sentence,
@@ -2056,6 +2112,28 @@ def api_word(strongs):
         WHERE w2.strongs=%s
         ORDER BY vv.book_id, vv.chapter, vv.verse LIMIT 500''',
         (s,)).fetchall()
+    # Word-page variants are a LEXEME-level summary: variant rows are
+    # stored per occurrence, so aggregate the distinct textual rows
+    # over the first 50 occurrences (verse payloads stay exact).
+    agg, seen = [], set()
+    for ow in b.execute(
+            f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.strongs=%s '
+            'ORDER BY w.word_id LIMIT 50', (s,)).fetchall():
+        for r in word_variant_rows(ow['word_id'], ow['letters']):
+            if r['variant_kind'] != 'textual':
+                continue
+            key = (r['witness'], r['variant_text'] or r['unpointed'])
+            if key in seen:
+                continue
+            seen.add(key)
+            agg.append({'seq': r['variant_seq'],
+                        'kind': r['variant_kind'],
+                        'type': r['variant_type'],
+                        'witness': r['witness'],
+                        'convention': r['convention'],
+                        'text': r['variant_text'] or r['unpointed']})
+        if len(agg) >= 12:
+            break
     return _api_json({
         'strongs': s,
         'hebrew': w['pointed'] or w['unpointed'],
@@ -2064,6 +2142,7 @@ def api_word(strongs):
         'gloss': gloss,
         'morph': w['morph'],
         'root': w['base_word'],
+        'variants': agg[:12],
         'kjv_phrases': kjv_lp.get(lk, [])[:12],
         'ylt_phrases': ylt_lp.get(lk, [])[:12],
         'ylt_computed': True,
