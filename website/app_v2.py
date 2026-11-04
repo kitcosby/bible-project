@@ -1548,9 +1548,9 @@ def english_sentence_html(verse_id):
 def api_books():
     rows = bible().execute(
         'SELECT book_id, name_en FROM books ORDER BY book_id').fetchall()
-    return jsonify([{'book_id': r['book_id'], 'name_en': r['name_en'],
-                     'testament': 'OT' if r['book_id'] <= 39 else 'NT'}
-                    for r in rows])
+    return _api_json([{'book_id': r['book_id'], 'name_en': r['name_en'],
+                       'testament': 'OT' if r['book_id'] <= 39 else 'NT'}
+                      for r in rows])
 
 @app.route('/api/chapters/<int:n>')
 def api_chapters(n):
@@ -1558,7 +1558,7 @@ def api_chapters(n):
         f'''SELECT DISTINCT vv.chapter FROM verses vv
             WHERE vv.book_id=%s {_WORDS_EXIST} ORDER BY vv.chapter''',
         (n,)).fetchall()
-    return jsonify([r['chapter'] for r in rows])
+    return _api_json([r['chapter'] for r in rows])
 
 @app.route('/api/verses/<int:n>/<int:c>')
 def api_verses(n, c):
@@ -1566,7 +1566,7 @@ def api_verses(n, c):
         f'''SELECT vv.verse FROM verses vv
             WHERE vv.book_id=%s AND vv.chapter=%s {_WORDS_EXIST}
             ORDER BY vv.verse''', (n, c)).fetchall()
-    return jsonify([r['verse'] for r in rows])
+    return _api_json([r['verse'] for r in rows])
 
 # ---------------------------------------------------------------- BYOT PWA JSON API
 # Phase 3 (2026-11-03): content endpoints for the Build Your Own
