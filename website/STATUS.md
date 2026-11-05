@@ -346,3 +346,36 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   on the laptop and the standing rule bars a laptop ship without Kit's
   authorization; PG counts are the one remaining step.
 - Committed locally only — GitHub push held for the Sunday weekly push.
+
+## 2026-11-05 — YLT-REPAIR-R2: gold expansion + span-boundary prototype (gate pass on a copy; NOT applied)
+
+- Gold set `eval/ylt_gold.tsv` expanded 30 → 42 verses (335 → 438 words,
+  770 → 991 pairs) with 12 hand-aligned verses from 8 further books
+  (Ex 20:2, 20:3, 3:14; Deut 6:4–5; Prov 3:5–6; Eccl 1:2; Song 8:6;
+  Amos 5:24; Hab 2:4; Mic 6:8), validated against `bible_v2.db` to
+  0 integrity errors (4 round-1 `strongs` cells updated to post-U-10 DB
+  values; no alignment positions changed).
+- Re-census of the shipped `ylt_renderings` on the expanded gold:
+  precision 0.7873 (tp 507/644), recall 0.5116 (507/991), H3068 drift 0;
+  the round-1 subset reproduces 0.7984 / 0.5039 exactly. False-negative
+  words 281: span-boundary 255 (largest class), displaced 23,
+  unbridgeable (blank Strong's) 3.
+- New prototype `ylt_span_repair_proto.py` (insert-only, never steals a
+  held token, H3068 guard retained): SB1, SB2 and loose SB3 FAILED the
+  precision gate and were dropped/recorded, as R3 was in round 1.
+  Winning combo SB4 (verb auxiliary capture) + SB3s (strict
+  evidence-gated gap claiming) GATE-PASS on both gate halves — expanded:
+  P 0.7873 → 0.7917, R 0.5116 → 0.5368, drift 0; round-1 subset:
+  P 0.7984 → 0.8023, R 0.5039 → 0.5325, drift 0.
+- Trial run on a DB COPY only (backup taken first; copy scores read back
+  from its own table reproduce the prototype exactly): +12,263 rows →
+  370,654; distinct Hebrew words hit 176,470 → 177,498 / 262,062
+  (67.34% → 67.73%); YLT token positions covered 345,979 → 358,242 /
+  602,067 (57.47% → 59.50%). `lexicon_ylt_rendering` not rebuilt
+  (98,090 groups / 234,091 rows, unchanged).
+- Live DB NOT changed (md5 `9287ff0ab30161de93e5e13cbb12a49d` before and
+  after), no laptop/PostgreSQL ship. Shipped table stands at 358,391
+  rows / 176,470 hit / 345,979 positions. Corpus-wide application of
+  SB4+SB3s awaits Kit's ruling. YLT remains COMPUTED best-effort, NOT
+  authoritative; 'computed' labels unchanged; website still opens the
+  DB read-only.
