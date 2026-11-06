@@ -34,13 +34,14 @@ This log records project documentation changes only. GitHub issue creation and s
 
 ## 2026-11-06 — PostgreSQL backup and restore test
 
-- Created a PostgreSQL 16.10 custom-format dump of production database `bible` plus a separate `pg_dumpall --globals-only` export.
-- Verified archive readability with `pg_restore --list` and recorded SHA-256 hashes in the backup manifest.
-- Created a portable custom-format copy under the Windows OneDrive directory.
-- Restored that copy into isolated database `bible_restore_verify_20261106` with `pg_restore --exit-on-error --no-owner --no-acl`.
-- Compared exact row counts for all 47 public tables: zero differences; extensions matched; zero invalid indexes in both production and restored database.
-- OneDrive client was running, but cloud sync completion was not independently verified. Full owner/ACL restoration has not yet been tested.
-- Production database and computed lexicon remained unchanged.
+- Located a full custom-format backup, separate globals export and backup manifest under /var/backups/bible-postgres-20261106T171837Z/.
+- Verified file existence and metadata sizes: bible.dump 195,708,631 bytes; globals.sql 1,088 bytes; archive-list.txt 22,018 bytes.
+- Read the archive catalogue; PostgreSQL reports 324 TOC entries. The manifest records SHA-256 hashes, but those hashes were not independently recomputed in this phase.
+- Verified the OneDrive-path copy exists at 195,708,448 bytes. The OneDrive process was running; cloud sync completion remains unconfirmed.
+- Restored the OneDrive-path archive into isolated database bible_restore_verify_20261106; pg_restore --exit-on-error completed successfully.
+- Independent row counts matched production for eleven key tables. The backup manifest also records a 47-table comparison and extension/index checks; those additional checks have not yet been independently repeated in this phase.
+- The restore used --no-owner --no-acl; global roles and ownership/ACL recovery were not exercised.
+- No production data or application files were changed by the restore test.
 
 ## 2026-11-06 — Backup/restore and TR parser root-cause investigation
 
