@@ -33,7 +33,7 @@ CrossWire KJV module markup carries the omitted forms in `lemma.TR` and referenc
 
 **Minimal correction direction:** Extend parse_tr() to recognize the pipe-delimited source syntax, preserve one token occurrence and retain alternate Strong's/morphology analyses as metadata. Then rebuild and validate the TR token stream in a disposable database before regenerating any downstream bridge. Do not apply a blanket positional shift.
 
-### YLT-GNT-002 — SBL lemma/gloss lookup uses incompatible lemma representations
+### YLT-GNT-002 — SBL normalized word forms are incorrectly treated as LXX lexical lemmas
 
 **Severity:** High  
 **Affected components:** `gnts_words`, `lxx_words`, Flask lexical lookup and PWA.
@@ -47,7 +47,7 @@ The API attempts an exact lemma equality lookup. These different representations
 
 **Expected behavior:** The application must either use a Greek-script lemma source or an explicit, provenance-bearing crosswalk from the SBL lemma representation to the LXX representation. A transliteration guess or accent-stripping alone is insufficient.
 
-**Minimal correction direction:** Identify a licensed, version-pinned Greek lemma crosswalk or use a direct Greek-script lexicon. Preserve source lemma and matched lemma separately, and expose lookup provenance and ambiguity.
+**Minimal correction direction:** Confirm the MorphGNT source schema, retain normalized form and morphology as such, and obtain a genuine lexical lemma from a version-pinned Greek lexicon/crosswalk. Preserve original form, canonical lemma, matching method and source provenance separately.
 
 ### YLT-GNT-003 — Greek lexical provenance is discarded by the PWA adapter
 
