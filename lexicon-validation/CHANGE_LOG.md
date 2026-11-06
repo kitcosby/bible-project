@@ -31,3 +31,13 @@ This log records project documentation changes only. GitHub issue creation and s
 - Confirmed the orphan YLT words: John 9:21 `shall` and `speak`; Colossians 4:10 `him`.
 - Confirmed no PostgreSQL backup was identified in inspected locations. The existing `bible.db` and `bible_v2.db` files are SQLite artifacts, not PostgreSQL backups. Backup/restore verification remains blocking.
 - No database rows, live application files or generation scripts were modified.
+
+## 2026-11-06 — PostgreSQL backup and restore test
+
+- Created a PostgreSQL 16.10 custom-format dump of production database `bible` plus a separate `pg_dumpall --globals-only` export.
+- Verified archive readability with `pg_restore --list` and recorded SHA-256 hashes in the backup manifest.
+- Created a portable custom-format copy under the Windows OneDrive directory.
+- Restored that copy into isolated database `bible_restore_verify_20261106` with `pg_restore --exit-on-error --no-owner --no-acl`.
+- Compared exact row counts for all 47 public tables: zero differences; extensions matched; zero invalid indexes in both production and restored database.
+- OneDrive client was running, but cloud sync completion was not independently verified. Full owner/ACL restoration has not yet been tested.
+- Production database and computed lexicon remained unchanged.
