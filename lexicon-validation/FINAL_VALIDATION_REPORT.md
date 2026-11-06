@@ -60,3 +60,10 @@ The validator was downloaded from this branch and rerun read-only against `bible
 - Ran the focused parser regression tests against `master/build_nt.py`: both John 9:21 and Colossians 4:10 were reported as expected failures, confirming the reproducer still detects the parser defect. The tests are intentionally marked expected-failure; no parser code was changed.
 
 Interpretation: the stored English rendering positions and token strings are internally consistent across all four witnesses. This does not prove that each Greek token has the correct English association; the three TR bridge defects remain. The validator's punctuation/token convention is a structural consistency test, not a semantic alignment gold standard. No production rows or application files were changed.
+
+
+## 2026-11-06 — Isolated Robinson variant rebuild
+
+A variant-aware TR sequence and shadow bridge were built and validated in `bible_greek_bridge_test_20261106`, not in production. The resolved subset achieved 99.90% `lemma.TR` agreement and zero out-of-range positions; John 9:21 and Colossians 4:10 are corrected in the shadow sequence. Shadow integrity checks found no non-contiguous token positions, duplicate bridge keys, missing Greek references, or orphan YLT renderings.
+
+This does **not** complete production validation. Nineteen groups across 17 references remain unresolved, and ten legacy Colossians 4:18 edges are classified as colophon-only. The existing YLT rendering edge set is unchanged on resolved verses. The embedding vectorizer and public corpus remain unchanged. Production status remains **not approved** pending review of unresolved variants and the colophon exclusion. See [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md).
