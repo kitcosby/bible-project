@@ -92,7 +92,13 @@ Byzantine YLT mapping rows exist in PostgreSQL but were not found in the Flask A
 - Unaligned particles or function words where no defensible one-to-one English equivalent exists.
 - A morphology pattern whose source grammar is genuinely ambiguous.
 
-## Backup/restore evidence\n\nA PostgreSQL 16.15 custom-format dump of the production `bible` database was created in the local OneDrive sync folder (91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`). The archive catalogue was readable and restore into `bible_restore_verify_20261106` completed successfully. Independent row counts for eleven key tables matched production. The dump excludes owner/ACL metadata; OneDrive cloud upload and off-host recovery remain unverified.\n\nA separate execution of the validator against the restored database returned zero counts for several Greek/rendering tables even though the independent row-count comparison had shown those tables populated. This discrepancy is unresolved; do not treat the restored-snapshot validator run as valid until its DSN/session/search-path behavior is independently reconciled.\n\n## Backup/restore evidence
+## Backup/restore evidence
+
+A PostgreSQL 16.15 custom-format dump of the production `bible` database was created in the local OneDrive sync folder (91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`). The archive catalogue was readable and restore into `bible_restore_verify_20261106` completed successfully. Independent row counts for eleven key tables matched production. The dump excludes owner/ACL metadata; OneDrive cloud upload and off-host recovery remain unverified.
+
+A separate execution of the validator against the restored database returned zero counts for several Greek/rendering tables even though the independent row-count comparison had shown those tables populated. This discrepancy is unresolved; do not treat the restored-snapshot validator run as valid until its DSN/session/search-path behavior is independently reconciled.
+
+## Backup/restore evidence
 
 A full custom-format backup and separate globals export are recorded in BACKUP_REPORT.md. File existence and sizes were checked; the archive catalogue was readable; the OneDrive-path copy restored into bible_restore_verify_20261106; and independent counts matched production for eleven key tables. The manifest SHA-256 values were not independently recomputed in this phase, OneDrive cloud sync remains unconfirmed, and ownership/ACL restore has not been tested. A restored-snapshot validator run returned zero counts for some tables that independent count checks showed as populated; this inconsistency remains open.
 
