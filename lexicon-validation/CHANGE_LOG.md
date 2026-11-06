@@ -46,9 +46,16 @@ This log records project documentation changes only. GitHub issue creation and s
 ## 2026-11-06 — Backup/restore and TR parser root-cause investigation
 
 - Installed PostgreSQL 16 client tools (pg_dump 16.15) on Lampy; no production database configuration or rows were changed by the package installation.
-- Created custom-format database dump in the local OneDrive sync folder: 91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`.
+- An initial 91,500,544-byte custom-format dump was created in the OneDrive folder and hashed. A later 195,708,448-byte archive replaced it at that same path; the current file is documented in BACKUP_REPORT.md.
 - `pg_restore -l` read the archive and `pg_restore --exit-on-error` restored it into isolated database `bible_restore_verify_20261106` with exit code 0.
 - Independent counts matched production for 11 key tables. The dump used `--no-owner --no-acl`; global roles were not included. OneDrive cloud replication was not independently confirmed.
 - Downloaded and inspected the pinned CrossWire KJV 3.1 module and Robinson TR source files. The root cause is now traced to `build_nt.py` `parse_tr()` skipping pipe-delimited variant/morphology records, omitting `autou` in John 9:21 and `barnaba` in Colossians 4:10. Issue #1 was updated with source pins and a corrected repair plan.
 - A validator run against the restored database returned zero for several Greek/rendering tables despite the independent count check showing matching nonzero counts. This inconsistency is unresolved and is explicitly recorded; do not trust that restored-snapshot validator result until reconciled.
 - No production data, deployed code, or computed lexicon rows were changed.
+
+## 2026-11-06 — Backup artifact reconciliation and security note
+
+- A separate full backup set under `/var/backups/bible-postgres-20261106T171837Z/` and its manifest were discovered and verified to exist by file metadata. The manifest records a 195,708,631-byte database archive, 1,088-byte globals export and 22,018-byte archive catalogue.
+- The portable OneDrive-path archive currently measures 195,708,448 bytes. This supersedes the earlier 91.5 MB file and its checksum.
+- The globals export contains SCRAM password hashes. It is sensitive and must not be committed to GitHub or copied to an unencrypted cloud location. The manifest reports restrictive Linux permissions, but the Windows/WSL file metadata interface returned mode 666; actual WSL permissions still need direct verification before treating the file as protected.
+- The backup manifest's checksums and 47-table comparison have not yet been independently recomputed in this phase. The restored-snapshot validator inconsistency remains open.
