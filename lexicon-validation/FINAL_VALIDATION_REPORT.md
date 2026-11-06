@@ -8,7 +8,7 @@
 The computed YLT lexicon is **not yet validated for release as a fully correct word-level lexicon**.
 
 - Hebrew alignment has an existing manual gold set and a measured baseline; it remains best-effort, not an authoritative interlinear.
-- Greek TR alignment contains confirmed positional defects. The upstream cause is traced to build_nt.py parse_tr() skipping pipe-delimited variant/morphology records in the pinned Robinson source.
+- Greek TR alignment contains confirmed positional defects. The upstream cause is traced to build_nt.py parse_tr() failing to implement the pinned Robinson source's first/second pipe-variant syntax. The MIT-licensed librobinson parser provides the reference behavior; the intended primary variant policy still needs compatibility testing.
 - SBL lemma/gloss lookup fails because Greek-script MorphGNT lemmas are compared directly with transliterated LXX lemmas.
 - The PWA drops the API's LXX-derived Greek lexical provenance note.
 - SBL and Byzantine bridge tables exist in PostgreSQL; their API serving coverage and SBL row counts remain to be measured.
