@@ -97,3 +97,13 @@ This log records project documentation changes only. GitHub issue creation and s
 - Applied librobinson's three documented shorthand regexes: 39 surface-alternative matches, one alternative-morphology match and one alternative-Strong's match (41 total).
 - Found no M5:, M6:, VAR: or :END control markers in these 27 files.
 - Confirmed the current builder's regex-only parser lacks librobinson's general first/second variant selection. The fix must use the upstream variant semantics across the whole corpus, not patch only John 9:21 and Colossians 4:10.
+
+## 2026-11-06 — Restored-snapshot YLT token-position validation
+
+- Re-ran the branch validator read-only against `bible_restore_verify_20261106`; the report identifies PostgreSQL 16.10 and a 1,086 MB database.
+- Hebrew 358,391; TR 143,227; Byzantine 141,902; SBL 135,971 rendering rows all passed YLT verse-token position/string checks (zero missing text, out-of-range token positions or token mismatches).
+- All checked Hebrew/root/lexicon/KJV references passed. Byzantine and SBL parent, range, orphan and duplicate-key checks were zero.
+- TR still has 3 out-of-range Greek alignment positions and 3 orphan rendering rows. KJV positions are in range; TR missing-parent and duplicate-key checks are zero. This is consistent with the known John 9:21 and Colossians 4:10 source-parser defects.
+- Focused parser tests were executed against `master/build_nt.py`; both cases were expected failures, confirming the current parser still omits the pipe-variant source tokens.
+- Diagnostics: 5 TR G0 occurrences; 1 unparsed morphology pattern; Hebrew-only Strong's dictionary (19,058 entries); zero exact SBL normalized-form/LXX lemma matches.
+- This run resolves the earlier concern that the restored-snapshot validator was returning zero for populated Greek/rendering tables: it reports their expected nonzero row counts and the known TR failures. No production data, source builder, deployed API or frontend was modified.
