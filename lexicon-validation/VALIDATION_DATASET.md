@@ -48,6 +48,6 @@ Each executable test result should record:
 - Evidence source and confidence classification.
 - Pass/fail/needs-review outcome.
 
-## Current readiness
+## Automated validator\n\nA read-only PostgreSQL validator is now available at `eval/validate_ylt_lexicon_postgres.py`. It requires `BIBLE_DATABASE_URL`, starts a read-only transaction, checks Hebrew/TR/Byzantine parent references, position bounds, duplicate bridge keys, Strong's G0 count and SBL/LXX exact lemma-match coverage, and emits focused records for John 9:21 and Colossians 4:10. It does not mutate the database.\n\nInitial live run (2026-11-06): Hebrew orphan mappings 0; TR out-of-range alignment rows 3; TR orphan YLT rendering rows 3; Byzantine out-of-range rows 0; Byzantine orphan rendering rows 0; duplicate keys in the checked bridge tables 0; TR G0 occurrences 5; SBL words with exact LXX lemma/gloss match 0. The validator returned a nonzero status because the TR positional/orphan checks fail, as intended.\n\n## Current readiness
 
 The Hebrew gold set already includes 30 manually aligned verses (Genesis 1, Psalm 23 and Isaiah 53), with reported baseline precision 0.7984 and recall 0.5039 at the current operating point. The Greek cases above are currently a specification, not yet a machine-executable gold set. Independent manual annotation is required before treating all expected Greek word associations as gold truth.
