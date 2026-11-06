@@ -23,3 +23,8 @@
 - **Closed/documented:** Deliberately retained with documented reason and evidence.
 
 Five actionable GitHub issues are open: [#1 TR parser/positional bridge](https://github.com/kitcosby/bible-project/issues/1), [#2 SBL lexical lookup](https://github.com/kitcosby/bible-project/issues/2), [#3 PWA provenance](https://github.com/kitcosby/bible-project/issues/3), [#4 Byzantine bridge integrity](https://github.com/kitcosby/bible-project/issues/4), and [#6 Greek variant API integration](https://github.com/kitcosby/bible-project/issues/6). An accidental duplicate issue #5 was closed as duplicate. The read-only validator now reports 3 out-of-range TR bridge rows and 3 orphan TR YLT renderings; Byzantine and Hebrew structural checks passed. No production repair has been applied. Backup/restore test completed locally; cloud sync and recovery metadata remain incomplete. Restored-snapshot validator output has an unresolved discrepancy with the independent table-count check.
+
+
+## 2026-11-06 update — Issue #1 (Greek positional alignment)
+
+The root cause is now traced to unhandled Robinson pipe-delimited variant groups in the current parser. A source-driven per-group reconstruction passed the isolated test for resolved references: 99.90% lemma agreement and zero out-of-range positions. The known John 9:21 and Colossians 4:10 failures are corrected in the shadow sequence. Nineteen groups across 17 references remain unresolved, and ten legacy Colossians 4:18 mappings are colophon-only. Issue #1 remains open; no production migration has been made. Full evidence is in [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md).
