@@ -41,3 +41,13 @@ This log records project documentation changes only. GitHub issue creation and s
 - Compared exact row counts for all 47 public tables: zero differences; extensions matched; zero invalid indexes in both production and restored database.
 - OneDrive client was running, but cloud sync completion was not independently verified. Full owner/ACL restoration has not yet been tested.
 - Production database and computed lexicon remained unchanged.
+
+## 2026-11-06 — Backup/restore and TR parser root-cause investigation
+
+- Installed PostgreSQL 16 client tools (pg_dump 16.15) on Lampy; no production database configuration or rows were changed by the package installation.
+- Created custom-format database dump in the local OneDrive sync folder: 91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`.
+- `pg_restore -l` read the archive and `pg_restore --exit-on-error` restored it into isolated database `bible_restore_verify_20261106` with exit code 0.
+- Independent counts matched production for 11 key tables. The dump used `--no-owner --no-acl`; global roles were not included. OneDrive cloud replication was not independently confirmed.
+- Downloaded and inspected the pinned CrossWire KJV 3.1 module and Robinson TR source files. The root cause is now traced to `build_nt.py` `parse_tr()` skipping pipe-delimited variant/morphology records, omitting `autou` in John 9:21 and `barnaba` in Colossians 4:10. Issue #1 was updated with source pins and a corrected repair plan.
+- A validator run against the restored database returned zero for several Greek/rendering tables despite the independent count check showing matching nonzero counts. This inconsistency is unresolved and is explicitly recorded; do not trust that restored-snapshot validator result until reconciled.
+- No production data, deployed code, or computed lexicon rows were changed.
