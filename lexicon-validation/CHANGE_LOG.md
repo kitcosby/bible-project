@@ -107,3 +107,14 @@ This log records project documentation changes only. GitHub issue creation and s
 - Focused parser tests were executed against `master/build_nt.py`; both cases were expected failures, confirming the current parser still omits the pipe-variant source tokens.
 - Diagnostics: 5 TR G0 occurrences; 1 unparsed morphology pattern; Hebrew-only Strong's dictionary (19,058 entries); zero exact SBL normalized-form/LXX lemma matches.
 - This run resolves the earlier concern that the restored-snapshot validator was returning zero for populated Greek/rendering tables: it reports their expected nonzero row counts and the known TR failures. No production data, source builder, deployed API or frontend was modified.
+
+
+## 2026-11-06 — Robinson variant-aware bridge test
+
+- Inspected upstream `librobinson` variant handling and pinned source commits for Robinson TR, parser, and CrossWire KJV 3.1.
+- Built a variant-aware Greek token sequence and shadow KJV/YLT bridge in isolated database `bible_greek_bridge_test_20261106`.
+- 242 groups resolved; 19 groups across 17 verses remain unresolved. No LLM decisions were used.
+- Source lemma agreement on resolved checks: 99.90%; out-of-range positions: 0. John 9:21 position 24 and Colossians 4:10 position 21 now exist in the shadow sequence.
+- YLT rendering edges unchanged on resolved verses; three prior orphan rows become valid. Ten legacy Colossians 4:18 colophon edges excluded.
+- Existing embedding vectorizer and corpus unchanged; no production changes.
+- Full report: [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md).
