@@ -13,7 +13,7 @@
 5. Backup report records current table counts and hashes.
 6. OneDrive cloud synchronization completion has not been independently confirmed; full owner/ACL restore has not yet been exercised.
 
-Historical `app_v2.py.bak-*` files are application-code backups, not database backups. No production mutation is permitted until the remaining backup checks are complete.
+Historical `app_v2.py.bak-*` files are application-code backups, not database backups. Current local dump: `C:\\Users\\kitco\\OneDrive\\BibleBackups\\bible-20261106.dump`; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`; 91,500,544 bytes. Restored to `bible_restore_verify_20261106` with `pg_restore --exit-on-error`; independent key-table row counts matched. A restored-snapshot validator run disagreed with the independent count check and needs investigation. No production mutation is permitted until the remaining backup checks are complete.
 
 ## Gate 1 — Reproduce defects outside production
 
