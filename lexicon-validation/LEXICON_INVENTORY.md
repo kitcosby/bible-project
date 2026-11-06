@@ -34,7 +34,10 @@ Additional counts measured:
 
 - `words`: 264,217 rows.
 - `ylt_renderings`: 358,391 rows.
-- `lexicon_ylt_rendering`: 234,091 rows.\n- `gnt_words`: 141,009 rows; `gnt_ylt_renderings`: 143,227 rows.\n- `gntb_words`: 140,149 rows; `gntb_ylt_renderings`: 141,902 rows.\n- `gnts_words`: 137,554 rows; `lxx_words`: 623,693 rows.
+- `lexicon_ylt_rendering`: 234,091 rows.
+- `gnt_words`: 141,009 rows; `gnt_ylt_renderings`: 143,227 rows.
+- `gntb_words`: 140,149 rows; `gntb_ylt_renderings`: 141,902 rows.
+- `gnts_words`: 137,554 rows; `lxx_words`: 623,693 rows.
 
 These are point-in-time production measurements, not a recoverable backup or cryptographic content manifest. Table sizes are approximate PostgreSQL total relation sizes.
 
@@ -86,7 +89,21 @@ The API exposes the Greek lexical provenance field in its underlying response, b
 
 ## Backup and recovery status
 
-**Unverified / blocking before repair.** Existing historical application-code backups were found under `/opt/bible/website`, but the read-only discovery did not establish a verified backup of the current PostgreSQL `bible` database. Do not infer that an application-code backup protects database contents. Before any production repair, take a fresh, independently verifiable PostgreSQL backup and record its path, size, checksum, timestamp, restore test and database identity. The inspected locations contained older SQLite files (`/opt/bible/bible_v2.db`, 479,227,904 bytes; `/opt/bible/bible.db`, 198,459,392 bytes), which are not backups of the current PostgreSQL database. Historical `app_v2.py.bak-*` files are application-code backups. No PostgreSQL dump/backup was identified in the inspected locations, and `pg_dump` was not found on PATH. No such backup was created in this phase.
+**A logical backup exists and has been restored locally; off-host replication and full permission recovery remain open.**
+
+The current backup report and manifest are recorded in BACKUP_REPORT.md. The files were independently located on Lampy and their metadata checked:
+
+- Full local archive: /var/backups/bible-postgres-20261106T171837Z/bible.dump, 195,708,631 bytes.
+- Separate globals export: /var/backups/bible-postgres-20261106T171837Z/globals.sql, 1,088 bytes.
+- Archive catalogue: archive-list.txt, 22,018 bytes; PostgreSQL archive header reports 324 TOC entries.
+- Portable OneDrive-path copy: C:\Users\kitco\OneDrive\BibleBackups\bible-20261106.dump, 195,708,448 bytes.
+- The backup manifest records SHA-256 values; this phase verified file existence, sizes and archive-list readability, but did not independently recompute the manifest hashes.
+- The OneDrive process was running, but cloud upload completion was not independently confirmed. This is not yet a verified off-host copy.
+- The portable archive restored into isolated database bible_restore_verify_20261106 with pg_restore --exit-on-error completing successfully. Independent counts matched production for 11 key tables. A separate restored-snapshot validator run unexpectedly returned zero for several populated Greek/rendering tables; that discrepancy remains unresolved.
+- The portable restore used --no-owner --no-acl. The separate globals export exists, but restoration of original roles, ownership and ACLs has not been exercised.
+- An earlier 91.5 MB dump was superseded at the same OneDrive path by the current 195.7 MB archive; use the current manifest and file metadata, not the earlier hash.
+
+Do not treat the local OneDrive path as a proven cloud backup until sync is confirmed from the client or another device. Before production repair, independently recompute checksums, verify the full local archive and globals export, complete an owner/ACL restore test in isolation, and confirm an off-host copy.
 
 ## Next inventory work
 
