@@ -9,7 +9,7 @@
 - The OneDrive-path copy restored into isolated database bible_restore_verify_20261106 with pg_restore --exit-on-error completing successfully.
 - Independent row counts matched production for eleven key tables.
 - The manifest records checksums and a 47-table comparison; those checksum values and the full 47-table comparison have not yet been independently rerun in this phase.
-- OneDrive cloud sync is unconfirmed. The restore used --no-owner --no-acl; ownership/ACL and globals restoration remain untested.
+- OneDrive cloud sync is unconfirmed. The restore used --no-owner --no-acl; ownership/ACL and globals restoration remain untested. The globals export contains SCRAM password hashes; restrict access and verify actual Linux file permissions (manifest says 0600, Windows/WSL metadata view reported 666).
 - A restored-snapshot validator run returned zero for several Greek/rendering tables despite the independent count comparison showing those tables populated. Reconcile this before relying on the validator against snapshots.
 
 No production data mutation is permitted until checksums, off-host replication, and a recovery-grade restore including the required roles/permissions have been verified.
