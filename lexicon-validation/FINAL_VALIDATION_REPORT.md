@@ -19,7 +19,7 @@ The current computed YLT lexicon is **not yet validated for release as a fully c
 
 ## Not completed
 
-- Current PostgreSQL backup verification and isolated restore test.
+- Current PostgreSQL backup verification and isolated restore test. (Blocking; not established.)
 - Full table/constraint/FK inventory and data fingerprints.
 - Source archive checksum and exact source-version pinning.
 - Machine-executable Greek gold dataset.
