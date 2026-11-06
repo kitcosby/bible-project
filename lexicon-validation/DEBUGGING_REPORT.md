@@ -22,7 +22,7 @@ Live examples identified during discovery:
 - **John 9:21:** Robinson TR has 23 Greek word positions; the KJV bridge references position 24. YLT tokens `shall` and `speak` were left orphaned. The Greek token `λαλησει` was associated with `himself` rather than the YLT phrase `shall speak`.
 - **Colossians 4:10:** Robinson TR has 20 Greek word positions; the KJV bridge references position 21. YLT token `him` was left orphaned. The Greek token `αυτον` was associated with `receive` rather than `him`.
 
-These are positional/source-bridge defects, not evidence that YLT's translation choices are wrong. The exact upstream edition/versification cause remains to be isolated.
+A new read-only validator run against the live PostgreSQL database confirmed **3 out-of-range bridge rows and 3 orphaned YLT rendering rows**: two out-of-range source references at John 9:21 (both target TR position 24, beyond the 23-word verse) and one at Colossians 4:10 (target position 21, beyond the 20-word verse). The orphan renderings are John 9:21 `shall` and `speak`, plus Colossians 4:10 `him`. The current stored mapping associates John 9:21 TR token `λαλησει` with `himself`; Colossians 4:10 token `αυτον` receives `receive`. These are positional/source-bridge defects, not evidence that YLT's translation choices are wrong. The exact upstream edition/versification cause remains to be isolated.
 
 **Expected behavior:** Every source reference must resolve against the selected Greek witness and verse. Unresolved references must be reported and excluded from automatic word association, not silently attached to another token.
 
