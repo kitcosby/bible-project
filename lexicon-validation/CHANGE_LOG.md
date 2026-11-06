@@ -76,3 +76,10 @@ This log records project documentation changes only. GitHub issue creation and s
 
 - Created GitHub issue #6 to define and expose the existing Byzantine and SBL bridge tables through the API, while keeping witness positions separate.
 - Updated ISSUE_LOG.md. The issue is an integration/design investigation; table counts and intended reader behavior still need verification.
+
+## 2026-11-06 — TR parser regression reproducer
+
+- Added `eval/test_nt_parser_variants.py` with focused John 9:21 and Colossians 4:10 source fixtures.
+- The tests assert the omitted token is retained once and that alternative Strong's/morphology values remain available as metadata.
+- Tests are marked expected-failure against current master because the parser has not yet been fixed. They have not been executed in this phase.
+- No parser implementation or production data was changed.
