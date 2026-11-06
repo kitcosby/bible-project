@@ -15,11 +15,12 @@ The computed YLT lexicon is **not yet validated for release as a fully correct w
 
 ## Completed
 
-- Created a dedicated ylt-lexicon-validation branch and seven initial validation records, plus a backup report.
+- Created a clean review branch ylt-lexicon-validation-review-20261106 from master, containing ten validation artifacts. The older ylt-lexicon-validation branch is 75 commits ahead of master and was not used for review.
 - Added a read-only PostgreSQL validator and ran it against the live production database.
 - Confirmed 3 out-of-range TR bridge rows and 3 orphan TR YLT rendering rows; Hebrew and Byzantine structural checks passed.
 - Traced the John 9:21 and Colossians 4:10 defects to the current TR parser's failure to implement Robinson first/second pipe-variant selection. Surveyed all 27 UTR files: 431 physical lines contain pipe markers, with 41 matches to librobinson's three shorthand-normalization patterns.
 - Created five actionable GitHub issues (#1–#4 and #6); duplicate issue #5 was closed.
+- Opened draft PR #7 against master; it contains only the ten validation artifacts and is not merged.
 - Located a full custom-format backup, globals export and manifest; verified file existence, sizes and archive catalogue readability.
 - Restored the OneDrive-path copy into isolated database bible_restore_verify_20261106; restore command completed successfully and independent row counts matched production for eleven key tables.
 
