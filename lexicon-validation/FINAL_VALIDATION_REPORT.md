@@ -44,3 +44,20 @@ The computed YLT lexicon is **not yet validated for release as a fully correct w
 ## Release recommendation
 
 **Not ready for validated release.** Preserve the current production data. Finish backup recovery verification, reconcile the snapshot validator, implement the TR parser correction in isolation, and validate the SBL lookup/provenance fixes. Do not regenerate the full lexicon or modify production data as part of this phase.
+
+## 2026-11-06 — Restored-snapshot full YLT token-position validation
+
+The validator was downloaded from this branch and rerun read-only against `bible_restore_verify_20261106` (PostgreSQL 16.10; reported database size 1,086 MB). The run completed and emitted a JSON report.
+
+- All four stored YLT rendering sets passed exact token-position comparison against their linked YLT verse text under the builder's whitespace-tokenization and punctuation-stripping convention:
+  - Hebrew: 358,391 rows; 0 missing text, out-of-range positions or token mismatches.
+  - TR: 143,227 rows; 0 in those three categories.
+  - Byzantine: 141,902 rows; 0 in those three categories.
+  - SBL: 135,971 rows; 0 in those three categories.
+- All checked Hebrew/root/lexicon/KJV references passed (zero missing parent links).
+- Byzantine and SBL alignment/rendering checks passed: zero missing verse links, out-of-range positions, orphan renderings or duplicate keys.
+- TR checks still report exactly 3 out-of-range Greek positions and 3 orphan YLT rendering rows. The KJV positions themselves are in range; duplicate-key and missing-parent checks are zero. These are the known John 9:21 and Colossians 4:10 parser/bridge defects.
+- Diagnostics remain: 5 TR G0 occurrences; 1 unparsed morphology pattern; Strong's dictionary contains Hebrew only (19,058 rows); 0 exact SBL normalized-form/LXX-lemma matches. These diagnostics are not automatically classified as corruption.
+- Ran the focused parser regression tests against `master/build_nt.py`: both John 9:21 and Colossians 4:10 were reported as expected failures, confirming the reproducer still detects the parser defect. The tests are intentionally marked expected-failure; no parser code was changed.
+
+Interpretation: the stored English rendering positions and token strings are internally consistent across all four witnesses. This does not prove that each Greek token has the correct English association; the three TR bridge defects remain. The validator's punctuation/token convention is a structural consistency test, not a semantic alignment gold standard. No production rows or application files were changed.
