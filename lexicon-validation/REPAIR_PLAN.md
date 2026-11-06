@@ -24,11 +24,11 @@ No production data mutation is permitted until checksums, off-host replication, 
 
 ## Priority 1 — Robinson TR parser and Greek positional bridge
 
-**Confirmed upstream cause:** build_nt.py parse_tr() uses a regex that requires an immediate morphology brace after the Strong's number. It skips pipe-delimited source records:
-- Colossians 4:10: barnaba 921 | {N-GSM} | {N-DSM} | ... — one token omitted.
-- John 9:21: autou 848 | autou 846 | {P-GSM} ... — one token omitted, with alternative Strong's values.
+**Confirmed upstream cause:** build_nt.py parse_tr() does not implement the Robinson file format's pipe-delimited first/second-variant syntax. The official MIT-licensed librobinson library normalizes these patterns and selects one reading explicitly. The current regex skips the selected token in these cases:
+- Colossians 4:10: barnaba 921 | {N-GSM} | {N-DSM} | ... — first reading has one Barnabas token with N-GSM; second reading uses N-DSM.
+- John 9:21: autou 848 | autou 846 | {P-GSM} ... — first and second readings differ in Strong's value.
 
-The resulting stored TR verses have 20 instead of 21 tokens in Colossians 4:10, and 23 instead of 24 in John 9:21. CrossWire KJV lemma.TR references retain the omitted forms, creating the observed out-of-range bridge rows and orphan YLT renderings.
+The current stored TR verses have 20 instead of 21 first-reading tokens in Colossians 4:10, and 23 instead of 24 in John 9:21. CrossWire KJV lemma.TR references retain these positions, creating the observed out-of-range bridge rows and orphan YLT renderings.
 
 Proposed minimal repair:
 
@@ -41,7 +41,7 @@ Proposed minimal repair:
 
 Do not shift all positions by one, merge Greek witnesses, or regenerate the Hebrew lexicon.
 
-## Priority 2 — SBL lemma/gloss mapping
+## Priority 2 — SBL lexical field semantics and gloss mapping
 
 1. Determine exact lemma encodings and source versions in MorphGNT and LXX.
 2. Prefer a direct Greek-script lexical source with documented licensing and lemma identifiers.
