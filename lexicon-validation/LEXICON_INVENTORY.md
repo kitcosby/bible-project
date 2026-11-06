@@ -65,7 +65,7 @@ Important semantic constraint: YLT source text is verse-level. A computed per-wo
 | Translation text | ebible.org `engylt` USFM | YLT verse text |
 | Builder | `build_nt.py` | Loads NT books, verses, KJV, YLT and TR |
 | Alignment builder | `build_nt_align.py` | Transfers KJV source references to TR positions and aligns YLT |
-| Alternative textual traditions | Byzantine and SBL source/build bridges | Separate Greek token streams; not interchangeable with TR |
+| Alternative textual traditions | Byzantine and SBL source/build bridges; build_gntb_bridge.py and build_gnts_bridge.py | Separate Greek token streams; alignment tables stored separately from TR |
 | Derived lexical metadata | `lxx_words` | LXX-based lemma/gloss lookup; not a direct NT lexicon |
 
 The Greek build header explicitly identifies the primary Greek text as the Textus Receptus and the stated rationale as the Greek text behind KJV and YLT. Treat TR, Byzantine and SBL as separate text witnesses.
@@ -77,7 +77,7 @@ The Greek build header explicitly identifies the primary Greek text as the Textu
 3. PWA `/var/www/html/byot/index.html` renders the YLT text and computed word associations.
 4. The current separate Node API in `kitcosby/BibleApp` is not the serving source for these legacy lexicon routes.
 
-The API exposes the Greek lexical provenance field in its underlying response, but the PWA word-page adapter currently drops that field. The Byzantine mapping tables exist in PostgreSQL but were not found in the current Flask API's Greek-variant serving path. SBL's lemma/gloss join currently fails because the LXX lemma and MorphGNT lemma representations use different scripts/transliteration conventions.
+The API exposes the Greek lexical provenance field in its underlying response, but the PWA word-page adapter currently drops that field. Byzantine and SBL bridge tables exist in PostgreSQL; the current Flask API's Greek-variant serving path was not found to consume these tables. SBL's gloss lookup is semantically invalid: the MorphGNT field called lemma is documented in build_gnts_bridge.py as a normalized word form, not a lexical dictionary lemma, and the API compares it to transliterated LXX lexical lemmas.
 
 ## Known data limitations
 
@@ -108,6 +108,6 @@ Do not treat the local OneDrive path as a proven cloud backup until sync is conf
 ## Next inventory work
 
 - Record exact source commit hashes and source archive checksums for every loaded NT dataset.
-- Record exact row counts and schema/constraint inventory for every lexicon bridge table.
+- Record exact row counts and schema/constraint inventory for every lexicon bridge table, including gnts_alignment and gnts_ylt_renderings.
 - Establish an encrypted/off-host backup and perform a restore test before any data mutation.
 - Capture reproducible table-level fingerprints for the relevant production tables.
