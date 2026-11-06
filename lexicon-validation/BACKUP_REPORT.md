@@ -72,7 +72,7 @@ Results:
 - Invalid indexes: 0 in production and 0 in restored database.
 - Key lexicon counts matched, including Hebrew `words` (264,217), `ylt_renderings` (358,391), `lexicon_ylt_rendering` (234,091), TR `gnt_words` (141,009), `gnt_ylt_renderings` (143,227), Byzantine `gntb_words` (140,149), `gntb_ylt_renderings` (141,902), SBL `gnts_words` (137,554), and `lxx_words` (623,693).
 
-The restore test used `--no-owner --no-acl`, so it validates schema/data restoration, not restoration of original object ownership and ACLs. The separate globals export and full local archive preserve those items, but an isolated full-owner/ACL restore test has not yet been run.
+A second restore test was then performed using the full local archive with no `--no-owner` or `--no-acl` flags. It completed with `--exit-on-error`. Exact row counts matched for all 47 public tables; 68 catalog objects across the `public` and `ai` schemas had identical owner and ACL metadata in source and restored databases; extension versions matched; and both databases had zero invalid indexes. This verifies database-level schema/data and object ownership/ACL restoration in the current cluster. The separate globals export was preserved but not replayed into production; the roles already existed in the test cluster. Database-level ACL equivalence and a restore onto a separate PostgreSQL cluster remain untested.
 
 ## Recovery limitations and next checks
 
