@@ -93,3 +93,10 @@ The validator's token comparison was executed against the restored snapshot. It 
 This validates stored rendering-word positions and strings against YLT verse text, not semantic Greek-to-English alignment. The existing three TR Greek-position errors and three orphan renderings remain. The builder's canonical YLT token convention is defined in `build_nt.py`'s `parse_ylt()` and `STRIP_CHARS`; the token check is therefore a structural consistency test, not a manually annotated alignment gold set.
 
 The focused parser regression tests were also run against `master/build_nt.py`; both John 9:21 and Colossians 4:10 cases produced the expected failures.
+
+
+## 2026-11-06 — Robinson variant source-comparison dataset
+
+The corpus-wide variant test covered 261 pipe-delimited groups in the 27 NT Robinson source files and compared candidate sequences against CrossWire KJV 3.1 `src`, `lemma.TR`, Strong's, and morphology fields. There were 245 connected decision components: 228 uniquely resolved and 17 tied. The cross-verse Colossians 4:10–18 group was resolved with 151/151 available source checks. Seventeen references remain unresolved and are excluded from the shadow active bridge.
+
+The source-text check covered 7,957 NT KJV verse blocks: 7,943 exact matches to stored KJV tokens and 14 prefix matches with 186 appended suffix tokens; no non-prefix mismatches. The resolved shadow sequence has 137,821 source checks, 99.90% lemma agreement, and zero out-of-range positions. Known cases: John 9:21 position 24 and Colossians 4:10 position 21. See the full report for the unresolved reference list and bridge set comparisons.
