@@ -90,3 +90,10 @@ This log records project documentation changes only. GitHub issue creation and s
 - Corrected issue #1 and the regression specification: pipe-delimited groups are alternative readings, not automatically one token with all alternatives attached or multiple sequential tokens. The primary TR reading policy must be explicit and checked against CrossWire lemma.TR compatibility.
 - The focused parser tests now specify first-reading output. The second-reading path and corpus-wide pipe-pattern survey remain open.
 - No builder code or production data has been changed.
+
+## 2026-11-06 — Corpus-wide Robinson pipe-variant survey
+
+- Surveyed all 27 pinned Robinson UTR book files. Found 431 physical source lines containing pipe markers; this is a line count, not a variant-group count.
+- Applied librobinson's three documented shorthand regexes: 39 surface-alternative matches, one alternative-morphology match and one alternative-Strong's match (41 total).
+- Found no M5:, M6:, VAR: or :END control markers in these 27 files.
+- Confirmed the current builder's regex-only parser lacks librobinson's general first/second variant selection. The fix must use the upstream variant semantics across the whole corpus, not patch only John 9:21 and Colossians 4:10.
