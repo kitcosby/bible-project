@@ -997,4 +997,614 @@
     },
     {
       "book": "2CO",
+      "group_id": 7,      "affected_references": [
+        "2CO 11:10"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "sfragisetai 4972 5695 {V-FDI-3S}",
+      "branch_B_raw": "fraghsetai 5420 5691 {V-2FPI-3S}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": "B",
+      "status": "proposed_not_applied",
+      "confidence": "high",
+      "rationale": "Shall not be stopped."
+    },
+    {
+      "book": "PHP",
+      "group_id": 1,
+      "affected_references": [
+        "PHP 1:30"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "idete 3708 5627 {V-2AAI-2P}",
+      "branch_B_raw": "eidete 3708 5627 {V-2AAI-2P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "PHP",
+      "group_id": 2,
+      "affected_references": [
+        "PHP 4:2"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "euwdian 2136 {N-ASF}",
+      "branch_B_raw": "euodian 2136 {N-ASF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "PHP",
+      "group_id": 3,
+      "affected_references": [
+        "PHP 4:12"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "de 1161 {CONJ}",
+      "branch_B_raw": "kai 2532 {CONJ}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "COL",
+      "group_id": 3,
+      "affected_references": [
+        "COL 2:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "sunezwpoihsen 4806 5656 {V-AAI-3S}",
+      "branch_B_raw": "sunezwopoihsen 4806 5656 {V-AAI-3S}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "COL",
+      "group_id": 4,
+      "affected_references": [
+        "COL 2:13"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "hmin 1473 {P-1DP}",
+      "branch_B_raw": "umin 4771 {P-2DP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "COL",
+      "group_id": 5,
+      "affected_references": [
+        "COL 4:10",
+        "COL 4:11",
+        "COL 4:12",
+        "COL 4:13",
+        "COL 4:14",
+        "COL 4:15",
+        "COL 4:16",
+        "COL 4:17",
+        "COL 4:18"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "barnaba 921 {N-GSM}",
+      "branch_B_raw": "barnaba 921 {N-DSM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "COL",
+      "group_id": 6,
+      "affected_references": [
+        "COL 4:10",
+        "COL 4:11",
+        "COL 4:12",
+        "COL 4:13",
+        "COL 4:14",
+        "COL 4:15",
+        "COL 4:16",
+        "COL 4:17",
+        "COL 4:18"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "peri 4012 {PREP} ou 3739 {R-GSM} elabete 2983 5627 {V-2AAI-2P} entolav 1785 {N-APF} ean 1437 {COND} elqh 2064 5632 {V-2AAS-3S} prov 4314 {PREP} umav 4771 {P-2AP} dexasqe 1209 5663 {V-ADM-2P} auton 846 {P-ASM} 4:11 kai 2532 {CONJ} ihsouv 2424 {N-NSM} o 3588 {T-NSM} legomenov 3004 5746 {V-PPP-NSM} ioustov 2459 {N-NSM} oi 3588 {T-NPM} ontev 1510 5723 {V-PAP-NPM} ek 1537 {PREP} peritomhv 4061 {N-GSF} outoi 3778 {D-NPM} monoi 3441 {A-NPM} sunergoi 4904 {A-NPM} eiv 1519 {PREP} thn 3588 {T-ASF} basileian 932 {N-ASF} tou 3588 {T-GSM} qeou 2316 {N-GSM} oitinev 3748 {R-NPM} egenhqhsan 1096 5675 {V-AOI-3P} moi 1473 {P-1DS} parhgoria 3931 {N-NSF} 4:12 aspazetai 782 5736 {V-PNI-3S} umav 4771 {P-2AP} epafrav 1889 {N-NSM} o 3588 {T-NSM} ex 1537 {PREP} umwn 4771 {P-2GP} doulov 1401 {N-NSM} cristou 5547 {N-GSM} pantote 3842 {ADV} agwnizomenov 75 5740 {V-PNP-NSM} uper 5228 {PREP} umwn 4771 {P-2GP} en 1722 {PREP} taiv 3588 {T-DPF} proseucaiv 4335 {N-DPF} ina 2443 {CONJ} sthte 2476 5632 {V-2AAS-2P} teleioi 5046 {A-NPM} kai 2532 {CONJ} peplhrwmenoi 4137 5772 {V-RPP-NPM} en 1722 {PREP} panti 3956 {A-DSN} qelhmati 2307 {N-DSN} tou 3588 {T-GSM} qeou 2316 {N-GSM} 4:13 marturw 3140 5719 {V-PAI-1S} gar 1063 {CONJ} autw 846 {P-DSM} oti 3754 {CONJ} ecei 2192 5719 {V-PAI-3S} zhlon 2205 {N-ASM} polun 4183 {A-ASM} uper 5228 {PREP} umwn 4771 {P-2GP} kai 2532 {CONJ} twn 3588 {T-GPM} en 1722 {PREP} laodikeia 2993 {N-DSF} kai 2532 {CONJ} twn 3588 {T-GPM} en 1722 {PREP} ierapolei 2404 {N-DSF} 4:14 aspazetai 782 5736 {V-PNI-3S} umav 4771 {P-2AP} loukav 3065 {N-NSM} o 3588 {T-NSM} iatrov 2395 {N-NSM} o 3588 {T-NSM} agaphtov 27 {A-NSM} kai 2532 {CONJ} dhmav 1214 {N-NSM} 4:15 aspasasqe 782 5663 {V-ADM-2P} touv 3588 {T-APM} en 1722 {PREP} laodikeia 2993 {N-DSF} adelfouv 80 {N-APM} kai 2532 {CONJ} numfan 3564 {N-ASM} kai 2532 {CONJ} thn 3588 {T-ASF} kat 2596 {PREP} oikon 3624 {N-ASM} autou 846 {P-GSM} ekklhsian 1577 {N-ASF} 4:16 kai 2532 {CONJ} otan 3752 {CONJ} anagnwsqh 314 5686 {V-APS-3S} par 3844 {PREP} umin 4771 {P-2DP} h 3588 {T-NSF} epistolh 1992 {N-NSF} poihsate 4160 5657 {V-AAM-2P} ina 2443 {CONJ} kai 2532 {CONJ} en 1722 {PREP} th 3588 {T-DSF} laodikewn 2994 {N-GPM} ekklhsia 1577 {N-DSF} anagnwsqh 314 5686 {V-APS-3S} kai 2532 {CONJ} thn 3588 {T-ASF} ek 1537 {PREP} laodikeiav 2993 {N-GSF} ina 2443 {CONJ} kai 2532 {CONJ} umeiv 4771 {P-2NP} anagnwte 314 5632 {V-2AAS-2P} 4:17 kai 2532 {CONJ} eipate 3004 5628 {V-2AAM-2P} arcippw 751 {N-DSM} blepe 991 5720 {V-PAM-2S} thn 3588 {T-ASF} diakonian 1248 {N-ASF} hn 3739 {R-ASF} parelabev 3880 5627 {V-2AAI-2S} en 1722 {PREP} kuriw 2962 {N-DSM} ina 2443 {CONJ} authn 846 {P-ASF} plhroiv 4137 5725 {V-PAS-2S} 4:18 o 3588 {T-NSM} aspasmov 783 {N-NSM} th 3588 {T-DSF} emh 1699 {S-1SDSF} ceiri 5495 {N-DSF} paulou 3972 {N-GSM} mnhmoneuete 3421 5720 {V-PAM-2P} mou 1473 {P-1GS} twn 3588 {T-GPM} desmwn 1199 {N-GPM} h 3588 {T-NSF} cariv 5485 {N-NSF} meq 3326 {PREP} umwn 4771 {P-2GP} amhn 281 {HEB}",
+      "branch_B_raw": "[prov 4314 {PREP} kolassaeiv 2858 {N-APM} egrafh 1125 5648 {V-2API-3S} apo 575 {PREP} rwmhv 4516 {N-GSF} dia 1223 {PREP} tucikou 5190 {N-GSM} kai 2532 {CONJ} onhsimou] 3682 {N-GSM}",
+      "context_sensitive": true,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1TH",
+      "group_id": 1,
+      "affected_references": [
+        "1TH 1:9"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "ecomen 2192 5719 {V-PAI-1P}",
+      "branch_B_raw": "escomen 2192 5627 {V-2AAI-1P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1TH",
+      "group_id": 2,
+      "affected_references": [
+        "1TH 2:15"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "umav 4771 {P-2AP}",
+      "branch_B_raw": "hmav 1473 {P-1AP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1TI",
+      "group_id": 2,
+      "affected_references": [
+        "1TI 1:4"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "oikonomian 3622 {N-ASF}",
+      "branch_B_raw": "oikodomian 3620 {N-ASF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1TI",
+      "group_id": 3,
+      "affected_references": [
+        "1TI 3:2"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "nhfaleon 3524 {A-ASM}",
+      "branch_B_raw": "nhfalion 3524 {A-ASM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1TI",
+      "group_id": 4,
+      "affected_references": [
+        "1TI 3:11"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "nhfaleouv 3524 {A-APF}",
+      "branch_B_raw": "nhfaliouv 3524 {A-APF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2TI",
+      "group_id": 1,
+      "affected_references": [
+        "2TI 1:5"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "euneikh 2131 {N-DSF}",
+      "branch_B_raw": "eunikh 2131 {N-DSF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2TI",
+      "group_id": 2,
+      "affected_references": [
+        "2TI 4:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "failonhn 5341 {N-ASM}",
+      "branch_B_raw": "felonhn 5341 {N-ASM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "TIT",
+      "group_id": 1,
+      "affected_references": [
+        "TIT 2:10"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "umwn 4771 {P-2GP}",
+      "branch_B_raw": "hmwn 1473 {P-1GP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "PHM",
+      "group_id": 1,
+      "affected_references": [
+        "PHM 1:7"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "carin 5485 {N-ASF}",
+      "branch_B_raw": "caran 5479 {N-ASF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "HEB",
+      "group_id": 2,
+      "affected_references": [
+        "HEB 6:10"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "enedeixasqe 1731 5668 {V-AMI-2P}",
+      "branch_B_raw": "endeixasqe 1731 5669 {V-AMM-2P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "HEB",
+      "group_id": 6,
+      "affected_references": [
+        "HEB 11:4"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "laleitai 2980 5731 {V-PMI-3S}",
+      "branch_B_raw": "lalei 2980 5719 {V-PAI-3S}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "HEB",
       "group_id": 7,
+      "affected_references": [
+        "HEB 12:24"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "ton 3588 {T-ASM}",
+      "branch_B_raw": "to 3588 {T-ASN}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 1,
+      "affected_references": [
+        "JAS 2:18"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "ek 1537 {PREP}",
+      "branch_B_raw": "cwriv 5565 {ADV}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 2,
+      "affected_references": [
+        "JAS 4:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "kai 2532 {CONJ}",
+      "branch_B_raw": "h 2228 {PRT}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 3,
+      "affected_references": [
+        "JAS 4:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "poreuswmeqa 4198 5667 {V-ADS-1P}",
+      "branch_B_raw": "poreusomeqa 4198 5695 {V-FDI-1P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 4,
+      "affected_references": [
+        "JAS 4:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "poihswmen 4160 5661 {V-AAS-1P}",
+      "branch_B_raw": "poihsomen 4160 5692 {V-FAI-1P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 5,
+      "affected_references": [
+        "JAS 4:13"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "emporeuswmeqa 1710 5667 {V-ADS-1P} kai 2532 {CONJ} kerdhswmen 2770 5661 {V-AAS-1P}",
+      "branch_B_raw": "emporeusomeqa 1710 5695 {V-FDI-1P} kai 2532 {CONJ} kerdhsomen 2770 5692 {V-FAI-1P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "JAS",
+      "group_id": 6,
+      "affected_references": [
+        "JAS 4:15"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "zhswmen 2198 5661 {V-AAS-1P} kai 2532 {CONJ} poihswmen 4160 5661 {V-AAS-1P}",
+      "branch_B_raw": "zhsomen 2198 5692 {V-FAI-1P} kai 2532 {CONJ} poihsomen 4160 5692 {V-FAI-1P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1PE",
+      "group_id": 1,
+      "affected_references": [
+        "1PE 1:4"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "hmav 1473 {P-1AP}",
+      "branch_B_raw": "umav 4771 {P-2AP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1PE",
+      "group_id": 3,
+      "affected_references": [
+        "1PE 3:21"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "o 3739 {R-NSN}",
+      "branch_B_raw": "w 3739 {R-DSN}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2PE",
+      "group_id": 1,
+      "affected_references": [
+        "2PE 1:1"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "sumewn 4826 {N-PRI}",
+      "branch_B_raw": "simwn 4613 {N-NSM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2PE",
+      "group_id": 2,
+      "affected_references": [
+        "2PE 1:1"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "",
+      "branch_B_raw": "hmwn 1473 {P-1GP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2PE",
+      "group_id": 4,
+      "affected_references": [
+        "2PE 2:9"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "peirasmou 3986 {N-GSM}",
+      "branch_B_raw": "peirasmwn 3986 {N-GPM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1JO",
+      "group_id": 1,
+      "affected_references": [
+        "1JO 1:4"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "hmwn 1473 {P-1GP}",
+      "branch_B_raw": "umwn 4771 {P-2GP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "1JO",
+      "group_id": 2,
+      "affected_references": [
+        "1JO 1:5"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "epaggelia 1860 {N-NSF}",
+      "branch_B_raw": "aggelia 31 {N-NSF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "2JO",
+      "group_id": 1,
+      "affected_references": [
+        "2JO 1:3"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "hmwn 1473 {P-1GP}",
+      "branch_B_raw": "umwn 4771 {P-2GP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": "B",
+      "status": "proposed_not_applied",
+      "confidence": "high_for_YLT_alignment",
+      "rationale": "With you; textual support is mixed."
+    },
+    {
+      "book": "2JO",
+      "group_id": 2,
+      "affected_references": [
+        "2JO 1:5"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "grafw 1125 5719 {V-PAI-1S}",
+      "branch_B_raw": "grafwn 1125 5723 {V-PAP-NSM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "prior_proposal_retracted_pending_review",
+      "rationale": "YLT “not as writing to thee” does not establish a Greek participle. A γράφω is the finite first-person verb “I write” and is syntactically natural after “I beseech thee”; English gerund phrasing is not proof of B γράφων. Do not apply B."
+    },
+    {
+      "book": "JUDE",
+      "group_id": 3,
+      "affected_references": [
+        "JUDE 1:24"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "autouv 846 {P-APM}",
+      "branch_B_raw": "umav 4771 {P-2AP}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 2,
+      "affected_references": [
+        "RE 2:5"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "tacei 5034 {N-DSN}",
+      "branch_B_raw": "tacu 5035 {ADV}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 6,
+      "affected_references": [
+        "RE 4:3"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "omoiov 3664 {A-NSM}",
+      "branch_B_raw": "omoia 3664 {A-NSF}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 8,
+      "affected_references": [
+        "RE 7:2"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "anabanta 305 5631 {V-2AAP-ASM}",
+      "branch_B_raw": "anabainonta 305 5723 {V-PAP-ASM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": "B",
+      "status": "proposed_not_applied",
+      "confidence": "medium_high",
+      "rationale": "Going up (present participle)."
+    },
+    {
+      "book": "RE",
+      "group_id": 18,
+      "affected_references": [
+        "RE 9:20"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "oute 3777 {CONJ-N}",
+      "branch_B_raw": "ou 3756 {PRT-N}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 20,
+      "affected_references": [
+        "RE 11:2"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "eswqen 2081 {ADV}",
+      "branch_B_raw": "exwqen 1855 {ADV}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": "B",
+      "status": "proposed_not_applied",
+      "confidence": "high",
+      "rationale": "Outer court outside the sanctuary."
+    },
+    {
+      "book": "RE",
+      "group_id": 28,
+      "affected_references": [
+        "RE 16:5"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "osiov 3741 {A-NSM}",
+      "branch_B_raw": "esomenov 1510 5697 {V-FDP-NSM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": "B",
+      "status": "proposed_not_applied",
+      "confidence": "high_for_YLT_alignment_not_textual_priority",
+      "rationale": "Who shalt be; TR/Beza versus ὅσιος in critical/Byzantine texts."
+    },
+    {
+      "book": "RE",
+      "group_id": 31,
+      "affected_references": [
+        "RE 17:4"
+      ],
+      "candidate_kjv_alignment_branch": "B",
+      "branch_A_raw": "h 3588 {T-NSF}",
+      "branch_B_raw": "hn 1510 5707 {V-IAI-3S}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 34,
+      "affected_references": [
+        "RE 18:5"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "hkolouqhsan 190 5656 {V-AAI-3P}",
+      "branch_B_raw": "ekollhqhsan 2853 5681 {V-API-3P}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    },
+    {
+      "book": "RE",
+      "group_id": 40,
+      "affected_references": [
+        "RE 21:20"
+      ],
+      "candidate_kjv_alignment_branch": "A",
+      "branch_A_raw": "enatov 1766 {A-NSM}",
+      "branch_B_raw": "ennatov 1766 {A-NSM}",
+      "context_sensitive": false,
+      "ylt_profile_proposed_branch": null,
+      "status": "not_yet_decided_for_ylt_profile"
+    }
+  ]
+}
