@@ -27,6 +27,14 @@
 - Verify the Flask API exposes the intended TR, Byzantine and SBL witness data independently, or explicitly documents which witnesses are not served.
 - Verify PWA rendering retains lexical source/provenance fields and does not present LXX-derived glosses as contextual NT definitions.
 
+## Corpus-wide parser regression cases
+
+- Process all 27 pinned UTR files and assert that every verse has a deterministic first-reading token sequence.
+- Audit all 431 physical lines containing pipe markers; do not treat this line count as the number of independent variant units.
+- Exercise all three librobinson shorthand normalizations: surface alternatives, morphology alternatives and Strong's alternatives. Current corpus survey found 39, 1 and 1 matches respectively.
+- Exercise first-reading and second-reading selection separately; test multiword alternatives and verify that the unselected reading does not shift the selected sequence.
+- Confirm no M5:, M6:, VAR: or :END control markers occur in the current 27 UTR files; if the source version changes, re-run this inventory.
+
 ## Parser-specific regression cases
 
 - `parsed/JOH.UTR` commit `7fd4d02c3e5adebd379ebfbc824040820dde10fc`, John 9:21: 24 source token occurrences; the current parser output stored 23. The pipe-delimited `autou` variant must be retained as one occurrence, with both Strong's alternatives preserved as metadata.
