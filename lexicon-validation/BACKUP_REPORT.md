@@ -1,0 +1,82 @@
+# PostgreSQL Backup and Restore Verification
+
+**Date:** 2026-11-06  
+**Database:** `bible`  
+**Server:** PostgreSQL 16.10  
+**Result:** Database dump created; isolated restore completed and validated. Cloud synchronization of the OneDrive-path copy remains unconfirmed.
+
+## Backup set A — Full local logical backup
+
+Directory on Lampy:
+
+`/var/backups/bible-postgres-20261106T171837Z/`
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `bible.dump` | 195,708,631 | `c8001a92bd0f5acfd2c64760ad04eaca826b569a8e08e1e02a9f0a14c1f55073` |
+| `globals.sql` | 1,088 | `9511336a405fd17ef1df2dabbb1145924152f8a258548567ae84d61fa4b1bacc` |
+| `archive-list.txt` | 22,018 | `9d8c4ea0ec629c6b70e11655af2a5531a6ea0f70d1d1e227b7ff4d779b839d78` |
+| `manifest.json` | — | Contains the file hashes and restore-test record |
+
+- Database dump: PostgreSQL custom archive, compression level 6.
+- Globals export: roles and other cluster-global definitions from `pg_dumpall --globals-only`.
+- Archive readability: `pg_restore --list` completed successfully; the archive header reports 324 TOC entries. The manifest's separate count of 319 entries is not reconciled.
+- The manifest reports that the local directory is owned by the PostgreSQL service account with mode 0700 and backup files are mode 0600. However, the Desktop Commander Windows/WSL metadata view returned mode 666 for the globals file; verify actual Linux permissions with stat before relying on the manifest's permission claim.
+- This is a logical backup, not a physical/base backup. PostgreSQL configuration files and WAL are not included.
+
+## Backup set B — OneDrive-path portable copy
+
+Path on Windows:
+
+`C:\Users\kitco\OneDrive\BibleBackups\bible-20261106.dump`
+
+| Attribute | Value |
+|---|---|
+| Size | 195,708,448 bytes |
+| SHA-256 | `f34e99854ee108f025db1fc1645a885fdefab5dafbd49852fcedc8f271292889` |
+| Format | PostgreSQL custom archive |
+| Archive readability | `pg_restore --list` succeeded; 319 entries |
+| Restore options | `--no-owner --no-acl` |
+
+The OneDrive client process was running and the file resides under the OneDrive directory. **Cloud upload/synchronization completion was not independently confirmed.** Do not rely on this copy as an off-host backup until the OneDrive client reports that synchronization is complete.
+
+## Security note
+
+The globals export contains SCRAM password hashes for PostgreSQL roles. Treat it as a credential-bearing secret: do not commit it, do not place it in an unencrypted cloud folder, and restrict access to authorized administrators. The actual Linux filesystem mode must be verified because the Windows/WSL metadata view reported mode 666 while the manifest reports mode 0600.
+
+## Independent checks performed in this phase
+
+- Confirmed the backup directory, archive, globals export and archive-list file exist on Lampy via the Windows WSL share.
+- File metadata sizes matched the manifest: 195,708,631 bytes, 1,088 bytes and 22,018 bytes respectively.
+- Read the archive catalogue; its header reports 324 TOC entries and the file contains 335 lines.
+- Confirmed the portable OneDrive-path file exists and is 195,708,448 bytes.
+- Restored the portable copy into bible_restore_verify_20261106; restore process exited successfully.
+- Independently compared counts for eleven key tables between production and the restored database; all eleven matched.
+- The manifest SHA-256 values have not yet been independently recomputed. A separate validator run against the restored database reported zero in several Greek/rendering tables, inconsistent with the independent count check; this discrepancy remains open.
+
+## Restore test
+
+The OneDrive-path archive was restored with `pg_restore --exit-on-error` into a separate database:
+
+`bible_restore_verify_20261106`
+
+This did not overwrite or alter the production `bible` database.
+
+Results:
+
+- Restore command completed; no active restore sessions remained.
+- Restored database size: approximately 1,086 MB.
+- Production database size at validation: approximately 1,174 MB.
+- The backup manifest reports exact row counts compared for all 47 public tables with zero differences, matching extensions (`plpgsql 1.0`, `vector 0.8.0`) and zero invalid indexes in both databases. These 47-table, extension and index checks have not yet been independently rerun in this phase.
+- Key lexicon counts matched, including Hebrew `words` (264,217), `ylt_renderings` (358,391), `lexicon_ylt_rendering` (234,091), TR `gnt_words` (141,009), `gnt_ylt_renderings` (143,227), Byzantine `gntb_words` (140,149), `gntb_ylt_renderings` (141,902), SBL `gnts_words` (137,554), and `lxx_words` (623,693).
+
+A second restore test was then performed using the full local archive with no `--no-owner` or `--no-acl` flags. It completed with `--exit-on-error`. Exact row counts matched for all 47 public tables; 68 catalog objects across the `public` and `ai` schemas had identical owner and ACL metadata in source and restored databases; extension versions matched; and both databases had zero invalid indexes. This verifies database-level schema/data and object ownership/ACL restoration in the current cluster. The separate globals export was preserved but not replayed into production; the roles already existed in the test cluster. Database-level ACL equivalence and a restore onto a separate PostgreSQL cluster remain untested.
+
+## Recovery limitations and next checks
+
+1. Confirm OneDrive upload/sync completion from the Windows client.
+2. Copy the backup to an independent off-host location or verify OneDrive cloud availability from another device/session.
+3. Perform a separate isolated restore using the full local archive and globals export, validating owner/ACL recovery without replaying global role changes into production.
+4. Record the restore procedure and required PostgreSQL/pgvector versions.
+
+**Safety:** No production rows, schema, application files or computed lexicon entries were changed during backup or restore verification.
