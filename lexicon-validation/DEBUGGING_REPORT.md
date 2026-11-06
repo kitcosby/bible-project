@@ -6,7 +6,7 @@
 
 ## Executive summary
 
-The Hebrew and Greek paths must be evaluated separately. Hebrew already has a manually aligned gold sample and a measured precision/recall baseline. The Greek pipeline inherits positional references from a KJV source module and contains confirmed verse-level mismatches. The SBL Greek lemma/gloss lookup has a representation mismatch. Additional items require source verification and must not yet be called defects.
+The Hebrew and Greek paths must be evaluated separately. Hebrew already has a manually aligned gold sample and a measured precision/recall baseline. The Greek positional defects are traced to pipe-delimited variant records skipped by the Robinson TR parser before the KJV bridge is applied. The SBL Greek lemma/gloss lookup has a representation mismatch. Additional items require source verification and must not yet be called defects.
 
 ## Confirmed software/integration defects
 
@@ -80,9 +80,9 @@ The `morph_patterns` table contains one pattern with `parse_status='unparsed'`. 
 
 The live `gntb_alignment` and `gntb_ylt_renderings` tables were found without primary-key constraints or indexes. Initial checks did not find duplicate mappings or orphaned references. This is a structural integrity risk, not proof of corrupt rows.
 
-### YLT-API-001 — Byzantine and SBL serving coverage
+### YLT-API-001 — Greek variant API serving and SBL bridge coverage
 
-Byzantine YLT mapping rows exist in PostgreSQL but were not found in the Flask API's Greek variant response path. The SBL bridge is not synchronized into the equivalent YLT mapping table. Treat as integration coverage gaps; verify desired product behavior before implementing.
+Byzantine mapping tables exist in PostgreSQL but were not found in the Flask API's Greek variant response path. SBL tables (including gnts_alignment and gnts_ylt_renderings) also exist in the current database archive/catalogue; their row counts and actual mapping coverage have not yet been measured. The earlier statement that the SBL bridge was not synchronized is therefore unverified and is withdrawn. Inspect table contents and API usage before classifying this as a missing-data defect. Treat the API-serving gap as an integration question until the expected witness behavior is specified.
 
 ## Not a defect by itself
 
@@ -94,14 +94,8 @@ Byzantine YLT mapping rows exist in PostgreSQL but were not found in the Flask A
 
 ## Backup/restore evidence
 
-A PostgreSQL 16.15 custom-format dump of the production `bible` database was created in the local OneDrive sync folder (91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`). The archive catalogue was readable and restore into `bible_restore_verify_20261106` completed successfully. Independent row counts for eleven key tables matched production. The dump excludes owner/ACL metadata; OneDrive cloud upload and off-host recovery remain unverified.
-
-A separate execution of the validator against the restored database returned zero counts for several Greek/rendering tables even though the independent row-count comparison had shown those tables populated. This discrepancy is unresolved; do not treat the restored-snapshot validator run as valid until its DSN/session/search-path behavior is independently reconciled.
-
-## Backup/restore evidence
-
 A full custom-format backup and separate globals export are recorded in BACKUP_REPORT.md. File existence and sizes were checked; the archive catalogue was readable; the OneDrive-path copy restored into bible_restore_verify_20261106; and independent counts matched production for eleven key tables. The manifest SHA-256 values were not independently recomputed in this phase, OneDrive cloud sync remains unconfirmed, and ownership/ACL restore has not been tested. A restored-snapshot validator run returned zero counts for some tables that independent count checks showed as populated; this inconsistency remains open.
 
 ## Evidence and limitations
 
-The initial discovery queried live PostgreSQL using a READ ONLY transaction, inspected current source files in `master`, and inspected the serving Flask/PWA implementation. The full raw query transcripts and exact source commit hashes still need to be attached to the issue evidence. No repair or recomputation has occurred.
+The discovery queried live PostgreSQL using READ ONLY transactions, inspected source code and pinned Robinson/CrossWire source artifacts, and inspected the serving Flask/PWA implementation. The Robinson source repository commit and the JOH/COL source blob IDs are recorded in issue #1. No production repair or recomputation has occurred.
