@@ -64,3 +64,10 @@ This log records project documentation changes only. GitHub issue creation and s
 
 - The current PostgreSQL backup catalogue and pg_dump log show SBL-related tables including gnts_alignment and gnts_ylt_renderings. This contradicts the earlier unverified statement that the SBL bridge had not been synchronized to PostgreSQL.
 - The SBL table row counts and mapping coverage have not yet been measured; the Flask API serving path still requires verification. The debugging report and issue log should treat this as an open integration/coverage question, not a confirmed missing-table defect.
+
+## 2026-11-06 — SBL field-semantics review
+
+- Inspected build_gnts_bridge.py and export_sync_gnt.py on master. The bridge builder explicitly describes the SBL/MorphGNT lemma field as a normalized word form (example ἐγέννησε(ν)), not a lexical dictionary lemma.
+- Confirmed the repository export bundle includes gnts_alignment and gnts_ylt_renderings; the earlier statement that the SBL bridge was not synchronized is withdrawn. The PostgreSQL archive/catalogue also contains the SBL bridge table names.
+- Updated issue #2: the API's exact match compares a normalized SBL word form with a transliterated LXX lexical lemma, which is a semantic as well as representation mismatch.
+- Updated the inventory and validation dataset to measure SBL bridge row counts and API serving separately. No SBL data was changed.
