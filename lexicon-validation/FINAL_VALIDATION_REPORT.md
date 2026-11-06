@@ -9,6 +9,7 @@ The current computed YLT lexicon is **not yet validated for release as a fully c
 
 ## Completed
 
+- Created a PostgreSQL custom-format backup and separate globals export; checksums and archive readability verified.\n- Restored a portable copy into an isolated database; exact row counts matched across all 47 public tables, extension versions matched and no invalid indexes were found.\n- Added `BACKUP_REPORT.md` with paths, hashes and remaining recovery limitations.\n
 - Identified live PostgreSQL as the current authoritative store.
 - Recorded selected table sizes and baseline counts.
 - Identified Hebrew and Greek source/build paths.
