@@ -29,7 +29,7 @@ The computed YLT lexicon is **not yet validated for release as a fully correct w
 - Confirm OneDrive cloud sync or another off-host copy.
 - Test restoration of roles, ownership and ACLs using the globals export and full local archive.
 - Reconcile the restored-snapshot validator output: it returned zero for several Greek/rendering tables although an independent count script found those tables populated.
-- Build executable source-parser regression tests for pipe-delimited alternatives and expand the Greek gold set.
+- Execute the new expected-failure source-parser tests, implement the parser correction in an isolated branch, and expand the Greek gold set.
 - Complete full-corpus schema, FK, duplicate, orphan and coverage checks.
 - Independently review ambiguous lexical/morphological cases.
 - Implement and regression-test repairs in isolation; no production migration has been approved.
