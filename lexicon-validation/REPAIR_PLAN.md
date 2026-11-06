@@ -2,16 +2,18 @@
 
 **Status:** Proposed; no repair authorized or applied.
 
-## Gate 0 — Preserve the production baseline (blocking)
+## Gate 0 — Preserve the production baseline
 
-1. Identify the exact PostgreSQL cluster and live database identity.
-2. Create a fresh database backup using an approved PostgreSQL backup method.
-3. Verify backup size, checksum, completion status and database identity.
-4. Restore it into an isolated database and run integrity checks.
-5. Record source commit, schema version, row counts and relevant table fingerprints.
-6. Confirm that the backup is independent of the live data volume.
+**Partially complete; off-host and full ownership/ACL verification remain open.**
 
-Historical `app_v2.py.bak-*` files are application-code backups, not database backups. The initial discovery did not verify a current PostgreSQL backup. No database mutation is permitted until this gate is complete.
+1. PostgreSQL 16.10 and live database identity confirmed.
+2. Full custom-format logical dump and globals export created.
+3. SHA-256 hashes and archive-list validation recorded.
+4. Portable OneDrive-path copy restored into an isolated database; exact row counts for all 47 public tables matched, extension versions matched and invalid index count was zero.
+5. Backup report records current table counts and hashes.
+6. OneDrive cloud synchronization completion has not been independently confirmed; full owner/ACL restore has not yet been exercised.
+
+Historical `app_v2.py.bak-*` files are application-code backups, not database backups. No production mutation is permitted until the remaining backup checks are complete.
 
 ## Gate 1 — Reproduce defects outside production
 
