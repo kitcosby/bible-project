@@ -20,7 +20,13 @@
 | V-NT-007 | Luke 1:1-4 | TR Greek | Punctuation, quotation and formatting | Punctuation is not emitted as lexical tokens unless source tokenization explicitly treats it so |
 | V-NT-008 | Mark 1:1 | TR Greek | Words without direct English equivalents / textual variants | Unaligned words are represented as unaligned, not assigned to a neighboring word |
 
-## Parser-specific regression cases\n\n- `parsed/JOH.UTR` commit `7fd4d02c3e5adebd379ebfbc824040820dde10fc`, John 9:21: 24 source token occurrences; the current parser output stored 23. The pipe-delimited `autou` variant must be retained as one occurrence, with both Strong's alternatives preserved as metadata.\n- `parsed/COL.UTR` same commit, Colossians 4:10: 21 source token occurrences; the current parser output stored 20. The pipe-delimited `barnaba` token must be retained once, with both morphology alternatives preserved as metadata.\n- These tests must assert both token count and token sequence against the source, not only successful parsing or a final verse position.\n\n## Automated invariants
+## Parser-specific regression cases
+
+- `parsed/JOH.UTR` commit `7fd4d02c3e5adebd379ebfbc824040820dde10fc`, John 9:21: 24 source token occurrences; the current parser output stored 23. The pipe-delimited `autou` variant must be retained as one occurrence, with both Strong's alternatives preserved as metadata.
+- `parsed/COL.UTR` same commit, Colossians 4:10: 21 source token occurrences; the current parser output stored 20. The pipe-delimited `barnaba` token must be retained once, with both morphology alternatives preserved as metadata.
+- These tests must assert both token count and token sequence against the source, not only successful parsing or a final verse position.
+
+## Automated invariants
 
 1. Every mapping row resolves to an existing parent word in the same witness.
 2. Every verse-local Greek position satisfies `1 <= position <= token_count`.
@@ -48,6 +54,12 @@ Each executable test result should record:
 - Evidence source and confidence classification.
 - Pass/fail/needs-review outcome.
 
-## Automated validator\n\nA read-only PostgreSQL validator is now available at `eval/validate_ylt_lexicon_postgres.py`. It requires `BIBLE_DATABASE_URL`, starts a read-only transaction, checks Hebrew/TR/Byzantine parent references, position bounds, duplicate bridge keys, Strong's G0 count and SBL/LXX exact lemma-match coverage, and emits focused records for John 9:21 and Colossians 4:10. It does not mutate the database.\n\nInitial live run (2026-11-06): Hebrew orphan mappings 0; TR out-of-range alignment rows 3; TR orphan YLT rendering rows 3; Byzantine out-of-range rows 0; Byzantine orphan rendering rows 0; duplicate keys in the checked bridge tables 0; TR G0 occurrences 5; SBL words with exact LXX lemma/gloss match 0. The validator returned a nonzero status because the TR positional/orphan checks fail, as intended.\n\n## Current readiness
+## Automated validator
+
+A read-only PostgreSQL validator is now available at `eval/validate_ylt_lexicon_postgres.py`. It requires `BIBLE_DATABASE_URL`, starts a read-only transaction, checks Hebrew/TR/Byzantine parent references, position bounds, duplicate bridge keys, Strong's G0 count and SBL/LXX exact lemma-match coverage, and emits focused records for John 9:21 and Colossians 4:10. It does not mutate the database.
+
+Initial live run (2026-11-06): Hebrew orphan mappings 0; TR out-of-range alignment rows 3; TR orphan YLT rendering rows 3; Byzantine out-of-range rows 0; Byzantine orphan rendering rows 0; duplicate keys in the checked bridge tables 0; TR G0 occurrences 5; SBL words with exact LXX lemma/gloss match 0. The validator returned a nonzero status because the TR positional/orphan checks fail, as intended.
+
+## Current readiness
 
 The Hebrew gold set already includes 30 manually aligned verses (Genesis 1, Psalm 23 and Isaiah 53), with reported baseline precision 0.7984 and recall 0.5039 at the current operating point. The Greek cases above are currently a specification, not yet a machine-executable gold set. Independent manual annotation is required before treating all expected Greek word associations as gold truth.
