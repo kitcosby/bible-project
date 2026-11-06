@@ -21,7 +21,7 @@ Directory on Lampy:
 - Database dump: PostgreSQL custom archive, compression level 6.
 - Globals export: roles and other cluster-global definitions from `pg_dumpall --globals-only`.
 - Archive readability: `pg_restore --list` completed successfully (319 archive entries).
-- Local directory is owned by the PostgreSQL service account with mode 0700; backup files are mode 0600.
+- The manifest reports that the local directory is owned by the PostgreSQL service account with mode 0700 and backup files are mode 0600. However, the Desktop Commander Windows/WSL metadata view returned mode 666 for the globals file; verify actual Linux permissions with stat before relying on the manifest's permission claim.
 - This is a logical backup, not a physical/base backup. PostgreSQL configuration files and WAL are not included.
 
 ## Backup set B — OneDrive-path portable copy
@@ -39,6 +39,10 @@ Path on Windows:
 | Restore options | `--no-owner --no-acl` |
 
 The OneDrive client process was running and the file resides under the OneDrive directory. **Cloud upload/synchronization completion was not independently confirmed.** Do not rely on this copy as an off-host backup until the OneDrive client reports that synchronization is complete.
+
+## Security note
+
+The globals export contains SCRAM password hashes for PostgreSQL roles. Treat it as a credential-bearing secret: do not commit it, do not place it in an unencrypted cloud folder, and restrict access to authorized administrators. The actual Linux filesystem mode must be verified because the Windows/WSL metadata view reported mode 666 while the manifest reports mode 0600.
 
 ## Independent checks performed in this phase
 
