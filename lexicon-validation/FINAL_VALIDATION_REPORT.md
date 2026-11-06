@@ -1,41 +1,45 @@
 # YLT Lexicon Final Validation Report
 
-**Status:** NOT COMPLETE — initial discovery only  
+**Status:** NOT COMPLETE — Phase 2 baseline and source diagnosis underway  
 **Report date:** 2026-11-06
 
 ## Readiness assessment
 
-The current computed YLT lexicon is **not yet validated for release as a fully correct word-level lexicon**. The Hebrew path has an existing manual gold baseline and substantial computed coverage, but remains best-effort. The Greek path has confirmed positional defects whose upstream cause is now traced to the TR parser dropping pipe-delimited variant records, plus the SBL lookup defect.
+The computed YLT lexicon is **not yet validated for release as a fully correct word-level lexicon**.
+
+- Hebrew alignment has an existing manual gold set and a measured baseline; it remains best-effort, not an authoritative interlinear.
+- Greek TR alignment contains confirmed positional defects. The upstream cause is traced to build_nt.py parse_tr() skipping pipe-delimited variant/morphology records in the pinned Robinson source.
+- SBL lemma/gloss lookup fails because Greek-script MorphGNT lemmas are compared directly with transliterated LXX lemmas.
+- The PWA drops the API's LXX-derived Greek lexical provenance note.
 
 ## Completed
 
-- Created a PostgreSQL custom-format backup and separate globals export; checksums and archive readability verified.\n- Restored a portable copy into an isolated database; exact row counts matched across all 47 public tables, extension versions matched and no invalid indexes were found.\n- Added `BACKUP_REPORT.md` with paths, hashes and remaining recovery limitations.\n
-- Identified live PostgreSQL as the current authoritative store.
-- Recorded selected table sizes and baseline counts.
-- Identified Hebrew and Greek source/build paths.
-- Traced the PWA and legacy Flask API consumption path.
-- Reproduced two Greek positional alignment anomalies.
-- Identified the SBL lemma representation mismatch and lost PWA provenance.
-- Specified an initial representative validation dataset and safe repair gates.
+- Created a dedicated ylt-lexicon-validation branch and seven initial validation records, plus a backup report.
+- Added a read-only PostgreSQL validator and ran it against the live production database.
+- Confirmed 3 out-of-range TR bridge rows and 3 orphan TR YLT rendering rows; Hebrew and Byzantine structural checks passed.
+- Traced the John 9:21 and Colossians 4:10 defects to pipe-delimited token alternatives skipped by the current TR parser.
+- Created four actionable GitHub issues (#1–#4); duplicate issue #5 was closed.
+- Located a full custom-format backup, globals export and manifest; verified file existence, sizes and archive catalogue readability.
+- Restored the OneDrive-path copy into isolated database bible_restore_verify_20261106; restore command completed successfully and independent row counts matched production for eleven key tables.
 
-## Not completed
+## Remaining blockers
 
-- Recovery-grade PostgreSQL backup preserving ownership/ACLs and global roles, off-host replication confirmation, and restore under intended application roles. (A local data/schema dump restored successfully and key table counts matched; remaining recovery metadata and off-host confirmation are incomplete.)
-- Full table/constraint/FK inventory and data fingerprints.
-- Full source archive checksum and exact source-version pinning. (Robinson source commit and two relevant source-file blob IDs are now pinned; broader corpus pinning remains.)
-- Machine-executable Greek gold dataset and parser-specific tests for pipe-delimited variant records.
-- Full OT/NT alignment coverage analysis.
-- Independent linguistic review of proposed expected word mappings.
-- Repair implementation and regression run.
-- Full PWA/API end-to-end validation after correction.
+- Independently recompute the backup manifest's checksums and repeat the full 47-table comparison recorded in the manifest.
+- Confirm OneDrive cloud sync or another off-host copy.
+- Test restoration of roles, ownership and ACLs using the globals export and full local archive.
+- Reconcile the restored-snapshot validator output: it returned zero for several Greek/rendering tables although an independent count script found those tables populated.
+- Build executable source-parser regression tests for pipe-delimited alternatives and expand the Greek gold set.
+- Complete full-corpus schema, FK, duplicate, orphan and coverage checks.
+- Independently review ambiguous lexical/morphological cases.
+- Implement and regression-test repairs in isolation; no production migration has been approved.
 
 ## Known limitations
 
 - Computed YLT word associations are hypotheses derived from alignment, not publisher-provided interlinear data.
 - LXX-derived glosses are not direct NT lexical definitions.
-- Greek textual witnesses must remain separate.
-- Some source/edition and morphology questions remain unresolved.
+- TR, Byzantine and SBL textual witnesses must remain separate.
+- Some Strong's sentinel and morphology questions remain unresolved.
 
 ## Release recommendation
 
-**Not ready for validated release.** Preserve the current production data, complete backup/restore verification, build executable regression tests on a snapshot, then repair the Greek positional bridge and SBL lookup in isolation. Do not regenerate the lexicon or modify production data as part of this phase.
+**Not ready for validated release.** Preserve the current production data. Finish backup recovery verification, reconcile the snapshot validator, implement the TR parser correction in isolation, and validate the SBL lookup/provenance fixes. Do not regenerate the full lexicon or modify production data as part of this phase.
