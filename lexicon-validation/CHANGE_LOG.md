@@ -80,6 +80,13 @@ This log records project documentation changes only. GitHub issue creation and s
 ## 2026-11-06 — TR parser regression reproducer
 
 - Added `eval/test_nt_parser_variants.py` with focused John 9:21 and Colossians 4:10 source fixtures.
-- The tests assert the omitted token is retained once and that alternative Strong's/morphology values remain available as metadata.
+- The tests assert first-reading selection: John 9:21 uses the first Strong's alternative (G848), and Colossians 4:10 uses the first morphology alternative (N-GSM). The upstream librobinson reader also supports second-reading selection; explicit second-reading tests remain to be added.
 - Tests are marked expected-failure against current master because the parser has not yet been fixed. They have not been executed in this phase.
 - No parser implementation or production data was changed.
+
+## 2026-11-06 — Upstream Robinson variant parser reference
+
+- Inspected the MIT-licensed byztxt/librobinson parser. Its book.py normalizes three pipe-delimited variant patterns and selects either the first or second reading; verse.py assigns positions to the selected sequence; word.py has separate alternate Strong's and alternate morphology fields.
+- Corrected issue #1 and the regression specification: pipe-delimited groups are alternative readings, not automatically one token with all alternatives attached or multiple sequential tokens. The primary TR reading policy must be explicit and checked against CrossWire lemma.TR compatibility.
+- The focused parser tests now specify first-reading output. The second-reading path and corpus-wide pipe-pattern survey remain open.
+- No builder code or production data has been changed.
