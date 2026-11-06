@@ -20,7 +20,7 @@ Directory on Lampy:
 
 - Database dump: PostgreSQL custom archive, compression level 6.
 - Globals export: roles and other cluster-global definitions from `pg_dumpall --globals-only`.
-- Archive readability: `pg_restore --list` completed successfully (319 archive entries).
+- Archive readability: `pg_restore --list` completed successfully; the archive header reports 324 TOC entries. The manifest's separate count of 319 entries is not reconciled.
 - The manifest reports that the local directory is owned by the PostgreSQL service account with mode 0700 and backup files are mode 0600. However, the Desktop Commander Windows/WSL metadata view returned mode 666 for the globals file; verify actual Linux permissions with stat before relying on the manifest's permission claim.
 - This is a logical backup, not a physical/base backup. PostgreSQL configuration files and WAL are not included.
 
@@ -67,9 +67,7 @@ Results:
 - Restore command completed; no active restore sessions remained.
 - Restored database size: approximately 1,086 MB.
 - Production database size at validation: approximately 1,174 MB.
-- Exact row counts compared for all 47 public tables: **zero differences**.
-- Extensions matched: `plpgsql 1.0`, `vector 0.8.0`.
-- Invalid indexes: 0 in production and 0 in restored database.
+- The backup manifest reports exact row counts compared for all 47 public tables with zero differences, matching extensions (`plpgsql 1.0`, `vector 0.8.0`) and zero invalid indexes in both databases. These 47-table, extension and index checks have not yet been independently rerun in this phase.
 - Key lexicon counts matched, including Hebrew `words` (264,217), `ylt_renderings` (358,391), `lexicon_ylt_rendering` (234,091), TR `gnt_words` (141,009), `gnt_ylt_renderings` (143,227), Byzantine `gntb_words` (140,149), `gntb_ylt_renderings` (141,902), SBL `gnts_words` (137,554), and `lxx_words` (623,693).
 
 A second restore test was then performed using the full local archive with no `--no-owner` or `--no-acl` flags. It completed with `--exit-on-error`. Exact row counts matched for all 47 public tables; 68 catalog objects across the `public` and `ai` schemas had identical owner and ACL metadata in source and restored databases; extension versions matched; and both databases had zero invalid indexes. This verifies database-level schema/data and object ownership/ACL restoration in the current cluster. The separate globals export was preserved but not replayed into production; the roles already existed in the test cluster. Database-level ACL equivalence and a restore onto a separate PostgreSQL cluster remain untested.
