@@ -6,12 +6,12 @@
 
 | Local ID | GitHub issue | Title | Severity | Classification | Status |
 |---|---|---|---|---|---|
-| YLT-GNT-001 | Pending | Greek TR/KJV positional bridge creates incorrect YLT mappings | High | Confirmed software/data alignment defect | Reproduced at John 9:21 and Colossians 4:10; repair not started |
-| YLT-GNT-002 | Pending | SBL Greek lemma/gloss lookup fails across transliteration representations | High | Confirmed API/data integration defect | Reproduced by representation inspection; repair not started |
-| YLT-GNT-003 | Pending | Preserve Greek lexical provenance in PWA word detail | Medium | Confirmed frontend integration defect | API field exists; adapter drops it |
+| YLT-GNT-001 | [#1](https://github.com/kitcosby/bible-project/issues/1) | Greek TR/KJV positional bridge creates incorrect YLT mappings | High | Confirmed software/data alignment defect | Reproduced at John 9:21 and Colossians 4:10; repair not started |
+| YLT-GNT-002 | [#2](https://github.com/kitcosby/bible-project/issues/2) | SBL Greek lemma/gloss lookup fails across transliteration representations | High | Confirmed API/data integration defect | Reproduced by representation inspection; repair not started |
+| YLT-GNT-003 | [#3](https://github.com/kitcosby/bible-project/issues/3) | Preserve Greek lexical provenance in PWA word detail | Medium | Confirmed frontend integration defect | API field exists; adapter drops it |
 | YLT-GNT-004 | Pending | Verify G0 Strong's sentinel values in TR source | Medium | Suspected source-data anomaly | Requires source-level verification |
 | YLT-MORPH-001 | Pending | Resolve or document unparsed Aramaic morphology segment | Low | Unresolved linguistic metadata | Raw value preserved; no guessed parse |
-| YLT-DB-001 | Pending | Add integrity constraints to Byzantine alignment bridge | Medium | Structural integrity risk | Initial duplicate/orphan checks clean; no DDL proposed |
+| YLT-DB-001 | [#4](https://github.com/kitcosby/bible-project/issues/4) | Add integrity constraints to Byzantine alignment bridge | Medium | Structural integrity risk | Initial duplicate/orphan checks clean; no DDL proposed |
 | YLT-API-001 | Pending | Define and implement Greek variant YLT API coverage | Medium | Integration gap | Desired TR/Byzantine/SBL behavior requires design |
 
 ## Status vocabulary
@@ -22,4 +22,4 @@
 - **Fixed:** Minimal change merged and regression tests pass.
 - **Closed/documented:** Deliberately retained with documented reason and evidence.
 
-No production repair has been applied. GitHub issue URLs are added after the issues are created.
+Four actionable GitHub issues are open: #1 positional bridge, #2 SBL lemma/gloss lookup, #3 PWA provenance, and #4 Byzantine bridge integrity. An accidental duplicate issue #5 was closed as duplicate. No production repair has been applied.
