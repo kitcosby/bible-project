@@ -12,7 +12,7 @@
 | YLT-GNT-004 | Pending | Verify G0 Strong's sentinel values in TR source | Medium | Suspected source-data anomaly | Requires source-level verification |
 | YLT-MORPH-001 | Pending | Resolve or document unparsed Aramaic morphology segment | Low | Unresolved linguistic metadata | Raw value preserved; no guessed parse |
 | YLT-DB-001 | [#4](https://github.com/kitcosby/bible-project/issues/4) | Add integrity constraints to Byzantine alignment bridge | Medium | Structural integrity risk | Initial duplicate/orphan checks clean; no DDL proposed |
-| YLT-API-001 | Pending | Expose existing Greek variant bridge tables through the API | Medium | Integration gap | gntb_* and gnts_* bridge tables exist; API consumption and SBL row counts still require verification |
+| YLT-API-001 | [#6](https://github.com/kitcosby/bible-project/issues/6) | Define and expose existing Byzantine and SBL YLT bridge data through the API | Medium | Integration/design gap | Bridge tables exist; row counts, API behavior and intended witness support require verification |
 
 ## Status vocabulary
 
