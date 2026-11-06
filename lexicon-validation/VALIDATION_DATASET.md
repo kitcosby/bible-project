@@ -20,6 +20,13 @@
 | V-NT-007 | Luke 1:1-4 | TR Greek | Punctuation, quotation and formatting | Punctuation is not emitted as lexical tokens unless source tokenization explicitly treats it so |
 | V-NT-008 | Mark 1:1 | TR Greek | Words without direct English equivalents / textual variants | Unaligned words are represented as unaligned, not assigned to a neighboring word |
 
+## SBL and Greek-variant integration cases
+
+- Verify gnts_alignment and gnts_ylt_renderings exist, record exact row counts, and check all parent references and verse-local positions.
+- Compare SBL bridge output against the pinned MorphGNT normalized-form field; do not treat it as a dictionary lemma.
+- Verify the Flask API exposes the intended TR, Byzantine and SBL witness data independently, or explicitly documents which witnesses are not served.
+- Verify PWA rendering retains lexical source/provenance fields and does not present LXX-derived glosses as contextual NT definitions.
+
 ## Parser-specific regression cases
 
 - `parsed/JOH.UTR` commit `7fd4d02c3e5adebd379ebfbc824040820dde10fc`, John 9:21: 24 source token occurrences; the current parser output stored 23. The pipe-delimited `autou` variant must be retained as one occurrence, with both Strong's alternatives preserved as metadata.
