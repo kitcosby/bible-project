@@ -71,3 +71,8 @@ This log records project documentation changes only. GitHub issue creation and s
 - Confirmed the repository export bundle includes gnts_alignment and gnts_ylt_renderings; the earlier statement that the SBL bridge was not synchronized is withdrawn. The PostgreSQL archive/catalogue also contains the SBL bridge table names.
 - Updated issue #2: the API's exact match compares a normalized SBL word form with a transliterated LXX lexical lemma, which is a semantic as well as representation mismatch.
 - Updated the inventory and validation dataset to measure SBL bridge row counts and API serving separately. No SBL data was changed.
+
+## 2026-11-06 — Greek variant API tracking
+
+- Created GitHub issue #6 to define and expose the existing Byzantine and SBL bridge tables through the API, while keeping witness positions separate.
+- Updated ISSUE_LOG.md. The issue is an integration/design investigation; table counts and intended reader behavior still need verification.
