@@ -96,6 +96,10 @@ Byzantine mapping tables exist in PostgreSQL but were not found in the Flask API
 
 A full custom-format backup and separate globals export are recorded in BACKUP_REPORT.md. File existence and sizes were checked; the archive catalogue was readable; the OneDrive-path copy restored into bible_restore_verify_20261106; and independent counts matched production for eleven key tables. The manifest SHA-256 values were not independently recomputed in this phase, OneDrive cloud sync remains unconfirmed, and ownership/ACL restore has not been tested. A restored-snapshot validator run returned zero counts for some tables that independent count checks showed as populated; this inconsistency remains open.
 
+## Corpus-wide variant survey
+
+A source survey of all 27 pinned Robinson UTR book files found 431 physical lines containing pipe markers. Applying the three shorthand-normalization regexes documented by librobinson to those files found 41 matches: 39 surface-alternative patterns, one alternative-morphology pattern, and one alternative-Strong's pattern. These are pattern matches, not a count of all variant groups; the remaining pipe markers are handled by librobinson's general first/second-variant selection logic. No M5:, M6:, VAR: or :END control markers were found in these 27 UTR files. The current build_nt.py parser does not implement the general variant selection stage.
+
 ## Upstream parser reference
 
 The MIT-licensed byztxt/librobinson project explicitly supports Robinson's file format and variant handling. Its book.py normalizes three pipe-delimited variant patterns and chooses first or second readings; verse.py assigns one word position per selected reading; word.py preserves alternate Strong's and morphology fields. This is a better reference for the parser repair than inventing a new interpretation of pipe groups. The library is legacy Python 2 code, so direct import into the current Python 3 builder is not assumed; port the relevant behavior with tests.
