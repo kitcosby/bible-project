@@ -97,3 +97,10 @@ This log records project documentation changes only. GitHub issue creation and s
 - Applied librobinson's three documented shorthand regexes: 39 surface-alternative matches, one alternative-morphology match and one alternative-Strong's match (41 total).
 - Found no M5:, M6:, VAR: or :END control markers in these 27 files.
 - Confirmed the current builder's regex-only parser lacks librobinson's general first/second variant selection. The fix must use the upstream variant semantics across the whole corpus, not patch only John 9:21 and Colossians 4:10.
+
+## 2026-11-06 — Clean review branch and draft PR
+
+- Found that the branch name `ylt-lexicon-validation` is 75 commits ahead of master and contains older unrelated history; it was not used as the review branch and was not merged.
+- Created clean branch `ylt-lexicon-validation-review-20261106` directly from master. It contains only the ten validation artifacts in this phase, with ten commits.
+- Opened draft PR #7 against master: https://github.com/kitcosby/bible-project/pull/7.
+- The original 75-commit branch remains untouched; do not merge it as part of this validation work.
