@@ -22,4 +22,4 @@
 - **Fixed:** Minimal change merged and regression tests pass.
 - **Closed/documented:** Deliberately retained with documented reason and evidence.
 
-Four actionable GitHub issues are open: #1 positional bridge, #2 SBL lemma/gloss lookup, #3 PWA provenance, and #4 Byzantine bridge integrity. An accidental duplicate issue #5 was closed as duplicate. No production repair has been applied.
+Four actionable GitHub issues are open: [#1 positional bridge](https://github.com/kitcosby/bible-project/issues/1), [#2 SBL lemma/gloss lookup](https://github.com/kitcosby/bible-project/issues/2), [#3 PWA provenance](https://github.com/kitcosby/bible-project/issues/3), and [#4 Byzantine bridge integrity](https://github.com/kitcosby/bible-project/issues/4). An accidental duplicate issue #5 was closed as duplicate. The read-only validator now reports 3 out-of-range TR bridge rows and 3 orphan TR YLT renderings; Byzantine and Hebrew structural checks passed. No production repair has been applied.
