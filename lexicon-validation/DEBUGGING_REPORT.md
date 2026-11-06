@@ -107,3 +107,10 @@ The MIT-licensed byztxt/librobinson project explicitly supports Robinson's file 
 ## Evidence and limitations
 
 The discovery queried live PostgreSQL using READ ONLY transactions, inspected source code and pinned Robinson/CrossWire source artifacts, and inspected the serving Flask/PWA implementation. The Robinson source repository commit and the JOH/COL source blob IDs are recorded in issue #1. No production repair or recomputation has occurred.
+
+
+## 2026-11-06 — Robinson variant handling confirmed
+
+The current NT builder's token extraction does not implement the pipe-delimited variant state handled by upstream `librobinson`. The upstream parser normalizes three variant encodings and selects first/second readings; the current builder flattens alternatives. A per-group deterministic reconstruction against CrossWire KJV 3.1 `src`, `lemma.TR`, Strong's, and Robinson morphology resolved 242 of 261 groups (19 groups across 17 verses remain tied). The resolved sequence achieved 99.90% lemma agreement across 137,821 source checks and zero out-of-range positions. See [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md) for provenance and full metrics.
+
+The isolated shadow bridge also confirms the two known defects: John 9:21 now contains position 24 `λαλησει`, and Colossians 4:10 now contains position 21 `auton`. The existing YLT rendering edges were already present; they became valid once the Greek sequence was corrected. No production data or vectorizer was changed.
