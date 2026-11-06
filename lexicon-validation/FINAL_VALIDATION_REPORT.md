@@ -5,7 +5,7 @@
 
 ## Readiness assessment
 
-The current computed YLT lexicon is **not yet validated for release as a fully correct word-level lexicon**. The Hebrew path has an existing manual gold baseline and substantial computed coverage, but remains best-effort. The Greek path has confirmed positional alignment and SBL lookup defects.
+The current computed YLT lexicon is **not yet validated for release as a fully correct word-level lexicon**. The Hebrew path has an existing manual gold baseline and substantial computed coverage, but remains best-effort. The Greek path has confirmed positional defects whose upstream cause is now traced to the TR parser dropping pipe-delimited variant records, plus the SBL lookup defect.
 
 ## Completed
 
@@ -20,10 +20,10 @@ The current computed YLT lexicon is **not yet validated for release as a fully c
 
 ## Not completed
 
-- Current PostgreSQL backup verification and isolated restore test. (Blocking; not established; existing SQLite files are not PostgreSQL backups.)
+- Recovery-grade PostgreSQL backup preserving ownership/ACLs and global roles, off-host replication confirmation, and restore under intended application roles. (A local data/schema dump restored successfully and key table counts matched; remaining recovery metadata and off-host confirmation are incomplete.)
 - Full table/constraint/FK inventory and data fingerprints.
-- Source archive checksum and exact source-version pinning.
-- Machine-executable Greek gold dataset.
+- Full source archive checksum and exact source-version pinning. (Robinson source commit and two relevant source-file blob IDs are now pinned; broader corpus pinning remains.)
+- Machine-executable Greek gold dataset and parser-specific tests for pipe-delimited variant records.
 - Full OT/NT alignment coverage analysis.
 - Independent linguistic review of proposed expected word mappings.
 - Repair implementation and regression run.
