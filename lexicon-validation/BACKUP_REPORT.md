@@ -40,6 +40,16 @@ Path on Windows:
 
 The OneDrive client process was running and the file resides under the OneDrive directory. **Cloud upload/synchronization completion was not independently confirmed.** Do not rely on this copy as an off-host backup until the OneDrive client reports that synchronization is complete.
 
+## Independent checks performed in this phase
+
+- Confirmed the backup directory, archive, globals export and archive-list file exist on Lampy via the Windows WSL share.
+- File metadata sizes matched the manifest: 195,708,631 bytes, 1,088 bytes and 22,018 bytes respectively.
+- Read the archive catalogue; its header reports 324 TOC entries and the file contains 335 lines.
+- Confirmed the portable OneDrive-path file exists and is 195,708,448 bytes.
+- Restored the portable copy into bible_restore_verify_20261106; restore process exited successfully.
+- Independently compared counts for eleven key tables between production and the restored database; all eleven matched.
+- The manifest SHA-256 values have not yet been independently recomputed. A separate validator run against the restored database reported zero in several Greek/rendering tables, inconsistent with the independent count check; this discrepancy remains open.
+
 ## Restore test
 
 The OneDrive-path archive was restored with `pg_restore --exit-on-error` into a separate database:
