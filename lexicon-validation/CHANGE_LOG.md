@@ -126,3 +126,6 @@ This log records project documentation changes only. GitHub issue creation and s
 - Identified that the legacy YLT rendering bridge is KJV-mediated (YLT→KJV→Greek), not independent YLT lexical evidence. In the review packet, 2,101/3,076 YLT tokens have a Greek-position link (68.3%); 975 do not, and 389 mapped tokens link to multiple Greek positions.
 - Parser equivalence corrected: first-variant mode 7,954/7,954 common sequences exact, plus one upstream-only empty verse key (Luke 17:36); second-variant mode 7,947/7,947 exact. Revelation 17:7–8 remains excluded under the upstream workaround.
 - No production DDL, API changes, branch selections, embeddings/vectorizer changes, merge or deployment. New artifacts document proposals only.
+
+
+- Opened [issue #9](https://github.com/kitcosby/bible-project/issues/9) to track independent YLT-to-Greek alignment and explicit provenance for the legacy KJV-mediated bridge.
