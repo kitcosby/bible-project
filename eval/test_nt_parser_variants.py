@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Regression reproductions for pipe-delimited Robinson TR source tokens.
 
-These tests are marked expectedFailure because the current master parser is
-known to skip the source alternatives. When the parser fix is implemented,
-remove the expectedFailure decorators and keep the assertions as passing
-regression tests.
+These tests are marked expectedFailure because the current master parser
+skips the first reading in these pipe-delimited variant groups. The canonical
+librobinson reader selects either first or second variant explicitly; this
+fixture specifies the first-variant behavior expected for the primary TR
+alignment. When the parser fix is implemented, remove expectedFailure and
+keep the assertions as passing regression tests.
 
 Run from the repository root:
     python3 -m unittest eval.test_nt_parser_variants -v
@@ -55,7 +57,7 @@ class PipeDelimitedTRVariantTests(unittest.TestCase):
         parsed = self.parse_fixture({"JOH": source})
         words = parsed[(43, 9, 21)]
         self.assertEqual(len(words), 24)
-        self.assertEqual(words[22][1:], ("autou", "G848", "846", "P-GSM"))
+        self.assertEqual(words[22][1:], ("autou", "G848", None, "P-GSM"))
         self.assertEqual(words[23][1], "lalhsei")
 
     @unittest.expectedFailure
@@ -76,8 +78,7 @@ class PipeDelimitedTRVariantTests(unittest.TestCase):
         self.assertEqual(len(words), 21)
         self.assertEqual(words[10][1], "barnaba")
         self.assertEqual(words[10][2], "G921")
-        self.assertIn("N-GSM", words[10][4])
-        self.assertIn("N-DSM", words[10][4])
+        self.assertEqual(words[10][4], "N-GSM")
 
 
 if __name__ == "__main__":
