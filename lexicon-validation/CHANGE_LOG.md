@@ -22,3 +22,12 @@ This log records project documentation changes only. GitHub issue creation and s
 - Opened GitHub issues #1–#4 for the confirmed positional bridge defect, SBL lemma/gloss lookup defect, PWA provenance gap and Byzantine bridge integrity risk.
 - A duplicate submission (#5) was immediately closed with reason `duplicate`; issue #4 is the canonical tracking item for the Byzantine bridge.
 - No source code, production data or computed lexicon content changed.
+
+## 2026-11-06 — First executable read-only validation run
+
+- Added `eval/validate_ylt_lexicon_postgres.py`, a parameterized read-only PostgreSQL validation script.
+- Executed it against the live `bible` database in a READ ONLY transaction.
+- Result: 3 TR out-of-range alignment rows; 3 TR orphan YLT rendering rows; 0 Hebrew orphan renderings; 0 Byzantine out-of-range/orphan mappings; 0 duplicate keys in the tested TR/Byzantine mapping tables; 5 TR G0 occurrences; 0 SBL rows with an exact LXX lemma/gloss match.
+- Confirmed the orphan YLT words: John 9:21 `shall` and `speak`; Colossians 4:10 `him`.
+- Confirmed no PostgreSQL backup was identified in inspected locations. The existing `bible.db` and `bible_v2.db` files are SQLite artifacts, not PostgreSQL backups. Backup/restore verification remains blocking.
+- No database rows, live application files or generation scripts were modified.
