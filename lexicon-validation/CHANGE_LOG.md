@@ -59,3 +59,8 @@ This log records project documentation changes only. GitHub issue creation and s
 - The portable OneDrive-path archive currently measures 195,708,448 bytes. This supersedes the earlier 91.5 MB file and its checksum.
 - The globals export contains SCRAM password hashes. It is sensitive and must not be committed to GitHub or copied to an unencrypted cloud location. The manifest reports restrictive Linux permissions, but the Windows/WSL file metadata interface returned mode 666; actual WSL permissions still need direct verification before treating the file as protected.
 - The backup manifest's checksums and 47-table comparison have not yet been independently recomputed in this phase. The restored-snapshot validator inconsistency remains open.
+
+## 2026-11-06 — SBL bridge inventory correction
+
+- The current PostgreSQL backup catalogue and pg_dump log show SBL-related tables including gnts_alignment and gnts_ylt_renderings. This contradicts the earlier unverified statement that the SBL bridge had not been synchronized to PostgreSQL.
+- The SBL table row counts and mapping coverage have not yet been measured; the Flask API serving path still requires verification. The debugging report and issue log should treat this as an open integration/coverage question, not a confirmed missing-table defect.
