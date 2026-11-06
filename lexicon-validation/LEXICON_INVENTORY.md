@@ -22,19 +22,19 @@ Measurements obtained using a PostgreSQL transaction explicitly started READ ONL
 | `words` | 64 MB | Hebrew/Aramaic token records |
 | `ylt_renderings` | 73 MB | Computed Hebrew-token to YLT-word renderings |
 | `lexicon_ylt_rendering` | 50 MB | Aggregated Hebrew lexicon YLT rendering data |
-| `gnt_words` | 13 MB | Robinson TR Greek token records |
-| `gnt_alignment` | 15 MB | KJV-to-TR positional bridge |
-| `gnt_ylt_renderings` | 13 MB | TR-token to YLT-word renderings |
-| `gntb_words` | 12 MB | Byzantine Greek token records |
-| `gntb_ylt_renderings` | 9 MB | Byzantine-token to YLT-word renderings |
-| `gnts_words` | 15 MB | SBL Greek token records |
-| `lxx_words` | 90 MB | LXX Greek token/lemma/gloss source data |
+| `gnt_words` | 13 MB | Robinson TR Greek token records; 141,009 rows |
+| `gnt_alignment` | 15 MB | KJV-to-TR positional bridge; 3 out-of-range rows detected |
+| `gnt_ylt_renderings` | 13 MB | TR-token to YLT-word renderings; 143,227 rows, 3 orphan renderings detected |
+| `gntb_words` | 12 MB | Byzantine Greek token records; 140,149 rows |
+| `gntb_ylt_renderings` | 9 MB | Byzantine-token to YLT-word renderings; 141,902 rows |
+| `gnts_words` | 15 MB | SBL Greek token records; 137,554 rows |
+| `lxx_words` | 90 MB | LXX Greek token/lemma/gloss source data; 623,693 rows |
 
 Additional counts measured:
 
 - `words`: 264,217 rows.
 - `ylt_renderings`: 358,391 rows.
-- `lexicon_ylt_rendering`: 234,091 rows.
+- `lexicon_ylt_rendering`: 234,091 rows.\n- `gnt_words`: 141,009 rows; `gnt_ylt_renderings`: 143,227 rows.\n- `gntb_words`: 140,149 rows; `gntb_ylt_renderings`: 141,902 rows.\n- `gnts_words`: 137,554 rows; `lxx_words`: 623,693 rows.
 
 These are point-in-time production measurements, not a recoverable backup or cryptographic content manifest. Table sizes are approximate PostgreSQL total relation sizes.
 
@@ -86,7 +86,7 @@ The API exposes the Greek lexical provenance field in its underlying response, b
 
 ## Backup and recovery status
 
-**Unverified / blocking before repair.** Existing historical application-code backups were found under `/opt/bible/website`, but the read-only discovery did not establish a verified backup of the current PostgreSQL `bible` database. Do not infer that an application-code backup protects database contents. Before any production repair, take a fresh, independently verifiable PostgreSQL backup and record its path, size, checksum, timestamp, restore test and database identity. No such backup was created in this discovery phase.
+**Unverified / blocking before repair.** Existing historical application-code backups were found under `/opt/bible/website`, but the read-only discovery did not establish a verified backup of the current PostgreSQL `bible` database. Do not infer that an application-code backup protects database contents. Before any production repair, take a fresh, independently verifiable PostgreSQL backup and record its path, size, checksum, timestamp, restore test and database identity. The inspected locations contained older SQLite files (`/opt/bible/bible_v2.db`, 479,227,904 bytes; `/opt/bible/bible.db`, 198,459,392 bytes), which are not backups of the current PostgreSQL database. Historical `app_v2.py.bak-*` files are application-code backups. No PostgreSQL dump/backup was identified in the inspected locations, and `pg_dump` was not found on PATH. No such backup was created in this phase.
 
 ## Next inventory work
 
