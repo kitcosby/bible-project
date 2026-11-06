@@ -6,7 +6,7 @@
 
 | Local ID | GitHub issue | Title | Severity | Classification | Status |
 |---|---|---|---|---|---|
-| YLT-GNT-001 | [#1](https://github.com/kitcosby/bible-project/issues/1) | TR parser drops pipe-delimited variant tokens before Greek alignment | High | Confirmed software/data alignment defect | Root cause traced to pipe-delimited Robinson TR source records skipped by parse_tr(); source token counts 24/21 vs stored 23/20; repair not started |
+| YLT-GNT-001 | [#1](https://github.com/kitcosby/bible-project/issues/1) | TR parser drops pipe-delimited variant tokens before Greek alignment | High | Confirmed software/data alignment defect | Root cause traced to missing Robinson first/second variant parsing; 27 UTR files contain 431 pipe-marked lines; 41 shorthand pattern matches; John/Colossians undercounts confirmed; repair not started |
 | YLT-GNT-002 | [#2](https://github.com/kitcosby/bible-project/issues/2) | SBL normalized word forms are incorrectly treated as LXX lexical lemmas | High | Confirmed API/data integration defect | Confirmed field-semantics mismatch in build_gnts_bridge.py; zero exact SBL/LXX matches; repair not started |
 | YLT-GNT-003 | [#3](https://github.com/kitcosby/bible-project/issues/3) | Preserve Greek lexical provenance in PWA word detail | Medium | Confirmed frontend integration defect | API field exists; adapter drops it |
 | YLT-GNT-004 | Pending | Verify G0 Strong's sentinel values in TR source | Medium | Suspected source-data anomaly | Requires source-level verification |
