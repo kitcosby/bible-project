@@ -118,3 +118,11 @@ This log records project documentation changes only. GitHub issue creation and s
 - YLT rendering edges unchanged on resolved verses; three prior orphan rows become valid. Ten legacy Colossians 4:18 colophon edges excluded.
 - Existing embedding vectorizer and corpus unchanged; no production changes.
 - Full report: [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md).
+
+
+## 2026-11-06 — YLT profile review and parser reconciliation
+
+- Reviewed 108 low-margin components, 118 raw branch groups and 116 YLT verse contexts. Added a profile-aware shadow JSON with 15 proposed group selections across 13 references; 2 prior hypotheses retracted, 2 held unresolved, and 99 groups remain undecided for the YLT profile.
+- Identified that the legacy YLT rendering bridge is KJV-mediated (YLT→KJV→Greek), not independent YLT lexical evidence. In the review packet, 2,101/3,076 YLT tokens have a Greek-position link (68.3%); 975 do not, and 389 mapped tokens link to multiple Greek positions.
+- Parser equivalence corrected: first-variant mode 7,954/7,954 common sequences exact, plus one upstream-only empty verse key (Luke 17:36); second-variant mode 7,947/7,947 exact. Revelation 17:7–8 remains excluded under the upstream workaround.
+- No production DDL, API changes, branch selections, embeddings/vectorizer changes, merge or deployment. New artifacts document proposals only.

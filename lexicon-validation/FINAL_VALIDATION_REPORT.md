@@ -67,3 +67,8 @@ Interpretation: the stored English rendering positions and token strings are int
 A variant-aware TR sequence and shadow bridge were built and validated in `bible_greek_bridge_test_20261106`, not in production. The resolved subset achieved 99.90% `lemma.TR` agreement and zero out-of-range positions; John 9:21 and Colossians 4:10 are corrected in the shadow sequence. Shadow integrity checks found no non-contiguous token positions, duplicate bridge keys, missing Greek references, or orphan YLT renderings.
 
 This does **not** complete production validation. Nineteen groups across 17 references remain unresolved, and ten legacy Colossians 4:18 edges are classified as colophon-only. The existing YLT rendering edge set is unchanged on resolved verses. The embedding vectorizer and public corpus remain unchanged. Production status remains **not approved** pending review of unresolved variants and the colophon exclusion. See [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md).
+
+
+## 2026-11-06 — Scope qualification: YLT semantic alignment
+
+The earlier structural validation established that rendering rows are internally consistent with the stored positional bridge, but it did not establish that each YLT word is semantically associated with the correct Greek word. The new audit shows that the bridge is KJV-mediated and therefore not independent evidence for YLT-specific lexical or variant decisions. Keep production approval blocked until a profile-specific YLT alignment, unmatched-token accounting, and unresolved-variant review are completed. No production rows, APIs, embeddings, or vectorizer settings were changed.
