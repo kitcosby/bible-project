@@ -10,12 +10,12 @@ The Hebrew and Greek paths must be evaluated separately. Hebrew already has a ma
 
 ## Confirmed software/integration defects
 
-### YLT-GNT-001 — Greek positional bridge can assign source positions outside the TR verse
+### YLT-GNT-001 — TR parser drops pipe-delimited variant tokens before Greek alignment
 
 **Severity:** High  
 **Affected components:** `build_nt_align.py`, `gnt_alignment`, `gnt_ylt_renderings`, Flask API and PWA display.
 
-The alignment builder imports KJV source-encoded references to Greek positions and records them against the Robinson TR sequence. The source code counts in-range references but the observed logic does not reject or reconcile out-of-range references before mapping them.
+The primary cause is upstream in build_nt.py parse_tr(): its token regex expects a Strong's number to be followed immediately by a morphology brace. It skips pipe-delimited variant/morphology records in the Robinson TR source. build_nt_align.py then transfers CrossWire KJV src positions onto a shorter parsed TR sequence. The alignment builder counts in-range references but does not stop or reconcile the resulting out-of-range positions.
 
 Live examples identified during discovery:
 
@@ -31,7 +31,7 @@ CrossWire KJV module markup carries the omitted forms in `lemma.TR` and referenc
 
 **Expected behavior:** Every source reference must resolve against the selected Greek witness and verse. Unresolved references must be reported and excluded from automatic word association, not silently attached to another token.
 
-**Minimal correction direction:** Build a verse-local source-token reconciliation between CrossWire's encoded Greek references and the actual Robinson TR token stream. Reject unresolved references and retain an audit trail. Do not apply a blanket positional shift.
+**Minimal correction direction:** Extend parse_tr() to recognize the pipe-delimited source syntax, preserve one token occurrence and retain alternate Strong's/morphology analyses as metadata. Then rebuild and validate the TR token stream in a disposable database before regenerating any downstream bridge. Do not apply a blanket positional shift.
 
 ### YLT-GNT-002 — SBL lemma/gloss lookup uses incompatible lemma representations
 
@@ -92,6 +92,10 @@ Byzantine YLT mapping rows exist in PostgreSQL but were not found in the Flask A
 - Unaligned particles or function words where no defensible one-to-one English equivalent exists.
 - A morphology pattern whose source grammar is genuinely ambiguous.
 
-## Backup/restore evidence\n\nA PostgreSQL 16.15 custom-format dump of the production `bible` database was created in the local OneDrive sync folder (91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`). The archive catalogue was readable and restore into `bible_restore_verify_20261106` completed successfully. Independent row counts for eleven key tables matched production. The dump excludes owner/ACL metadata; OneDrive cloud upload and off-host recovery remain unverified.\n\nA separate execution of the validator against the restored database returned zero counts for several Greek/rendering tables even though the independent row-count comparison had shown those tables populated. This discrepancy is unresolved; do not treat the restored-snapshot validator run as valid until its DSN/session/search-path behavior is independently reconciled.\n\n## Evidence and limitations
+## Backup/restore evidence\n\nA PostgreSQL 16.15 custom-format dump of the production `bible` database was created in the local OneDrive sync folder (91,500,544 bytes; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`). The archive catalogue was readable and restore into `bible_restore_verify_20261106` completed successfully. Independent row counts for eleven key tables matched production. The dump excludes owner/ACL metadata; OneDrive cloud upload and off-host recovery remain unverified.\n\nA separate execution of the validator against the restored database returned zero counts for several Greek/rendering tables even though the independent row-count comparison had shown those tables populated. This discrepancy is unresolved; do not treat the restored-snapshot validator run as valid until its DSN/session/search-path behavior is independently reconciled.\n\n## Backup/restore evidence
+
+A full custom-format backup and separate globals export are recorded in BACKUP_REPORT.md. File existence and sizes were checked; the archive catalogue was readable; the OneDrive-path copy restored into bible_restore_verify_20261106; and independent counts matched production for eleven key tables. The manifest SHA-256 values were not independently recomputed in this phase, OneDrive cloud sync remains unconfirmed, and ownership/ACL restore has not been tested. A restored-snapshot validator run returned zero counts for some tables that independent count checks showed as populated; this inconsistency remains open.
+
+## Evidence and limitations
 
 The initial discovery queried live PostgreSQL using a READ ONLY transaction, inspected current source files in `master`, and inspected the serving Flask/PWA implementation. The full raw query transcripts and exact source commit hashes still need to be attached to the issue evidence. No repair or recomputation has occurred.
