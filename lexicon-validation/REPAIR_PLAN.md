@@ -2,18 +2,17 @@
 
 **Status:** Proposed; no repair authorized or applied.
 
-## Gate 0 — Preserve the production baseline
+## Gate 0 — Preserve the production baseline (partly complete; blocking items remain)
 
-**Partially complete; off-host and full ownership/ACL verification remain open.**
+- A full custom-format dump and a separate globals export are recorded in BACKUP_REPORT.md.
+- The files exist on Lampy; metadata sizes were checked. The archive catalogue is readable.
+- The OneDrive-path copy restored into isolated database bible_restore_verify_20261106 with pg_restore --exit-on-error completing successfully.
+- Independent row counts matched production for eleven key tables.
+- The manifest records checksums and a 47-table comparison; those checksum values and the full 47-table comparison have not yet been independently rerun in this phase.
+- OneDrive cloud sync is unconfirmed. The restore used --no-owner --no-acl; ownership/ACL and globals restoration remain untested.
+- A restored-snapshot validator run returned zero for several Greek/rendering tables despite the independent count comparison showing those tables populated. Reconcile this before relying on the validator against snapshots.
 
-1. PostgreSQL 16.10 and live database identity confirmed.
-2. Full custom-format logical dump and globals export created.
-3. SHA-256 hashes and archive-list validation recorded.
-4. Portable OneDrive-path copy restored into an isolated database; exact row counts for all 47 public tables matched, extension versions matched and invalid index count was zero.
-5. Backup report records current table counts and hashes.
-6. OneDrive cloud synchronization completion has not been independently confirmed; full owner/ACL restore has not yet been exercised.
-
-Historical `app_v2.py.bak-*` files are application-code backups, not database backups. Current local dump: `C:\\Users\\kitco\\OneDrive\\BibleBackups\\bible-20261106.dump`; SHA-256 `7e41a2abc13a9b558c16d209611868d7ac36ff15847a1f5147892be61f2e4377`; 91,500,544 bytes. Restored to `bible_restore_verify_20261106` with `pg_restore --exit-on-error`; independent key-table row counts matched. A restored-snapshot validator run disagreed with the independent count check and needs investigation. No production mutation is permitted until the remaining backup checks are complete.
+No production data mutation is permitted until checksums, off-host replication, and a recovery-grade restore including the required roles/permissions have been verified.
 
 ## Gate 1 — Reproduce defects outside production
 
@@ -23,18 +22,24 @@ Historical `app_v2.py.bak-*` files are application-code backups, not database ba
 - Reproduce John 9:21 and Colossians 4:10 from source files and database snapshot.
 - Preserve current mappings verbatim in the test fixture as the before-state.
 
-## Priority 1 — Greek positional bridge
+## Priority 1 — Robinson TR parser and Greek positional bridge
+
+**Confirmed upstream cause:** build_nt.py parse_tr() uses a regex that requires an immediate morphology brace after the Strong's number. It skips pipe-delimited source records:
+- Colossians 4:10: barnaba 921 | {N-GSM} | {N-DSM} | ... — one token omitted.
+- John 9:21: autou 848 | autou 846 | {P-GSM} ... — one token omitted, with alternative Strong's values.
+
+The resulting stored TR verses have 20 instead of 21 tokens in Colossians 4:10, and 23 instead of 24 in John 9:21. CrossWire KJV lemma.TR references retain the omitted forms, creating the observed out-of-range bridge rows and orphan YLT renderings.
 
 Proposed minimal repair:
 
-1. Compare CrossWire's embedded TR source references against the pinned Robinson TR token stream for each verse.
-2. Resolve references by source token identity/surface and local context, not by an assumed global offset.
-3. Reject unresolved/out-of-range references and emit an explicit diagnostic report.
-4. Rebuild only the affected bridge rows in a disposable database.
-5. Compare all other verses against the pre-repair baseline; require zero unexplained changes.
-6. Run the expanded Greek gold set and manual review before proposing production migration.
+1. Extend the TR parser to recognize the pipe-delimited alternatives.
+2. Preserve one occurrence per Greek token; keep alternative Strong's and morphology analyses as explicit metadata, not extra positions and not discarded data.
+3. Rebuild the TR token stream only in a disposable database; compare every token against the pinned Robinson source.
+4. Check every CrossWire lemma.TR reference against the parsed token identity, not only a small sample.
+5. Only after source-to-token parity is proven, rebuild the KJV-to-TR and YLT bridge in the disposable database.
+6. Require zero unexplained out-of-range references, orphan mappings or unrelated row changes; review all differences.
 
-Do not shift all positions by one or replace the existing Greek witness.
+Do not shift all positions by one, merge Greek witnesses, or regenerate the Hebrew lexicon.
 
 ## Priority 2 — SBL lemma/gloss mapping
 
