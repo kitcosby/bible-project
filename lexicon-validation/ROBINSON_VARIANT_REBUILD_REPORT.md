@@ -153,4 +153,4 @@ Shadow integrity checks passed:
 
 **Not approved for production.** The 19 unresolved variant groups across 17 references remain preserved but unselected. The Colossians 4:18 colophon exclusion also needs explicit review. No production migration, source change, API change, or vectorizer change has been made.
 
-Test artifacts currently reside on Lampy under `/tmp/robinson-variant-audit/`; they have not yet been packaged as repository scripts. The report and durable validation notes are committed on the `ylt-lexicon-validation` branch only.
+The test harness scripts and decision JSON are retained on Lampy under `/var/lib/bible-validation/robinson-variant-audit/`, with a `README.md` and `MANIFEST.sha256`. The pinned source checkouts and raw KJV OSIS input remain under `/tmp/robinson-variant-audit/`; the scripts have not yet been packaged as repository scripts. The report and durable validation notes are committed on the `ylt-lexicon-validation` branch only.
