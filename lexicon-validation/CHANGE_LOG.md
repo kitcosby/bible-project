@@ -14,3 +14,11 @@
 - No verified PostgreSQL backup was located during the initial check; backup verification remains a blocking item.
 
 This log records project documentation changes only. GitHub issue creation and subsequent evidence will be appended as separate dated entries.
+
+## 2026-11-06 — Validation branch and issue tracking
+
+- Created branch `ylt-lexicon-validation` from `master`.
+- Added the seven initial validation records under `lexicon-validation/`.
+- Opened GitHub issues #1–#4 for the confirmed positional bridge defect, SBL lemma/gloss lookup defect, PWA provenance gap and Byzantine bridge integrity risk.
+- A duplicate submission (#5) was immediately closed with reason `duplicate`; issue #4 is the canonical tracking item for the Byzantine bridge.
+- No source code, production data or computed lexicon content changed.
