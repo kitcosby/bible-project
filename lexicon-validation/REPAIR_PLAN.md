@@ -24,7 +24,7 @@ No production data mutation is permitted until checksums, off-host replication, 
 
 ## Priority 1 — Robinson TR parser and Greek positional bridge
 
-**Confirmed upstream cause:** build_nt.py parse_tr() does not implement the Robinson file format's pipe-delimited first/second-variant syntax. The official MIT-licensed librobinson library normalizes these patterns and selects one reading explicitly. The current regex skips the selected token in these cases:
+**Confirmed upstream cause:** build_nt.py parse_tr() does not implement the Robinson file format's pipe-delimited first/second-variant syntax. A survey of all 27 UTR files found 431 physical lines containing pipe markers and 41 matches to librobinson's three shorthand-normalization patterns (39 surface alternatives, one morphology alternative, one Strong's alternative). The parser repair is therefore corpus-wide. The official MIT-licensed librobinson library normalizes these patterns and selects one reading explicitly. The current regex skips the selected token in these cases:
 - Colossians 4:10: barnaba 921 | {N-GSM} | {N-DSM} | ... — first reading has one Barnabas token with N-GSM; second reading uses N-DSM.
 - John 9:21: autou 848 | autou 846 | {P-GSM} ... — first and second readings differ in Strong's value.
 
