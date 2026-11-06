@@ -23,3 +23,8 @@
 - **Closed/documented:** Deliberately retained with documented reason and evidence.
 
 Five actionable GitHub issues are open: [#1 TR parser/positional bridge](https://github.com/kitcosby/bible-project/issues/1), [#2 SBL lexical lookup](https://github.com/kitcosby/bible-project/issues/2), [#3 PWA provenance](https://github.com/kitcosby/bible-project/issues/3), [#4 Byzantine bridge integrity](https://github.com/kitcosby/bible-project/issues/4), and [#6 Greek variant API integration](https://github.com/kitcosby/bible-project/issues/6). An accidental duplicate issue #5 was closed as duplicate. The read-only validator now reports 3 out-of-range TR bridge rows and 3 orphan TR YLT renderings; Byzantine and Hebrew structural checks passed. No production repair has been applied. Backup/restore test completed locally; cloud sync and recovery metadata remain incomplete. Restored-snapshot validator output has an unresolved discrepancy with the independent table-count check.
+
+
+## Review branch
+
+Draft PR #7: https://github.com/kitcosby/bible-project/pull/7. It is based on master and contains only the ten YLT validation artifacts. The separate branch named ylt-lexicon-validation is 75 commits ahead of master and is not the review branch; do not merge it as part of this work.
