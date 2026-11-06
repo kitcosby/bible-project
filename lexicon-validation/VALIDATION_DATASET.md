@@ -78,3 +78,18 @@ Initial live run (2026-11-06): Hebrew orphan mappings 0; TR out-of-range alignme
 ## Current readiness
 
 The Hebrew gold set already includes 30 manually aligned verses (Genesis 1, Psalm 23 and Isaiah 53), with reported baseline precision 0.7984 and recall 0.5039 at the current operating point. The pipe-delimited TR parser cases now have an executable reproducer at `eval/test_nt_parser_variants.py`. Both tests are marked expected-failure against the current parser; they specify first-reading selection. The upstream librobinson parser supports explicit first/second variant modes, so separate tests for the alternate reading must also be added before the parser correction is accepted. The remaining Greek alignment cases are specifications, not yet a machine-executable gold set. Independent manual annotation is required before treating all expected Greek word associations as gold truth.
+
+## 2026-11-06 — Full stored YLT token-position run
+
+The validator's token comparison was executed against the restored snapshot. It compares each stored rendering word with the corresponding whitespace-delimited token in the linked YLT verse after the builder's punctuation stripping.
+
+| Witness | Rendering rows | Missing text | Out of range | Token mismatches |
+|---|---:|---:|---:|---:|
+| Hebrew | 358,391 | 0 | 0 | 0 |
+| TR | 143,227 | 0 | 0 | 0 |
+| Byzantine | 141,902 | 0 | 0 | 0 |
+| SBL | 135,971 | 0 | 0 | 0 |
+
+This validates stored rendering-word positions and strings against YLT verse text, not semantic Greek-to-English alignment. The existing three TR Greek-position errors and three orphan renderings remain. The builder's canonical YLT token convention is defined in `build_nt.py`'s `parse_ylt()` and `STRIP_CHARS`; the token check is therefore a structural consistency test, not a manually annotated alignment gold set.
+
+The focused parser regression tests were also run against `master/build_nt.py`; both John 9:21 and Colossians 4:10 cases produced the expected failures.
