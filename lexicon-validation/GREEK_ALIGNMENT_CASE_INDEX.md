@@ -4,11 +4,18 @@
 **Status:** Research index for the isolated YLT-profile shadow review.  
 **Companion:** [YLT–Greek Alignment Field Guide](GREEK_ALIGNMENT_FIELD_GUIDE.md)
 
-This index separates the 20 legacy-overlap positional-divergence cases already read in context from the original 39-case Greek-token review set, now 31 pending and eight proposed.
+This index separates the 20 legacy-overlap positional-divergence cases already read in context from the original 39-case Greek-token review set, now 31 pending and eight proposed. It also points to the separate 267-position function-word review; do not conflate these counts.
 
 [Contextual notes for the original 39 Greek-token cases](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide full-verse grammatical assessments and distinguish 31 pending rows from eight shadow proposals.
 
 Companion index: [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — all 19 formerly unresolved YLT-profile groups, including the five YLT-reviewed verse-text branches, 13 subscription/colophon exclusions, and the one remaining unresolved reading. Machine-readable selection snapshot: [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
+
+## Related broader function-word review
+
+- [Function-word alignment milestone](FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 267 positions reviewed across 116 verse contexts; 228 direct/phrase proposals and 39 retained for further consideration.
+- [Complete function-word review bundle index](FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) — category totals, disposition types, and legacy-overlap cautions.
+
+These 267 proposal candidates are a separate research layer, not a claim that 228 new links have been applied to the shadow database or approved for production.
 
 ## A. Twenty contextualized legacy-overlap cases
 
