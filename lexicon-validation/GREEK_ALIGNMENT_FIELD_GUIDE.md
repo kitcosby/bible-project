@@ -180,3 +180,10 @@ See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, t
 This guide is not a new lexicon or a replacement for the source text. It does not establish a preferred Greek textual reading, claim that every Greek token needs an English rendering, or authorize changes to production tables, embeddings, vectorizer, API, or deployment. It does not turn Strong's/morphology agreement into proof of occurrence identity.
 
 The governing principle is conservative: preserve evidence, represent phrase and grammar relationships honestly, and leave genuine uncertainty visible.
+
+
+## YLT-token review queue: phrase expansion examples (2026-11-07)
+
+The 503 pending YLT tokens are not all missing Greek equivalents. The queue triage report separates 500 generic “no direct proposal identified” rows from three documented English grammatical-supply cases (Romans 16:27 twice; 1 John 2:23 once). The generic rows remain unadjudicated; do not classify them as not_expressed merely because no proposal is recorded.
+
+Revelation 9:20 is the densest pending verse (16 tokens). Its case report illustrates one Greek finite verb rendered “did reform”; one subjunctive rendered “may bow before”; five Greek article-plus-adjective phrases rendered “those of [material]”; a supplied English copula “are”; and three English infinitive markers “to”. These require phrase-aware modeling, not fabricated Greek tokens or forced one-to-one glosses. The report is a contextual proposal only; no new alignment rows have yet been inserted.
