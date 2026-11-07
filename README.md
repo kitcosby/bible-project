@@ -289,7 +289,9 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 - [Greek token review queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) — machine-readable snapshot of the 39 pending rows.
 - [39-token contextual review notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammar/phrase assessments and reconciliation of token-review vs alignment-row statuses.
 - [Reconciled Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — pre-correction alignment status/confidence and provenance for all 39 rows.
-- [Current Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — latest state after the Acts 5:12 proposal (38 pending, one proposed).
+- [Current Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — intermediate snapshot after the Acts 5:12 proposal (38 pending, one proposed).
+- [Latest Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv) — latest state after five further proposals (33 pending, six proposed).
 - [Acts 5:12 alignment correction](lexicon-validation/ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md) — documents the direct διά → “through” proposal and shadow validation.
+- [Five contextual function-token proposals](lexicon-validation/FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md) — records five further token/phrase-member proposals with verse-context rationale.
 
 These are working research documents on the validation branch. They do not authorize production changes.
