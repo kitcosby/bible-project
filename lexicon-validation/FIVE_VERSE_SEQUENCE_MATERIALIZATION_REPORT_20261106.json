@@ -11,20 +11,21 @@
   "new_greek_sequence_words": 77,
   "initial_ylt_pending_tokens": 45,
   "initial_greek_pending_tokens": 30,
-  "contextual_pair_candidates": 40,
-  "contextual_proposed_pairs": 38,
-  "contextual_legacy_overlap_pairs": 2,
+  "contextual_pair_candidates": 45,
+  "contextual_proposed_pairs": 42,
+  "contextual_legacy_overlap_pairs": 3,
   "contextual_not_expressed_greek": 1,
-  "new_phrase_groups": 10,
-  "final_alignment_group_rows": 26,
-  "final_alignment_rows": 593,
+  "new_phrase_groups": 14,
+  "final_alignment_group_rows": 30,
+  "final_alignment_rows": 598,
+  "additional_alignment_rows_after_initial_placeholders": 16,
   "final_greek_pending_total": 32,
-  "final_ylt_pending_total": 510,
-  "new_verse_ylt_pending_rows": 8,
+  "final_ylt_pending_total": 505,
+  "new_verse_ylt_pending_rows": 3,
   "greek_review_statuses": [
     [
       "legacy_overlap_review",
-      27
+      28
     ],
     [
       "pending_review",
@@ -32,7 +33,7 @@
     ],
     [
       "proposed",
-      506
+      510
     ]
   ],
   "ylt_review_statuses": [
@@ -42,21 +43,21 @@
     ],
     [
       "legacy_overlap_review",
-      39
+      40
     ],
     [
       "pending_review",
-      510
+      505
     ],
     [
       "proposed",
-      510
+      514
     ]
   ],
   "alignment_review_statuses": [
     [
       "legacy_overlap_review",
-      2
+      3
     ],
     [
       "not_expressed",
@@ -64,7 +65,7 @@
     ],
     [
       "proposed",
-      559
+      563
     ],
     [
       "unresolved",
