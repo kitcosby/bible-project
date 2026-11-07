@@ -2,7 +2,7 @@
 
 **Prepared:** 2026-11-07  
 **Environment:** Isolated database bible_greek_bridge_test_20261106, schema ylt_profile_shadow.  
-**Scope:** Current YLT-profile token rows with ylt_token_review.review_status = pending_review.
+**Scope:** Historical pre-Revelation-9:20 snapshot of YLT-profile token rows with ylt_token_review.review_status = pending_review.
 
 ## Current queue shape
 
@@ -119,3 +119,7 @@ Acts 21:8 appears here because the YLT phrase “Paul and his company” is not 
 ## Scope and safeguards
 
 Four YLT token-review rows already had proposed alignment endpoints but still carried pending_review status; their token-review statuses were reconciled to proposed without creating new alignment rows. The remaining 499-row queue has no proposed alignment endpoints and no legacy Greek position spans. No legacy association, production table, embedding, vectorizer, API, or deployment was changed. See the [current row-level queue](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) and [surface/queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md).
+
+## Subsequent status update (2026-11-07)
+
+The 503-row distribution above is a historical snapshot and should not be treated as the current pending queue. Revelation 9:20 was reviewed as a dense phrase case: 15 tokens received proposed phrase-member links, and “are” received an alignment-level not_expressed disposition while remaining token-table pending because the token-review schema has no not_expressed status. Current YLT-token counts are 536 proposed, 484 pending_review, 42 legacy_overlap_review, and 2,109 legacy_only. See the [Revelation 9:20 case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [v10 final validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
