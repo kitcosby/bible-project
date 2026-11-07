@@ -149,5 +149,6 @@ The existing overlap on “and” remains. Both phrase members carry variant dep
 - Full v11 validator passed: [final validation output](FINAL_VALIDATION_AFTER_ACTS_19_27_20261107.txt).
 - Production counts unchanged: 141,009 gnt_words; 143,227 gnt_ylt_renderings; 31,102 YLT verses; 31,102 non-null stored embeddings.
 - Pre-update schema-only shadow backup: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_pre_acts19_27.dump`; SHA-256 `57f1d5accbaf3e609f3e812d237256895d94ffebe740b403254a69738e590958`.
+- Post-update schema-only shadow backup: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_after_acts19_27.dump`; SHA-256 `3e39c4b4b51dc0d3173618c11c63986aa2626dcb3dea5919b2a5dac0c7d65d45`.
 
 No production DDL/DML, embedding generation, vectorizer changes, API changes, merge, or deployment occurred.
