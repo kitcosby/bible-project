@@ -89,7 +89,7 @@ These rows were read from the isolated YLT-profile review queue where the review
 
 **Important:** the initial review cue is a hypothesis to guide the next pass, not a resolved classification. In particular, the Acts 19:27 and Luke 4:16 entries must be checked against the exact stored profile sequence and verse text before assigning a status.
 
-A machine-readable snapshot of the 39 open rows is also available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). It preserves reference, Greek profile position, surface, Beta transliteration, Strong's, morphology, and the exact pending-review status captured at export time.
+A raw machine-readable snapshot of the 39 open rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), adds the corresponding alignment-row status, confidence, and provenance. All 39 rows have a matching unaligned_greek record; 22 are tentatively not_expressed and 17 unresolved, but all 39 have unresolved confidence and remain pending in the token-review queue. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md).
 
 ## C. Open review totals
 
