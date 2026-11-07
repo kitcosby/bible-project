@@ -1,18 +1,18 @@
 # YLT Pending Token Queue — Stratification and Review Plan (2026-11-07)
 
-## Current queue state after Revelation 9:20 review
+## Current queue state after Acts 19:27 review
 
 The YLT-side token-review table now has **484 pending YLT tokens across 116 verses and 23 New Testament books**.
 
 Current status totals:
-- **536** proposed
-- **484** pending_review
-- **42** legacy_overlap_review
-- **2,109** legacy_only
+- **546** proposed
+- **474** pending_review
+- **43** legacy_overlap_review
+- **2,108** legacy_only
 
-The 484 pending rows divide by recorded reason:
-- **479** generic rows: “No direct proposal identified in this review set.”
-- **5** annotated corner cases: one each in Acts 15:32, 1 John 2:23, Romans 16:27 (“the” and “[be]”), and Revelation 9:20 (“are”).
+The 474 pending rows divide by recorded reason:
+- **466** generic rows: “No direct proposal identified in this review set.”
+- **8** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
 The 479 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The five annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
@@ -27,7 +27,7 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Acts 26:20 | “those” (token 3) | τοῖς (position 2) | high | Proposed |
 | Matthew 2:23 | “that” (token 15) | τό (position 10) | moderate | Proposed phrase member |
 
-## Five annotated pending cases
+## Eight annotated pending cases
 
 | Reference | YLT token | Disposition |
 |---|---|---|
@@ -43,29 +43,30 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 
 | Surface | Count |
 |---|---:|
-| to | 51 |
+| to | 50 |
 | the | 33 |
 | may | 22 |
 | did | 20 |
 | was | 18 |
+| a | 16 |
 | having | 15 |
-| is | 15 |
-| of | 15 |
-| a | 14 |
+| is | 14 |
+| of | 14 |
 | who | 13 |
 | in | 12 |
+| they | 9 |
 | have | 8 |
 | he | 8 |
-| they | 8 |
 | are | 6 |
 | be | 6 |
 | one | 6 |
 | that | 6 |
 | been | 5 |
 | being | 5 |
-| doth | 5 |
 | those | 5 |
 | do | 4 |
+| doth | 4 |
+| on | 4 |
 | were | 4 |
 | and | 3 |
 | back | 3 |
@@ -80,7 +81,7 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 
 | Book | Pending YLT tokens |
 |---|---:|
-| Acts | 101 |
+| Acts | 91 |
 | Luke | 54 |
 | Matthew | 49 |
 | Revelation | 34 |
@@ -108,7 +109,6 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 
 | Reference | Pending YLT tokens |
 |---|---:|
-| Acts 19:27 | 13 |
 | 1 Corinthians 5:11 | 12 |
 | Acts 26:20 | 11 |
 | Revelation 7:2 | 11 |
@@ -128,17 +128,18 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 | 1 Timothy 3:2 | 7 |
 | Acts 7:26 | 7 |
 | Acts 26:18 | 7 |
+| Acts 19:27 | 3 |
 
-Revelation 9:20 is no longer the largest pending cluster: 15 tokens now have proposed phrase-member endpoints and “are” has an alignment-level not_expressed disposition.
+Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed phrase-member endpoints and “are” has an alignment-level not_expressed disposition. Acts 19:27 was reviewed next; 10 tokens gained phrase proposals and three supplied English article/copula tokens received alignment-level not_expressed dispositions, leaving three pending at token-review level.
 
 ## Recommended next review batches
 
-1. Review the 51 remaining “to” occurrences by full verse and Greek construction, distinguishing prepositions from infinitive markers and supplied English syntax.
+1. Review the 50 remaining “to” occurrences by full verse and Greek construction, distinguishing prepositions from infinitive markers and supplied English syntax.
 2. Review the 33 “the” occurrences, especially repeated Greek articles, articular infinitives, and articles introduced or omitted in English.
 3. Review auxiliaries and participial expansions (“may”, “did”, “was”, “having”, “is”) as constructions before proposing individual Greek tokens.
-4. Keep the five annotated cases above separate from the 479 generic pending rows.
+4. Keep the eight annotated cases above separate from the 466 generic pending rows.
 5. Preserve legacy links; contextual alternatives should remain overlap candidates until occurrence identity is established.
 
-The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 484 rows.
+The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 474 rows.
 
 No production tables, legacy associations, embeddings, vectorizer, API, or deployment were changed.
