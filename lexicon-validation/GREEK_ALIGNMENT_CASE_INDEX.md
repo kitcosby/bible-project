@@ -17,6 +17,8 @@ Companion index: [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_I
 
 These 267 proposal candidates are a separate research layer, not a claim that 228 new links have been applied to the shadow database or approved for production.
 
+The [full 20-case positional-divergence report](LEGACY_POSITIONAL_DIVERGENCE_DECISIONS_20261106.md) preserves the full YLT verse, Greek profile sequence, legacy positions, classification, and rationale for each case. The strongest suspected legacy misassignments are Romans 1:27, 2 Peter 2:9, and (pending production-sequence verification) 1 Timothy 3:2.
+
 ## A. Twenty contextualized legacy-overlap cases
 
 These cases were reviewed against the full YLT verse and the profile-specific Greek sequence. Classifications describe the nature of the relationship; they do not imply every proposed target is a literal one-word gloss.
