@@ -3,7 +3,7 @@ c=psycopg2.connect(dbname='bible_greek_bridge_test_20261106',user='postgres',hos
 def count(t):
  q.execute('select count(*) from ylt_profile_shadow.'+t);return q.fetchone()[0]
 tables={t:count(t) for t in ['profile','textual_variant_group','textual_variant_branch','profile_variant_selection','gnt_sequence_word','ylt_token','alignment_group','ylt_greek_alignment','ylt_token_review','gnt_token_review','witness_bundle','witness_bundle_member','gnt_word_analysis']}
-assert tables=={'profile':4,'textual_variant_group':261,'textual_variant_branch':522,'profile_variant_selection':783,'gnt_sequence_word':2444,'ylt_token':3171,'alignment_group':30,'ylt_greek_alignment':598,'ylt_token_review':3171,'gnt_token_review':570,'witness_bundle':0,'witness_bundle_member':0,'gnt_word_analysis':0},tables
+assert tables=={'profile':4,'textual_variant_group':261,'textual_variant_branch':522,'profile_variant_selection':783,'gnt_sequence_word':2444,'ylt_token':3171,'alignment_group':31,'ylt_greek_alignment':598,'ylt_token_review':3171,'gnt_token_review':570,'witness_bundle':0,'witness_bundle_member':0,'gnt_word_analysis':0},tables
 q.execute("select p.profile_code,s.decision_status,count(*) from ylt_profile_shadow.profile_variant_selection s join ylt_profile_shadow.profile p using(profile_id) group by 1,2")
 selection={(a,b):n for a,b,n in q.fetchall()}
 assert selection[('crosswire_kjv_candidate_sequence','algorithmically_selected')]==242
@@ -46,11 +46,11 @@ q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment where ali
 q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment where review_status='proposed' and (ylt_verse_id is null or ylt_word_pos is null or gnt_verse_id is null or gnt_position is null)");assert q.fetchone()[0]==0
 q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment a left join ylt_profile_shadow.alignment_group g using(alignment_group_id) where a.alignment_group_id is not null and g.alignment_group_id is null");assert q.fetchone()[0]==0
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1 order by 1");align_status=q.fetchall()
-assert align_status==[('legacy_overlap_review',3),('not_expressed',21),('proposed',563),('unresolved',11)]
+assert align_status==[('legacy_overlap_review',4),('not_expressed',29),('proposed',563),('unresolved',2)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_token_review group by 1 order by 1");ylt_status=q.fetchall()
-assert ylt_status==[('legacy_only',2112),('legacy_overlap_review',40),('pending_review',505),('proposed',514)]
+assert ylt_status==[('legacy_only',2111),('legacy_overlap_review',41),('pending_review',505),('proposed',514)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.gnt_token_review group by 1 order by 1");gnt_status=q.fetchall()
-assert gnt_status==[('legacy_overlap_review',28),('pending_review',32),('proposed',510)]
+assert gnt_status==[('legacy_overlap_review',29),('pending_review',31),('proposed',510)]
 q.execute("select source_kind,review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1,2 order by 1,2");source_status=q.fetchall()
 q.execute("select variant_dependency_groups,count(*) from ylt_profile_shadow.ylt_greek_alignment where variant_dependency_groups<>'[]'::jsonb group by 1 order by 1");deps=q.fetchall()
 
@@ -102,6 +102,23 @@ assert q.fetchall()==[
 # The third overlap is the reverse side of the Romans 16:27 “to”/ἀμήν legacy mismatch.
 q.execute("select t.surface,t.legacy_gnt_positions,r.review_status from ylt_profile_shadow.ylt_token t join ylt_profile_shadow.ylt_token_review r using(ylt_verse_id,ylt_word_pos) where t.ylt_verse_id=(select corpus_verse_id from public.gnt_verses where book_id=(select book_id from public.gnt_books where code='RO') and chapter=16 and verse=27) and t.ylt_word_pos=16")
 assert q.fetchone()==('Amen',[],'legacy_overlap_review')
+# Eight former unresolved function-word alignments now have context-supported not-expressed dispositions.
+q.execute("select b.code,v.chapter,v.verse,g.position,g.surface,a.review_status,a.confidence from ylt_profile_shadow.ylt_greek_alignment a join public.gnt_verses v on v.gnt_verse_id=a.gnt_verse_id join public.gnt_books b on b.book_id=v.book_id join ylt_profile_shadow.gnt_sequence_word g on g.sequence_profile_id=a.sequence_profile_id and g.gnt_verse_id=a.gnt_verse_id and g.position=a.gnt_position where a.source_record_key in ('function:100:pending','function:115:pending','function:126:pending','function:20:pending','function:77:pending','function:146:pending','function:158:pending','function:50:pending') order by b.code,v.chapter,v.verse,g.position")
+assert q.fetchall()==[
+ ('AC',19,27,7,'το','not_expressed','high'),
+ ('AC',22,25,14,'ει','not_expressed','moderate'),
+ ('AC',22,25,17,'και','not_expressed','moderate'),
+ ('COL',4,10,4,'ο','not_expressed','high'),
+ ('JAS',4,15,2,'του','not_expressed','high'),
+ ('LU',4,16,4,'την','not_expressed','high'),
+ ('MT',4,13,3,'την','not_expressed','high'),
+ ('RE',7,2,22,'αυτοις','not_expressed','high')]
+# The two unresolved cases remain deliberately open.
+q.execute("select b.code,v.chapter,v.verse,g.position,g.surface,a.review_status from ylt_profile_shadow.ylt_greek_alignment a join public.gnt_verses v on v.gnt_verse_id=a.gnt_verse_id join public.gnt_books b on b.book_id=v.book_id join ylt_profile_shadow.gnt_sequence_word g on g.sequence_profile_id=a.sequence_profile_id and g.gnt_verse_id=a.gnt_verse_id and g.position=a.gnt_position where a.review_status='unresolved' and a.alignment_kind='unaligned_greek' order by b.code,v.chapter,v.verse,g.position")
+assert q.fetchall()==[('AC',15,32,2,'δε','unresolved'),('AC',21,8,6,'περι','unresolved')]
+# Philippians 4:2 article-to-"the" candidate remains legacy overlap because the legacy token points to φρονεῖν.
+q.execute("select t.surface,t.legacy_gnt_positions,r.review_status,a.gnt_position,g.surface,a.review_status,a.alignment_group_id from ylt_profile_shadow.ylt_token t join ylt_profile_shadow.ylt_token_review r using(ylt_verse_id,ylt_word_pos) join ylt_profile_shadow.ylt_greek_alignment a on a.ylt_verse_id=t.ylt_verse_id and a.ylt_word_pos=t.ylt_word_pos join ylt_profile_shadow.gnt_sequence_word g on g.sequence_profile_id=a.sequence_profile_id and g.gnt_verse_id=a.gnt_verse_id and g.position=a.gnt_position where t.ylt_verse_id=(select corpus_verse_id from public.gnt_verses where book_id=(select book_id from public.gnt_books where code='PHP') and chapter=4 and verse=2) and t.ylt_word_pos=11")
+assert q.fetchone()==('the',[8],'legacy_overlap_review',6,'το','legacy_overlap_review','PHP-4:2-the-same')
 # Three remaining pending YLT tokens are intentionally not force-linked.
 q.execute("select b.code,v.chapter,v.verse,t.ylt_word_pos,t.surface from ylt_profile_shadow.ylt_token t join ylt_profile_shadow.ylt_token_review r using(ylt_verse_id,ylt_word_pos) join public.ylt_verses y on y.verse_id=t.ylt_verse_id join public.verses v using(verse_id) join public.gnt_books b on b.book_id=v.book_id where r.profile_id=4 and r.review_status='pending_review' and ((b.code='JOH' and v.chapter=8 and v.verse=6) or (b.code='RO' and v.chapter=16 and v.verse=27) or (b.code='EPH' and v.chapter=6 and v.verse=24) or (b.code='1JO' and v.chapter=2 and v.verse=23)) order by b.code,t.ylt_word_pos")
 assert q.fetchall()==[('1JO',2,23,10,'he'),('RO',16,27,2,'the'),('RO',16,27,11,'be')]
