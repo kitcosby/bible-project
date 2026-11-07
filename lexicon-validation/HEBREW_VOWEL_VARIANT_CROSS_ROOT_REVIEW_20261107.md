@@ -146,3 +146,37 @@ The corrected all-group totals are:
 - Root-count distribution: 369 groups span two roots; three span three roots.
 
 This audit is still a database-level structural review, not a complete linguistic adjudication of all 372 groups.
+
+
+## 9. Second high-priority batch: 15 further cross-root groups
+
+A second member-level pass selected the next 15 groups from the language-scoped index, ordered by multiple Strong's values, multiple morphology patterns, root divergence, and occurrence count, excluding the first 15 high-occurrence cases already reviewed.
+
+| Signature | Occurrences | Existing roots | Strong's values | Main stored distinction |
+|---|---:|---|---|---|
+| `אל֖י` | 58 | `אל`, `אלי` | H410, H413 | `אֵלִ֖י` noun + first-person suffix (“my God” analysis); `אֵלַ֖י` preposition + first-person suffix (“to me”); one `אֵלַ֖י` under root `אלי` has no Strong's/morphology assignment. |
+| `הר֖ע` | 49 | `הרע`, `רע` | H7489, H7451 | One verbal member `הֵרַ֖ע` (Exodus 5:23) vs article/adjective members `הָרַ֖ע` and `הָרָ֖ע`. |
+| `את֔ם` | 47 | `את`, `אתמ` | H853, H864 | `אֹתָ֔ם` object pronoun “them” vs proper name `אֵתָ֔ם` (Numbers 33:8). |
+| `וּבנ֥י` | 45 | `בנ`, `בני` | H1121, H1129, H1137 | “and my son”, “and sons”, proper name Bani, and participial “builders”; different morphology and lexical entries. |
+| `אתּ֣ם` | 42 | `את`, `אתמ` | H854, H859 | `אִתָּ֣ם` “with them” vs `אַתֶּ֣ם` “you” (masculine plural). |
+| `מא֣ת` | 42 | `את`, `מאת` | H3967, H854 | `מְאַ֣ת` “hundred” vs `מֵאֵ֣ת` “from”. |
+| `על֣י` | 41 | `על`, `עלי` | H5921, H5941 | `עֲלֵ֣י` preposition, `עֵלִ֣י` proper name Eli, and `עָלַ֣י` preposition with first-person suffix. |
+| `דּבר֣י` | 38 | `דבר`, `דברי` | H1696, H1697 | “my words”, “words of”, and a participial form “speakers” (Psalms 28:3). |
+| `בּנ֖י` | 35 | `בנ`, `בני` | H1121, H1137 | Singular construct with first-person suffix, plural construct, proper name Bani, and plural construct with suffix. |
+| `אב֣י` | 32 | `אב`, `אבי` | H1, H33 | `אָבִ֣י` “my father” vs `אֲבִ֣י` under a separate root entry with both H1/H33 and multiple morphology assignments. |
+| `מע֖ל` | 31 | `מעל`, `על` | H4603, H5921 | Verb `מָעַ֖ל` vs preposition `מֵעַ֖ל` “from above”. |
+| `אדנ֖י` | 29 | `אדנ`, `אדני` | H113, H136 | “my lord”/divine-title analyses; one exact member `אֲדֹנִ֖י` itself carries both H113 and H136 across occurrences. |
+| `אתּם֙` | 29 | `את`, `אתמ` | H854, H859 | `אִתָּם֙` “with them” vs `אַתֶּם֙` “you” (masculine plural). |
+| `ל֣ך` | 29 | `כ`, `לכ` | H1980, H3212 | `לֵ֣ךְ` imperative/verb member has both Strong's H1980 and H3212 while retaining the same stored verbal morphology; `לָ֣ךְ` is a separate prepositional/pronominal member. |
+| `אתּ֖ם` | 27 | `את`, `אתמ` | H854, H859 | Same “with them” vs “you” distinction as other accent-specific groups. |
+
+### Additional data-quality flags
+
+Two cases deserve review beyond the vowel-only relation itself:
+
+1. In `אדנ֖י`, the same pointed root-vowel member `אֲדֹנִ֖י` is associated with both H113 and H136 across occurrences. The distinction may be contextual/lexical, but it cannot be resolved by the pointed form or root-vowel key alone.
+2. In `ל֣ך`, the same pointed verbal member `לֵ֣ךְ` carries both H1980 and H3212 while the stored morphology remains `HVqv2ms`. This is a Strong's assignment divergence within one member, not simply a difference between two vocalized members.
+
+The `אב֣י` group also has multiple Strong's and morphology assignments within its `אֲבִ֣י` member. These cases should become explicit lexical-association review items rather than being “fixed” by the variant-group builder.
+
+These 15 are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications. Combined with the first batch, 30 of the 372 cross-root groups have now received member-level inspection; 342 remain.
