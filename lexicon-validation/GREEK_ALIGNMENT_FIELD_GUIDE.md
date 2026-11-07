@@ -194,4 +194,9 @@ The governing principle is conservative: preserve evidence, represent phrase and
 
 The 499 pending YLT tokens are not all missing Greek equivalents. The queue triage report separates 495 generic “no direct proposal identified” rows from four annotated exceptions: supplied English “he” (1 John 2:23), branch-dependent “also” (Acts 15:32), and the supplied article/copula (Romans 16:27). All 499 lack legacy Greek position spans and none has a proposed alignment endpoint. The generic rows remain unadjudicated; do not classify them as not_expressed merely because no proposal is recorded.
 
-Revelation 9:20 is the densest pending verse (16 tokens). Its case report illustrates one Greek finite verb rendered “did reform”; one subjunctive rendered “may bow before”; five Greek article-plus-adjective phrases rendered “those of [material]”; a supplied English copula “are”; and three English infinitive markers “to”. These require phrase-aware modeling, not fabricated Greek tokens or forced one-to-one glosses. The report is a contextual proposal only; no new alignment rows have yet been inserted.
+Revelation 9:20 is the densest pending verse (16 tokens). Its case report illustrates one Greek finite verb rendered “did reform”; one subjunctive rendered “may bow before”; five Greek article-plus-adjective phrases rendered “those of [material]”; a supplied English copula “are”; and three English infinitive markers “to”. These require phrase-aware modeling, not fabricated Greek tokens or forced one-to-one glosses. The 2026-11-07 shadow implementation added 11 phrase groups and 16 alignment rows (15 proposed, one not_expressed); see the latest v10 validator and Revelation 9:20 case report.
+
+
+## Variant-sensitive phrase case (2026-11-07)
+
+Acts 15:32 now has a stable proposal for Greek καί at position 3 → YLT “and” (token 3), because that καί is present in both Robinson branches. The branch-specific particle at position 2 (A=τε, B=δέ) remains unresolved; YLT “also” does not independently establish which branch Young used. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
