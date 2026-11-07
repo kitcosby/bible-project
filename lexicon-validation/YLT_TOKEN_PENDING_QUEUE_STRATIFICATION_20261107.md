@@ -1,18 +1,18 @@
 # YLT Pending Token Queue — Stratification and Review Plan (2026-11-07)
 
-## Current queue state after Revelation 7:2 review
+## Current queue state after Acts 4:32 review
 
-The YLT-side token-review table now has **446 pending YLT tokens across 116 verses and 23 New Testament books**.
+The YLT-side token-review table now has **437 pending YLT tokens across 116 verses and 23 New Testament books**.
 
 Current status totals:
-- **574** proposed
-- **446** pending_review
-- **46** legacy_overlap_review
-- **2,105** legacy_only
+- **583** proposed
+- **437** pending_review
+- **47** legacy_overlap_review
+- **2,104** legacy_only
 
-The 446 pending rows divide by recorded reason:
-- **432** generic rows: “No direct proposal identified in this review set.”
-- **14** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
+The 437 pending rows divide by recorded reason:
+- **422** generic rows: “No direct proposal identified in this review set.”
+- **15** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
 The 443 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The twelve annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
@@ -27,7 +27,7 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Acts 26:20 | “those” (token 3) | τοῖς (position 2) | high | Proposed |
 | Matthew 2:23 | “that” (token 15) | τό (position 10) | moderate | Proposed phrase member |
 
-## Fourteen annotated pending cases
+## Fifteen annotated pending cases
 
 | Reference | YLT token | Disposition |
 |---|---|---|
@@ -45,6 +45,7 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Acts 19:27 | “is” (token 35) | Supplied English auxiliary in the passive infinitive construction. |
 | Revelation 7:2 | “the” (token 9) | Supplied English article before “rising”; no separate Greek article. |
 | Revelation 7:2 | “a” (token 15) | Supplied English indefinite article before “seal”; no separate Greek article. |
+| Acts 4:32 | “who” (token 7) | Supplied English relative marker for substantival τῶν πιστευσάντων; alignment-level not_expressed, but still token-table pending. |
 
 See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md), [Romans 16:27/1 John 2:23 grammatical-supply notes](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md), [Revelation 9:20 phrase case](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), and [Acts 19:27 phrase/legacy-conflict case](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
@@ -61,18 +62,18 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 
 | Surface | Count |
 |---|---:|
-| to | 46 |
-| the | 33 |
+| to | 45 |
+| the | 31 |
 | may | 21 |
-| did | 18 |
-| was | 17 |
+| did | 17 |
+| a | 16 |
+| was | 16 |
 | having | 15 |
-| a | 14 |
 | is | 14 |
 | who | 13 |
-| of | 12 |
-| in | 11 |
-| they | 8 |
+| of | 11 |
+| in | 10 |
+| they | 9 |
 | have | 8 |
 | he | 8 |
 | are | 6 |
@@ -80,25 +81,28 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 | that | 6 |
 | been | 5 |
 | one | 5 |
-| those | 5 |
 | being | 4 |
 | do | 4 |
 | doth | 4 |
+| on | 4 |
+| those | 4 |
 | were | 4 |
 | and | 3 |
 | before | 3 |
 | didst | 3 |
 | it | 3 |
 | mayest | 3 |
-| on | 3 |
-
-Frequencies prioritize review batches; they do not establish that repeated English words share the same Greek source. “To” may represent a preposition, an infinitive marker, a purpose construction, or English syntax without a one-to-one Greek token.
+| reign | 3 |
+| set | 3 |
+| shall | 3 |
+| we | 3 |
+| ye | 3 |
 
 ## Pending rows by book
 
 | Book | Pending YLT tokens |
 |---|---:|
-| Acts | 82 |
+| Acts | 73 |
 | Luke | 54 |
 | Matthew | 49 |
 | Colossians | 33 |
@@ -126,7 +130,6 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 
 | Reference | Pending YLT tokens |
 |---|---:|
-| Acts 4:32 | 10 |
 | Acts 21:8 | 10 |
 | Acts 22:25 | 9 |
 | 2 Corinthians 6:15 | 8 |
@@ -146,18 +149,19 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 | Revelation 11:2 | 7 |
 | 2 Peter 2:9 | 6 |
 | Acts 7:16 | 6 |
+| Acts 27:29 | 6 |
 
-Revelation 7:2 no longer has 11 unreviewed pending tokens. Nine tokens now have proposed alignments; two remaining token-table-pending rows (“the” and “a”) have alignment-level not_expressed dispositions. They remain in the token queue because that table has no not_expressed status.
+Acts 4:32 now has one pending token (“who”) with an explicit alignment-level not_expressed disposition. Nine other tokens in that verse moved to proposed alignments; the legacy “he” association was preserved and moved to legacy_overlap_review. Revelation 7:2 retains two token-table-pending articles (“the” and “a”) with alignment-level not_expressed dispositions.
 
 ## Recommended next review batches
 
 1. Review the 50 remaining “to” occurrences by full verse and Greek construction, distinguishing prepositions from infinitive markers and supplied English syntax.
 2. Review the 33 “the” occurrences, especially repeated Greek articles, articular infinitives, and articles introduced or omitted in English.
 3. Review auxiliaries and participial expansions (“may”, “did”, “was”, “having”, “is”) as constructions before proposing individual Greek tokens.
-4. Keep the fourteen annotated cases above separate from the 432 generic pending rows.
+4. Keep the fifteen annotated cases above separate from the 422 generic pending rows.
 5. Preserve legacy links; contextual alternatives should remain overlap candidates until occurrence identity is established.
 
-The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 446 rows.
+The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 437 rows.
 
 No production tables, legacy associations, embeddings, vectorizer, API, or deployment were changed.
 
