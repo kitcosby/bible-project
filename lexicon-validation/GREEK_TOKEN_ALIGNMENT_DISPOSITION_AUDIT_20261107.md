@@ -42,10 +42,10 @@ The 33 token-table rows remain pending because gnt_token_review has no not_expre
 - Alignment rows: 605.
 - Alignment statuses: 566 proposed, 32 not_expressed, six legacy_overlap_review, one unresolved.
 - Greek token-review rows: 509 proposed, 33 pending_review, 31 legacy_overlap_review.
-- YLT token-review rows: 517 proposed, 503 pending_review, 42 legacy_overlap_review, 2,109 legacy_only.
+- YLT token-review rows: 521 proposed, 499 pending_review, 42 legacy_overlap_review, 2,109 legacy_only.
 - All 509 Greek token-review rows marked proposed now have matching proposed alignment endpoints; the four mismatches discovered in this pass are reconciled.
 
-The row-level export is [GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv](GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv). The current YLT pending queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+The row-level export is [GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv](GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv). The current YLT pending queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). Its 499 rows are stratified in [YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md).
 
 ## Scope and safeguards
 
