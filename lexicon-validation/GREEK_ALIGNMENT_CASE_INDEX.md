@@ -149,6 +149,10 @@ The five newly materialized verses have a separate [46-row contextual alignment 
 - [Latest full shadow validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt): 88 alignment groups, 684 alignment rows, and unchanged production row/embedding counts.
 
 
+## Acts 15:32 branch-A reassessment (2026-11-07)
+
+Correction to the earlier edition table: Beza 1598 reads τε (branch A), not δέ. Stephanus 1550 and Beza 1598 therefore both support A; Elzevir 1624 and Scrivener 1894 support B. YLT “Judas also and Silas” is a better literal fit for τε καί than δὲ καί, so branch A is now a moderate-confidence YLT-profile proposal. Young's exact Greek exemplar remains unidentified. The isolated shadow selection remains inherited branch B until its dependent alignment and validator impact are reviewed; no database write was made. See the [corrected Acts 15:32 report](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+
 ## Revelation 7:3 verb-form variant review (2026-11-07)
 
 Robinson group 66:9 records A=σφραγίζωμεν (present active subjunctive, 1pl) and B=σφραγίσωμεν (aorist active subjunctive, 1pl). YLT “till we may seal” does not discriminate between these forms. Edition comparison found Stephanus 1550 and Beza 1598 with A, but Elzevir 1624, Scrivener 1894, Nestle 1904, Westcott–Hort, and SBL GNT with B. Young's preface names the generally recognized Received Text but not a specific edition. Keep the YLT profile unresolved and the rest of Revelation 7:3 unmaterialized. The separate ἄχρι / ἄχρις οὗ connective variation must not be conflated with group 66:9. See [the Revelation 7:3 verb-variant review](REVELATION_7_3_VERB_VARIANT_REVIEW_20261107.md).
