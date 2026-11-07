@@ -125,7 +125,11 @@ A proposed alignment must target the correct profile-specific sequence. The 2 Co
 
 ## Review queue versus alignment-row status
 
-The review queue and alignment table are separate status layers. A Greek token can have an unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. The token-review schema has no not_expressed value, so pending_review may persist after the alignment-level disposition has been contextually reviewed. As of 2026-11-07, the 31 token-table pending rows comprise 29 alignment-level not_expressed dispositions (24 high confidence, five moderate) and two unresolved cases. The unresolved cases are Acts 15:32 δέ and Acts 21:8 περί. The dual-status export records both layers. Do not interpret the token-table pending count as the count of unresolved alignments; likewise, do not infer finality from not_expressed when confidence remains unresolved.
+The review queue and alignment table are separate status layers. A Greek token can have an unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. The token-review schema has no not_expressed value, so pending_review may persist after the alignment-level disposition has been contextually reviewed. As of 2026-11-07, the 31 token-table pending rows comprise 29 alignment-level not_expressed dispositions (24 high confidence, five moderate) and two unresolved cases. The unresolved cases are Acts 15:32 δέ and Acts 21:8 περί. The [2026-11-07 disposition audit](GREEK_TOKEN_ALIGNMENT_DISPOSITION_AUDIT_20261107.md) and [dual-status export](GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv) record both layers. Do not interpret the token-table pending count as the count of unresolved alignments; likewise, do not infer finality from not_expressed when confidence remains unresolved.
+
+## Latest disposition update (2026-11-07)
+
+Twenty additional alignment rows that had provisional not_expressed status and unresolved confidence were reviewed in full context. Eighteen are now high-confidence and two moderate-confidence. Together with the earlier nine cases, this yields 29 not_expressed dispositions (24 high, five moderate) and two genuinely unresolved cases. The token-review table still reports 31 pending rows because its status vocabulary does not include not_expressed; this is a schema/status-layer limitation, not 31 undecided alignments. No production rows or embeddings were changed.
 
 ## Variant groups and paratext
 
