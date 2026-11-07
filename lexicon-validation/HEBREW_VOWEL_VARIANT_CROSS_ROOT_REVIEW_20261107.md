@@ -253,3 +253,37 @@ This batch continues down the corrected risk-sorted index after the 48 previousl
 - `אח֥י`, `עבד֥י`, and `רגל֑י` include cases where a pointed member itself has multiple stored Strong's or morphology assignments. These are data-quality review targets, not problems to resolve by merging variant members.
 
 The review now covers **63 of 372 cross-root groups** (three three-root cases plus four 15-group batches); **309 remain**. The evidence is still member-level and sample-reference based, not a complete contextual Hebrew lexical adjudication.
+
+
+## 13. Fifth high-priority batch: 15 further cross-root groups
+
+This pass reviews the next 15 pending groups in the risk-ranked index, after the 63 groups covered in §§1–12. The review used the isolated shadow snapshot and inspected each existing member's pointed form, root label, Strong's assignment, morphology pattern ID, occurrence count, and verse references. It remains a member-level database review, not a full contextual lexical adjudication.
+
+| Signature | Occurrences | Existing roots | Stored member distinction |
+|---|---:|---|---|
+| `אדנ֨י` | 10 | `אדנ`, `אדני` | Members include `אֲדֹנִ֨י` (H113; 2 occurrences) and `אֲדֹנָ֨י` (H136; 6), plus `אֲדֹנֵ֨י` (H113; 1). Distinct pointed forms and Strong's assignments; do not collapse the divine-title and ordinary-lord analyses. |
+| `בּנ֑י` | 10 | `בנ`, `בני` | `בְּנִ֑י` / `בָּנָ֑י` (H1121) alongside proper name `בָּנִ֑י` (H1137). |
+| `וּמא֖ת` | 10 | `את`, `מאת` | `וּמֵאֵ֖ת` (H853; 1) vs `וּמְאַ֖ת` (H3967; 9): conjunction + “from” versus “hundred”. |
+| `לב֔ן` | 10 | `בנ`, `לבנ` | `לְבֵ֔ן` (H1121; 2) vs `לָבָ֔ן` (H3836/H3837; 8), including “white” and Laban-related lexical assignments. |
+| `מא֨ת` | 10 | `את`, `מאת` | `מֵאֵ֨ת` (H854; 8) vs `מְאַ֨ת` (H3967; 2): “from” vs “hundred”. |
+| `מזּ֑ה` | 10 | `זה`, `מזה` | `מִזֶּ֑ה` (H2088; 9) vs `מִזָּ֑ה` (H4199; 1), with a distinct root/lexical assignment. |
+| `אתּ֜ם` | 9 | `את`, `אתמ` | `אִתָּ֜ם` (H854; 1) “with them” vs `אַתֶּ֜ם` (H859; 8) “you”. |
+| `העל֖ה` | 9 | `העלה`, `עלה` | `הֶעֱלָ֖ה` (H5927; 1) verbal form vs `הָעֹלָ֖ה` (H5930; 8) “the burnt offering”. |
+| `לב֑ן` | 9 | `בנ`, `לבנ` | Same “to/for a son” vs “white/Laban” lexical contrast as `לב֔ן`, in a separate accent-specific group. |
+| `כּלּ֖ה` | 8 | `כל`, `כלה` | `כֻּלֹּ֖ה` (H3605; 6) vs `כַּלָּ֖ה` (H3618; 2), “all of it” vs “bride”. |
+| `על֤י` | 8 | `על`, `עלי` | `עָלַ֤י` (H5921; 4) “upon me” vs `עֲלִ֤י` (H5927; 4), feminine singular imperative “go up”. |
+| `אתּֽם׃` | 7 | `את`, `אתמ` | `אִתָּֽם׃` (H854; 2) “with them” vs `אַתֶּֽם׃` (H859; 5) “you”. |
+| `אתּי֙` | 7 | `את`, `אתי` | `אִתִּי֙` (H854; 6) “with me” vs `אִתַּי֙` (H863; 1), a proper-name/member assignment. |
+| `בנ֔י` | 7 | `בנ`, `בני` | `בְנִ֔י` / `בָנַ֔י` (H1121) vs proper name `בָנִ֔י` (H1137). |
+| `כּלּ֑ה` | 7 | `כל`, `כלה` | `כֻּלֹּ֑ה` (H3605), `כִּלָּ֑ה` (H3615), and `כַּלָּ֑ה` (H3618): “all of it”, verbal “finish/complete”, and “bride”. |
+
+### Batch 5 observations and limits
+
+- Several groups contain clear lexical contrasts: “from” vs “hundred” (`מאת`), “with them” vs “you” (`אתּם`), “upon me” vs “go up” (`עלי`), and “all of it” vs “bride” (`כלה`). These are evidence that the relation must remain a cross-reference, not a merge.
+- The `לבנ` member family combines a word associated with “son” and forms associated with whiteness/the personal name Laban. The stored H3836 and H3837 assignments occur within one pointed-form grouping; retain this as a lexical-association review item rather than assuming the two Strong's labels are interchangeable.
+- `אדנ֨י` includes both H113 and H136 assignments across distinct pointed members; the form is context-sensitive and should be reviewed against its verse context before any theological or lexical conclusion.
+- The `אתּי֙` group includes H863 proper-name assignment `אִתַּי֙` (2 Samuel 23:29) alongside H854 “with me” forms. This is a proper-name/homograph case, not a semantic variant.
+- `כּלּ֑ה` has three different Strong's values and three distinct pointed members. The same strict signature groups “all of it”, “finish/complete”, and “bride”; this is a particularly clear counterexample to treating vowel-only groups as synonym sets.
+- Sample references include Genesis 22:8; Genesis 24:29; Genesis 36:17; Exodus 6:16; Exodus 16:31; Numbers 31:52; 1 Samuel 14:42; 2 Samuel 11:11; 2 Samuel 23:29; Isaiah 21:2; Ezekiel 11:15; and The Song of Solomon 4:11. The complete occurrence list remains in the shadow database and is not reproduced here.
+
+The index now records **78 of 372 cross-root groups** as reviewed at the member level (three three-root cases plus five 15-group batches); **294 remain pending**. This batch did not alter the candidate relation, source tables, or production database. No member is linguistically approved merely by this review.
