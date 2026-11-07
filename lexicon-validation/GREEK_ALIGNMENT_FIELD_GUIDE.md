@@ -145,11 +145,11 @@ The Greek token-review table’s proposed_alignment_count should agree with the 
 
 ## YLT-side pending queue stratification
 
-The current YLT token-review queue has 474 pending tokens across 116 verses. Of these, 466 retain the generic “No direct proposal identified” reason and eight have explicit corner-case notes: 1 John 2:23 “he”; Acts 15:32 “also”; Romans 16:27 “the”/“be”; Revelation 9:20 “are”; and Acts 19:27 “the” and two instances of “is”. The YLT review schema has no not_expressed or unresolved status, so these five remain pending with their rationale preserved.
+The current YLT token-review queue has 474 pending tokens across 116 verses. Of these, 466 retain the generic “No direct proposal identified” reason and eight have explicit corner-case notes: 1 John 2:23 “he”; Acts 15:32 “also”; Romans 16:27 “the”/“be”; Revelation 9:20 “are”; and Acts 19:27 “the” and two instances of “is”. The YLT review schema has no not_expressed or unresolved status, so these eight remain pending with their rationale preserved.
 
 Four additional YLT token rows that already had proposed alignment endpoints were reconciled from pending_review to proposed: 1 Corinthians 13:2 “the” → τὰ; Acts 5:12 “through” → διά; Acts 26:20 “those” → τοῖς; Matthew 2:23 “that” → τό (moderate-confidence phrase member). No alignment rows were created in that status-only reconciliation.
 
-The highest-frequency pending surfaces are “to” (50) and “the” (33), followed by “may” (22), “did” (20), “was” (18), “a” (16), “having” (15), and “is”/“of” (14 each). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 499-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+The highest-frequency pending surfaces are “to” (50) and “the” (33), followed by “may” (22), “did” (20), “was” (18), “a” (16), “having” (15), and “is”/“of” (14 each). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 474-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 ## Database design recommendations
 
