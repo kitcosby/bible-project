@@ -107,3 +107,15 @@ Additional cross-root/form examples from the highest-occurrence groups:
 | `לְפָנַ֣י`, `לִפְנֵ֣י` | `25056.11`, `25172.47` | 216 | `פנ`, `פני` |
 
 The root-entry labels above are the database's existing root keys, not a linguistic adjudication. These cases demonstrate why the variant relation must point to existing form records rather than merge root entries: the same strict surface consonants can be parsed into different base/root structures.
+
+
+## 8. Cross-check against existing lexicon records
+
+A second read-only validation joined every candidate occurrence to `root_vowel` and `lexicon`:
+
+- Candidate occurrence rows checked: **32,676**.
+- `words.pointed` versus `root_vowel.vowel_pattern` after NFC: **32,676 matches; 0 mismatches**.
+- Distinct candidate member keys at the `(root_id, root_form_seq, vowel_seq)` level: **7,148**.
+- Candidate member keys with a corresponding `lexicon` row: **7,148; 0 missing**.
+
+There are 7,124 distinct NFC pointed forms but 7,148 root-vowel keys because the same pointed form can occur under more than one root/form assignment. This confirms that a group/member relation can safely reference existing `root_vowel` keys while preserving each existing lexicon record; it does not justify merging those records.
