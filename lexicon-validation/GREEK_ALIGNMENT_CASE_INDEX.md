@@ -89,13 +89,13 @@ These rows were read from the isolated YLT-profile review queue where the review
 
 **Important:** the initial review cue is a hypothesis to guide the next pass, not a resolved classification. In particular, the Acts 19:27 and Luke 4:16 entries must be checked against the exact stored profile sequence and verse text before assigning a status.
 
-A raw machine-readable snapshot of the 39 open rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The current export, [GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv), records the latest state: 38 pending and one proposed (Acts 5:12 διά → “through”). Before that proposal, all 39 rows had matching unaligned_greek records; 22 were tentatively not_expressed and 17 unresolved, all with unresolved confidence. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) and [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md).
+A raw machine-readable snapshot of the 39 open rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The latest export, [GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv), records the current state: 33 pending and six proposed. The six proposals are Acts 5:12 διά → “through”; Matthew 2:23 τό → “that”; Acts 26:20 τοῖς → “those”; 1 Corinthians 13:2 τά → “the”; Jude 1:24 τῷ → “Him”; and Acts 26:18 τῇ → “that”. Before proposals, all 39 rows had matching unaligned_greek records; their confidence was unresolved. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md), [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md), and [five-proposal report](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
 
 ## C. Open review totals
 
 Snapshot from the isolated shadow review:
 
-- The original 39 Greek-token review rows now comprise 38 pending and one proposed alignment (Acts 5:12).
+- The original 39 Greek-token review rows now comprise 33 pending and six proposed alignments.
 - 20 legacy-overlap positional-divergence cases have contextual notes.
 - 19 Robinson variant groups remain unresolved.
 - 502 YLT token review cases remain pending.
