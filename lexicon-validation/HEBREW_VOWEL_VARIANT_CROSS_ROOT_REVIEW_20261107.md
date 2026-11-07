@@ -180,3 +180,10 @@ Two cases deserve review beyond the vowel-only relation itself:
 The `אב֣י` group also has multiple Strong's and morphology assignments within its `אֲבִ֣י` member. These cases should become explicit lexical-association review items rather than being “fixed” by the variant-group builder.
 
 These 15 are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications. Combined with the first batch, 30 of the 372 cross-root groups have now received member-level inspection; 342 remain.
+
+
+## 10. Follow-on isolated shadow prototype
+
+After the member-level review, a separate database `bible_hebrew_variant_shadow_20261107` was restored from a verified dump of the live `bible` database. The group/member schema was created and populated only in that new database. The independent validator passed all 3,349 group and 7,148 language-scoped member comparisons, 32,676 occurrence counts, root-vowel/lexicon parent checks, language-scope assertions, and Qere separation. Production and the existing Greek bridge test database were not modified.
+
+The source and post-build backup hashes, table-count parity, ACL restriction, and reproducible scripts are documented in [HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md). All 3,349 groups remain candidate-only; the prototype does not imply linguistic approval.
