@@ -278,3 +278,19 @@ flowchart TB
     CF --> BR["Byte → text resolution<br/>0 → Hebrew shown (no choice)<br/>KJV / Young's items → rendering<br/>Other items → option text"]
 ```
 <!-- MERMAID-SYSTEM-END -->
+
+
+## YLT Greek alignment study materials
+
+The YLT lexicon validation work includes a companion field guide and case index for difficult Greek-to-YLT token and phrase alignments. These are research documents; shadow proposals are not production approvals.
+
+- [YLT–Greek Alignment Field Guide](lexicon-validation/GREEK_ALIGNMENT_FIELD_GUIDE.md) — review method, recurring grammatical/phrase corner cases, and variant-aware safeguards.
+- [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases and the original 39-case token-review set (31 pending, eight proposed).
+- [39-case contextual notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammatical assessments and proposal rationales.
+- [Original 39-case queue snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) and [current 31-row pending queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — separate historical and current status snapshots.
+- [Post-eight-proposal queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv) and [reconciled queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — provenance and both review-status layers.
+- [Function-word alignment milestone](lexicon-validation/FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 267 positions across 116 verse contexts; 228 candidate direct/phrase proposals and 39 retained cases.
+- [Complete function-word review bundle index](lexicon-validation/FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) — review dispositions and legacy-overlap cautions.
+- [YLT variant-selection case index](lexicon-validation/YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — 19 formerly unresolved groups, with the remaining Revelation 7:3 distinction left open.
+
+These materials preserve the distinction between the 39-case shadow queue and the separate 267-position function-word review. No production database, legacy alignment, embeddings, vectorizer, API, or deployment changes are included in this documentation set.
