@@ -113,7 +113,7 @@ This is an orthographic candidate relation, not a general Hebrew consonantal-roo
 
 ## 6. Outstanding review
 
-- Review the remaining 342 cross-root groups, prioritizing multiple Strong's, multiple morphology, and groups with unusual affix/root segmentation.
+- Review the remaining 309 cross-root groups, prioritizing multiple Strong's, multiple morphology, and groups with unusual affix/root segmentation.
 - Review the complete verse context for high-impact lexical cases, especially divine-name and `אדני` forms.
 - Inspect whether the source's root and affix segmentation is internally consistent across repeated occurrences.
 - Build a separate Qere/Ketiv apparatus inventory; do not fold it into canonical `words.pointed` membership.
@@ -179,7 +179,7 @@ Two cases deserve review beyond the vowel-only relation itself:
 
 The `אב֣י` group also has multiple Strong's and morphology assignments within its `אֲבִ֣י` member. These cases should become explicit lexical-association review items rather than being “fixed” by the variant-group builder.
 
-These 15 are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications. Combined with the first batch, 30 of the 372 cross-root groups have now received member-level inspection; 342 remain.
+These 15 are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications. At this stage, 33 of the 372 cross-root groups had received member-level inspection (the three three-root cases plus two batches of 15); 339 remained before the later batches in §§11–12.
 
 
 ## 10. Follow-on isolated shadow prototype
