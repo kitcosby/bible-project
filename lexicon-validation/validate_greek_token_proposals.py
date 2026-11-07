@@ -22,6 +22,8 @@ EXPECTED = {
     "function:137:ylt:9": ("1CO", 13, 2, 7, 9, "τα", "the", "function_word", "high"),
     "function:159:ylt:3": ("JUDE", 1, 24, 1, 3, "τω", "Him", "phrase_member", "moderate"),
     "function:133:ylt:37": ("AC", 26, 18, 29, 37, "τη", "that", "phrase_member", "moderate"),
+    "function:114:ylt:6": ("LU", 2, 39, 5, 6, "τα", "things", "phrase_member", "moderate"),
+    "function:208:ylt:14": ("RO", 16, 20, 13, 14, "εν", "quickly", "phrase_member", "moderate"),
 }
 
 
@@ -88,8 +90,8 @@ def main() -> int:
         greek_review = dict(cur.fetchall())
         assert greek_review == {
             "legacy_overlap_review": 25,
-            "pending_review": 33,
-            "proposed": 477,
+            "pending_review": 31,
+            "proposed": 479,
         }, greek_review
 
         cur.execute(
@@ -102,8 +104,8 @@ def main() -> int:
         alignment_review = dict(cur.fetchall())
         assert alignment_review == {
             "not_expressed": 20,
-            "proposed": 519,
-            "unresolved": 13,
+            "proposed": 521,
+            "unresolved": 11,
         }, alignment_review
 
         cur.execute(
@@ -130,7 +132,7 @@ def main() -> int:
             gnt_words, legacy_renderings
         )
 
-        print("PASS: six contextual proposals match their exact YLT/Greek endpoints.")
+        print("PASS: eight contextual proposals match their exact YLT/Greek endpoints.")
         print("PASS: Greek-token review counts:", greek_review)
         print("PASS: alignment review counts:", alignment_review)
         print("PASS: no incomplete proposals or orphan alignment groups.")
