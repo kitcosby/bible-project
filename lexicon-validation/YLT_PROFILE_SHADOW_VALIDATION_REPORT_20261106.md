@@ -60,6 +60,7 @@ The original 39 Greek function-token queue now has eight proposals and 31 pendin
 - 152 sequence words are in verses with no recorded variant group.
 - Five proposed YLT branch words remain in the existing sequence sample (Mark 8:24 and 2 Corinthians 7:12).
 - No sequence rows were added for the six newly reviewed variant references.
+- No materialized sequence row depends on any of the thirteen subscription/colophon groups marked not applicable.
 
 ## Integrity checks
 
@@ -68,7 +69,7 @@ The original 39 Greek function-token queue now has eight proposals and 31 pendin
 - Orphan alignment groups: 0.
 - The four earlier legacy-overlap target corrections remain valid.
 - The eight current function-token proposals pass the read-only endpoint validator.
-- The 19-group variant-selection review passes the read-only branch/status validator.
+- The 19-group variant-selection review passes the read-only branch/status validator, including a check that subscription groups do not contaminate the materialized verse sequence.
 - The legacy-overlap validator passes.
 
 ## Production preservation
