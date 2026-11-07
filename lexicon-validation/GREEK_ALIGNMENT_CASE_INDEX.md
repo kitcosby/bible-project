@@ -178,10 +178,12 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 
 ## Hebrew vowel-only variant inventory
 
-- [Hebrew vowel-only variant audit and read-only inventory tool](HEBREW_VOWEL_VARIANT_AUDIT_20261107.md): defines the strict niqqud-only comparison rule, distinguishes qere/ketiv and non-vowel marks, documents existing `root_vowel` behavior, and provides `audit_hebrew_vowel_variants.py` for a read-only corpus candidate inventory. The tool is committed but has **not yet been run against the corpus**; no data or schema changes were made.
+- [Hebrew vowel-only variant audit and read-only inventory tool](HEBREW_VOWEL_VARIANT_AUDIT_20261107.md) and [reproducible PostgreSQL runner](audit_hebrew_vowel_variants_postgres.py): define the strict niqqud-only comparison rule, preserve non-vowel marks, separate Hebrew/Aramaic, and exclude Qere/Ketiv from canonical membership.
 
-- [Live Hebrew/Aramaic vowel-only candidate inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md): read-only PostgreSQL scan of 264,217 canonical word rows found 3,323 Hebrew and 26 Aramaic candidate groups. All groups map to existing `root_vowel` IDs; 372 span multiple `root_form` parents. Qere/ketiv (1,204 MT qere rows) remains separate and was not included. No database writes were made.
+- [Live Hebrew/Aramaic vowel-only candidate inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md): the read-only PostgreSQL scan processed 264,217 canonical word rows and found 3,323 Hebrew and 26 Aramaic candidate groups, mapping to 7,148 member keys and 32,676 occurrences. A total of 372 groups span multiple `root_form` parents. The separate `word_variants` apparatus contains 1,204 MT Qere rows, not included in this canonical inventory.
 
 - [Hebrew vowel-only variant schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md): proposes a reversible group/member relation referencing existing `root_vowel` keys, with validators and explicit no-merge safeguards. Proposal only; no database changes.
 
-- The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged.
+- [Cross-root member review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md): records member-level inspection of all three three-root groups and the 15 highest-occurrence cross-root groups. The examples include distinct roots, Strong's values, morphology patterns, and affix analyses under identical non-vowel signatures. This confirms that the relation is an orthographic cross-reference, not a lemma or translation-equivalence key.
+
+- The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged. Review of the remaining 357 cross-root groups is still outstanding.
