@@ -87,6 +87,9 @@ def main():
         elif all(c in cols for c in ("book", "chapter", "verse")):
             select += ["w.book AS book_name", "w.chapter AS chapter", "w.verse AS verse",
                        "NULL AS book_id"]
+        elif all(c in cols for c in ("book_num", "chapter", "verse")):
+            select += ["CAST(w.book_num AS TEXT) AS book_name", "w.chapter AS chapter",
+                       "w.verse AS verse", "w.book_num AS book_id"]
         else:
             select += ["NULL AS book_id", "NULL AS book_name",
                        "NULL AS chapter", "NULL AS verse"]
