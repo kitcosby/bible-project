@@ -24,7 +24,7 @@ Robinson source alternatives:
 | A | `apaggellwn 518 5723 {V-PAP-NSM}` | ἀπαγγέλλων | G518 | V-PAP-NSM | present active participle, nominative singular masculine |
 | B | `aphggellon 518 5707 {V-IAI-1S}` | ἀπήγγελλον | G518 | V-IAI-1S | imperfect active indicative, first-person singular |
 
-The YLT phrase is **“I was preaching”**. Branch B directly accounts for the first-person imperfect finite construction; branch A is a participle with an implied subject. The [Cambridge Greek Testament commentary](https://www.truthaccordingtoscripture.com/commentaries/cgt/acts-26.php) reads ἀπήγγελλον (“I declared”) and comments on its literal sense. [OpenBible’s Greek text analysis](https://openbible.com/text/acts/26-20.htm) likewise gives ἀπήγγελλον as an imperfect active indicative, first-person singular. The [parallel Greek edition comparison](https://www.studylight.org/interlinear-study-bible/greek/acts/26-20.html) shows ἀπήγγελλον in SBL/WH/UBS and ἀπαγγέλλων in the TR/RP line.
+The YLT phrase is **“I was preaching”**. Branch B directly accounts for the first-person imperfect finite construction; branch A is a participle with an implied subject. The [Lemma interlinear and Cambridge Greek Testament note](https://lemma.gebible.app/v/acts/26/20) identify Ἱεροσολύμοις as dative plural, translate the phrase “and at Jerusalem”, parse ἀπήγγελλον as imperfect active indicative first-person singular, and gloss it “I declared”. [OpenBible’s Greek text analysis](https://openbible.com/text/acts/26-20.htm) likewise gives the finite form. The [parallel Greek edition comparison](https://www.studylight.org/interlinear-study-bible/greek/acts-26-20.html) shows ἀπήγγελλον in SBL/WH/UBS and ἀπαγγέλλων in the TR/RP line.
 
 **Decision:** The YLT profile selection for group 44:36 changes from inherited provisional A to **proposed B**. This is a YLT-specific proposal, not a proven Young editorial reading. The CrossWire/KJV candidate profile remains on branch A with its algorithmic-selection status unchanged.
 
@@ -48,7 +48,7 @@ Acts 26:20 also has textual differences elsewhere in the verse, including τε a
 
 ### Jerusalem phrase: “to those in Jerusalem”
 
-The Greek has the dative plural proper noun Ἱεροσολύμοις, not a separate preposition plus article/pronoun. The Cambridge commentary renders the phrase “and at Jerusalem”. YLT expands it as “to those in Jerusalem”, likely preserving parallelism with the preceding τοῖς ἐν Δαμασκῷ (“to those in Damascus”).
+The Greek has the dative plural proper noun Ἱεροσολύμοις, not a separate preposition plus article/pronoun. The Cambridge note on the [Lemma interlinear page](https://lemma.gebible.app/v/acts/26/20) renders the phrase “and at Jerusalem”. YLT expands it as “to those in Jerusalem”, likely preserving parallelism with the preceding τοῖς ἐν Δαμασκῷ (“to those in Damascus”).
 
 - YLT “in” (token 10) is proposed as a phrase member of the locative dative Ἱεροσολύμοις.
 - YLT “to” (token 8) is recorded as alignment-level `not_expressed`: no separate εἰς/πρός occurs here.
