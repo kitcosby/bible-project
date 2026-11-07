@@ -1,0 +1,10 @@
+YLT PROFILE SHADOW FINAL VALIDATION PASS
+tables {'profile': 4, 'textual_variant_group': 261, 'textual_variant_branch': 522, 'profile_variant_selection': 783, 'gnt_sequence_word': 2445, 'ylt_token': 3171, 'alignment_group': 80, 'ylt_greek_alignment': 672, 'ylt_token_review': 3171, 'gnt_token_review': 607, 'witness_bundle': 0, 'witness_bundle_member': 0, 'gnt_word_analysis': 0}
+branch selections [(12, 'A', 'proposed'), (13, 'B', 'proposed'), (36, 'B', 'proposed'), (2, 'B', 'proposed'), (4, 'B', 'proposed'), (5, 'B', 'proposed'), (7, 'B', 'proposed'), (8, 'B', 'proposed'), (18, 'A', 'proposed')]
+alignment statuses [('legacy_overlap_review', 10), ('not_expressed', 42), ('proposed', 619), ('unresolved', 1)]
+new verse context review statuses [('legacy_overlap_review', 3), ('not_expressed', 1), ('proposed', 42)]
+source/status [('content_word', 'proposed', 267), ('cross_verse_context_review', 'proposed', 1), ('function_word', 'not_expressed', 28), ('function_word', 'proposed', 248), ('function_word', 'unresolved', 1), ('function_word_context_review', 'legacy_overlap_review', 6), ('function_word_context_review', 'not_expressed', 13), ('function_word_context_review', 'proposed', 54), ('legacy_overlap_context_review', 'legacy_overlap_review', 1), ('variant_override', 'proposed', 7), ('variant_sequence_context_review', 'legacy_overlap_review', 3), ('variant_sequence_context_review', 'not_expressed', 1), ('variant_sequence_context_review', 'proposed', 42)]
+YLT token statuses [('legacy_only', 2105), ('legacy_overlap_review', 46), ('pending_review', 446), ('proposed', 574)]
+Greek token statuses [('legacy_overlap_review', 34), ('pending_review', 32), ('proposed', 541)]
+dependency groups [(['40:7'], 1), (['41:13'], 3), (['42:1'], 1), (['43:6'], 8), (['44:19'], 1), (['44:22'], 2), (['44:26'], 5), (['44:3'], 8), (['44:36'], 3), (['45:7'], 9), (['46:2'], 1), (['47:4'], 1), (['47:5'], 1), (['47:7'], 3), (['49:3'], 5), (['50:2'], 1), (['62:3'], 16), (['66:18'], 1), (['66:8'], 2)]
+production read-only counts {'gnt_words': 141009, 'gnt_ylt_renderings': 143227, 'ylt_verses': 31102, 'ylt_verses_embedding_store': 31102, 'non_null_embeddings': 31102}

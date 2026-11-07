@@ -1,0 +1,10 @@
+YLT PROFILE SHADOW FINAL VALIDATION PASS
+tables {'profile': 4, 'textual_variant_group': 261, 'textual_variant_branch': 522, 'profile_variant_selection': 783, 'gnt_sequence_word': 2444, 'ylt_token': 3171, 'alignment_group': 44, 'ylt_greek_alignment': 621, 'ylt_token_review': 3171, 'gnt_token_review': 585, 'witness_bundle': 0, 'witness_bundle_member': 0, 'gnt_word_analysis': 0}
+branch selections [(12, 'A', 'proposed'), (13, 'B', 'proposed'), (4, 'B', 'proposed'), (5, 'B', 'proposed'), (7, 'B', 'proposed')]
+alignment statuses [('legacy_overlap_review', 6), ('not_expressed', 33), ('proposed', 581), ('unresolved', 1)]
+new verse context review statuses [('legacy_overlap_review', 3), ('not_expressed', 1), ('proposed', 42)]
+source/status [('content_word', 'proposed', 267), ('function_word', 'not_expressed', 28), ('function_word', 'proposed', 249), ('function_word', 'unresolved', 1), ('function_word_context_review', 'legacy_overlap_review', 3), ('function_word_context_review', 'not_expressed', 4), ('function_word_context_review', 'proposed', 16), ('variant_override', 'proposed', 7), ('variant_sequence_context_review', 'legacy_overlap_review', 3), ('variant_sequence_context_review', 'not_expressed', 1), ('variant_sequence_context_review', 'proposed', 42)]
+YLT token statuses [('legacy_only', 2109), ('legacy_overlap_review', 42), ('pending_review', 484), ('proposed', 536)]
+Greek token statuses [('legacy_overlap_review', 31), ('pending_review', 33), ('proposed', 521)]
+dependency groups [(['40:7'], 1), (['41:13'], 3), (['42:1'], 1), (['43:6'], 8), (['44:19'], 1), (['44:26'], 5), (['44:3'], 8), (['45:7'], 9), (['47:4'], 1), (['47:5'], 1), (['47:7'], 3), (['49:3'], 5), (['50:2'], 1), (['62:3'], 16), (['66:18'], 15)]
+production read-only counts {'gnt_words': 141009, 'gnt_ylt_renderings': 143227, 'ylt_verses': 31102, 'ylt_verses_embedding_store': 31102, 'non_null_embeddings': 31102}
