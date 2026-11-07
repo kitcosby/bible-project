@@ -140,7 +140,7 @@ As of 2026-11-06:
 - 37 legacy-overlap cases were reconciled.
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
-- 39 Greek token positions remain pending review; the case index lists them without implying they are resolved.
+- The original 39-row Greek-token review set now has 38 pending rows and one high-confidence proposed function-word alignment (Acts 5:12 διά → “through”).
 - 19 Robinson variant groups remain unresolved.
 - 502 YLT token review cases remain pending.
 - The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
