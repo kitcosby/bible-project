@@ -297,5 +297,8 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 - [Two additional phrase-member proposals](lexicon-validation/TWO_ADDITIONAL_PHRASE_MEMBER_PROPOSALS_20261106.md) — documents Luke 2:39 and Romans 16:20 phrase-level mappings.
 - [Six function-note corrections](lexicon-validation/FUNCTION_NOTE_CORRECTIONS_20261106.md) — corrects inaccurate rationales without changing pending statuses or endpoints.
 - [Read-only proposal validator](lexicon-validation/validate_greek_token_proposals.py) — checks all eight proposal endpoints, review counts, alignment integrity, and unchanged production baselines.
+- [YLT variant-selection case index](lexicon-validation/YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — classifies the 19 formerly unresolved groups into five YLT-reviewed verse-text choices, 13 subscription/colophon exclusions, and one unresolved reading.
+- [Current YLT variant selection CSV](lexicon-validation/YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv) — machine-readable record of all 19 decisions.
+- [Read-only variant decision validator](lexicon-validation/validate_ylt_variant_decisions.py) — verifies branch choices, paratext exclusions, unresolved Revelation 7:3, sequence coverage boundary, and production baselines.
 
 These are working research documents on the validation branch. They do not authorize production changes.
