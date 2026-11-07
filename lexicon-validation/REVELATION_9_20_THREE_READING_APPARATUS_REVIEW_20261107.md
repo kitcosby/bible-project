@@ -72,7 +72,7 @@ A deterministic alternative-sequence comparison confirmed:
 
 Thus the 15 phrase groups for “did reform”, “may bow before”, “those of [material]”, and “to see/hear/walk” do not need positional remapping for any of these three readings. The directly affected alignment remains YLT token 13 (“neither”) ↔ Greek position 13.
 
-The current direct dependency metadata is now correct: only the position-13 alignment carries dependency group `66:18`. The YLT sequence profile remains provisional because it still inherits branch B from the KJV candidate; that global provisional status must not be confused with direct sensitivity of every later token.
+The current direct dependency metadata is correct: only the position-13 alignment carries dependency group `66:18`. The YLT sequence profile proposes A for this group, but remains provisional overall because other variant groups still inherit candidate readings. Do not confuse that global provisional status with direct sensitivity of every later token.
 
 ## Implications for the YLT profile
 
@@ -98,3 +98,7 @@ Inspect Young's 1862/1887 printed Greek-text source or his *Concise Critical Com
 7. Young's Literal Translation Revelation 9:20: https://biblia.com/bible/ylt/revelation/9/20-21
 
 No production data was changed. The only database change in this audit series remains the shadow-only correction of direct variant-dependency metadata described in [REVELATION_9_20_VARIANT_DEPENDENCY_AUDIT_20261107.md](REVELATION_9_20_VARIANT_DEPENDENCY_AUDIT_20261107.md).
+
+## Subsequent YLT-profile proposal (2026-11-07)
+
+After reviewing Young's preface and pre-1888 Received-Text editions, the isolated YLT profile now proposes branch A (οὔτε) for group 66:18. Stephanus 1550 and Beza 1598 both read οὔτε at this point; the YLT reads “neither did reform”. This is a strong profile-specific proposal but not final because Young's exact printed edition is unknown and the wider apparatus also records οὐδέ. See [REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md) and [v14 validation](FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt).
