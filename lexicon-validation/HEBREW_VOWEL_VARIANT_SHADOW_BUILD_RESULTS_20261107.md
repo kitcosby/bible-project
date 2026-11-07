@@ -112,3 +112,16 @@ The prototype establishes that the proposed relation is technically viable again
 - [All-group cross-root index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv)
 - [Member-level cross-root review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md)
 - [Schema proposal and constraints](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md)
+
+
+## 7. Post-build backup and access restriction
+
+After the validator passed, the completed shadow database was backed up again:
+
+- Path on Lampy: `/var/tmp/bible-hebrew-variant-shadow-built-20261107.dump`
+- Format: PostgreSQL custom archive, compression level 6
+- Size: 187 MB
+- SHA-256: `3cbb5efb19c7c11db7ea996458372a0835c3bb94f988767e08ae5d8136e869a0`
+- `pg_restore --list`: successful; 349 archive-list entries
+
+The shadow database's default PUBLIC connection and temporary-table privileges were revoked. Its database ACL now grants CONNECT/TEMP only to the owning `postgres` role. The restore and backup procedures are committed as [restore script](restore_hebrew_variant_shadow.sh) and [post-build backup script](backup_built_hebrew_shadow.sh).
