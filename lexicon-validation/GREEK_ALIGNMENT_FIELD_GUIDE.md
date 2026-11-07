@@ -127,6 +127,10 @@ A proposed alignment must target the correct profile-specific sequence. The 2 Co
 
 The review queue and alignment table are separate status layers. A Greek token can have a corresponding unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. In this audit, all 39 original queue entries had matching alignment rows, but their confidence was unresolved. That is a deliberate signal that the current non-link classification is provisional, not a settled decision. When a proposal is made, the alignment row and the corresponding token-review row should be updated together and validated. Do not infer finality from not_expressed when confidence remains unresolved.
 
+## Variant groups and paratext
+
+The 19 YLT-profile variant groups initially marked unresolved have now been classified: five verse-text groups were selected against the stored YLT wording, thirteen epistle subscriptions/colophons were marked not applicable to verse alignment, and Revelation 7:3 remains unresolved because YLT does not distinguish the present from aorist subjunctive. The raw Robinson branch payloads remain preserved. The five branch decisions are in the selection ledger, but their six affected verse references (the five selected verses plus Revelation 7:3) are not yet materialized in the current 116-verse sequence fixture. Do not align against them until the sequence is built and validated. See [YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) and [the machine-readable snapshot](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
+
 ## Database design recommendations
 
 Keep these concepts distinct:
