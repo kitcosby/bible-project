@@ -175,3 +175,7 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 - [v17 full validator](FINAL_VALIDATION_AFTER_ACTS21_8_V17.txt) and [reproducible validator script](validate_ylt_lexicon_shadow_v17.py): 94 alignment groups, 695 alignment rows, 635 proposed, 47 not_expressed, twelve legacy_overlap_review, one unresolved. YLT token review: 590 proposed, 431 pending, 47 legacy-overlap, 2,103 legacy-only. Greek token review: 553 proposed, 32 pending, 35 legacy-overlap.
 - Current YLT profile selection ledger: 219 inherited_provisional, ten proposed, 17 reviewed_against_translation, 14 not_applicable_to_verse_alignment, one unresolved. The refreshed [261-row ledger](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv) records group 44:26 as branch B / proposed.
 - The [current YLT pending queue](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) has been refreshed to 431 rows. The [queue stratification report](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) now distinguishes v17 counts from its historical v16 book/reason snapshots.
+
+## Hebrew vowel-only variant inventory
+
+- [Hebrew vowel-only variant audit and read-only inventory tool](HEBREW_VOWEL_VARIANT_AUDIT_20261107.md): defines the strict niqqud-only comparison rule, distinguishes qere/ketiv and non-vowel marks, documents existing `root_vowel` behavior, and provides `audit_hebrew_vowel_variants.py` for a read-only corpus candidate inventory. The tool is committed but has **not yet been run against the corpus**; no data or schema changes were made.
