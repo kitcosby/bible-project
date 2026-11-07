@@ -77,7 +77,12 @@ A pre-Acts-21:8 custom-format backup was created and passed `pg_restore -l` vali
 
 Inspection of that backup confirms it contains the prior state: YLT group `44:26` branch A / `inherited_provisional`, and sequence position 9 `ηλθον / V-2AAI-3P`. A subsequent read-only inspection of the live shadow database found the branch-B proposal and its associated phrase rows already present. The first attempted application script stopped at its initial baseline assertion before performing any writes; it did not create these rows. The available process evidence does not identify which earlier process made the intervening shadow changes, so this report records the observed before/after state without attributing authorship.
 
-A post-state backup is being produced separately; its hash and archive validation will be appended when verified.
+A post-state custom-format backup was created after the v17 validator passed and also passed `pg_restore -l` validation:
+- Path: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_after_acts21_8.dump`
+- SHA-256: `7fb1f98711ec0f3187e41ca70deb196a06bde1bd0288682431c91abb9e300b77`
+- Size: 192 MB.
+
+Together, the pre- and post-state archives bracket the state change. The pre-state archive contains branch A / inherited provisional; the current post-state contains branch B / proposed and the phrase review recorded above.
 
 ## Safeguards
 
