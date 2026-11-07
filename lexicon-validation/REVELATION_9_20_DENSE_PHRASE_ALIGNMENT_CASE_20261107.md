@@ -1,7 +1,7 @@
 # Revelation 9:20 — Dense YLT/Greek Phrase-Alignment Case
 
 **Prepared:** 2026-11-07  
-**Status:** Contextual analysis; shadow proposal not yet inserted.  
+**Status:** Shadow phrase proposals inserted and validated; production unchanged.  
 **Environment:** Isolated YLT-profile sequence in bible_greek_bridge_test_20261106.
 
 ## Textual observation
@@ -12,7 +12,7 @@ YLT:
 
 The YLT-profile Greek sequence contains 49 words. The YLT token table contains 62 tokens. Sixteen YLT tokens are currently marked pending_review in this verse. This is the largest pending-token cluster in the current queue.
 
-The sixteen pending YLT tokens are:
+The sixteen tokens that were pending before this review were:
 - did (14)
 - may (24)
 - bow (26)
@@ -22,7 +22,7 @@ The sixteen pending YLT tokens are:
 - are (52)
 - to (55, 58, 61)
 
-The other tokens in the same constructions are already legacy_only or proposed. This report does not replace those legacy associations.
+The other tokens in the same constructions are already legacy_only or proposed. The 2026-11-07 shadow update records 15 of these tokens as proposed phrase members and the supplied copula “are” as alignment-level not_expressed. The YLT token-review table still leaves “are” pending because it has no not_expressed status. Existing legacy associations remain intact.
 
 ## Contextual phrase analysis
 
@@ -109,16 +109,26 @@ This legacy evidence strengthens the phrase-level diagnosis but does not authori
 - **Established observation:** the YLT wording, token positions, and YLT-profile Greek sequence shown above.
 - **Strong phrase analysis:** “did reform”, “may bow before”, the five “those of [material]” phrases, and “to see/hear/walk”.
 - **Grammatical inference:** “are” is supplied by English syntax; Greek uses the relative pronoun plus δύναται and infinitive complements.
-- **Not yet implemented:** no new alignment-group rows or token-review statuses were inserted during this analysis.
+- **Implemented in shadow:** 11 phrase groups and 16 alignment rows were added. Fifteen YLT tokens now have proposed phrase-member endpoints; “are” has an alignment-level unaligned_ylt/not_expressed record.
 - **Legacy protection:** existing legacy_only and proposed relationships remain untouched. Any future shadow proposals must be additive, phrase-aware, and checked against the exact existing endpoints.
 
-## Recommended shadow proposal work
+## Implemented shadow proposal work
 
-1. Add a phrase group for μετενόησαν → “did reform”, preserving the existing direct link to “reform”.
-2. Add a phrase group for προσκυνήσωσιν → “may bow before”, preserving the existing ἵνα → “that” and μή → “not” links.
-3. Add five distinct material phrase groups for τὰ + adjective → “those of [material]”.
-4. Record “are” as a supplied English copula with no independent Greek endpoint.
-5. Add three phrase groups for each Greek infinitive → “to [verb]”.
-6. Reconcile token-review counts only after every proposed endpoint is represented and validated.
+1. Added a phrase group for μετενόησαν → “did reform”, preserving the existing direct link to “reform”.
+2. Added a phrase group for προσκυνήσωσιν → “may bow before”, preserving the existing ἵνα → “that” and μή → “not” links.
+3. Added five distinct material phrase groups for τὰ + adjective → “those of [material]”. The article-to-“those” members are proposed in all five; the adjective-to-“of” members are proposed in the middle three, while first/last legacy links are preserved.
+4. Recorded “are” as a supplied English copula with no independent Greek endpoint.
+5. Added three phrase groups for each Greek infinitive → “to [verb]”.
+6. Updated YLT and Greek token-review rows and validated all proposed endpoints.
 
-No production data, legacy links, embeddings, vectorizer, API, or deployment were changed.
+No production data, legacy links, embeddings, vectorizer, API, or deployment were changed. All new alignment rows and token-review updates are confined to the isolated shadow schema.
+
+## Post-update validation (2026-11-07)
+
+- Added 11 alignment groups and 16 alignment rows: 15 proposed and one not_expressed.
+- Alignment table: 621 rows total; 581 proposed, 33 not_expressed, six legacy_overlap_review, one unresolved.
+- YLT token review: 536 proposed, 484 pending_review, 42 legacy_overlap_review, 2,109 legacy_only. The “are” token remains token-table pending while its alignment-level disposition is not_expressed.
+- Greek token review: 521 proposed, 33 pending_review, 31 legacy_overlap_review.
+- Full v10 validator passed: [final validation output](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
+- Production counts remain 141,009 gnt_words; 143,227 gnt_ylt_renderings; 31,102 YLT verses; and 31,102 stored non-null embeddings.
+- Pre-update shadow backup: /var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_pre_case_reconciliation_20261107.dump; SHA-256 aa4775794b7caffe46816bd369331f9833e06040bc730f27bb46b51532904064.
