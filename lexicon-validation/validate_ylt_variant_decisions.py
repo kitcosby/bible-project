@@ -125,6 +125,18 @@ def main() -> int:
         sequence_rows = cur.fetchone()[0]
         assert sequence_rows == 0, sequence_rows
 
+        cur.execute(
+            """
+            SELECT count(*)
+            FROM ylt_profile_shadow.gnt_sequence_word g
+            WHERE g.sequence_profile_id = 3
+              AND g.source_variant_groups ?| %s
+            """,
+            (list(NOT_APPLICABLE),),
+        )
+        subscription_dependencies = cur.fetchone()[0]
+        assert subscription_dependencies == 0, subscription_dependencies
+
         cur.execute("SELECT count(*) FROM public.gnt_words")
         gnt_words = cur.fetchone()[0]
         cur.execute("SELECT count(*) FROM public.gnt_ylt_renderings")
@@ -138,6 +150,7 @@ def main() -> int:
         print("PASS: Revelation 7:3 remains unresolved.")
         print("PASS: selection counts:", counts)
         print("PASS: no sequence rows were prematurely materialized for the six variant verses.")
+        print("PASS: no paratextual subscription group contaminates the materialized verse sequence.")
         print("PASS: production baselines unchanged:", gnt_words, legacy_renderings)
         conn.rollback()
         return 0
