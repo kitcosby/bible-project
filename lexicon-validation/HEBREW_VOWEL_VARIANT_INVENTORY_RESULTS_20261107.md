@@ -139,3 +139,18 @@ The three Hebrew groups spanning three root entries include:
 | `לְכָ֔ה`, `לֵכָ֔ה` | `14608.6`, `17908.2`, `17918.1` | 4 |
 
 These are high-priority manual-review cases because one strict surface signature crosses several existing root entries. Preserve all existing root and lexicon records; the proposed relation is a cross-reference, not a normalization.
+
+
+## 9. Lexical and morphology divergence check
+
+I also grouped the candidate occurrences by strict signature and counted distinct existing Strong's values and morphology pattern IDs. These are occurrence-level differences, not claims that every member has a unique lexical analysis.
+
+| Population | Candidate groups | Groups with multiple Strong's values | Groups with multiple morphology patterns | Groups with both |
+|---|---:|---:|---:|---:|
+| Hebrew | 3,323 | 1,223 | 2,932 | 1,115 |
+| Aramaic | 26 | 3 | 23 | 3 |
+| **Total** | **3,349** | **1,226** | **2,955** | **1,118** |
+
+For the **372 cross-root/form groups**, 185 have multiple Strong's values and 370 have multiple morphology patterns; 185 have both. Thus, the shared consonantal signature is very often compatible with materially different existing morphological analyses, and in over a third of all groups with multiple Strong's values.
+
+This is direct evidence against collapsing these records into a single lexical entry. The new relation must be a cross-reference between vocalized forms, with each member's root, morphology, Strong's association, glosses, and translation rendering left intact.
