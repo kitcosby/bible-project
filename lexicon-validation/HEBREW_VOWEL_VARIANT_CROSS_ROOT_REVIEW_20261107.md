@@ -125,3 +125,24 @@ This is an orthographic candidate relation, not a general Hebrew consonantal-roo
 - No DDL/DML or production writes.
 - No schema, lexical, morphology, Strong's, alignment, embedding, or vectorizer changes.
 - No shadow database was created or modified in this review.
+
+
+## 8. Language-scope audit and corrected cross-root index
+
+A second read-only check tested whether one existing `root_vowel` key can occur in both language populations. Among the **830 distinct member keys** used by the 372 cross-root groups, **eight keys** have occurrences with both `is_aramaic=0` and `is_aramaic=1`. The pointed spelling is the same, but the occurrence populations are distinct.
+
+This confirms an important implementation detail: group identity is language-scoped, while the same existing root-vowel key may be a member of a Hebrew group and a separate Aramaic group. Validators must compare each group's signature and member occurrences only within its `is_aramaic` population. They must not aggregate every occurrence attached to a root-vowel key without that filter.
+
+A diagnostic that aggregated all occurrences by root-vowel key (without language filtering) temporarily produced 186 cross-root groups with multiple Strong's values. It incorrectly included an Aramaic occurrence (H1123) in the Hebrew `וּבנ֣י` group. Recomputing from the exact candidate occurrence word IDs, as in the original inventory-level grouping, restored the correct totals: **185** cross-root groups with multiple Strong's values and **370** with multiple morphology patterns. The initial 186 figure is rejected and is not used in the corrected index.
+
+The complete language-scoped group index is [HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv). It contains all 372 groups, sorted by lexical/morphological divergence, with root labels, occurrence counts, Strong's values and counts, morphology pattern IDs and counts, affix-profile counts, and a flag for groups containing a member key also used in the other language population.
+
+The corrected all-group totals are:
+- 372 cross-root groups and 830 distinct root-vowel member keys.
+- 185 groups with multiple Strong's values, computed from the group's exact occurrence IDs.
+- 370 groups with multiple morphology pattern IDs, computed from the group's exact occurrence IDs.
+- All 372 groups have more than one affix profile across their members.
+- Eight groups contain a root-vowel key that is also used in the other language population.
+- Root-count distribution: 369 groups span two roots; three span three roots.
+
+This audit is still a database-level structural review, not a complete linguistic adjudication of all 372 groups.
