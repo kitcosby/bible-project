@@ -101,3 +101,7 @@ See [latest full validator output](FINAL_VALIDATION_AFTER_RE9_20_DEPENDENCY_FIX_
 ## Recommended next step
 
 The branch-A sequence comparison is complete. Next, review Robinson group 66:18 against independent Greek witnesses and the YLT wording to determine whether οὐ or οὔτε is the better-supported reading. Retain both branch-conditioned readings if the evidence does not establish one YLT-specific choice.
+
+## Subsequent YLT-specific branch proposal
+
+The YLT candidate profile now proposes Robinson group 66:18 branch A (οὔτε) at Greek position 13, replacing the inherited provisional B (οὐ). Young's revised-edition preface states that he followed the generally recognized Received Text; Stephanus 1550 and Beza 1598 read οὔτε, and YLT renders “neither did reform”. This remains a proposal because Young's exact source edition is unidentified and the external apparatus also records οὐδέ. The 15 phrase-member endpoints remain unchanged under all three one-token readings. See [the branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md) and [latest v14 validation](FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt).
