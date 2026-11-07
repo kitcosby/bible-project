@@ -220,3 +220,36 @@ The third batch continues down the corrected language-scoped index's risk rankin
 - `מא֥ת` / `מא֖ת` and `אתּ֑ם` / `אתּ֔ם` show that accent-specific signatures may repeat the same lexical contrast across several separate groups. The group key is intentionally strict; a higher-level lemma-family index would be a separate layer.
 
 The review now covers **48 of 372 cross-root groups** (three three-root cases plus three batches of 15); **324 remain**. These are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications.
+
+
+## 12. Fourth high-priority batch: 15 further cross-root groups
+
+This batch continues down the corrected risk-sorted index after the 48 previously reviewed groups.
+
+| Signature | Occurrences | Existing roots | Strong's values | Main stored distinction |
+|---|---:|---|---|---|
+| `אתּ֥ם` | 16 | `את`, `אתמ` | H854, H859 | `אִתָּ֥ם` “with them” vs `אַתֶּ֥ם` “you” (masculine plural). |
+| `אח֥י` | 15 | `אח`, `אחי` | H251, H277 | Singular/plural kinship forms, “my brothers”, and a member with H251/H277 and noun/proper-name morphology. |
+| `עבד֥י` | 15 | `עבד`, `עבדי` | H5647, H5650 | Noun forms “my servants” / “servants of” vs participial `עֹבְדֵ֥י` “those serving”. |
+| `עמּ֑י` | 15 | `עמ`, `עמי` | H3818, H5971, H5973 | `עִמִּ֑י` preposition “with me”, `עַמִּ֑י` “my people”, and proper name Ammi. |
+| `בּע֥ד` | 14 | `בעד`, `עד` | H1157, H5750 | Prepositional member `בְּעַ֥ד` vs member from root `עד` with a different stored grammatical analysis. |
+| `על֛י` | 14 | `על`, `עלי` | H5921, H5941 | Proper name Eli vs preposition with first-person suffix (“upon me”). |
+| `על֥י` | 13 | `על`, `עלי` | H5921, H5927, H5941 | Adds a verbal imperative `עֲלִ֥י` (“go up”, feminine singular) alongside Eli and “upon me”. |
+| `בּמ֣ות` | 11 | `במות`, `מות` | H1116, H1120, H4191, H4194 | Construct/inflected noun `בָּמ֣וֹת` (high places) vs `בְּמ֣וֹת` “at/in the death of” with verbal/noun morphology. |
+| `מאחר֣י` | 11 | `אחרי`, `מאחרי` | H309, H310 | Participle from `מאחרי` vs preposition `מֵאַחֲרֵ֣י` (“from behind/after”). |
+| `מאת֙` | 11 | `את`, `מאת` | H3967, H854 | “hundred” vs “from”; another cantillation-specific signature. |
+| `מה֥ר` | 11 | `הר`, `מהר` | H2022, H4116, H4118, H4122 | “from the mountain” vs forms associated with hurrying/haste and a proper-name assignment. |
+| `מעלֽיו׃` | 11 | `מעלי`, `עלי` | H4608, H5921 | Prepositional `מֵעָלָֽיו` with third-person suffix vs noun `מַעֲלָֽיו` with suffix; different morphology. |
+| `על֑י` | 11 | `על`, `עלי` | H5921, H5941 | Proper name Eli vs “upon me”; two vocalized prepositional members are also separately recorded. |
+| `על֔י` | 11 | `על`, `עלי` | H5921, H5941 | Same Eli vs “upon me” distinction in a different accentual context. |
+| `רגל֑י` | 11 | `רגל`, `רגלי` | H7272, H7273 | Noun “my foot/feet” member vs a separate `רגלי` member with adjective morphology. |
+
+### Additional data-quality and interpretation flags
+
+- `עמּ֑י` combines preposition “with me”, noun “my people”, and a proper name. This is a strong example of why the signature cannot determine lexical class.
+- `בּמ֣ות` is a high-value morphology case: the same consonantal sequence occurs in a noun for high places and in a construction tied to death. The vowel difference aligns with different stored roots and morphology.
+- `מה֥ר` contains several Strong's values and mixed noun, verb, and proper-name morphology. It needs full-context review before any lexical conclusion.
+- The recurring `עלי` families (Eli vs “upon me” vs “go up”) occur across multiple accent-specific groups. These groups should remain separate under the strict signature algorithm; a higher-level cross-accent lexical-family index would be distinct functionality.
+- `אח֥י`, `עבד֥י`, and `רגל֑י` include cases where a pointed member itself has multiple stored Strong's or morphology assignments. These are data-quality review targets, not problems to resolve by merging variant members.
+
+The review now covers **63 of 372 cross-root groups** (three three-root cases plus four 15-group batches); **309 remain**. The evidence is still member-level and sample-reference based, not a complete contextual Hebrew lexical adjudication.
