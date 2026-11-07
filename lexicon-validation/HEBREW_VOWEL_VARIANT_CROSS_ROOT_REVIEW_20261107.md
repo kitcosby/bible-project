@@ -1,7 +1,7 @@
 # Hebrew/Aramaic vowel-only variants — cross-root member review
 
 **Date:** 2026-11-07  
-**Status:** Read-only member-level review completed for all three three-root cases and four prioritized batches of 15 additional cross-root groups (63 distinct groups total). The subsequent isolated shadow build is documented in §10.  
+**Status:** Read-only member-level review completed for all three three-root cases and six prioritized batches of 15 additional cross-root groups (93 distinct groups total). The subsequent isolated shadow build is documented in §10.
 **Parent evidence:** [Live inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md), [schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md).
 
 ## 1. Scope and safeguards
@@ -287,3 +287,53 @@ This pass reviews the next 15 pending groups in the risk-ranked index, after the
 - Sample references include Genesis 22:8; Genesis 24:29; Genesis 36:17; Exodus 6:16; Exodus 16:31; Numbers 31:52; 1 Samuel 14:42; 2 Samuel 11:11; 2 Samuel 23:29; Isaiah 21:2; Ezekiel 11:15; and The Song of Solomon 4:11. The complete occurrence list remains in the shadow database and is not reproduced here.
 
 The index now records **78 of 372 cross-root groups** as reviewed at the member level (three three-root cases plus five 15-group batches); **294 remain pending**. This batch did not alter the candidate relation, source tables, or production database. No member is linguistically approved merely by this review.
+
+
+## 13. Batch 5 — 15 additional high-risk groups
+
+Batch 5 inspected the next 15 pending groups against the isolated shadow database. The review retained every group as an orthographic candidate and did not infer shared lemma identity from the stripped-vowel signature.
+
+Key distinctions found:
+- `אדנ֨י`: existing members include H113 and H136 assignments; the pointed forms and verse contexts remain distinct.
+- `אתּ֜ם` and `אתּֽם׃`: `אִתָּם` (“with them”, H854) versus `אַתֶּם` (“you”, H859).
+- `אתּי֙`: “with me” (H854) versus the proper name Ittai (H863).
+- `בּנ֑י` and `בנ֔י`: son/sons forms versus the proper name Bani (H1137).
+- `העל֖ה`: verbal “bring up/raise” (H5927) versus “the burnt offering” (H5930).
+- `וּמא֖ת`: “and a hundred” (H3967) versus a conjunction/preposition combination involving H853.
+- `כּלּ֑ה` and `כּלּ֖ה`: “all of it” (H3605), “finish/complete” (H3615), and “bride” (H3618).
+- `לב֑ן` and `לב֔ן`: “son” (H1121) versus Laban/white (H3836/H3837).
+- `מזּ֑ה`: “from this” (H2088) versus a proper-name assignment (H4199).
+- `מא֨ת`: “from/with” (H854) versus “hundred” (H3967).
+- `על֤י`: “upon me” (H5921) versus an imperative form of “go up” (H5927).
+
+These are database member observations, not full contextual adjudications.
+
+## 14. Batch 6 — 15 additional high-risk groups
+
+Batch 6 was queried read-only from `bible_hebrew_variant_shadow_20261107`, not the production database. Member-level findings:
+
+| Signature | Existing member distinction | Evidence / caution |
+|---|---|---|
+| `רגלֽי׃` | “my feet” (H7272) versus the proper name Ragli (H7273) | Root `רגל` with pronominal suffix versus separate proper-name root `רגלי`. |
+| `רע֣י` | “my companion” (H7453), “companions” (H7453), “evil” (H7451), and shepherd forms (H7462/H7473) | Same stripped signature spans noun and verbal/participial analyses. |
+| `א֭שׁרי` | “my steps” (H838) versus “blessed” (H835) | Different pointed forms, roots, and morphology. |
+| `אתּ֛י` | “with me” (H854) versus Ittai (H863) | Preposition/pronominal suffix versus proper name. |
+| `בּגד֣י` | “in my garment” (H1423) versus “garments” (H899) | Prefix preposition plus noun versus plural construct noun. |
+| `בּז֔ה` | “in this” (H2088) versus “despised” (H959) | Demonstrative/preposition phrase versus verb. |
+| `בּנֽי׃` and `בנ֖י` | “my son” (H1121) versus Bani (H1137) | Possessive noun form versus proper name. |
+| `וּמא֣ת` | “and a hundred” (H3967) versus “and from” (H853) | Distinct prepositional/numeral analyses. |
+| `כּל֖ב` | Caleb (H3612) versus “like the heart” (H3820) | Proper name versus prefix + noun. |
+| `גּוי֙` | “my body” (H1460) versus “nation” (H1471) | Suffix-bearing noun versus independent noun. |
+| `העל֣ים` | “he concealed” (H5956) versus “the ones going up” (H5927) | Verb versus article + participle. |
+| `ועל֖י` | Eli (H5941), “upon me” (H5921), and “leaves” (H5929) | Three separate root/lexical analyses. |
+| `כּלּ֥ה` | “finish/complete” (H3615) versus “all of it” (H3605) | Verbal and pronominal-noun analyses. |
+| `מחל֥י` | sickness (H2483) versus Mahlai (H4249) | Common noun versus proper name. |
+
+The member evidence was drawn from stored Strong's values, morphology codes, root/form assignments, and sample verse references in the shadow snapshot. The table is a review index, not a final lexical ruling; in particular, shared consonants and stripped-vowel signatures do not establish semantic equivalence.
+
+### Updated review status
+
+- 93 of 372 cross-root groups have member-level review notes (three three-root cases plus six batches of 15).
+- 279 remain pending member review.
+- All groups remain candidate-only; no group has been approved as a lexical equivalence.
+- Production data and the existing embedding/vectorizer corpus were not modified.
