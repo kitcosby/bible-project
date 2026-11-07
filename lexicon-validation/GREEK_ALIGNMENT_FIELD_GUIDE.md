@@ -123,6 +123,10 @@ The isolated shadow model therefore keeps separate:
 
 A proposed alignment must target the correct profile-specific sequence. The 2 Corinthians 11:10 proposal (φραγήσεται, “shall be stopped”) is variant-sensitive and remains a YLT-profile proposal, not a universal textual claim.
 
+## Review queue versus alignment-row status
+
+The review queue and alignment table are separate status layers. A Greek token can have a corresponding unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. In this audit, all 39 original queue entries had matching alignment rows, but their confidence was unresolved. That is a deliberate signal that the current non-link classification is provisional, not a settled decision. When a proposal is made, the alignment row and the corresponding token-review row should be updated together and validated. Do not infer finality from not_expressed when confidence remains unresolved.
+
 ## Database design recommendations
 
 Keep these concepts distinct:
