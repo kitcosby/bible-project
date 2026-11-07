@@ -1,6 +1,6 @@
 # YLT Pending Token Queue — Stratification and Review Plan (2026-11-07)
 
-## Current queue state after Acts 19:27 review
+## Current queue state after 1 Corinthians 5:11 review
 
 The YLT-side token-review table now has **464 pending YLT tokens across 116 verses and 23 New Testament books**.
 
@@ -147,7 +147,7 @@ Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed ph
 1. Review the 50 remaining “to” occurrences by full verse and Greek construction, distinguishing prepositions from infinitive markers and supplied English syntax.
 2. Review the 33 “the” occurrences, especially repeated Greek articles, articular infinitives, and articles introduced or omitted in English.
 3. Review auxiliaries and participial expansions (“may”, “did”, “was”, “having”, “is”) as constructions before proposing individual Greek tokens.
-4. Keep the eight annotated cases above separate from the 466 generic pending rows.
+4. Keep the ten annotated cases above separate from the 454 generic pending rows.
 5. Preserve legacy links; contextual alternatives should remain overlap candidates until occurrence identity is established.
 
 The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 464 rows.
