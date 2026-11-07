@@ -1,6 +1,8 @@
 # Greek Token Alignment Disposition Audit — 2026-11-07
 
-## Current result
+## Snapshot result at time of this audit
+
+The counts below describe the shadow database at the time of the original disposition audit, before the subsequent Acts 15:32 and Revelation 9:20 updates.
 
 The 20 remaining cases whose alignment rows were provisionally marked not_expressed but still had unresolved confidence have been reviewed against their full YLT verse and exact YLT-profile Greek sequence:
 
@@ -60,3 +62,14 @@ Production read-only counts remain unchanged:
 - non-null embedding vectors: 31,102
 
 These are evidence-based shadow annotations and proposals, not production approvals. not_expressed means no independent English token is warranted in this YLT rendering; grammatical and phrase-level contribution may still be present.
+
+## Subsequent shadow-only updates (later 2026-11-07)
+
+Two additional context passes followed this audit:
+
+1. **Acts 15:32:** the stable καί at Greek position 3 is now proposed to YLT “and” (token 3). The branch-sensitive position-2 particle remains unresolved; see [the Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+2. **Revelation 9:20:** 11 phrase groups and 16 alignment rows were added. Fifteen YLT tokens received proposed phrase-member links; the supplied copula “are” received an alignment-level not_expressed record. The detailed [Revelation 9:20 case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) documents the five repeated “those of [material]” phrases and other grammatical expansions.
+
+The latest v10 shadow state contains 44 alignment groups and 621 alignment rows: 581 proposed, 33 not_expressed, six legacy_overlap_review, and one unresolved. YLT-token review now has 536 proposed, 484 pending_review, 42 legacy_overlap_review, and 2,109 legacy_only. Greek-token review has 521 proposed, 33 pending_review, and 31 legacy_overlap_review. The sole unresolved alignment remains Acts 15:32 δέ.
+
+The [v10 validator](../eval/validate_ylt_profile_shadow_context_review_20261107_v10.py) and [final validation output](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt) passed. Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
