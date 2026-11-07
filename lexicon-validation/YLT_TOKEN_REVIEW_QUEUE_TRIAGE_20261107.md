@@ -6,18 +6,19 @@
 
 ## Current queue shape
 
-The current queue contains **503 YLT tokens** across 23 New Testament books. The review-reason field divides them as follows:
+The current queue contains **499 YLT tokens** across 23 New Testament books and 116 verses. The review-reason field divides them as follows:
 
 | Reason | Count | Interpretation |
 |---|---:|---|
-| No direct proposal identified in this review set. | 500 | No candidate was recorded by the current review workflow. This does not mean the token was examined and proved to have no Greek counterpart. |
+| No direct proposal identified in this review set. | 495 | No candidate was recorded by the current review workflow. This does not mean the token was examined and proved to have no Greek counterpart. |
 | Bracketed supplied copula; no Greek finite verb is present. | 1 | Romans 16:27, “be”. |
 | English article added before “only wise God”; no Greek article occurs in this sequence. | 1 | Romans 16:27, “the”. |
 | English subject pronoun supplied with third-person ἔχει; no independent Greek pronoun occurs. | 1 | 1 John 2:23, “he” in “neither hath he the Father”. |
+| YLT “also” token depends on unresolved source-branch particle (A τε / B δέ). | 1 | Acts 15:32, “also” (token 2). |
 
-The 500 generic rows remain a candidate-discovery queue. They should not be automatically classified as unexpressed, nor should their count be presented as 500 unresolved alignments: many may already have legacy relationships or may require phrase-level treatment.
+The 495 generic rows remain a candidate-discovery queue. They should not be automatically classified as unexpressed, nor should their count be presented as 500 unresolved alignments: many may already have legacy relationships or may require phrase-level treatment.
 
-## Three explicit grammatical corner cases
+## Four annotated pending corner cases
 
 ### Romans 16:27 — supplied “the”
 
@@ -44,6 +45,14 @@ The 500 generic rows remain a candidate-discovery queue. They should not be auto
 - **Interpretation:** the first “he” is a supplied English subject pronoun, not a separate Greek lexical token.
 - **Workflow status:** remains pending_review in the YLT token-review table; no Greek token should be fabricated to support it.
 
+### Acts 15:32 — branch-dependent “also”
+
+- YLT phrase: “Judas also and Silas”.
+- Robinson variant group 44:19 has branch A τε and branch B δέ. The Robinson source is unselected; CrossWire/KJV selected B algorithmically, and the YLT candidate inherited B provisionally. This is not a YLT editorial decision.
+- The stable καί at Greek position 3 is proposed to YLT “and” (token 3). The position-2 particle and YLT “also” (token 2) remain unresolved because the YLT source reading has not been established independently.
+- **Interpretation:** do not force “also” to δέ on the basis of the inherited KJV candidate. The YLT wording is compatible with both branches.
+- **Workflow status:** remains pending_review in the YLT token-review table and unresolved at alignment level. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+
 ## Largest current pending clusters
 
 These are useful review batches, not evidence that every token in a verse has the same problem.
@@ -53,7 +62,7 @@ These are useful review batches, not evidence that every token in a verse has th
 | Revelation 9:20 | 16 |
 | Acts 19:27 | 13 |
 | 1 Corinthians 5:11 | 12 |
-| Acts 26:20 | 12 |
+| Acts 26:20 | 11 |
 | Revelation 7:2 | 11 |
 | Acts 4:32 | 10 |
 | Acts 21:8 | 10 |
@@ -74,14 +83,14 @@ Acts 21:8 appears here because the YLT phrase “Paul and his company” is not 
 
 | Book | Pending tokens |
 |---|---:|
-| Acts | 103 |
+| Acts | 101 |
 | Luke | 54 |
-| Matthew | 50 |
+| Matthew | 49 |
 | Revelation | 49 |
 | Colossians | 33 |
 | Mark | 30 |
 | John | 25 |
-| 1 Corinthians | 22 |
+| 1 Corinthians | 21 |
 | Romans | 20 |
 | 2 Corinthians | 17 |
 | Hebrews | 16 |
@@ -105,8 +114,8 @@ Acts 21:8 appears here because the YLT phrase “Paul and his company” is not 
 3. Preserve existing legacy links. A contextual alternative should be recorded as an overlap until its occurrence identity is established.
 4. Do not use Strong’s or morphology alone to choose among repeated Greek occurrences.
 5. Keep the token-review status distinct from the alignment-row disposition. The current schema does not provide a YLT-token not_expressed status.
-6. Do not infer that the 500 generic pending rows are all missing Greek equivalents; they have not yet been individually adjudicated by this review.
+6. Do not infer that the 495 generic pending rows are all missing Greek equivalents; they have not yet been individually adjudicated by this review.
 
 ## Scope and safeguards
 
-This is a read-only triage of existing shadow rows. No YLT token-review status, alignment endpoint, legacy association, production table, embedding, vectorizer, API, or deployment was changed. The exact 503-row pending queue is represented by the database status at export time; this report gives the reason distribution and review priorities, not a replacement for the row-level queue.
+Four YLT token-review rows already had proposed alignment endpoints but still carried pending_review status; their token-review statuses were reconciled to proposed without creating new alignment rows. The remaining 499-row queue has no proposed alignment endpoints and no legacy Greek position spans. No legacy association, production table, embedding, vectorizer, API, or deployment was changed. See the [current row-level queue](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) and [surface/queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md).
