@@ -79,7 +79,7 @@ The five originally reviewed choices remain materialized in the YLT candidate se
 
 A subsequent Revelation 7:2 review proposed YLT branch B for group 66:8 (ἀναβαίνοντα, present participle, “going up”), created seven phrase groups, and added a stable cross-verse anchor from YLT “saying” at the end of 7:2 to Greek λέγων at the start of 7:3. The exact-edition caveat remains: Stephanus 1550 and Beza 1598 read branch A, while Scrivener 1894 and several other witnesses read branch B. See [the Revelation 7:2 dense phrase and variant report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
-Revelation 7:3 group 66:9 remains unresolved. Only the stable λέγων anchor at position 1 is materialized in the YLT candidate sequence; the rest of 7:3 is deliberately withheld pending a source-reading decision. Do not infer a choice from the inherited KJV candidate. See the [current v15 validation](FINAL_VALIDATION_AFTER_REVELATION_7_2_20261107.txt).
+Revelation 7:3 group 66:9 remains unresolved. Only the stable λέγων anchor at position 1 is materialized in the YLT candidate sequence; the rest of 7:3 is deliberately withheld pending a source-reading decision. Do not infer a choice from the inherited KJV candidate. See the [current v16 validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
 
 ## F. Provenance and change control
 
@@ -92,7 +92,7 @@ Revelation 7:3 group 66:9 remains unresolved. Only the stable λέγων anchor 
 
 The controlling principle is to separate verse text from subscription paratext, preserve every raw branch, and leave a translation-insensitive Greek distinction unresolved.
 
-## G. Current profile-wide YLT selection status (2026-11-07, v15)
+## G. Current profile-wide YLT selection status (2026-11-07, v16)
 
 The full YLT profile selection ledger contains 261 rows:
 
@@ -119,6 +119,8 @@ The nine proposed branch selections are:
 | Revelation 7:2 | 66:8 | B | YLT “going up”; present participle ἀναβαίνοντα is the closer phrase match, but Young’s exact Greek edition remains unconfirmed |
 | Revelation 9:20 | 66:18 | A | YLT “neither did reform”; Received-Text basis and Stephanus 1550 / Beza 1598 reading οὔτε; exact edition remains unconfirmed |
 
-The Revelation 7:2 and Revelation 9:20 selections are proposals, not final textual decisions. The current 261-row export preserves all YLT profile selections, inherited statuses, rationale, and evidence: [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv). The [v15 full validation](FINAL_VALIDATION_AFTER_REVELATION_7_2_20261107.txt) passed. See the [Revelation 7:2 case report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [Revelation 9:20 branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md).
+The Revelation 7:2 and Revelation 9:20 selections are proposals, not final textual decisions. The current 261-row export preserves all YLT profile selections, inherited statuses, rationale, and evidence: [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv). The [v16 full validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt) passed. See the [Revelation 7:2 case report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [Revelation 9:20 branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md).
+
+Acts 4:32 group 44:4 remains A / inherited_provisional (οὐδέ versus elided οὐδ); YLT “not one” does not distinguish the forms, so no new branch proposal was made. See [the Acts 4:32 case report](ACTS_4_32_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
 Revelation 7:3 group 66:9 remains the single unresolved YLT-profile variant selection. The translation “till we may seal” does not reliably distinguish the present from the aorist subjunctive.
