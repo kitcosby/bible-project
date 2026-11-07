@@ -1,20 +1,19 @@
 # YLT Pending Token Queue — Stratification and Review Plan (2026-11-07)
 
-## Current queue state after Acts 4:32 review
+## Current queue state after Acts 21:8 review (v17)
 
 The YLT-side token-review table now has **437 pending YLT tokens across 116 verses and 23 New Testament books**.
 
 Current status totals:
-- **583** proposed
-- **437** pending_review
+- **590** proposed
+- **431** pending_review
 - **47** legacy_overlap_review
-- **2,104** legacy_only
+- **2,103** legacy_only
 
-The 437 pending rows divide by recorded reason:
-- **422** generic rows: “No direct proposal identified in this review set.”
-- **15** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
+The 431 pending rows retain their recorded grammatical/variant rationales; the earlier 422-generic/15-annotated split is a historical v16 snapshot and has not yet been re-stratified.
 
-The 443 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The twelve annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
+
+The remaining generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The twelve annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
 ## Four earlier proposal-status reconciliations
 
@@ -66,14 +65,14 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 | the | 31 |
 | may | 21 |
 | did | 17 |
-| a | 16 |
+| a | 14 |
 | was | 16 |
-| having | 15 |
+| having | 13 |
 | is | 14 |
-| who | 13 |
+| who | 12 |
 | of | 11 |
 | in | 10 |
-| they | 9 |
+| they | 8 |
 | have | 8 |
 | he | 8 |
 | are | 6 |
@@ -130,7 +129,7 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 
 | Reference | Pending YLT tokens |
 |---|---:|
-| Acts 21:8 | 10 |
+| Acts 21:8 | 4 |
 | Acts 22:25 | 9 |
 | 2 Corinthians 6:15 | 8 |
 | 2 Corinthians 7:12 | 8 |
@@ -184,3 +183,8 @@ The verse’s 11 original pending tokens were reviewed: nine received phrase-mem
 ## Acts 26:20 review result
 
 The verse’s 11 original pending tokens were reviewed: nine received phrase-member proposals and two (“to” and “those” in “to those in Jerusalem”) received alignment-level not_expressed dispositions. Robinson group 44:36 contrasts A=ἀπαγγέλλων (present participle) with B=ἀπήγγελλον (first-person imperfect). YLT “I was preaching” supports a proposed YLT-specific B selection. The KJV profile remains on A. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+## v17 update — Acts 21:8 and current review queue
+
+The full v17 validator passes with 94 alignment groups and 695 alignment rows. The Acts 21:8 review proposed branch B (ἤλθομεν, first-person plural) for YLT “we came”, added phrase-level endpoints for “on the morrow”, “having gone forth”, “having entered”, and “who is”, and recorded supplied English “and”, “his”, and subject pronouns as alignment-level not_expressed. Four Acts 21:8 YLT tokens remain pending_review because the YLT token table has no not_expressed state; they are not unresolved Greek alignments. The current queue CSV has been refreshed to 431 rows.
+
+Current v17 totals: 590 proposed, 431 pending_review, 47 legacy_overlap_review, and 2,103 legacy_only. The highest-frequency pending surfaces are “to” (45), “the” (31), “may” (21), “did” (17), “was” (16), “a” (14), “is” (14), “having” (13), “who” (12), and “of” (11). See [Acts 21:8 branch and phrase report](ACTS_21_8_BRANCH_B_AND_PHRASE_ALIGNMENT_20261107.md) and [v17 validation output](FINAL_VALIDATION_AFTER_ACTS21_8_V17.txt).
