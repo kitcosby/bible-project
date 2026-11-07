@@ -4,9 +4,9 @@
 **Status:** Research index for the isolated YLT-profile shadow review.  
 **Companion:** [YLT–Greek Alignment Field Guide](GREEK_ALIGNMENT_FIELD_GUIDE.md)
 
-This index separates the 20 legacy-overlap positional-divergence cases already read in context from the 39 Greek-token review rows that remain pending.
+This index separates the 20 legacy-overlap positional-divergence cases already read in context from the original 39-case Greek-token review set, now 31 pending and eight proposed.
 
-[Contextual notes for all 39 pending Greek-token rows](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide a full-verse grammatical assessment while keeping their database status pending.
+[Contextual notes for the original 39 Greek-token cases](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide full-verse grammatical assessments and distinguish 31 pending rows from eight shadow proposals.
 
 Companion index: [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — all 19 formerly unresolved YLT-profile groups, including the five YLT-reviewed verse-text branches, 13 subscription/colophon exclusions, and the one remaining unresolved reading. Machine-readable selection snapshot: [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
 
@@ -91,7 +91,7 @@ These 39 rows were captured from the isolated YLT-profile review queue at the in
 
 **Important:** the initial review cue is a hypothesis to guide the next pass, not a resolved classification. In particular, the Acts 19:27 and Luke 4:16 entries must be checked against the exact stored profile sequence and verse text before assigning a status.
 
-The initial machine-readable snapshot of the 39 rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The latest export, [GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), records the current state: 31 pending and eight proposed. The proposals are Acts 5:12 διά → “through”; Matthew 2:23 τό → “that”; Acts 26:20 τοῖς → “those”; 1 Corinthians 13:2 τά → “the”; Jude 1:24 τῷ → “Him”; Acts 26:18 τῇ → “that”; Luke 2:39 τά → “things”; and Romans 16:20 ἐν → “quickly”. The latter two are phrase-member proposals; see [the two-proposal report](TWO_ADDITIONAL_PHRASE_MEMBER_PROPOSALS_20261106.md). Before proposals, all 39 rows had matching unaligned_greek records; their confidence was unresolved. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md), [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md), and [five-proposal report](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
+The initial machine-readable snapshot of the 39 rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The current 31-row pending-only export is [GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The latest export, [GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), records the current state: 31 pending and eight proposed. The proposals are Acts 5:12 διά → “through”; Matthew 2:23 τό → “that”; Acts 26:20 τοῖς → “those”; 1 Corinthians 13:2 τά → “the”; Jude 1:24 τῷ → “Him”; Acts 26:18 τῇ → “that”; Luke 2:39 τά → “things”; and Romans 16:20 ἐν → “quickly”. The latter two are phrase-member proposals; see [the two-proposal report](TWO_ADDITIONAL_PHRASE_MEMBER_PROPOSALS_20261106.md). Before proposals, all 39 rows had matching unaligned_greek records; their confidence was unresolved. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md), [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md), and [five-proposal report](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
 
 ## C. Open review totals
 
@@ -106,7 +106,7 @@ Snapshot from the isolated shadow review:
 ## D. Provenance and change control
 
 - Case evidence is drawn from the isolated PostgreSQL database bible_greek_bridge_test_20261106, schema ylt_profile_shadow.
-- The 39-row queue is the exact set with gnt_token_review.review_status = pending_review at export time.
+- The current 31-row pending-only CSV is the exact set with gnt_token_review.review_status = pending_review at export time.
 - The 20-case notes use YLT verse text, token positions, legacy position spans, and the YLT-profile Greek sequence.
 - Raw Robinson and CrossWire source provenance is recorded in companion audit reports in the Lampy working directory; temporary paths are not durable repository references.
 - No production DDL/DML, API, embedding, vectorizer, merge, or deployment operation is authorized by this document.
