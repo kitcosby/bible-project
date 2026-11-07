@@ -159,7 +159,7 @@ As of 2026-11-06:
 - YLT token review counts: 510 proposed, 510 pending, 39 legacy-overlap review, and 2,112 legacy-only.
 - The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
 - The five new sequence materializations add 95 YLT tokens and 77 Greek words. Their 40 contextual pair candidates produced 38 proposals, two retained legacy-overlap cases, and one Greek article classified not separately expressed; ten phrase groups preserve the non-one-to-one relationships.
-- Eight YLT tokens and one Greek token remain pending in the five new verses. The full shadow validator passed after contextual review; production counts and all 31,102 stored embeddings were unchanged.
+- Three YLT tokens and one Greek token remain pending in the five new verses. The full shadow validator passed after contextual review; production counts and all 31,102 stored embeddings were unchanged.
 
 See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the original 39-case subset, the current 32-row Greek pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
 
