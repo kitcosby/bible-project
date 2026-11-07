@@ -290,7 +290,10 @@ The YLT lexicon validation work includes a companion field guide and case index 
 - [39-case contextual notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammatical assessments and proposal rationales.
 - [Original 39-case queue snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv), [historical 39-case post-proposal snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), and [current 32-row pending queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — distinct historical and current status snapshots.
 - [Current Greek pending queue (CSV)](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — all 32 pending Greek positions after the five new verse materializations.
-- [Five-verse YLT sequence materialization report](lexicon-validation/FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md) — John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23; shadow-only changes and validation results.
+- [Five-verse YLT sequence and contextual review report](lexicon-validation/FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md) — John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23; shadow-only changes, phrase decisions, and validation results.
+- [41-row contextual alignment ledger](lexicon-validation/FIVE_VERSE_CONTEXTUAL_ALIGNMENT_PROPOSALS_20261106.csv) — 38 proposals, two legacy overlaps, and one not-expressed article.
+- [Ten phrase-group definitions](lexicon-validation/FIVE_VERSE_CONTEXTUAL_ALIGNMENT_GROUPS_20261106.csv) — preserves the multi-token and phrase-level relationships.
+- [Final shadow validation output](lexicon-validation/FINAL_VALIDATION_AFTER_CONTEXT_REVIEW_20261106.txt) and [reproducible validator](eval/validate_ylt_profile_shadow_context_review_20261106.py).
 - [Initial 45-token YLT pending snapshot](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) — historical queue before contextual alignment review.
 - [Current YLT pending queue](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — all 510 pending YLT tokens.
 - [Eight remaining YLT pending tokens in the five new verses](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) — current residual after contextual proposals.
