@@ -4,7 +4,7 @@
 **Database:** `bible_greek_bridge_test_20261106` (isolated shadow database)  
 **Alignment profile:** 4 (YLT)  
 **Sequence profile:** 3 (YLT candidate, provisional inheritance)  
-**Status:** Structural validation passed; textual choice at Robinson group 66:18 remains open.
+**Status:** Structural validation passed; YLT profile branch A is proposed, with the exact source edition still unconfirmed.
 
 ## Executive result
 
@@ -14,7 +14,7 @@ The 15 phrase-member proposals already applied to Revelation 9:20 are structural
 - B: `ou 3756 {PRT-N}` — οὐ
 - C (external apparatus): `oude 3761` — οὐδέ
 
-The current YLT candidate sequence uses B, inherited provisionally from the KJV candidate. A/B/C sequence simulations each change only the one token at Greek position 13, with no token-count delta or later positional shift. All 15 phrase-member endpoints occur after that point and retain the same Greek surface, position, YLT target, and phrase group under all three readings. The source parser's A/B alternatives must not be mistaken for an exhaustive textual apparatus.
+The YLT candidate profile now proposes A (οὔτε), replacing the earlier inherited B (οὐ) from the KJV candidate. A/B/C sequence simulations each change only the one token at Greek position 13, with no token-count delta or later positional shift. All 15 phrase-member endpoints occur after that point and retain the same Greek surface, position, YLT target, and phrase group under all three readings. The source parser's A/B alternatives must not be mistaken for an exhaustive textual apparatus.
 
 The directly affected alignment is Greek position 13 → YLT token 13 (“neither”). The database previously had the dependency metadata backwards: the 15 later phrase rows were tagged with `66:18`, while this directly affected position-13 row was not. This metadata has been corrected in the shadow database only.
 
@@ -45,9 +45,9 @@ Young's Revised Edition preface says that its Greek text followed the generally 
 
 ## Directly affected alignment
 
-The current branch-B sequence has οὐ at position 13, aligned to YLT “neither” (token 13). Under branch A, the same position would contain οὔτε. This is the one alignment row whose Greek lexical identity changes when the branch changes.
+The proposed branch-A sequence has οὔτε at position 13, aligned to YLT “neither” (token 13). Under branch B, the same position contains οὐ; the external apparatus also records οὐδέ. This is the one alignment row whose Greek lexical identity changes among the three readings.
 
-The YLT wording “neither did reform” is compatible with all three readings in translation, though οὔτε is a more direct lexical match. The YLT preface's Received-Text basis makes οὔτε a serious candidate, but the precise source edition used by Young has not been identified. The textual choice therefore remains unresolved pending identification of Young's actual source edition or a specific commentary/textual note.
+The YLT wording “neither did reform” is compatible with all three readings, but οὔτε is directly attested in Stephanus 1550 and Beza 1598, both Received-Text editions available before Young's translation. Young's preface states that he followed the generally recognized Received Text. This supports proposing A for the YLT profile, but the precise source edition used by Young has not been identified, so the selection remains proposed rather than final.
 
 ## The 15 phrase-member endpoints
 
@@ -89,7 +89,7 @@ The supplied English “are” remains an alignment-level `unaligned_ylt/not_exp
 
 The 15 phrase proposals supplement rather than overwrite the existing legacy rendering rows. No production legacy association was modified.
 
-## Latest full validation (v13)
+## Latest full validation (v14)
 
 The full v13 validator passed after the dependency metadata correction:
 
@@ -102,7 +102,7 @@ The full v13 validator passed after the dependency metadata correction:
 - The `66:18` dependency group now has exactly one directly dependent alignment row.
 - Production counts unchanged: 141,009 `gnt_words`; 143,227 `gnt_ylt_renderings`; 31,102 YLT verses; 31,102 non-null embeddings.
 
-Full output: [FINAL_VALIDATION_AFTER_RE9_20_DEPENDENCY_FIX_20261107.txt](FINAL_VALIDATION_AFTER_RE9_20_DEPENDENCY_FIX_20261107.txt).
+Full output: [FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt](FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt).
 
 ## Backup and provenance
 
