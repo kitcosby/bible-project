@@ -4,9 +4,9 @@
 **Status:** Research index for the isolated YLT-profile shadow review.  
 **Companion:** [YLT–Greek Alignment Field Guide](GREEK_ALIGNMENT_FIELD_GUIDE.md)
 
-This index separates the 20 legacy-overlap positional-divergence cases already read in context from the original 39-case Greek-token review set, now 31 pending and eight proposed. It also points to the separate 267-position function-word review; do not conflate these counts.
+This index separates the 20 legacy-overlap positional-divergence cases already read in context from the original 39-case Greek-token review set. The 31-pending/eight-proposed figures refer only to the historical post-eight-proposal snapshot, not the current all-verse queue. It also points to the separate 267-position function-word review; do not conflate these counts.
 
-[Contextual notes for the original 39 Greek-token cases](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide full-verse grammatical assessments and distinguish 31 pending rows from eight shadow proposals.
+[Contextual notes for the original 39 Greek-token cases](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide full-verse grammatical assessments for the historical 39-case subset; current statuses are in the 2026-11-07 dual-status queue.
 
 Companion index: [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — all 19 formerly unresolved YLT-profile groups, including the five YLT-reviewed verse-text branches, 13 subscription/colophon exclusions, and the one remaining unresolved reading. Machine-readable selection snapshot: [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
 
@@ -106,7 +106,7 @@ The initial machine-readable snapshot of the 39 rows is available as [GREEK_TOKE
 
 Snapshot from the isolated shadow review:
 
-- The original 39 Greek-token review rows now comprise 31 pending and eight proposed alignments.
+- At the historical post-eight-proposal snapshot, the original 39-case subset comprised 31 pending and eight proposed alignments.
 - 20 legacy-overlap positional-divergence cases have contextual notes.
 - One YLT-profile verse-text variant group remains unresolved (Revelation 7:3); five formerly unresolved verse-text groups have now been materialized in the shadow sequence, and 13 paratext groups are excluded from verse alignment.
 - The current Greek token-review queue has 33 pending rows. The 2026-11-07 contextual review assigned alignment-level not_expressed dispositions to 32 of these rows (27 high confidence, five moderate); Acts 15:32 δέ is the sole genuinely unresolved case. The token-review table still shows all 33 as pending because it has no not_expressed status. Acts 21:8 οἱ περὶ τὸν Παῦλον now has a phrase-group proposal for “Paul and his company”; two phrase-member links remain in legacy-overlap review because the legacy “company” token points to positions [7,8].
