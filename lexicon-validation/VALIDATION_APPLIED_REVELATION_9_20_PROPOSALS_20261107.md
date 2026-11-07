@@ -36,6 +36,10 @@ The latest full v13 shadow validator passed after the branch-dependency metadata
 
 The verse contains 11 phrase groups created for this case: ten phrase groups for the 15 proposed links and one group for the supplied copula disposition. The case contributes 16 alignment rows in total.
 
+## Subsequent three-reading apparatus review
+
+A later independent textual review identified a third external reading, οὐδέ, in addition to the two branches represented by Robinson group 66:18 (οὐ / οὔτε). All three alternatives are single tokens at Greek position 13; the 15 phrase-member endpoints remain positionally stable under all three. Young's Revised Edition preface states that the translation follows the generally recognized Received Text, making οὔτε a serious candidate for YLT “neither”, but not proving which precise TR edition Young used. See the [three-reading apparatus review](REVELATION_9_20_THREE_READING_APPARATUS_REVIEW_20261107.md). The external οὐδέ reading is documented but not inserted as a new Robinson parser branch.
+
 ## Supplied copula
 
 YLT token 52 (“are”) is recorded as:
