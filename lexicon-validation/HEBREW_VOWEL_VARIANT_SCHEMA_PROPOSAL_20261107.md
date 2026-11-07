@@ -1,7 +1,7 @@
 # Hebrew vowel-only variant relation — schema and validation proposal
 
 **Date:** 2026-11-07  
-**Status:** Proposed only; not applied to any database.  
+**Status:** Built and independently validated in the dedicated isolated shadow database `bible_hebrew_variant_shadow_20261107`; not applied to production.  
 **Evidence base:** [Live inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md).
 
 ## 1. Design decision
@@ -12,7 +12,7 @@ The live scan found 3,349 candidate groups and 7,148 language-scoped member keys
 
 A group must be language-scoped (`is_aramaic`) because Hebrew and Aramaic must not be joined solely by surface spelling. The member key may occur in separate Hebrew and Aramaic groups if its underlying root-vowel record is used in both populations. The live cross-root audit confirmed eight such shared keys among the 830 keys used by cross-root groups. The member table therefore repeats the language flag and algorithm/source-snapshot identifiers, constrains them to the parent group with a composite foreign key, and enforces at most one group membership per member key, language, algorithm version, and source snapshot.
 
-## 2. Proposed tables
+## 2. Proposed tables (implemented in the isolated shadow)
 
 Illustrative PostgreSQL DDL only:
 
@@ -83,22 +83,24 @@ These are regression expectations for the captured snapshot, not permanent const
 - All member `root_vowel.vowel_pattern` values produce the stored non-vowel signature.
 - All occurrences reached through a member have the group's language flag.
 - Every member has its `root_vowel` and `lexicon` parent.
-- No member joins two groups with the same language, signature, and algorithm version.
+- The unique member constraint prevents a root-vowel key from joining multiple groups within the same language, algorithm version, and source snapshot.
 - Forms differing in dagesh/mapiq, meteg, shin/sin dot, cantillation, consonants, matres, final forms, or separators do not share a group.
 - Qere/ketiv rows are absent from canonical membership.
 - All original `words`, `root_vowel`, and `lexicon` row counts and values remain unchanged.
 - The candidate group/member counts match the read-only inventory for the same source snapshot.
 
-## 5. Open decisions before implementation
+## 5. Remaining design decisions before any production adoption
 
 1. Whether the persistent relation should be a regular table or a materialized view refreshed from the source corpus. A regular table preserves review status and provenance; a view avoids stale derived data but is more expensive and cannot hold manual review state.
 2. Whether rejected candidates should remain in the table with `review_status='rejected'` or be excluded from the persistent relation and retained only in the audit export.
-3. How to version the source corpus snapshot and parser version alongside `algorithm_version`.
+3. How to retain and rotate source-snapshot identifiers and parser/build metadata for future corpus revisions. The prototype records the SHA-256 of the verified source dump.
 4. Whether qere readings should later receive a parallel member type or a separate apparatus group, preserving the distinction between canonical vocalization variants and Masoretic reading alternatives.
 
-## 6. Change boundary
+## 6. Change boundary and current implementation status
 
-This proposal has **not** been executed. No production or shadow DDL/DML, table creation, row insertion, or data update was performed. The next implementation must be a reversible isolated-shadow prototype with a verified backup and post-build validator. Production remains untouched.
+The proposed schema was executed only in the new isolated database `bible_hebrew_variant_shadow_20261107`, restored from a verified custom-format dump. The two relation tables contain 3,349 candidate groups and 7,148 language-scoped member rows. The independent validator passed all group/member, language, lexical-parent, source-table-count, and Qere-separation assertions. Full details are in [the shadow build results](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md).
+
+No production DDL/DML, source-table update, lexical merge, alignment update, embedding/vectorizer change, API change, or deployment occurred. The existing Greek bridge test database was not modified. The remaining decisions in §5 concern any later persistent/production adoption, not the already validated shadow prototype.
 
 
 ## 7. Language-scoped membership and source-snapshot revision
@@ -107,4 +109,7 @@ The member-level audit found that eight of the 830 root-vowel keys used by cross
 
 The member-table unique constraint now prevents one root-vowel key from entering two different groups within the same language, algorithm version, and source snapshot, while still allowing the same key to be present once in a Hebrew group and once in an Aramaic group.
 
-The earlier draft used algorithm version without a source-snapshot identifier. That is insufficient for reproducible rebuilds: the same algorithm can produce a changed membership set when the source corpus changes. The verified dump SHA-256 should be recorded as the snapshot identifier for the prototype. These constraints are still illustrative and must be validated against the actual clone before any shadow DDL is applied.
+The earlier draft used algorithm version without a source-snapshot identifier. That is insufficient for reproducible rebuilds: the same algorithm can produce a changed membership set when the source corpus changes. The prototype records the verified dump SHA-256 as the snapshot identifier. The revised composite constraints were implemented and passed the independent validator in the isolated clone.
+
+
+The prototype contains 7,148 language-scoped membership rows over 7,145 unique root-vowel keys. Three keys are members in both Hebrew and Aramaic candidate populations. A further five cross-root member keys have occurrences in both language populations but are not candidate members in both; in total, eight cross-root keys have cross-language occurrences. This distinction is recorded in the validator and the [build results](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md).
