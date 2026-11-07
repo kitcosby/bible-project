@@ -68,3 +68,15 @@ These categories overlap because the same Greek token can be both part of a phra
 The full-context read supports a conservative conclusion: most of these 39 rows are not missing content words. They are articles or function words whose contribution is expressed by phrase structure, possessives, substantival constructions, or English punctuation. A small number have straightforward English counterparts.
 
 **No status changes are made here.** The 39 database rows remain pending review until the proposed category/status mapping is agreed against the schema and the exact alignment candidate records are inspected. This avoids confusing a linguistic assessment with a committed database decision.
+
+
+## Review-queue reconciliation
+
+A separate read-only join of all 39 rows in gnt_token_review to ylt_greek_alignment found a corresponding unaligned_greek alignment row for every one of them: **39/39 matched; zero missing alignment records**. The alignment rows divide into:
+
+- 22 rows with alignment review_status = not_expressed and confidence = unresolved.
+- 17 rows with alignment review_status = unresolved and confidence = unresolved.
+
+The gnt_token_review rows remain pending_review. This is not contradictory: the alignment table contains provisional non-link/unresolved classifications, but every row still has unresolved confidence and no YLT token target. The review queue is therefore correctly still open pending final contextual disposition. Do not treat not_expressed as a settled finding while confidence remains unresolved.
+
+The reconciled machine-readable export is [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv). It records both status layers and the original function source-record key. The earlier CSV is retained as the raw queue snapshot.
