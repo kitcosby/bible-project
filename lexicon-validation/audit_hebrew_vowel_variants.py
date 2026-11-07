@@ -27,7 +27,7 @@ VOWEL_NAMES = {
     0x05B0: "sheva", 0x05B1: "hataf-segol", 0x05B2: "hataf-patah",
     0x05B3: "hataf-qamats", 0x05B4: "hiriq", 0x05B5: "tsere",
     0x05B6: "segol", 0x05B7: "patah", 0x05B8: "qamats",
-    0x05B9: "holam", 0x05BA: "holam-haser/legacy-holam",
+    0x05B9: "holam", 0x05BA: "holam-haser-for-vav",
     0x05BB: "qubuts", 0x05C7: "qamats-qatan",
 }
 
@@ -109,10 +109,12 @@ def main():
             item["nfc_pointed"] = normalized
             item["vowels"] = vowel_description(normalized)
             item["codepoints"] = codepoints(normalized)
-            groups[signature].append(item)
+            # Never mix Hebrew and Aramaic populations in one candidate group.
+            # NULL remains its own unknown/unclassified population.
+            groups[(row["is_aramaic"], signature)].append(item)
 
         candidates = []
-        for signature, rows in groups.items():
+        for (aramaic_flag, signature), rows in groups.items():
             forms = collections.defaultdict(list)
             for row in rows:
                 forms[row["nfc_pointed"]].append(row)
@@ -155,6 +157,7 @@ def main():
                 and r["root_vowel_seq"] is not None
             })
             candidates.append({
+                "is_aramaic": aramaic_flag,
                 "signature": signature,
                 "signature_codepoints": codepoints(signature),
                 "members": members,
@@ -164,20 +167,21 @@ def main():
                 "root_vowel_ids": root_ids,
             })
 
-        candidates.sort(key=lambda x: (x["signature"], x["distinct_form_count"]))
+        candidates.sort(key=lambda x: (str(x["is_aramaic"]), x["signature"], x["distinct_form_count"]))
         prefix = Path(args.out_prefix)
         prefix.parent.mkdir(parents=True, exist_ok=True)
         csv_path = str(prefix) + ".csv"
         json_path = str(prefix) + ".summary.json"
         with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=[
-                "signature", "signature_codepoints", "pointed_form",
+                "is_aramaic", "signature", "signature_codepoints", "pointed_form",
                 "vowel_points", "codepoints", "occurrence_count", "word_ids",
                 "root_vowel_ids", "references", "aramaic_values"])
             writer.writeheader()
             for group in candidates:
                 for member in group["members"]:
                     writer.writerow({
+                        "is_aramaic": group["is_aramaic"],
                         "signature": group["signature"],
                         "signature_codepoints": group["signature_codepoints"],
                         "pointed_form": member["pointed_form"],
@@ -206,7 +210,11 @@ def main():
             "candidate_groups_spanning_multiple_root_vowel_ids":
                 sum(len(g["root_vowel_ids"]) > 1 for g in candidates),
             "candidate_groups_aramaic_flagged":
-                sum(1 in g["aramaic_values"] for g in candidates),
+                sum(g["is_aramaic"] == 1 for g in candidates),
+            "candidate_groups_hebrew_flagged":
+                sum(g["is_aramaic"] == 0 for g in candidates),
+            "candidate_groups_unknown_language":
+                sum(g["is_aramaic"] is None for g in candidates),
             "limitations": [
                 "Candidates are mechanical orthographic matches, not adjudicated textual variants.",
                 "The codepoint set must be checked against the corpus and the Unicode standard before production use.",
