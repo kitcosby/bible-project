@@ -1983,6 +1983,25 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
             if not vr:
                 greek_words_variants[key] = None
                 continue
+            # The tradition's own phrases, from its alignment bridge
+            # ({tbl}_alignment -> KJV words; {tbl}_ylt_renderings ->
+            # computed Young's), mirroring the TR construction above.
+            tal = {}
+            for r in b.execute(
+                    f'SELECT a.{tbl}_position AS pos, k.kjv_word '
+                    f'FROM {tbl}_alignment a '
+                    'JOIN kjv_words k ON k.verse_id=a.corpus_verse_id '
+                    'AND k.kjv_pos=a.kjv_pos WHERE a.corpus_verse_id=%s '
+                    f'ORDER BY a.{tbl}_position, k.kjv_pos', (verse_id,)):
+                tal.setdefault(r['pos'], []).append(r['kjv_word'])
+            tyl = {}
+            for r in b.execute(
+                    f'SELECT {tbl}_position AS pos, ylt_word '
+                    f'FROM {tbl}_ylt_renderings '
+                    f'WHERE {tbl}_verse_id=%s '
+                    f'ORDER BY {tbl}_position, ylt_word_pos',
+                    (vr['gnt_verse_id'],)):
+                tyl.setdefault(r['pos'], []).append(r['ylt_word'])
             if key == 'byz':
                 rows = b.execute(
                     'SELECT position, surface, strongs, morph '
@@ -1992,7 +2011,10 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
                     {'pos': w['position'], 'greek': w['surface'],
                      'translit': None, 'strongs': w['strongs'],
                      'morph': w['morph'], 'lemma': None,
-                     'gloss': lex.get(w['strongs'], {}).get('gloss', '')}
+                     'gloss': lex.get(w['strongs'], {}).get('gloss', ''),
+                     'kjv': ' '.join(tal.get(w['position'], [])) or None,
+                     'ylt': ' '.join(tyl.get(w['position'], [])) or None,
+                     'ylt_computed': True}
                     for w in rows]
             else:
                 rows = b.execute(
@@ -2003,7 +2025,10 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
                     {'pos': w['position'], 'greek': w['surface'],
                      'translit': None, 'strongs': None,
                      'morph': w['morph'], 'lemma': w['lemma'],
-                     'gloss': lemma_gloss.get(w['lemma'], '')}
+                     'gloss': lemma_gloss.get(w['lemma'], ''),
+                     'kjv': ' '.join(tal.get(w['position'], [])) or None,
+                     'ylt': ' '.join(tyl.get(w['position'], [])) or None,
+                     'ylt_computed': True}
                     for w in rows]
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c,
