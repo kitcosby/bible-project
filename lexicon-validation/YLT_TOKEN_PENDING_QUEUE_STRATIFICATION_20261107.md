@@ -14,7 +14,7 @@ The 474 pending rows divide by recorded reason:
 - **466** generic rows: “No direct proposal identified in this review set.”
 - **8** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
-The 479 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The five annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
+The 466 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The eight annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
 ## Four earlier proposal-status reconciliations
 
@@ -38,6 +38,15 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Revelation 9:20 | “are” (token 52) | Supplied English copula; recorded as alignment-level unaligned_ylt/not_expressed. The token-review table has no not_expressed status, so it remains pending_review there. |
 
 See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md), [Romans 16:27/1 John 2:23 grammatical-supply notes](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md), [Revelation 9:20 phrase case](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), and [Acts 19:27 phrase/legacy-conflict case](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+
+
+### Acts 19:27 — supplied article and copulas
+
+- YLT “the” before “temple” (token 23): the Greek article τὸ is already represented as “that” earlier in the YLT phrase; this second English article is alignment-level not_expressed.
+- YLT “is” in “the temple is to be reckoned” (token 25): supplied English copula for an infinitive construction; alignment-level not_expressed.
+- YLT “is” in “her greatness is about to be brought down” (token 35): supplied English finite auxiliary; μέλλειν contributes “about”, and καθαιρεῖσθαι is the passive infinitive.
+- These three tokens remain pending in the YLT token table because it has no not_expressed status. See the [Acts 19:27 case report](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
 ## Most frequent pending YLT surfaces
 
