@@ -314,7 +314,7 @@ Latest v15 full shadow validation: [final output](lexicon-validation/FINAL_VALID
 - [Initial 45-token YLT pending snapshot](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) — historical queue before contextual alignment review.
 - [Current YLT pending queue](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) — refreshed row-level export of all 446 pending YLT tokens.
 - [Historical YLT pending queue snapshot](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — 505 pending tokens at the earlier export.
-- [Eight remaining YLT pending tokens in the five new verses](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) — current residual after contextual proposals.
+- [Historical eight-token residual at the five-verse contextual milestone](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) — historical residual after that milestone's contextual proposals.
 - [Post-eight-proposal queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv) and [reconciled queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — provenance and both review-status layers.
 - [Function-word alignment milestone](lexicon-validation/FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 267 positions across 116 verse contexts; 228 candidate direct/phrase proposals and 39 retained cases.
 - [Complete function-word review bundle index](lexicon-validation/FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) — review dispositions and legacy-overlap cautions.
