@@ -3,7 +3,7 @@ c=psycopg2.connect(dbname='bible_greek_bridge_test_20261106',user='postgres',hos
 def count(t):
  q.execute('select count(*) from ylt_profile_shadow.'+t);return q.fetchone()[0]
 tables={t:count(t) for t in ['profile','textual_variant_group','textual_variant_branch','profile_variant_selection','gnt_sequence_word','ylt_token','alignment_group','ylt_greek_alignment','ylt_token_review','gnt_token_review','witness_bundle','witness_bundle_member','gnt_word_analysis']}
-assert tables=={'profile':4,'textual_variant_group':261,'textual_variant_branch':522,'profile_variant_selection':783,'gnt_sequence_word':2444,'ylt_token':3171,'alignment_group':32,'ylt_greek_alignment':604,'ylt_token_review':3171,'gnt_token_review':572,'witness_bundle':0,'witness_bundle_member':0,'gnt_word_analysis':0},tables
+assert tables=={'profile':4,'textual_variant_group':261,'textual_variant_branch':522,'profile_variant_selection':783,'gnt_sequence_word':2444,'ylt_token':3171,'alignment_group':33,'ylt_greek_alignment':605,'ylt_token_review':3171,'gnt_token_review':573,'witness_bundle':0,'witness_bundle_member':0,'gnt_word_analysis':0},tables
 q.execute("select p.profile_code,s.decision_status,count(*) from ylt_profile_shadow.profile_variant_selection s join ylt_profile_shadow.profile p using(profile_id) group by 1,2")
 selection={(a,b):n for a,b,n in q.fetchall()}
 assert selection[('crosswire_kjv_candidate_sequence','algorithmically_selected')]==242
@@ -41,6 +41,27 @@ q.execute("select a.ylt_word_pos,t.surface,a.gnt_position,g.surface,a.variant_de
 stopped=q.fetchall()
 assert [(x[0],x[1],x[2],x[3],x[4]) for x in stopped]==[(11,'shall',11,'φραγήσεται',['47:7']),(13,'be',11,'φραγήσεται',['47:7']),(14,'stopped',11,'φραγήσεται',['47:7'])]
 
+
+# Acts 15:32: stable καί -> “and”; branch-dependent particle remains unresolved.
+q.execute("""select a.gnt_position,a.ylt_word_pos,a.alignment_kind,a.review_status
+ from ylt_profile_shadow.ylt_greek_alignment a where a.alignment_group_id='AC-15:32-de-kai-additive'
+ order by a.gnt_position""")
+assert q.fetchall()==[(2,None,'unaligned_greek','unresolved'),(3,3,'phrase_member','proposed')]
+q.execute("""select branch_a_normalized,branch_b_normalized,current_candidate_branch,current_candidate_status
+ from ylt_profile_shadow.textual_variant_group where group_key='44:19'""")
+assert q.fetchone()==('te 5037 {PRT}','de 1161 {CONJ}','B','resolved')
+q.execute("""select p.profile_code,s.selected_branch,s.decision_status from ylt_profile_shadow.profile_variant_selection s
+ join ylt_profile_shadow.profile p using(profile_id) where s.group_key='44:19' order by p.profile_id""")
+assert q.fetchall()==[('robinson_source_unselected',None,'unreviewed'),('crosswire_kjv_candidate_sequence','B','algorithmically_selected'),('ylt_candidate_sequence','B','inherited_provisional')]
+q.execute("""select t.surface,r.review_status from ylt_profile_shadow.ylt_token t join ylt_profile_shadow.ylt_token_review r using(ylt_verse_id,ylt_word_pos)
+ where t.ylt_verse_id=(select corpus_verse_id from public.gnt_verses gv join public.gnt_books b using(book_id)
+  where b.code='AC' and gv.chapter=15 and gv.verse=32) and t.ylt_word_pos=2""")
+assert q.fetchone()==('also','pending_review')
+q.execute("""select t.surface,r.review_status,r.proposed_alignment_count from ylt_profile_shadow.ylt_token t join ylt_profile_shadow.ylt_token_review r using(ylt_verse_id,ylt_word_pos)
+ where t.ylt_verse_id=(select corpus_verse_id from public.gnt_verses gv join public.gnt_books b using(book_id)
+  where b.code='AC' and gv.chapter=15 and gv.verse=32) and t.ylt_word_pos=3""")
+assert q.fetchone()==('and','proposed',1)
+
 # All proposed Greek token-review counts must have corresponding proposed alignment endpoints.
 q.execute("""select count(*) from ylt_profile_shadow.gnt_token_review r
  where r.review_status='proposed' and r.proposed_alignment_count>0
@@ -76,16 +97,16 @@ q.execute("""select count(*) from ylt_profile_shadow.gnt_token_review r
 assert q.fetchone()[0]==0
 
 # All alignment endpoints and profile references resolve.
-assert count('ylt_greek_alignment')==604
+assert count('ylt_greek_alignment')==605
 q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment where alignment_profile_id<>4 or sequence_profile_id<>3");assert q.fetchone()[0]==0
 q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment where review_status='proposed' and (ylt_verse_id is null or ylt_word_pos is null or gnt_verse_id is null or gnt_position is null)");assert q.fetchone()[0]==0
 q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment a left join ylt_profile_shadow.alignment_group g using(alignment_group_id) where a.alignment_group_id is not null and g.alignment_group_id is null");assert q.fetchone()[0]==0
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1 order by 1");align_status=q.fetchall()
-assert align_status==[('legacy_overlap_review',6),('not_expressed',32),('proposed',565),('unresolved',1)]
+assert align_status==[('legacy_overlap_review',6),('not_expressed',32),('proposed',566),('unresolved',1)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_token_review group by 1 order by 1");ylt_status=q.fetchall()
-assert ylt_status==[('legacy_only',2110),('legacy_overlap_review',42),('pending_review',503),('proposed',516)]
+assert ylt_status==[('legacy_only',2109),('legacy_overlap_review',42),('pending_review',503),('proposed',517)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.gnt_token_review group by 1 order by 1");gnt_status=q.fetchall()
-assert gnt_status==[('legacy_overlap_review',31),('pending_review',33),('proposed',508)]
+assert gnt_status==[('legacy_overlap_review',31),('pending_review',33),('proposed',509)]
 q.execute("select source_kind,review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1,2 order by 1,2");source_status=q.fetchall()
 q.execute("select variant_dependency_groups,count(*) from ylt_profile_shadow.ylt_greek_alignment where variant_dependency_groups<>'[]'::jsonb group by 1 order by 1");deps=q.fetchall()
 
