@@ -48,13 +48,13 @@ These 39 rows were captured from the isolated YLT-profile review queue at the in
 | Reference | Greek position | Greek form | Strong's | Morphology | Initial review cue |
 |---|---:|---|---|---|---|
 | Matthew 2:23 | 10 | τό | G3588 | T-NSN | PROPOSED, moderate: substantival article τὸ ῥηθέν contributes to YLT “that was spoken”; phrase-member link to “that”. |
-| Matthew 4:13 | 3 | τήν | G3588 | T-ASF | Article + adjective phrase “by the sea”; not an independent article. |
+| Matthew 4:13 | 3 | τήν | G3588 | T-ASF | Article before the proper name Nazareth; YLT “having left Nazareth” has no separate article. Do not confuse this with the second article before παραθαλασσιάν, which is a different Greek position. |
 | Matthew 10:10 | 16 | τῆς | G3588 | T-GSF | Genitive article in “his nourishment”; possessive rendering. |
 | Matthew 21:7 | 11 | τά | G3588 | T-APN | Article + “garments”; English also has possessive “their”. |
 | Luke 2:4 | 21 | τό | G3588 | T-ASN | Articular infinitive διὰ τὸ εἶναι (“because of his being”). |
 | Luke 2:34 | 21 | τῷ | G3588 | T-DSM | Article in ἐν τῷ Ἰσραήλ; no separate YLT “the”. |
 | Luke 2:39 | 5 | τά | G3588 | T-APN | PROPOSED, moderate: ἅπαντα τὰ κατὰ τὸν νόμον; τὰ nominalizes the following phrase, represented by YLT “things”. |
-| Luke 4:16 | 4 | τήν | G3588 | T-ASF | Article in the Nazareth phrase; verify exact profile context and target. |
+| Luke 4:16 | 4 | τήν | G3588 | T-ASF | Article before the proper name Nazareth; YLT “came to Nazareth” has no separate article. |
 | Luke 4:16 | 12 | τό | G3588 | T-ASN | Articular construction κατὰ τὸ εἰωθός (“according to his custom”). |
 | Acts 5:12 | 1 | διά | G1223 | PREP | PROPOSED, high: διά directly matches YLT “through” (token 2). |
 | Acts 8:19 | 4 | τήν | G3588 | T-ASF | Article in requested phrase; review full clause and exact token target. |
