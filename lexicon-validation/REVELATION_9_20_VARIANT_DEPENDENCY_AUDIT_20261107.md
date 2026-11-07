@@ -91,7 +91,7 @@ The 15 phrase proposals supplement rather than overwrite the existing legacy ren
 
 ## Latest full validation (v14)
 
-The full v13 validator passed after the dependency metadata correction:
+The full v14 validator passed after the YLT branch-A proposal:
 
 - 261 Robinson variant groups; 522 raw branch payloads; 783 profile selection rows.
 - 2,444 profile-3 Greek sequence words; 3,171 YLT tokens.
@@ -113,7 +113,7 @@ Full output: [FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt](
 
 ## Evidence classification and next investigation
 
-- **Verified structural result:** 15 unique phrase-member endpoints; one supplied-copula disposition; successful v13 full validator; unchanged production counts.
+- **Verified structural result:** 15 unique phrase-member endpoints; one supplied-copula disposition; successful v14 full validator; unchanged production counts.
 - **Verified sequence derivation:** branch A and B each contain one token; the only changed position is 13; later phrase endpoints are stable.
 - **Provisional:** profile 3 currently inherits branch B from an algorithmically selected KJV candidate.
 - **Open textual question:** whether the YLT should be represented with οὐ or οὔτε at position 13. The YLT English “neither” alone is insufficient to decide this.
