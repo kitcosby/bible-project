@@ -150,7 +150,7 @@ This audit is still a database-level structural review, not a complete linguisti
 
 ## 9. Second high-priority batch: 15 further cross-root groups
 
-A second member-level pass selected the next 15 groups from the language-scoped index, ordered by multiple Strong's values, multiple morphology patterns, root divergence, and occurrence count, excluding the first 15 high-occurrence cases already reviewed.
+A second member-level pass selected the next 15 groups from the language-scoped index, ordered by multiple Strong's values, multiple morphology patterns, root divergence, and occurrence count, excluding the first 15 high-occurrence cases and the three three-root groups already reviewed separately.
 
 | Signature | Occurrences | Existing roots | Strong's values | Main stored distinction |
 |---|---:|---|---|---|
@@ -191,7 +191,7 @@ The source and post-build backup hashes, table-count parity, ACL restriction, an
 
 ## 11. Third high-priority batch: 15 further cross-root groups
 
-The third batch continues down the corrected language-scoped index's risk ranking, excluding the first 30 reviewed groups.
+The third batch continues down the corrected language-scoped index's risk ranking, excluding the first 33 reviewed groups (the three three-root groups plus two 15-group batches).
 
 | Signature | Occurrences | Existing roots | Strong's values | Main stored distinction |
 |---|---:|---|---|---|
@@ -219,4 +219,4 @@ The third batch continues down the corrected language-scoped index's risk rankin
 - `על֔ינוּ` is a particularly clear morphology contrast: first-person plural verb vs preposition with first-person plural suffix.
 - `מא֥ת` / `מא֖ת` and `אתּ֑ם` / `אתּ֔ם` show that accent-specific signatures may repeat the same lexical contrast across several separate groups. The group key is intentionally strict; a higher-level lemma-family index would be a separate layer.
 
-The review now covers **45 of 372 cross-root groups** (including all three three-root groups); **327 remain**. These are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications.
+The review now covers **48 of 372 cross-root groups** (three three-root cases plus three batches of 15); **324 remain**. These are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications.
