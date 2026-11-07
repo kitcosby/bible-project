@@ -8,16 +8,17 @@
 
 ## Executive result
 
-The 15 phrase-member proposals already applied to Revelation 9:20 are structurally valid and remain positionally stable under either branch of Robinson group `66:18`. The two alternatives are both single-token readings:
+The 15 phrase-member proposals already applied to Revelation 9:20 are structurally valid and remain positionally stable under both branches represented by Robinson group `66:18`. The local parser has two single-token alternatives, but independent apparatus review identifies a third single-token reading not present in the parser payload:
 
 - A: `oute 3777 {CONJ-N}` — οὔτε
 - B: `ou 3756 {PRT-N}` — οὐ
+- C (external apparatus): `oude 3761` — οὐδέ
 
-The current YLT candidate sequence uses B, inherited provisionally from the KJV candidate. A branch-A simulation changes exactly one sequence token, at Greek position 13, and changes no token count or later position. All 15 phrase-member endpoints occur after that point and retain the same Greek surface, position, YLT target, and phrase group under either branch.
+The current YLT candidate sequence uses B, inherited provisionally from the KJV candidate. A/B/C sequence simulations each change only the one token at Greek position 13, with no token-count delta or later positional shift. All 15 phrase-member endpoints occur after that point and retain the same Greek surface, position, YLT target, and phrase group under all three readings. The source parser's A/B alternatives must not be mistaken for an exhaustive textual apparatus.
 
 The directly affected alignment is Greek position 13 → YLT token 13 (“neither”). The database previously had the dependency metadata backwards: the 15 later phrase rows were tagged with `66:18`, while this directly affected position-13 row was not. This metadata has been corrected in the shadow database only.
 
-## Branch A/B comparison
+## Robinson parser branches and external third reading
 
 | Attribute | Branch A | Branch B |
 |---|---|---|
@@ -36,11 +37,17 @@ Deterministic comparison against the profile-3 sequence:
 
 This is a one-token substitution, not an insertion/deletion. No positional shift should be applied to the rest of the verse when testing branch A.
 
+## External third reading and YLT textual basis
+
+The local Robinson parser group contains A=οὔτε and B=οὐ, but the external apparatus also records C=οὐδέ. The Robinson–Pierpont Text-Critical Greek New Testament apparatus reports οὐ (73.7%), οὔτε (18.4%), and οὐδέ (4.6%) in its collation. SBLGNT prints οὐδὲ μετενόησαν; Stephanus TR 1550 prints οὔτε μετενόησαν; Scrivener TR 1894 prints οὐ μετενόησαν. These editions demonstrate that “Received Text” does not name a perfectly uniform reading at this locus.
+
+Young's Revised Edition preface says that its Greek text followed the generally recognized “Received Text”. YLT's “neither did reform” is compatible with οὔτε and makes A a serious candidate, but the preface does not identify the exact TR edition, and English “neither” alone does not prove the underlying Greek token. The external οὐδέ reading must also be kept in view. See the [three-reading apparatus review](REVELATION_9_20_THREE_READING_APPARATUS_REVIEW_20261107.md).
+
 ## Directly affected alignment
 
 The current branch-B sequence has οὐ at position 13, aligned to YLT “neither” (token 13). Under branch A, the same position would contain οὔτε. This is the one alignment row whose Greek lexical identity changes when the branch changes.
 
-The YLT wording “neither did reform” may be a natural English rendering under either reading, but it does not by itself decide the Greek variant. The lexical match between οὔτε and “neither” is more direct; οὐ can also participate in a negative construction rendered idiomatically as “neither did …”. The textual choice therefore remains unresolved pending independent witness and source review.
+The YLT wording “neither did reform” is compatible with all three readings in translation, though οὔτε is a more direct lexical match. The YLT preface's Received-Text basis makes οὔτε a serious candidate, but the precise source edition used by Young has not been identified. The textual choice therefore remains unresolved pending identification of Young's actual source edition or a specific commentary/textual note.
 
 ## The 15 phrase-member endpoints
 
