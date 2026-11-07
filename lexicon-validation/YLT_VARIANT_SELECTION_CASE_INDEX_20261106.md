@@ -1,6 +1,6 @@
 # YLT Variant-Selection Case Index — 19 Formerly Unresolved Groups
 
-**Prepared:** 2026-11-06  
+**Prepared:** 2026-11-06; updated 2026-11-07  
 **Environment:** Isolated database bible_greek_bridge_test_20261106, schema ylt_profile_shadow.  
 **Scope:** The 19 YLT-profile variant-selection rows that were unresolved at the start of this review.  
 **Companion snapshot:** [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv)
@@ -13,7 +13,7 @@ The 19 groups divide into three materially different classes:
 - **Thirteen groups** contain epistle subscriptions/colophons, not verse text. Their raw source payloads are preserved, but their YLT-profile selection rows are now marked not_applicable_to_verse_alignment.
 - **One verse-text group** remains unresolved because the YLT English rendering does not distinguish the Greek aspect forms.
 
-This resolves the selection-ledger ambiguity without claiming that all six verse sequences have been rebuilt. The current YLT sequence table covers only the existing 116-verse review sample; none of the six verse-text references below currently has a materialized YLT-profile sequence row. The five decisions are recorded in the profile selection ledger, but their Greek sequences must still be materialized and validated before alignment work can use them.
+This resolves the selection-ledger ambiguity without forcing a decision for Revelation 7:3. The five selected verse-text branches have since been materialized in the isolated YLT-profile candidate sequence and validated against the stored YLT text. Revelation 7:3 remains deliberately unmaterialized until independent Greek textual evidence resolves the aspect distinction.
 
 ## A. Verse-text groups reviewed against YLT
 
@@ -74,23 +74,16 @@ The five reviewed verse-text groups and thirteen not-applicable subscriptions ac
 
 ## E. Sequence materialization boundary
 
-The current ylt_profile_shadow.gnt_sequence_word table contains 2,367 rows across the existing review sample. It has no sequence rows for the six verse-text references in sections A and C:
+The five reviewed choices have now been materialized in the YLT candidate sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The shadow sequence table now contains 2,444 Greek sequence-word rows and 3,171 YLT token rows, including the five new verse sequences. The stored YLT verse text was hash-checked and inherited Greek tokens were cross-checked against production positions. 1 John 2:23 branch B adds the eight-token bracketed confession clause.
 
-- John 8:6
-- Acts 3:3
-- Romans 16:27
-- Ephesians 6:24
-- 1 John 2:23
-- Revelation 7:3
-
-The five reviewed choices are now materialized in the YLT candidate sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The stored YLT verse text was hash-checked and inherited Greek tokens were cross-checked against production positions. 1 John 2:23 branch B adds the eight-token bracketed confession clause. The Revelation 7:3 sequence remains excluded while its branch is unresolved; do not infer a choice from the inherited KJV candidate sequence. See [the materialization and contextual review report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md).
+Revelation 7:3 remains excluded while its branch is unresolved; do not infer a choice from the inherited KJV candidate sequence. The remaining materialization boundary is therefore one verse-text case, not six. See [the materialization and contextual review report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md) and the [2026-11-07 final shadow validation](FINAL_VALIDATION_AFTER_DISPOSITION_RECONCILIATION_20261107.txt).
 
 ## F. Provenance and change control
 
 - Raw branch payloads and source/parser provenance remain in textual_variant_group and textual_variant_branch.
 - Only the YLT profile's profile_variant_selection rows were updated for these 18 decisions.
 - The Robinson raw-source profile and CrossWire/KJV candidate profile were not changed.
-- No sequence words were inserted or deleted in this milestone.
+- The five selected YLT-profile verse sequences were materialized in a later shadow-only milestone. The Revelation 7:3 sequence remains unmaterialized pending independent textual review.
 - No YLT/Greek alignment endpoints, legacy associations, production tables, embeddings, vectorizer settings, API, merge, or deployment were changed.
 - The current selection snapshot is [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
 
