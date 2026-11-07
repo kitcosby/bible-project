@@ -155,13 +155,13 @@ As of 2026-11-06:
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
-- Current shadow alignment counts after contextual review: 563 proposed, 21 not_expressed, 11 unresolved, and three legacy_overlap_review rows; 510 proposed, 32 pending, and 28 legacy-overlap rows in the Greek-token review table.
-- YLT token review counts: 514 proposed, 505 pending, 40 legacy-overlap review, and 2,112 legacy-only.
+- Current shadow alignment counts after the eleven-case follow-up: 563 proposed, 29 not_expressed, two unresolved, and four legacy_overlap_review rows; 510 proposed, 31 pending, and 29 legacy-overlap rows in the Greek-token review table.
+- YLT token review counts: 514 proposed, 505 pending, 41 legacy-overlap review, and 2,111 legacy-only.
 - The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
 - The five new sequence materializations add 95 YLT tokens and 77 Greek words. Their 45 contextual pair candidates produced 42 proposals, three retained legacy-overlap cases, and one Greek article classified not separately expressed; fourteen phrase groups preserve the non-one-to-one relationships.
-- Three YLT tokens and one Greek token remain pending in the five new verses. The full shadow validator passed after contextual review; production counts and all 31,102 stored embeddings were unchanged.
+- Three YLT tokens and one Greek token remain pending in the five new verses. The eleven-case follow-up classified eight additional Greek function words as not separately expressed, identified one further legacy overlap in Philippians 4:2, and retained two cases unresolved. The full shadow validator passed after contextual review; production counts and all 31,102 stored embeddings were unchanged.
 
-See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the original 39-case subset, the current 32-row Greek pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
+See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the original 39-case subset, the current 31-row Greek pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
 
 ## Non-goals and cautions
 
