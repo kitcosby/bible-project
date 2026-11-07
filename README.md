@@ -286,6 +286,7 @@ The YLT lexicon validation work includes a companion field guide and case index 
 
 - [YLT–Greek Alignment Field Guide](lexicon-validation/GREEK_ALIGNMENT_FIELD_GUIDE.md) — review method, recurring grammatical/phrase corner cases, and variant-aware safeguards.
 - [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases and the original 39-case token-review set (31 pending, eight proposed).
+- [Full 20-case positional-divergence report](lexicon-validation/LEGACY_POSITIONAL_DIVERGENCE_DECISIONS_20261106.md) — complete verse/Greek context, legacy position evidence, and classifications.
 - [39-case contextual notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammatical assessments and proposal rationales.
 - [Original 39-case queue snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) and [current 31-row pending queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — separate historical and current status snapshots.
 - [Post-eight-proposal queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv) and [reconciled queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — provenance and both review-status layers.
