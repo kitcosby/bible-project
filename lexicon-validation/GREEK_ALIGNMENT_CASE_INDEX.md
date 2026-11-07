@@ -183,3 +183,5 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 - [Live Hebrew/Aramaic vowel-only candidate inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md): read-only PostgreSQL scan of 264,217 canonical word rows found 3,323 Hebrew and 26 Aramaic candidate groups. All groups map to existing `root_vowel` IDs; 372 span multiple `root_form` parents. Qere/ketiv (1,204 MT qere rows) remains separate and was not included. No database writes were made.
 
 - [Hebrew vowel-only variant schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md): proposes a reversible group/member relation referencing existing `root_vowel` keys, with validators and explicit no-merge safeguards. Proposal only; no database changes.
+
+- The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged.
