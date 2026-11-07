@@ -124,7 +124,7 @@ Three YLT tokens in the five new verses remain pending rather than being forced 
 
 The Greek article ἡ before δόξα remains `not_expressed` in the alignment layer and pending in the Greek token-review layer because that token-review table does not support a `not_expressed` status.
 
-### Final queue counts after contextual review
+### Queue counts at completion of the five-verse review (before the separate eleven-case follow-up)
 
 | Review layer | Status | Rows |
 |---|---|---:|
@@ -140,20 +140,22 @@ The Greek article ἡ before δόξα remains `not_expressed` in the alignment l
 | Alignment | Not expressed | 21 |
 | Alignment | Unresolved | 11 |
 
-Of the 45 YLT tokens initially queued as pending in the five new verses, 41 now have proposed links, one has a candidate link retained as a legacy-overlap case, and three remain pending. The current all-verse queues are [32 pending Greek positions](GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) and [505 pending YLT tokens](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv). The [45-row initial YLT queue snapshot](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) is historical; the [three-row remaining queue for the five new verses](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) is current.
+Of the 45 YLT tokens initially queued as pending in the five new verses, 41 now have proposed links, one has a candidate link retained as a legacy-overlap case, and three remain pending. The current all-verse queues at this checkpoint were [32 pending Greek positions](GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) and [505 pending YLT tokens](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv). The [45-row initial YLT queue snapshot](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) is historical; the [three-row remaining queue for the five new verses](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) is current.
 
 The machine-readable [46-row contextual alignment ledger](FIVE_VERSE_CONTEXTUAL_ALIGNMENT_PROPOSALS_20261106.csv) records all proposals, overlaps, and the not-expressed article. The [14 phrase-group definitions](FIVE_VERSE_CONTEXTUAL_ALIGNMENT_GROUPS_20261106.csv) preserve phrase-level evidence. The final validator is available at [eval/validate_ylt_profile_shadow_context_review_20261106.py](../eval/validate_ylt_profile_shadow_context_review_20261106.py), with its [successful output](FINAL_VALIDATION_AFTER_CONTEXT_REVIEW_20261106.txt).
 
 ### Final validation after contextual review
 
-The updated full validator passed with:
+The updated full validator passed after the separate eleven-case follow-up with:
 - 2,444 YLT-profile Greek sequence words.
 - 3,171 YLT tokens.
-- 30 alignment groups.
+- 31 alignment groups.
 - 598 YLT–Greek alignment rows.
 - 3,171 YLT token-review rows.
 - 570 Greek token-review rows.
 - All endpoints and alignment-group references resolving.
 - Five selected YLT verse-text branches materialized; Revelation 7:3 still unmaterialized and unresolved.
 
-Production counts remained unchanged, including all 31,102 non-null stored embeddings. The contextual proposals and overlap decisions remain shadow-only research data, not production approvals.
+Production counts remained unchanged, including all 31,102 non-null stored embeddings. The later [eleven-case function-word review](ELEVEN_PENDING_FUNCTION_WORD_REVIEW_20261106.md) updates the current all-verse queue to 31 pending Greek positions and records eight additional not_expressed dispositions, one Philippians 4:2 overlap, and two unresolved cases. The final current counts are 563 proposed, 29 not_expressed, four legacy-overlap, and two unresolved alignment rows; 510 proposed, 29 legacy-overlap, and 31 pending Greek token-review rows; and 514 proposed, 41 legacy-overlap, and 505 pending YLT token-review rows.
+
+The contextual proposals and overlap decisions remain shadow-only research data, not production approvals.
