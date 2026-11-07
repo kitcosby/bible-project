@@ -278,3 +278,13 @@ flowchart TB
     CF --> BR["Byte → text resolution<br/>0 → Hebrew shown (no choice)<br/>KJV / Young's items → rendering<br/>Other items → option text"]
 ```
 <!-- MERMAID-SYSTEM-END -->
+
+
+## YLT Greek alignment study materials
+
+The YLT lexicon validation work includes a companion study guide for interpreting Greek-to-YLT token and phrase alignments. These documents describe difficult grammatical and positional cases without changing the production database:
+
+- [YLT–Greek Alignment Field Guide](lexicon-validation/GREEK_ALIGNMENT_FIELD_GUIDE.md) — review method, recurring corner cases, evidence labels, and database design cautions.
+- [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases and the 39-item Greek-token review queue (still pending).
+
+These are working research documents on the validation branch. They do not authorize production changes.
