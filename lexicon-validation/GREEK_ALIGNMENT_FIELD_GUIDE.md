@@ -143,6 +143,10 @@ Keep these concepts distinct:
 
 Do not add a production schema merely to hold this guide. Current work remains a shadow validation exercise. Any production schema/API extension should be additive and backwards-compatible and follow a separate reviewed migration proposal.
 
+## Related function-word review
+
+The [267-position function-word review milestone](FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) and [complete review bundle index](FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) document a separate review across 116 verse contexts. Its 228 links are proposals, not applied production mappings, and its 39 pending/non-expressed cases are not the same set as the 39-case shadow token-review queue.
+
 ## Current audit snapshot
 
 As of 2026-11-06:
