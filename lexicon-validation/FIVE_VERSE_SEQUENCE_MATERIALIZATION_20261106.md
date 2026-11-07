@@ -52,7 +52,7 @@ Review status counts:
 | Alignment | Unresolved | 11 |
 | Alignment | Pending review | 30 |
 
-The current Greek pending queue is now 61 rows: the original 31 pending rows from the 116-verse fixture plus 30 newly materialized Greek positions. The YLT pending count is 547: the prior 502 plus 45 newly materialized YLT tokens. These are current database queue counts, not the historical 39-case subset described in the original contextual review.
+At this intermediate checkpoint, before contextual alignment review, the Greek pending queue was 61 rows (31 original plus 30 new) and the YLT pending queue was 547 (502 original plus 45 new). These are historical materialization-stage counts; the final current counts after contextual review are 32 Greek pending and 510 YLT pending, as reported below.
 
 ## Variant-selection status
 
