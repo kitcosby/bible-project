@@ -26,6 +26,18 @@ build_variants_kq.py creates variant_kind='textual', witness='MT', variant_type=
 
 The schema's word_variants primary key is (word_id, variant_seq). It attaches a reading to one corpus occurrence. It has no explicit group identifier or membership relation connecting multiple distinct word_id records that share a consonantal skeleton. Therefore it cannot, by itself, express the requested cross-occurrence linking cleanly.
 
+### Existing root/vowel grouping
+
+build_roots3.py creates root_vowel rows by grouping each exact pointed string beneath a (root_id, root_form_seq) pair. Distinct pointed strings therefore already receive distinct vowel_seq values within a root/form, and words with the same pointed string share that root_vowel identity.
+
+This is a useful existing structural relationship, but it is **not yet a vowel-only variant apparatus**:
+- grouping is scoped to an existing root/form assignment, not globally to an exact consonantal surface signature;
+- the builder groups distinct pointed strings without determining whether the difference is only vowel points, cantillation, dagesh, or another mark;
+- it does not preserve a pairwise/group-level explanation that a specific pair differs only in niqqud;
+- it is a lexical numbering tier, not a textual-variant provenance record.
+
+The audit must inspect root_vowel membership before proposing any new table, so it can reuse or reference existing IDs and avoid duplicating work already represented structurally.
+
 ### Other consonantal normalization
 
 assemble_bible.py's cons_key() retains Hebrew letters and folds final forms (ךםןףץ → כמנפצ). That is appropriate for its OSHB crosswalk, but must not be reused as the strict vowel-only variant key: the user's rule requires identical consonantal spelling, and final-form differences are not vowel differences.
@@ -83,6 +95,6 @@ The code-point set must be validated against the Unicode Hebrew block and the co
 
 **Established from source code:** the OSHB parser preserves pointed text but its unpointed projection removes all non-Hebrew-letter codepoints; the spelling builder does not create vowel-only links; qere is already represented separately; the current variant table has no cross-occurrence group key.
 
-**Not established:** number of eligible vowel-only pairs in the corpus, whether some are already linked indirectly through root/vowel structures, or whether the live database has additional local changes not present in GitHub.
+**Not established:** number of eligible vowel-only pairs in the corpus; how many are already co-located under the same root_vowel parent; how many strict vowel-only pairs cross existing root/form boundaries; or whether the live database has additional local changes not present in GitHub.
 
 **No changes performed:** no database writes, schema changes, parser changes, corpus-wide query, embedding/vectorizer operation, production access, or deployment. This report is a code-level audit and implementation design only.
