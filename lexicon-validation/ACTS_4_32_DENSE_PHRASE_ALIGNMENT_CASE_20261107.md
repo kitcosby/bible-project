@@ -113,4 +113,13 @@ Reproducible artifacts:
 - [Acts 4:32 endpoint validator](../eval/validate_acts4_32_v16_endpoints.py)
 - [Full v16 validation output](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt)
 
+### Shadow database backup integrity
+
+A full custom-format backup was taken immediately before the Acts 4:32 shadow transaction and another immediately after it. Both archives passed `pg_restore -l` validation.
+
+- Pre-change: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_pre_acts4_32.dump`  
+  SHA-256: `a6694606a1d4177b4603757d16243bdc9ad331b7e1b3c6f29777666a32d0fdb1`
+- Post-change: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_after_acts4_32.dump`  
+  SHA-256: `9c72f1fe6b5c51d1c5e7eb261f20e8e6c1313f0e3f6ed17fae2cb3fb5e4128af`
+
 No production DDL/DML, legacy rendering changes, embedding generation, vectorizer changes, API changes, merge, or deployment occurred. All proposals remain isolated in the shadow schema.
