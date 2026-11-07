@@ -66,8 +66,8 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 | may | 21 |
 | did | 18 |
 | was | 17 |
-| a | 14 |
 | having | 15 |
+| a | 14 |
 | is | 14 |
 | who | 13 |
 | of | 12 |
