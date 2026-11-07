@@ -114,7 +114,7 @@ python3 lexicon-validation/audit_hebrew_vowel_variants.py \
 
 Review the JSON summary first, then inspect candidate rows in the CSV. The report includes the exact pointed forms, word IDs, verse references where available, Aramaic flag values, and existing `root_id.root_form_seq.root_vowel_seq` identifiers. It deliberately includes a form with no vowel marks when it shares the same strict signature with a pointed form: absence of a vowel mark can itself be the only difference.
 
-**Important:** this script has been committed but has not yet been executed against the corpus. Its output is a candidate inventory, not a set of approved variants. Before interpreting counts, run it on a read-only snapshot and independently verify the Unicode mark classification and a sample of candidates. In particular, inspect slash-separated morphemes, Qere/Ketiv rows, cantillation, shin/sin dots, dagesh/mapiq, and Aramaic forms. No schema, source text, root numbering, lexicon rows, embeddings, or production data were changed.
+**Status update:** the SQLite runner is retained for verified SQLite snapshots. The live PostgreSQL database was inventoried using the separate PostgreSQL runner; see §8 and the linked results report. The inventory remains a candidate list, not an approval to merge variants. Qere/Ketiv is treated as a separate population.
 
 ### Additional safeguard: language-population separation
 
