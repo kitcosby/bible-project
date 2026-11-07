@@ -186,4 +186,6 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 
 - [Cross-root member review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md): records member-level inspection of all three three-root groups and the 15 highest-occurrence cross-root groups. The examples include distinct roots, Strong's values, morphology patterns, and affix analyses under identical non-vowel signatures. This confirms that the relation is an orthographic cross-reference, not a lemma or translation-equivalence key.
 
+- [Complete language-scoped cross-root index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv): all 372 cross-root groups, sorted by Strong's/morphology divergence, with root labels, affix-profile counts, and a flag for eight root-vowel keys that occur in both Hebrew and Aramaic populations. The language-filtered recheck confirms 185 groups with multiple Strong's values and 370 with multiple morphology patterns; an unfiltered diagnostic overcount was rejected and documented.
+
 - The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged. Review of the remaining 357 cross-root groups is still outstanding.
