@@ -80,3 +80,9 @@ A separate read-only join of all 39 rows in gnt_token_review to ylt_greek_alignm
 The gnt_token_review rows remain pending_review. This is not contradictory: the alignment table contains provisional non-link/unresolved classifications, but every row still has unresolved confidence and no YLT token target. The review queue is therefore correctly still open pending final contextual disposition. Do not treat not_expressed as a settled finding while confidence remains unresolved.
 
 The reconciled machine-readable export is [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv). It records both status layers and the original function source-record key. The earlier CSV is retained as the raw queue snapshot.
+
+## Subsequent correction: Acts 5:12
+
+The full-verse review identified one clear error in the prior function-word assessment. Greek διά at profile position 1 directly corresponds to YLT token 2, “through”, in “through the hands of the apostles”. The existing Greek-only row (alignment_id 466) was converted in place to a high-confidence proposed function-word alignment; the matching gnt_token_review row was changed to proposed with one proposal. This is documented in [ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md).
+
+The current queue therefore contains **38 pending rows and one proposed row** among the original 39. The updated [current queue CSV](GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) records this state. The earlier 39-row exports remain as historical snapshots. The remaining 38 pending rows still have unresolved confidence; the 22 tentative not_expressed classifications are not final decisions.
