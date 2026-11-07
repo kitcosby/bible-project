@@ -2,7 +2,7 @@
 
 ## Current queue state after Acts 19:27 review
 
-The YLT-side token-review table now has **484 pending YLT tokens across 116 verses and 23 New Testament books**.
+The YLT-side token-review table now has **474 pending YLT tokens across 116 verses and 23 New Testament books**.
 
 Current status totals:
 - **546** proposed
@@ -37,7 +37,7 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Romans 16:27 | “[be]” (token 11) | Bracketed supplied copula; no Greek finite verb is present. |
 | Revelation 9:20 | “are” (token 52) | Supplied English copula; recorded as alignment-level unaligned_ylt/not_expressed. The token-review table has no not_expressed status, so it remains pending_review there. |
 
-See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md), [Romans 16:27/1 John 2:23 grammatical-supply notes](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md), and [Revelation 9:20 phrase case](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md), [Romans 16:27/1 John 2:23 grammatical-supply notes](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md), [Revelation 9:20 phrase case](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), and [Acts 19:27 phrase/legacy-conflict case](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
 ## Most frequent pending YLT surfaces
 
@@ -143,3 +143,8 @@ Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed ph
 The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 474 rows.
 
 No production tables, legacy associations, embeddings, vectorizer, API, or deployment were changed.
+
+
+## Acts 19:27 review result
+
+The Acts 19:27 case report records 12 phrase groups, a correction of εἰς οὐδέν from the earlier shadow candidate “to” to “for nothing”, a retained legacy conflict for YLT “be”, and the branch-sensitive δέ/τε καί phrase. Ten YLT tokens received proposals; three supplied English tokens remain token-table pending with alignment-level not_expressed dispositions. See [ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
