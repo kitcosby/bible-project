@@ -149,7 +149,7 @@ The current YLT token-review queue has 437 pending tokens across 116 verses. Of 
 
 Four additional YLT token rows that already had proposed alignment endpoints were reconciled from pending_review to proposed: 1 Corinthians 13:2 “the” → τὰ; Acts 5:12 “through” → διά; Acts 26:20 “those” → τοῖς; Matthew 2:23 “that” → τό (moderate-confidence phrase member). No alignment rows were created in that status-only reconciliation.
 
-The highest-frequency pending surfaces are “to” (46) and “the” (33), followed by “may” (21), “did” (18), “was” (17), “a” (14), “having” (15), “is” (14), and “of” (12). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 437-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+The highest-frequency pending surfaces are “to” (45) and “the” (31), followed by “may” (21), “did” (17), “a” (16), “was” (16), “having” (15), “is” (14), and “of” (11). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 437-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 ## Database design recommendations
 
@@ -175,7 +175,7 @@ As of 2026-11-07:
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - At the historical post-eight-proposal snapshot, the original 39-case Greek-token subset had 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals). This is not the current all-verse queue.
-- Historical shadow alignment counts at the milestone after the Acts 15:32 and initial Revelation 9:20 reviews: 581 proposed, 33 not_expressed (28 high confidence, five moderate), one unresolved, and six legacy_overlap_review rows; 521 proposed, 33 pending, and 31 legacy-overlap rows in the Greek-token review table. These counts were superseded by later case reviews and the v15 validation.
+- Historical shadow alignment counts at the milestone after the Acts 15:32 and initial Revelation 9:20 reviews: 581 proposed, 33 not_expressed (28 high confidence, five moderate), one unresolved, and six legacy_overlap_review rows; 521 proposed, 33 pending, and 31 legacy-overlap rows in the Greek-token review table. These counts were superseded by later case reviews and the v16 validation.
 - Current YLT token review counts after Acts 4:32: 583 proposed, 437 pending, 47 legacy-overlap review, and 2,104 legacy-only.
 - The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
 - The five new sequence materializations add 95 YLT tokens and 77 Greek words. Their 45 contextual pair candidates produced 42 proposals, three retained legacy-overlap cases, and one Greek article classified not separately expressed; fourteen phrase groups preserve the non-one-to-one relationships.
@@ -228,7 +228,7 @@ Robinson group 44:36 has A=ἀπαγγέλλων (present active participle) and
 
 Robinson group 66:18 offers οὔτε (A) versus οὐ (B). Both alternatives are one token, so the sequence changes only at Greek position 13 and no later positions shift. The 15 phrase-member proposals for “did reform”, “may bow before”, the five “those of [material]” phrases, and the three infinitive phrases remain positionally stable under either branch. Only the alignment of YLT “neither” at token 13 is directly variant-dependent.
 
-An audit found that the initial dependency metadata had been assigned backwards: 15 later phrase rows carried 66:18 while the position-13 row did not. The shadow database was corrected; exactly one alignment row now carries direct dependency group 66:18. The YLT profile now proposes branch A (οὔτε) for group 66:18, replacing the inherited branch B. The overall sequence remains provisional because other variant groups still inherit candidate readings. Do not confuse this global provisional sequence status with direct token-level sensitivity. See the [variant-dependency audit](REVELATION_9_20_VARIANT_DEPENDENCY_AUDIT_20261107.md) and [latest v15 full validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+An audit found that the initial dependency metadata had been assigned backwards: 15 later phrase rows carried 66:18 while the position-13 row did not. The shadow database was corrected; exactly one alignment row now carries direct dependency group 66:18. The YLT profile now proposes branch A (οὔτε) for group 66:18, replacing the inherited branch B. The overall sequence remains provisional because other variant groups still inherit candidate readings. Do not confuse this global provisional sequence status with direct token-level sensitivity. See the [variant-dependency audit](REVELATION_9_20_VARIANT_DEPENDENCY_AUDIT_20261107.md) and [latest v16 full validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
 
 
 ## Revelation 7:2 phrase and variant update (2026-11-07)
@@ -237,7 +237,7 @@ The YLT candidate profile now proposes branch B for Robinson group 66:8: ἀνα
 
 Revelation 7:3 group 66:9 remains unresolved: σφραγίζωμεν (present subjunctive) versus σφραγίσωμεν (aorist subjunctive). YLT “till we may seal” does not discriminate reliably. The YLT candidate sequence contains only the stable cross-verse anchor at position 1; it does not materialize the remainder of 7:3 while the variant is unresolved.
 
-The latest full v16 validator passes with 2,445 Greek sequence words, 88 alignment groups, and 684 alignment rows. Production counts and all 31,102 stored embeddings remain unchanged. See [v15 validation output](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+The latest full v16 validator passes with 2,445 Greek sequence words, 88 alignment groups, and 684 alignment rows. Production counts and all 31,102 stored embeddings remain unchanged. See [v16 validation output](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
 
 
 ## Acts 4:32 phrase and variant update (2026-11-07)
