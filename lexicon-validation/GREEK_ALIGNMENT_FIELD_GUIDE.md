@@ -143,6 +143,14 @@ The YLT wording is “Judas also and Silas”. Robinson variant group 44:19 cont
 
 The Greek token-review table’s proposed_alignment_count should agree with the number of proposed alignment endpoints for that Greek token; the latest validator checks this and found no remaining mismatches. Do not apply the same row-count assumption blindly to YLT tokens: a single YLT token may represent a multi-token Greek phrase. For example, YLT “quickly” in Romans 16:20 is represented by the two Greek phrase members ἐν and τάχει within one phrase group.
 
+## YLT-side pending queue stratification
+
+The current YLT token-review queue has 499 pending tokens across 116 verses. All 499 lack legacy Greek position spans, and none has a proposed alignment endpoint. Of these, 495 retain the generic “No direct proposal identified” reason and four have explicit corner-case notes: 1 John 2:23 “he” (supplied subject pronoun), Acts 15:32 “also” (branch-dependent particle), and Romans 16:27 “the”/“be” (added article and bracketed copula). The YLT review schema has no not_expressed or unresolved status, so these four remain pending with their rationale preserved.
+
+Four additional YLT token rows that already had proposed alignment endpoints were reconciled from pending_review to proposed: 1 Corinthians 13:2 “the” → τὰ; Acts 5:12 “through” → διά; Acts 26:20 “those” → τοῖς; Matthew 2:23 “that” → τό (moderate-confidence phrase member). No alignment rows were created in that status-only reconciliation.
+
+The highest-frequency pending surfaces are “to” (54) and “the” (33), followed by “may” (23), “did” (21), “of” and “was” (18 each), “having” and “is” (15 each). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 499-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+
 ## Database design recommendations
 
 Keep these concepts distinct:
@@ -168,7 +176,7 @@ As of 2026-11-07:
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - At the historical post-eight-proposal snapshot, the original 39-case Greek-token subset had 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals). This is not the current all-verse queue.
 - Current shadow alignment counts after the Acts 15:32 stable-member proposal: 566 proposed, 32 not_expressed (27 high confidence, five moderate), one unresolved, and six legacy_overlap_review rows; 509 proposed, 33 pending, and 31 legacy-overlap rows in the Greek-token review table.
-- YLT token review counts: 517 proposed, 503 pending, 42 legacy-overlap review, and 2,109 legacy-only.
+- YLT token review counts: 521 proposed, 499 pending, 42 legacy-overlap review, and 2,109 legacy-only.
 - The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
 - The five new sequence materializations add 95 YLT tokens and 77 Greek words. Their 45 contextual pair candidates produced 42 proposals, three retained legacy-overlap cases, and one Greek article classified not separately expressed; fourteen phrase groups preserve the non-one-to-one relationships.
 - Three YLT tokens and one Greek token remain pending in the five new verses. The earlier eleven-case follow-up classified eight Greek function words as not separately expressed and identified one further legacy overlap in Philippians 4:2. The subsequent 20-case confidence review raised the not_expressed set to 29 (24 high, five moderate). The later occurrence audit reconciled four proposed-status rows without endpoints and added the Acts 21:8 phrase group, bringing the total to 32 not_expressed (27 high, five moderate), one unresolved (Acts 15:32 δέ), and six legacy-overlap alignment rows. The full v10 shadow validator passed after contextual review; production counts and all 31,102 stored embeddings were unchanged.
