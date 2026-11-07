@@ -130,19 +130,9 @@ AC 14:8,16,the,[],pending_review,0,No direct proposal identified in this review 
 AC 14:8,18,of,[],pending_review,0,No direct proposal identified in this review set.
 AC 15:32,2,also,[],pending_review,0,YLT “also” token remains pending: its possible Greek source is the branch-specific particle at position 2 (A τε / B δέ); YLT-specific source reading is not established.
 AC 15:32,12,did,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,4,is,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,9,for,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,11,of,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,23,the,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,25,is,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,29,for,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,32,also,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,35,is,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,36,about,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,37,to,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,39,brought,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,40,down,[],pending_review,0,No direct proposal identified in this review set.
-AC 19:27,47,doth,[],pending_review,0,No direct proposal identified in this review set.
+AC 19:27,23,the,[],pending_review,0,Alignment-level disposition is not_expressed: supplied English 'the'; see Acts 19:27 case report.
+AC 19:27,25,is,[],pending_review,0,Alignment-level disposition is not_expressed: supplied English 'is'; see Acts 19:27 case report.
+AC 19:27,35,is,[],pending_review,0,Alignment-level disposition is not_expressed: supplied English 'is'; see Acts 19:27 case report.
 AC 21:8,2,on,[],pending_review,0,No direct proposal identified in this review set.
 AC 21:8,4,morrow,[],pending_review,0,No direct proposal identified in this review set.
 AC 21:8,6,and,[],pending_review,0,No direct proposal identified in this review set.
