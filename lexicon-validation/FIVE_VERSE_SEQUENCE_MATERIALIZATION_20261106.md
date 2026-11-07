@@ -22,7 +22,7 @@ The 1 John insertion is marked `proposed_ylt_branch`, with null base positions a
 - 30 new Greek token-review rows with status `pending_review`.
 - 30 corresponding unaligned-Greek alignment placeholders.
 
-## Current shadow totals after materialization
+## Initial shadow totals immediately after materialization (before contextual review)
 
 | Table | Rows |
 |---|---:|
@@ -85,3 +85,64 @@ Production read-only counts remained:
 - Non-null stored embeddings: 31,102
 
 No production rows, API behavior, embedding vectors, or vectorizer configuration were changed. This is an isolated research/shadow update only.
+
+
+## Follow-up contextual alignment review
+
+The five materialized verses were then reviewed against their complete stored YLT wording, profile-specific Greek sequence, and every existing legacy position association. The review generated 40 candidate Greek/YLT pair relationships:
+
+- 38 shadow alignment proposals.
+- Two legacy-overlap cases retained for separate adjudication.
+- One additional Greek article classified as not separately expressed (no YLT token assigned).
+- Ten phrase groups preserve one-to-many, many-to-one, and grammatical phrase relationships.
+
+### Phrase and token decisions
+
+- **John 8:6:** the two occurrences of δέ are distinguished and linked to the two English “and” tokens; πειράζοντες → “trying”; ἔγραφεν → “he was writing” as a phrase group.
+- **Acts 3:3:** ἰδών → “having seen”; ἠρώτα → “was begging”; ἐλεημοσύνην → “a kindness”; λαβεῖν → “to receive”. These are phrase-level proposals where the English uses auxiliaries or an expanded infinitive.
+- **Romans 16:27:** ᾧ → “to him” is a candidate phrase link; δόξα → “glory”; εἰς → “to”; τούς → “the”; αἰῶνας → “ages”. The article ἡ before δόξα is classified not separately expressed in YLT “to him [be] glory”.
+- **Ephesians 6:24:** τῶν ἀγαπώντων → “those loving”; ἐν ἀφθαρσίᾳ → “undecayingly”. Both are represented as phrase groups rather than forced one-to-one glosses.
+- **1 John 2:23:** the new branch-B clause is linked phrase by phrase: ὁ ὁμολογῶν → “he who is confessing”; τὸν υἱόν → “the Son”; καί → “also”; τὸν πατέρα → “the Father”; ἔχει → “hath”. The first-clause links already supported by legacy positions were retained without duplicate shadow links.
+
+### Legacy overlaps deliberately retained
+
+Two Romans 16:27 target tokens already have legacy associations that do not match the contextual candidate:
+
+1. YLT “to” (token 9) has legacy Greek position 13, ἀμήν; the contextual candidate for “to him” is ᾧ at YLT tokens 9–10.
+2. YLT “the” (token 14) has legacy positions 22 and 25, διακόνου and Κεγχρεαῖς in the subscription; the contextual candidate is τούς at Greek sequence position 11 (“to the ages”).
+
+These are marked `legacy_overlap_review` in both token-review and alignment layers. Neither legacy association was overwritten. The 1 John 2:23 first-clause links at YLT positions 6, 7, 9, 11, and 12 were independently checked against Greek positions [4,5], [4,5], [9], [7,8], and [7,8] respectively and retained as legacy-only rather than duplicated.
+
+### Final queue counts after contextual review
+
+| Review layer | Status | Rows |
+|---|---|---:|
+| Greek token | Proposed | 506 |
+| Greek token | Legacy overlap review | 27 |
+| Greek token | Pending review | 32 |
+| YLT token | Proposed | 510 |
+| YLT token | Legacy overlap review | 39 |
+| YLT token | Pending review | 510 |
+| YLT token | Legacy only | 2,112 |
+| Alignment | Proposed | 559 |
+| Alignment | Legacy overlap review | 2 |
+| Alignment | Not expressed | 21 |
+| Alignment | Unresolved | 11 |
+
+Of the 45 YLT tokens initially queued as pending in the five new verses, 37 now have proposals and eight remain pending. Of the 30 newly pending Greek positions, 27 now have proposed token-review dispositions, two are legacy-overlap cases, and one (the article ἡ in Romans 16:27) remains pending in the token-review table while its alignment row is classified `not_expressed`. The Greek token-review schema has no `not_expressed` status, so that distinction is intentionally represented in the alignment layer and explained in the token-review reason.
+
+The current all-verse queues are [32 pending Greek positions](GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) and [510 pending YLT tokens](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv). The [45-row initial YLT queue snapshot](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) is historical; the [eight-row remaining queue for the five new verses](YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) is current.
+
+### Final validation after contextual review
+
+The updated full validator passed with:
+- 2,444 YLT-profile Greek sequence words.
+- 3,171 YLT tokens.
+- 26 alignment groups.
+- 593 YLT–Greek alignment rows.
+- 3,171 YLT token-review rows.
+- 565 Greek token-review rows.
+- All endpoints and alignment-group references resolving.
+- Five selected YLT verse-text branches materialized; Revelation 7:3 still unmaterialized and unresolved.
+
+Production counts remained unchanged, including all 31,102 non-null stored embeddings. The contextual proposals and overlap decisions remain shadow-only research data, not production approvals.
