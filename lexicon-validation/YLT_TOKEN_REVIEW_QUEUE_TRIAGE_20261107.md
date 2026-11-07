@@ -213,6 +213,6 @@ The largest remaining verse clusters are Revelation 7:2 (11), Acts 4:32 (10), Ac
 
 The 443 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
 
-Full shadow validation passed after Acts 26:20. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_ACTS_26_20_20261107.txt), and refreshed [455-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+Full shadow validation passed after Acts 26:20 and the subsequent Revelation 9:20 variant-dependency metadata correction. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_RE9_20_DEPENDENCY_FIX_20261107.txt), and refreshed [455-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
