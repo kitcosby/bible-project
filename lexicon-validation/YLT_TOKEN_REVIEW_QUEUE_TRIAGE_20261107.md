@@ -131,7 +131,7 @@ Four YLT token-review rows already had proposed alignment endpoints but still ca
 
 ## Subsequent status update (2026-11-07)
 
-The 503-row distribution above is a historical snapshot and should not be treated as the current pending queue. Revelation 9:20 was reviewed as a dense phrase case: 15 tokens received proposed phrase-member links, and “are” received an alignment-level not_expressed disposition while remaining token-table pending because the token-review schema has no not_expressed status. Current YLT-token counts are 536 proposed, 484 pending_review, 42 legacy_overlap_review, and 2,109 legacy_only. See the [Revelation 9:20 case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [v10 final validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
+The 499-row distribution above is a historical snapshot and should not be treated as the current pending queue. Revelation 9:20 was reviewed as a dense phrase case: 15 tokens received proposed phrase-member links, and “are” received an alignment-level not_expressed disposition while remaining token-table pending because the token-review schema has no not_expressed status. Current YLT-token counts are 536 proposed, 484 pending_review, 42 legacy_overlap_review, and 2,109 legacy_only. See the [Revelation 9:20 case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [v10 final validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
 
 
 ## Current queue status after Revelation 9:20 (2026-11-07)
