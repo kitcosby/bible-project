@@ -2,19 +2,19 @@
 
 ## Current queue state after Acts 19:27 review
 
-The YLT-side token-review table now has **474 pending YLT tokens across 116 verses and 23 New Testament books**.
+The YLT-side token-review table now has **464 pending YLT tokens across 116 verses and 23 New Testament books**.
 
 Current status totals:
-- **546** proposed
-- **474** pending_review
+- **556** proposed
+- **464** pending_review
 - **43** legacy_overlap_review
 - **2,108** legacy_only
 
-The 474 pending rows divide by recorded reason:
-- **466** generic rows: “No direct proposal identified in this review set.”
-- **8** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
+The 464 pending rows divide by recorded reason:
+- **454** generic rows: “No direct proposal identified in this review set.”
+- **10** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
-The 466 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The eight annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
+The 454 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The eight annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
 ## Four earlier proposal-status reconciliations
 
@@ -27,7 +27,7 @@ A previous reconciliation found four YLT tokens whose alignment rows were alread
 | Acts 26:20 | “those” (token 3) | τοῖς (position 2) | high | Proposed |
 | Matthew 2:23 | “that” (token 15) | τό (position 10) | moderate | Proposed phrase member |
 
-## Eight annotated pending cases
+## Ten annotated pending cases
 
 | Reference | YLT token | Disposition |
 |---|---|---|
@@ -52,10 +52,10 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 
 | Surface | Count |
 |---|---:|
-| to | 50 |
+| to | 49 |
 | the | 33 |
-| may | 22 |
-| did | 20 |
+| may | 21 |
+| did | 19 |
 | was | 18 |
 | a | 16 |
 | having | 15 |
@@ -68,10 +68,10 @@ See the focused [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_
 | he | 8 |
 | are | 6 |
 | be | 6 |
-| one | 6 |
+| one | 5 |
 | that | 6 |
 | been | 5 |
-| being | 5 |
+| being | 4 |
 | those | 5 |
 | do | 4 |
 | doth | 4 |
@@ -97,7 +97,7 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 | Colossians | 33 |
 | Mark | 30 |
 | John | 25 |
-| 1 Corinthians | 21 |
+| 1 Corinthians | 11 |
 | Romans | 20 |
 | 2 Corinthians | 17 |
 | Hebrews | 16 |
@@ -138,6 +138,7 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 | Acts 7:26 | 7 |
 | Acts 26:18 | 7 |
 | Acts 19:27 | 3 |
+| 1 Corinthians 5:11 | 2 |
 
 Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed phrase-member endpoints and “are” has an alignment-level not_expressed disposition. Acts 19:27 was reviewed next; 10 tokens gained phrase proposals and three supplied English article/copula tokens received alignment-level not_expressed dispositions, leaving three pending at token-review level.
 
@@ -149,7 +150,7 @@ Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed ph
 4. Keep the eight annotated cases above separate from the 466 generic pending rows.
 5. Preserve legacy links; contextual alternatives should remain overlap candidates until occurrence identity is established.
 
-The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 474 rows.
+The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 464 rows.
 
 No production tables, legacy associations, embeddings, vectorizer, API, or deployment were changed.
 
@@ -157,3 +158,8 @@ No production tables, legacy associations, embeddings, vectorizer, API, or deplo
 ## Acts 19:27 review result
 
 The Acts 19:27 case report records 12 phrase groups, a correction of εἰς οὐδέν from the earlier shadow candidate “to” to “for nothing”, a retained legacy conflict for YLT “be”, and the branch-sensitive δέ/τε καί phrase. Ten YLT tokens received proposals; three supplied English tokens remain token-table pending with alignment-level not_expressed dispositions. See [ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+
+## 1 Corinthians 5:11 review result
+
+The verse’s 12 original pending tokens were reviewed: ten now have phrase-member proposals and two supplied English tokens (“[him]” and “a”) have alignment-level not_expressed dispositions. Robinson variant group 46:2 has A=ἤ and B=ᾖ; the YLT wording “may be” and independent Greek witnesses support a proposed YLT-specific B selection. The CrossWire/KJV profile remains on A. See the [1 Corinthians 5:11 case report](FIRST_CORINTHIANS_5_11_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
