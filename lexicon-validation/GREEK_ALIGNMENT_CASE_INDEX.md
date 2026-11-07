@@ -109,14 +109,14 @@ Snapshot from the isolated shadow review:
 - The original 39 Greek-token review rows now comprise 31 pending and eight proposed alignments.
 - 20 legacy-overlap positional-divergence cases have contextual notes.
 - One YLT-profile verse-text variant group remains unresolved (Revelation 7:3); five formerly unresolved verse-text groups have now been materialized in the shadow sequence, and 13 paratext groups are excluded from verse alignment.
-- The current Greek token-review queue has 31 pending rows (30 remaining from the original 39-case set plus one not-separately-expressed article retained as pending in the token-review layer). Eight additional cases have context-supported not_expressed alignment dispositions; one Philippians 4:2 case moved to legacy-overlap review; Acts 15:32 and Acts 21:8 remain unresolved.
+- The current Greek token-review queue has 31 pending rows (30 remaining from the original 39-case set plus one not-separately-expressed article retained as pending in the token-review layer). The 2026-11-07 review has now assigned alignment-level not_expressed dispositions to 29 of these rows (24 high confidence, five moderate); only Acts 15:32 δέ and Acts 21:8 περί remain genuinely unresolved. The token-review table still shows all 31 as pending because it has no not_expressed status. One Philippians 4:2 case remains in legacy-overlap review.
 - 505 YLT token-review rows are pending (502 prior rows plus eight remaining from the five new verses).
 - Three Romans 16:27 candidate rows are explicitly retained as legacy-overlap cases arising from two legacy-position problems: YLT “to” has legacy Greek position 13 (ἀμήν), and YLT “the” has legacy positions 22 and 25 in the subscription, while the contextual candidates are ᾧ and τούς respectively.
 - No production data, legacy alignment positions, embeddings, or vectorizer settings were modified by this review.
 
 ## Follow-up review of eleven pending function-word cases
 
-The [eleven-case disposition report](ELEVEN_PENDING_FUNCTION_WORD_REVIEW_20261106.md) and [machine-readable ledger](ELEVEN_FUNCTION_WORD_CASE_DISPOSITIONS_20261106.csv) record eight context-supported not_expressed classifications, one Philippians 4:2 legacy overlap, and two unresolved cases. The current Greek pending queue is 31; eight not_expressed alignment dispositions remain token-review-pending because that table has no not_expressed status.
+The [eleven-case disposition report](ELEVEN_PENDING_FUNCTION_WORD_REVIEW_20261106.md) and [machine-readable ledger](ELEVEN_FUNCTION_WORD_CASE_DISPOSITIONS_20261106.csv) record eight context-supported not_expressed classifications, one Philippians 4:2 legacy overlap, and two unresolved cases. The current Greek pending queue is 31; 29 have alignment-level not_expressed dispositions (24 high confidence, five moderate) and two remain unresolved. All 31 remain token-review-pending because that table has no not_expressed status. See the [2026-11-07 disposition audit](GREEK_TOKEN_ALIGNMENT_DISPOSITION_AUDIT_20261107.md) and [dual-status CSV](GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv).
 
 ## New five-verse contextual alignment review
 
