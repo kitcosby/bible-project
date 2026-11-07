@@ -34,6 +34,27 @@ Thus the current YLT-profile sequence displays δέ, but the sequence provenance
 - The [Scrivener TR interlinear](https://bible.4disciples.com/Acts/15/32) leaves δέ without a separate gloss and glosses the following καί as “and”. It also gives δέ a broad range including continuative and additive renderings, sometimes unexpressed.
 - Robertson, *A Grammar of the Greek New Testament* (1919), pp. 1184–1185, discusses δέ as both copulative/continuative and adversative, and notes δὲ καί examples where the discourse advances in the same direction. This establishes that δέ need not mean “but”; it does not prove that δέ independently supplies YLT “also” here. [Grammar text](https://www.ibiblio.org/bgreek/project/robertson/Robertson_GreekGrammar.pdf).
 
+## Expanded printed-edition comparison
+
+The branch contrast is not simply “critical text versus Received Text.” Printed editions within the Received Text tradition differ:
+
+| Edition | Reading at Acts 15:32 | Robinson branch |
+|---|---|---|
+| Stephanus 1550 | Ἰούδας τε καὶ Σιλᾶς | A |
+| Beza 1598 | Ἰούδας δὲ καὶ Σίλας | B |
+| Elzevir 1624 | Ἰούδας δὲ καὶ Σίλας | B |
+| Scrivener 1894 | Ἰούδας δὲ καὶ Σίλας | B |
+| Nestle 1904 | Ἰούδας τε καὶ Σιλᾶς | A |
+| Westcott–Hort 1881 | Ἰούδας τε καὶ Σίλας | A |
+| RP Byzantine Majority 2005 | Ἰούδας τε καὶ Σίλας | A |
+| SBL GNT 2010 | Ἰούδας τε καὶ Σιλᾶς | A |
+
+Sources: [CNBible / parallel Greek texts](https://cnbible.com/text/acts/15-32.htm), [Beza 1598 Acts 15](https://biblehub.com/beza/acts/15.htm), [Elzevir 1624 Acts 15](https://www.bibliatodo.com/la-biblia/tr1624/acts-15), and [UBS Dictionary / MACULA clause analysis](https://bibleontology.org/p/Acts.15.32).
+
+This refines the earlier shorthand. Beza 1598 and Elzevir 1624 support B, while Stephanus 1550 supports A. Scrivener 1894 also supports B, but it postdates Young's death (1888) and cannot itself have been Young's printed exemplar. It is useful as a later reconstruction of the Greek text associated with the KJV, not direct evidence of Young's own edition.
+
+Young's preface says he followed the Received Text generally, but does not identify a specific edition. Thus the edition evidence makes B a plausible YLT source candidate, but does not prove it. The exact English sequence “Judas also and Silas” is compatible with an additive rendering of δὲ καί; it does not independently exclude an idiomatic rendering of τε καί.
+
 ## Alignment decision
 
 1. **καί (Greek position 3) → YLT “and” (token 3):** stable across both variant branches and proposed with high confidence.
