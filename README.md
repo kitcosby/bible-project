@@ -286,5 +286,6 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 
 - [YLT–Greek Alignment Field Guide](lexicon-validation/GREEK_ALIGNMENT_FIELD_GUIDE.md) — review method, recurring corner cases, evidence labels, and database design cautions.
 - [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases and the 39-item Greek-token review queue (still pending).
+- [Greek token review queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) — machine-readable snapshot of the 39 pending rows.
 
 These are working research documents on the validation branch. They do not authorize production changes.
