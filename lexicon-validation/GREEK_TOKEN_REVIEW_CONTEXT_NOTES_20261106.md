@@ -12,7 +12,7 @@ The original 39-case working list was inspected in the complete YLT verse and co
 
 | Reference / Greek position | Form | Contextual assessment | Reason |
 |---|---|---|---|
-| Matthew 2:23, 10 | τό | Grammatical contribution | τό ῥηθέν is a substantivized participial expression, “the thing spoken”; YLT renders the construction as “that was spoken”. The article is not a separate “the”. |
+| Matthew 2:23, 10 | τό | Phrase-member proposal | τὸ ῥηθέν is a substantivized participle rendered “that was spoken”. The article contributes to the nominal head “that”; a moderate-confidence shadow proposal links it to YLT token 15. |
 | Matthew 4:13, 3 | τήν | Not independently expressed | εἰς τὴν Ναζαρέτ is rendered “to Nazareth”. The article belongs to the Greek place-name phrase but YLT has no separate article. Do not confuse this with the second article in τὴν παραθαλασσιάν. |
 | Matthew 10:10, 16 | τῆς | Possessive/phrase contribution | τῆς τροφῆς αὐτοῦ is “his nourishment”. The English possessive is expressed by αὐτοῦ; the Greek article is not an independent English token. |
 | Matthew 21:7, 11 | τά | Article + noun phrase | τὰ ἱμάτια αὐτῶν is “their garments”. The article belongs to the noun phrase; the possessive is expressed by αὐτῶν. |
@@ -21,7 +21,7 @@ The original 39-case working list was inspected in the complete YLT verse and co
 | Luke 2:39, 5 | τά | Substantivized phrase / phrase-member proposal | The sequence is ἅπαντα τὰ κατὰ τὸν νόμον κυρίου, rendered “all things, according to the Law of the Lord”. The article follows ἅπαντα and substantivizes the following κατὰ phrase; YLT “things” represents that nominalized phrase. A moderate-confidence phrase-member proposal now links τὰ to YLT token 6 “things”. The earlier cue that described τὰ πάντα was inaccurate. |
 | Luke 4:16, 4 | τήν | Article omitted in English | εἰς τὴν Ναζαρέτ is “to Nazareth”. The place-name phrase has no separate English article. |
 | Luke 4:16, 12 | τό | Articular substantival construction | κατὰ τὸ εἰωθός αὐτῷ is “according to his custom”. The article helps substantivize the expression; English uses “his custom”. |
-| Acts 5:12, 1 | διά | Direct correspondence | διὰ τῶν χειρῶν is “through the hands”. YLT has a clear “through” at the beginning of the verse. |
+| Acts 5:12, 1 | διά | Direct function-word proposal | διὰ τῶν χειρῶν is “through the hands”. A high-confidence shadow proposal links διά to YLT “through” at token 2. |
 | Acts 8:19, 4 | τήν | Article + noun + demonstrative | τὴν ἐξουσίαν ταύτην is “this authority”. The article is part of the noun phrase; ταύτην supplies the demonstrative “this”. |
 | Acts 9:35, 11 | οἵτινες | Relative-clause contribution | οἵτινες ἐπέστρεψαν introduces “who/they turned”. YLT expresses the clause as “and did turn to the Lord”, coordinating it with the preceding clause rather than supplying a separate “who”. |
 | Acts 15:32, 2 | δέ | Conjunction pair / discourse particle | Ἰούδας δὲ καὶ Σιλᾶς is rendered “Judas also and Silas”. δέ and καί jointly shape the connective force; do not assign both mechanically to separate English tokens. |
@@ -30,13 +30,13 @@ The original 39-case working list was inspected in the complete YLT verse and co
 | Acts 21:8, 6 | περί | Idiomatic phrase contribution | οἱ περὶ τὸν Παῦλον refers to those around/associated with Paul; YLT renders the group idiomatically as “Paul and his company”. |
 | Acts 22:25, 14 | εἰ | Elliptical conditional/question construction | εἰ ἄνθρωπον Ῥωμαῖον καὶ ἀκατάκριτον ἔξεστιν is rendered as a direct question, “A man, a Roman, uncondemned — is it lawful…?” YLT does not give a separate “if”. Treat as construction-level, not a missing lexical token. |
 | Acts 22:25, 17 | καί | Coordination within a descriptive list | Ῥωμαῖον καὶ ἀκατάκριτον coordinates “Roman” and “uncondemned”. YLT uses punctuation rather than a separate “and”. |
-| Acts 26:18, 29 | τῇ | Attributive/relative construction | πίστει τῇ εἰς ἐμέ is “by faith that is toward me”. The article marks the attributive prepositional phrase; YLT expresses its function with “that”. |
-| Acts 26:20, 2 | τοῖς | Substantival article; direct English rendering | τοῖς ἐν Δαμασκῷ is “to those in Damascus”. The article functions substantivally and is represented by “those”, not “the”. |
+| Acts 26:18, 29 | τῇ | Phrase-member proposal | πίστει τῇ εἰς ἐμέ is “by faith that is toward me”. A moderate-confidence shadow proposal links the article's attributive function to YLT “that” at token 37. |
+| Acts 26:20, 2 | τοῖς | Direct function-word proposal | τοῖς ἐν Δαμασκῷ is “to those in Damascus”. A high-confidence shadow proposal links the substantival article to YLT “those” at token 3. |
 | Acts 26:20, 26 | τῆς | Article + genitive phrase | ἔργα ἄξια τῆς μετανοίας is “works worthy of reformation”. The article belongs to the genitive noun phrase; English does not add a separate “the”. |
 | Romans 1:27, 22 | τήν | Article omitted in English | τὴν ἀσχημοσύνην is rendered “shame” in “working shame”. The article is grammatical within the object phrase, not a separate English token. |
-| Romans 16:20, 13 | ἐν | Idiomatic prepositional phrase | ἐν τάχει is the idiom “quickly”. YLT translates the phrase adverbially rather than “in haste”. |
+| Romans 16:20, 13 | ἐν | Phrase-member proposal | ἐν τάχει is the adverbial idiom “quickly”. A moderate-confidence shadow proposal links ἐν to YLT token 14 “quickly”, alongside τάχει; ἐν alone is not glossed “quickly”. |
 | 1 Corinthians 5:7, 15 | τό | Article + noun + possessive phrase | τὸ πάσχα ἡμῶν is “our passover”. The article is absorbed into the English possessive phrase. |
-| 1 Corinthians 13:2, 7 | τά | Article + noun + adjective | τὰ μυστήρια πάντα is “all the secrets”. Here YLT has a separate “the”; the article is a plausible direct token candidate, while πάντα contributes “all”. |
+| 1 Corinthians 13:2, 7 | τά | Direct function-word proposal | τὰ μυστήρια πάντα is “all the secrets”. YLT has a separate “the”; πάντα contributes “all”, μυστήρια “secrets”, and τά corresponds to the explicit article. A high-confidence shadow proposal links it to YLT token 9. |
 | 2 Corinthians 7:12, 16 | τοῦ | Articular infinitive | ἕνεκεν τοῦ φανερωθῆναι introduces the purpose/occasion “for … being manifested”. The article is part of the infinitive construction. |
 | 2 Corinthians 7:12, 18 | τήν | Article + noun + possessive | τὴν σπουδὴν ἡμῶν is “our diligence”. The article is not separately rendered; the genitive pronoun supplies “our”. |
 | 2 Corinthians 7:12, 21 | τήν | Attributive phrase marker | τὴν ὑπὲρ ὑμῶν modifies/qualifies the preceding “diligence” (“our diligence on your behalf”). The article introduces a phrase, not a separate English article. |
@@ -47,7 +47,7 @@ The original 39-case working list was inspected in the complete YLT verse and co
 | James 2:18, 23 | τῶν | Article + noun + possessive | ἐκ τῶν ἔργων σου is “out of thy works”. The article belongs to the genitive phrase; σου supplies “thy”. |
 | James 2:18, 26 | τήν | Article + noun + possessive | τὴν πίστιν μου is “my faith”. The article is absorbed into the English possessive phrase. |
 | James 4:15, 2 | τοῦ | Articular infinitive | ἀντὶ τοῦ λέγειν ὑμᾶς is “instead of your saying”. The article participates in the infinitive construction. |
-| Jude 1:24, 1 | τῷ | Substantival article | τῷ δυναμένῳ is “to Him who is able”. The article helps substantivize the participle and is represented by “Him”, not by a standalone “the”. |
+| Jude 1:24, 1 | τῷ | Phrase-member proposal | τῷ δυναμένῳ is “to Him who is able”. A moderate-confidence shadow proposal links the substantival article to YLT “Him” at token 3. |
 | Revelation 2:5, 20 | τήν | Article + noun + possessive | τὴν λυχνίαν σου is “thy lamp-stand”. The article is absorbed into the possessive noun phrase; YLT does not add a separate “the”. |
 | Revelation 7:2, 22 | αὐτοῖς | Redundant/pleonastic dative contribution | οἷς ἐδόθη αὐτοῖς ἀδικῆσαι has both relative οἷς (“to whom”) and αὐτοῖς (“to them”). YLT renders “to whom it was given to injure”; the personal pronoun is not separately repeated in English. |
 | Revelation 18:5, 13 | τά | Article + noun + possessive phrase | τὰ ἀδικήματα αὐτῆς is rendered “her unrighteousness”. Article, plural noun, and possessive form one English phrase; no separate “the” is needed. |
@@ -55,7 +55,7 @@ The original 39-case working list was inspected in the complete YLT verse and co
 ## Summary by contextual pattern
 
 - **Articular infinitives / substantival constructions:** Luke 2:4; Luke 4:16; Acts 26:18; 2 Corinthians 7:12; Philippians 4:2; James 4:15; Matthew 2:23; Jude 1:24.
-- **Article absorbed into possessive or noun phrase:** Matthew 10:10; Matthew 21:7; Acts 8:19; Acts 19:27; Acts 26:20; Romans 1:27; 1 Corinthians 5:7; 1 Corinthians 13:2; 2 Corinthians 7:12; 2 Corinthians 11:10; Colossians 4:10; James 2:18; Revelation 18:5.
+- **Article absorbed into possessive or noun phrase:** Matthew 10:10; Matthew 21:7; Acts 8:19; Acts 19:27; Acts 26:20; Romans 1:27; 1 Corinthians 5:7; 2 Corinthians 7:12; 2 Corinthians 11:10; Colossians 4:10; James 2:18; Revelation 18:5.
 - **Connective, relative, or clause-level contribution:** Acts 9:35; Acts 15:32; Acts 22:25.
 - **Idiomatic prepositional phrase:** Acts 21:8; Romans 16:20.
 - **Clear English token candidates:** Acts 5:12 (“through”); Acts 26:20 (“those”); 1 Corinthians 13:2 (article rendered as “the” in “all the secrets”). Additional phrase-member proposals link Matthew 2:23 τό to “that”, Jude 1:24 τῷ to “Him”, and Acts 26:18 τῇ to “that”; these remain moderate-confidence proposals.
