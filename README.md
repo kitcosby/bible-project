@@ -293,5 +293,6 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 - [Latest Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv) — latest state after five further proposals (33 pending, six proposed).
 - [Acts 5:12 alignment correction](lexicon-validation/ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md) — documents the direct διά → “through” proposal and shadow validation.
 - [Five contextual function-token proposals](lexicon-validation/FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md) — records five further token/phrase-member proposals with verse-context rationale.
+- [Read-only proposal validator](lexicon-validation/validate_greek_token_proposals.py) — checks all six proposal endpoints, review counts, alignment integrity, and unchanged production baselines.
 
 These are working research documents on the validation branch. They do not authorize production changes.
