@@ -10,7 +10,7 @@ YLT:
 
 > and the rest of men, who were not killed in these plagues, neither did reform from the works of their hands, that they may not bow before the demons, and idols, those of gold, and those of silver, and those of brass, and those of stone, and those of wood, that are neither able to see, nor to hear, nor to walk,
 
-The YLT-profile Greek sequence contains 49 words. The YLT token table contains 62 tokens. Sixteen YLT tokens are currently marked pending_review in this verse. This is the largest pending-token cluster in the current queue.
+The YLT-profile Greek sequence contains 49 words. The YLT token table contains 62 tokens. Sixteen YLT tokens were pending_review before this case review, making this the densest original pending-token cluster. After the shadow phrase update, 15 have proposed phrase-member links; “are” remains pending in the token-review table because that table has no not_expressed status.
 
 The sixteen tokens that were pending before this review were:
 - did (14)
@@ -131,4 +131,4 @@ No production data, legacy links, embeddings, vectorizer, API, or deployment wer
 - Greek token review: 521 proposed, 33 pending_review, 31 legacy_overlap_review.
 - Full v10 validator passed: [final validation output](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
 - Production counts remain 141,009 gnt_words; 143,227 gnt_ylt_renderings; 31,102 YLT verses; and 31,102 stored non-null embeddings.
-- Pre-update shadow backup: /var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_pre_case_reconciliation_20261107.dump; SHA-256 aa4775794b7caffe46816bd369331f9833e06040bc730f27bb46b51532904064.
+- Post-update schema-only backup: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_after_re9_20.dump`; SHA-256 `5659cc12f3dee2af1c6aafc89a0a949d3c587a72d1d12efcd84923b19d0f49ef`.
