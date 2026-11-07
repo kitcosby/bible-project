@@ -129,6 +129,6 @@ No production data, legacy links, embeddings, vectorizer, API, or deployment wer
 - Alignment table: 621 rows total; 581 proposed, 33 not_expressed, six legacy_overlap_review, one unresolved.
 - YLT token review: 536 proposed, 484 pending_review, 42 legacy_overlap_review, 2,109 legacy_only. The “are” token remains token-table pending while its alignment-level disposition is not_expressed.
 - Greek token review: 521 proposed, 33 pending_review, 31 legacy_overlap_review.
-- Full v10 validator passed: [final validation output](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
+- Full v12 validator passed: [final validation output](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
 - Production counts remain 141,009 gnt_words; 143,227 gnt_ylt_renderings; 31,102 YLT verses; and 31,102 stored non-null embeddings.
 - Post-update schema-only backup: `/var/backups/bible-postgres-20261106T171837Z/bible_greek_bridge_test_ylt_profile_shadow_20261107_after_re9_20.dump`; SHA-256 `5659cc12f3dee2af1c6aafc89a0a949d3c587a72d1d12efcd84923b19d0f49ef`.
