@@ -1,4 +1,4 @@
-# Contextual Notes on the 39 Pending Greek-Token Rows
+# Contextual Notes on 39 Greek-Token Cases (31 Pending; 8 Proposed)
 
 **Prepared:** 2026-11-06  
 **Source:** Isolated YLT-profile shadow sequence and stored YLT verse text.  
@@ -6,7 +6,7 @@
 
 ## Purpose
 
-The 39 Greek-token rows were inspected in their complete YLT verse and complete YLT-profile Greek sequence. This note records what the syntax appears to be doing. It does not claim that a pending database row has been accepted, nor does it force a token-to-token alignment where English does not express a separate token.
+The original 39-case working list was inspected in the complete YLT verse and complete YLT-profile Greek sequence. Live reconciliation shows that 31 remain `pending_review` and eight are already `proposed` in the token-review table. This note records the grammatical assessments; it does not change any database status or force a token-to-token alignment where English does not express a separate token.
 
 ## Contextual assessments
 
@@ -67,7 +67,7 @@ These categories overlap because the same Greek token can be both part of a phra
 
 The full-context read supports a conservative conclusion: most of these 39 rows are not missing content words. They are articles or function words whose contribution is expressed by phrase structure, possessives, substantival constructions, or English punctuation. A small number have straightforward English counterparts.
 
-**No status changes are made here.** The 39 database rows remain pending review until the proposed category/status mapping is agreed against the schema and the exact alignment candidate records are inspected. This avoids confusing a linguistic assessment with a committed database decision.
+**No status changes are made here.** The 31 pending rows remain pending; the other eight cases already have proposed token-review status. The 20 `not_expressed` and 11 `unresolved` alignment records are not the same thing as approval: their token-review rows remain pending. This avoids confusing a linguistic assessment with a committed database decision.
 
 
 ## Review-queue reconciliation
