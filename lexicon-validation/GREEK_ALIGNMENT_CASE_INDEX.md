@@ -195,3 +195,10 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 - [Complete language-scoped cross-root index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv): all 372 cross-root groups, sorted by Strong's/morphology divergence, with root labels, affix-profile counts, language-scope flags, and review-batch/status columns (78 reviewed; 294 pending). The language-filtered recheck confirms 185 groups with multiple Strong's values and 370 with multiple morphology patterns; an unfiltered diagnostic overcount was rejected and documented.
 
 - The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged. Review of the remaining 294 cross-root groups is still outstanding.
+
+
+## Hebrew vowel-only variant cross-root review — 2026-11-07
+
+The read-only member-level review now covers 93 of 372 cross-root candidate groups: all three three-root cases plus six prioritized batches of 15. There are 279 pending groups. Batch 5 and batch 6 findings are recorded in [the cross-root review report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md); the [complete 372-group index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv) records the review status and batch for each group.
+
+The review is not lexical approval. Candidate groups remain orthographic cross-references only; distinct Strong's, morphology, root assignments, and contextual senses are preserved. Qere/Ketiv apparatus readings remain outside this relation. The isolated shadow database remains separate from production.
