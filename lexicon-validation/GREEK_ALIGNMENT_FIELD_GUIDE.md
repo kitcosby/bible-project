@@ -162,7 +162,7 @@ As of 2026-11-06:
 - 37 legacy-overlap cases were reconciled.
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
-- The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
+- At the historical post-eight-proposal snapshot, the original 39-case Greek-token subset had 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals). This is not the current all-verse queue.
 - Current shadow alignment counts after the phrase and status reconciliation: 565 proposed, 32 not_expressed (27 high confidence, five moderate), one unresolved, and six legacy_overlap_review rows; 508 proposed, 33 pending, and 31 legacy-overlap rows in the Greek-token review table.
 - YLT token review counts: 516 proposed, 503 pending, 42 legacy-overlap review, and 2,110 legacy-only.
 - The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
