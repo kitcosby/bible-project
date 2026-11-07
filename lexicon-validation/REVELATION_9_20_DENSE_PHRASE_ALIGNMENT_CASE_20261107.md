@@ -87,6 +87,23 @@ Pending YLT tokens in these phrases are “those” at positions 32, 36, 40, 44,
 | are | 1 | Supplied English copula | No Greek copula |
 | to | 3 | English infinitive markers | Infinitive verb forms |
 
+
+## Existing legacy-rendering evidence
+
+A read-only inspection of production gnt_ylt_renderings confirms that the existing bridge has partial phrase mappings in this verse. Relevant legacy rows include:
+
+| Robinson Greek position(s) | Existing legacy YLT token(s) | Surface(s) |
+|---|---|---|
+| 28–29 | 33–34 | “of gold” |
+| 31–32 | 38 | “silver” |
+| 34–35 | 42 | “brass” |
+| 37–38 | 46 | “stone” |
+| 40–41 | 49–50 | “of wood” |
+
+The five YLT “those” tokens (32, 36, 40, 44, 48) have no corresponding legacy-rendering row in this verse. The middle three “of” tokens (37, 41, 45) also have no legacy row; the first and last “of” tokens (33, 49) do have legacy rows. This explains why the review queue marks the former as pending and the latter as legacy_only.
+
+This legacy evidence strengthens the phrase-level diagnosis but does not authorize replacing the stored associations. Any shadow additions should explicitly preserve the existing links and record only the missing phrase members or phrase-level relationship.
+
 ## Evidence classification and cautions
 
 - **Established observation:** the YLT wording, token positions, and YLT-profile Greek sequence shown above.
