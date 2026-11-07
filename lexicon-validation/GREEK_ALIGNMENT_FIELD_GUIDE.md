@@ -129,7 +129,7 @@ The review queue and alignment table are separate status layers. A Greek token c
 
 ## Variant groups and paratext
 
-The 19 YLT-profile variant groups initially marked unresolved have now been classified: five verse-text groups were selected against the stored YLT wording, thirteen epistle subscriptions/colophons were marked not applicable to verse alignment, and Revelation 7:3 remains unresolved because YLT does not distinguish the present from aorist subjunctive. The raw Robinson branch payloads remain preserved. The five branch decisions are in the selection ledger, but their six affected verse references (the five selected verses plus Revelation 7:3) are not yet materialized in the current 116-verse sequence fixture. Do not align against them until the sequence is built and validated. See [YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) and [the machine-readable snapshot](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
+The 19 YLT-profile variant groups initially marked unresolved have now been classified: five verse-text groups were selected against the stored YLT wording, thirteen epistle subscriptions/colophons were marked not applicable to verse alignment, and Revelation 7:3 remains unresolved because YLT does not distinguish the present from aorist subjunctive. The raw Robinson branch payloads remain preserved. The five selected verse-text groups have now been materialized in the shadow sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The 1 John 2:23 branch-B clause adds eight tokens; the other four selections are already present in the base sequence or select an empty branch. Revelation 7:3 remains unmaterialized pending a textual decision. See [YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md), [the machine-readable snapshot](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv), and [the materialization report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md).
 
 ## Database design recommendations
 
@@ -155,13 +155,13 @@ As of 2026-11-06:
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
-- Current shadow review counts: 521 proposed, 20 not_expressed, and 11 unresolved alignment rows; 479 proposed, 31 pending, and 25 legacy-overlap rows in the Greek-token review table.
-- The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved.
-- The five selected verse-text branches and the unresolved Revelation 7:3 case are not materialized in the current 116-verse sequence fixture. Do not align against those six references until the selected sequences are built and validated.
-- 502 YLT token review cases remain pending.
-- The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
+- Current shadow review counts after five additional verse materializations: 521 proposed, 20 not_expressed, 11 unresolved, and 30 pending alignment rows; 479 proposed, 61 pending, and 25 legacy-overlap rows in the Greek-token review table.
+- YLT token review counts: 473 proposed, 547 pending, 37 legacy-overlap review, and 2,114 legacy-only.
+- The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
+- The five new sequence materializations add 95 YLT tokens, 77 Greek words, 45 pending YLT token rows, and 30 pending Greek token/alignment rows.
+- The full shadow validator passed after materialization; production counts and all 31,102 stored embeddings were unchanged.
 
-See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the 31-row pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
+See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the original 39-case subset, the current 61-row Greek pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
 
 ## Non-goals and cautions
 
