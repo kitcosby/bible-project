@@ -114,6 +114,10 @@ Snapshot from the isolated shadow review:
 - Two new Romans 16:27 legacy-overlap cases are explicitly retained: YLT “to” has legacy Greek position 13 (ἀμήν), and YLT “the” has legacy positions 22 and 25 in the subscription, while the contextual candidates are ᾧ and τούς respectively.
 - No production data, legacy alignment positions, embeddings, or vectorizer settings were modified by this review.
 
+## New five-verse contextual alignment review
+
+The five newly materialized verses have a separate [41-row contextual alignment ledger](FIVE_VERSE_CONTEXTUAL_ALIGNMENT_PROPOSALS_20261106.csv) and [10 phrase-group definitions](FIVE_VERSE_CONTEXTUAL_ALIGNMENT_GROUPS_20261106.csv). The ledger contains 38 proposed pair links, two legacy-overlap links, and one not-expressed Greek article. The complete rationale, remaining pending tokens, and final validation are in [the five-verse materialization and contextual review report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md).
+
 ## D. Provenance and change control
 
 - Case evidence is drawn from the isolated PostgreSQL database bible_greek_bridge_test_20261106, schema ylt_profile_shadow.
