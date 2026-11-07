@@ -160,7 +160,7 @@ Full shadow validation passed after the Acts 19:27 update. See the [Acts 19:27 c
 Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
 
 
-## Current queue status after 1 Corinthians 5:11 (2026-11-07)
+## Historical queue status after 1 Corinthians 5:11 (superseded by Acts 26:20 review)
 
 The current YLT-profile token-review queue contains **464 pending tokens across 116 verses**. Reason counts:
 
@@ -184,5 +184,35 @@ The largest remaining verse clusters are Acts 26:20 (11), Revelation 7:2 (11), A
 The 454 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
 
 Full shadow validation passed after the 1 Corinthians 5:11 update. See the [1 Corinthians 5:11 case report](FIRST_CORINTHIANS_5_11_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_1CO_5_11_20261107.txt), and refreshed [464-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+
+Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
+
+
+## Current queue status after Acts 26:20 (2026-11-07)
+
+The current YLT-profile token-review queue contains **455 pending tokens across 116 verses**. Reason counts:
+
+| Reason | Count |
+|---|---:|
+| No direct proposal identified in this review set | 443 |
+| Acts 15:32 branch-dependent “also” | 1 |
+| Romans 16:27 supplied copula “be” | 1 |
+| Romans 16:27 supplied English article “the” | 1 |
+| 1 John 2:23 supplied subject pronoun “he” | 1 |
+| Revelation 9:20 supplied copula “are” | 1 |
+| Acts 19:27 supplied article “the” | 1 |
+| Acts 19:27 supplied copula “is” | 2 |
+| 1 Corinthians 5:11 bracketed supplied pronoun “[him]” | 1 |
+| 1 Corinthians 5:11 supplied article “a” | 1 |
+| Acts 26:20 supplied “to” in “to those in Jerusalem” | 1 |
+| Acts 26:20 supplied “those” in “to those in Jerusalem” | 1 |
+
+Current YLT-token status totals: **565 proposed, 455 pending_review, 43 legacy_overlap_review, 2,108 legacy_only**. Current pending counts by book: Acts 82; Luke 54; Matthew 49; Revelation 34; Colossians 33; Mark 30; John 25; Romans 20; 2 Corinthians 17; Hebrews 16; 1 Timothy 15; 1 Thessalonians 12; Philippians 12; 1 Corinthians 11; 2 Peter 10; James 8; Jude 6; 1 Peter 5; 1 John 4; 2 John 4; 2 Timothy 3; Titus 3; Philemon 2.
+
+The largest remaining verse clusters are Revelation 7:2 (11), Acts 4:32 (10), Acts 21:8 (10), Acts 22:25 (9), and 2 Corinthians 6:15 (8). Acts 26:20 now has two token-table pending cases (“to” and “those” in the expanded Jerusalem phrase), both with alignment-level not_expressed dispositions. The verse also has a proposed YLT-specific branch-B selection for Robinson group 44:36 (ἀπήγγελλον, first-person imperfect), while the CrossWire/KJV profile remains branch A.
+
+The 443 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
+
+Full shadow validation passed after Acts 26:20. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_ACTS_26_20_20261107.txt), and refreshed [455-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
