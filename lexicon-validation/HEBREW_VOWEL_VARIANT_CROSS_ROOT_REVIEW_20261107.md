@@ -187,3 +187,36 @@ These 15 are still database-level member reviews with sample references, not exh
 After the member-level review, a separate database `bible_hebrew_variant_shadow_20261107` was restored from a verified dump of the live `bible` database. The group/member schema was created and populated only in that new database. The independent validator passed all 3,349 group and 7,148 language-scoped member comparisons, 32,676 occurrence counts, root-vowel/lexicon parent checks, language-scope assertions, and Qere separation. Production and the existing Greek bridge test database were not modified.
 
 The source and post-build backup hashes, table-count parity, ACL restriction, and reproducible scripts are documented in [HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md). All 3,349 groups remain candidate-only; the prototype does not imply linguistic approval.
+
+
+## 11. Third high-priority batch: 15 further cross-root groups
+
+The third batch continues down the corrected language-scoped index's risk ranking, excluding the first 30 reviewed groups.
+
+| Signature | Occurrences | Existing roots | Strong's values | Main stored distinction |
+|---|---:|---|---|---|
+| `מא֥ת` | 26 | `את`, `מאת` | H3967, H854 | `מְאַ֥ת` “hundred” vs `מֵאֵ֥ת` “from”. |
+| `אל֛י` | 24 | `אל`, `אלי` | H194, H413 | `אֵלַ֛י` “to me” vs `אֻלַ֛י` “perhaps”. |
+| `אב֥י` | 23 | `אב`, `אבי` | H1, H33 | “my father” vs a separate `אבי` root entry with multiple noun/genitive morphology patterns. |
+| `אח֣י` | 23 | `אח`, `אחי` | H251, H278 | Singular/plural construct, “my brothers”, and proper name Echi; five member keys and several noun parses. |
+| `על֖י` | 23 | `על`, `עלי` | H5921, H5941 | Preposition `עֲלֵ֖י`, proper name Eli `עֵלִ֖י`, and `עָלַ֖י` “upon me”. |
+| `אתּ֑ם` | 22 | `את`, `אתמ` | H854, H859 | `אִתָּ֑ם` “with them” vs `אַתֶּ֑ם` “you” (masculine plural). |
+| `הע֣יר` | 22 | `העיר`, `עיר` | H5782, H5892 | Verb `הֵעִ֣יר` “awaken” vs article + noun `הָעִ֣יר` “the city”. |
+| `העיר֙` | 21 | `העיר`, `עיר` | H5782, H5892 | Same verb-versus-article+noun contrast in another cantillation context. |
+| `עבד֣י` | 21 | `עבד`, `עבדי` | H5647, H5650 | “my servants” / “servants of” noun forms vs participial `עֹבְדֵ֣י` “those serving”. |
+| `בּנ֨י` | 19 | `בנ`, `בני` | H1121, H1137 | “my son”, “sons”, and proper name Bani. |
+| `מא֖ת` | 19 | `את`, `מאת` | H3967, H854 | “hundred” (two vocalizations) vs “from”. |
+| `אב֖י` | 17 | `אב`, `אבי` | H1, H21 | “my father” vs a distinct `אבי` member with H1/H21 and noun/proper-name analyses. |
+| `על֔ינוּ` | 17 | `עלי`, `עלינו` | H5921, H5927 | `עָלִ֔ינוּ` “we went up” (verb) vs `עָלֵ֔ינוּ` “upon us” (preposition + suffix). |
+| `עלי֙` | 17 | `על`, `עלי` | H5921, H5941 | Proper name Eli `עֵלִי֙` vs `עָלַי֙` “upon me”. |
+| `אתּ֔ם` | 16 | `את`, `אתמ` | H854, H859 | `אִתָּ֔ם` “with them” vs `אַתֶּ֔ם` “you” (masculine plural). |
+
+### Additional data-quality observations
+
+- The `אח֣י` family has multiple pointed forms and root assignments even where the Strong's value remains H251; one member is assigned H278 and proper-name morphology. A consonantal signature cannot decide between kinship noun and proper name.
+- The `העיר` groups are clear verb-versus-definite-article+noun cases. This also demonstrates why retaining cantillation creates separate groups for distinct accentual contexts, even when the underlying lexical contrast is repeated.
+- `עבד֣י` includes both noun and participial morphology under the same signature, with H5650 vs H5647.
+- `על֔ינוּ` is a particularly clear morphology contrast: first-person plural verb vs preposition with first-person plural suffix.
+- `מא֥ת` / `מא֖ת` and `אתּ֑ם` / `אתּ֔ם` show that accent-specific signatures may repeat the same lexical contrast across several separate groups. The group key is intentionally strict; a higher-level lemma-family index would be a separate layer.
+
+The review now covers **45 of 372 cross-root groups** (including all three three-root groups); **327 remain**. These are still database-level member reviews with sample references, not exhaustive contextual lexical adjudications.
