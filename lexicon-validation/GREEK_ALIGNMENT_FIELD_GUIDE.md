@@ -96,6 +96,8 @@ Greek conjunctions can be paired, layered, or rendered idiomatically.
 - **Acts 10:38:** ὑπὸ τοῦ διαβόλου = “by the devil”; article and noun are separate components of the prepositional phrase.
 - **Acts 21:8:** εἰς τὸν οἶκον = “into the house”; distinguish preposition, article, and noun.
 - **2 Peter 2:9:** εἰς ἡμέραν = “to a day”; distinguish this preposition from the later infinitive τηρεῖν, “to keep”.
+- **Romans 16:20:** ἐν τάχει is the idiom “quickly”. The preposition ἐν and noun τάχει jointly express one English adverb; the shadow review now proposes a phrase-member link from ἐν to the same YLT token already linked to τάχει.
+- **Luke 2:39:** ἅπαντα τὰ κατὰ τὸν νόμον κυρίου is rendered “all things, according to the Law of the Lord”. The article τὰ substantivizes the following phrase; YLT “things” is a phrase-level rendering, not a lexical gloss for the article alone.
 
 **Rule:** inspect the complete phrase. Do not let a nearby repeated preposition or later infinitive capture the wrong English token.
 
@@ -141,6 +143,7 @@ As of 2026-11-06:
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
+- Current shadow review counts: 521 proposed, 20 not_expressed, and 11 unresolved alignment rows; 479 proposed, 31 pending, and 25 legacy-overlap rows in the Greek-token review table.
 - 19 Robinson variant groups remain unresolved.
 - 502 YLT token review cases remain pending.
 - The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
