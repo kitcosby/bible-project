@@ -75,36 +75,37 @@ The five reviewed verse-text groups and thirteen not-applicable subscriptions ac
 
 ## E. Sequence materialization boundary
 
-The five reviewed choices have now been materialized in the YLT candidate sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The shadow sequence table now contains 2,444 Greek sequence-word rows and 3,171 YLT token rows, including the five new verse sequences. The stored YLT verse text was hash-checked and inherited Greek tokens were cross-checked against production positions. 1 John 2:23 branch B adds the eight-token bracketed confession clause.
+The five originally reviewed choices remain materialized in the YLT candidate sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The shadow sequence now contains 2,445 Greek sequence-word rows and 3,171 YLT token rows.
 
-Revelation 7:3 remains excluded while its branch is unresolved; do not infer a choice from the inherited KJV candidate sequence. The remaining materialization boundary is therefore one verse-text case, not six. See [the materialization and contextual review report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md) and the [2026-11-07 final shadow validation](FINAL_VALIDATION_AFTER_DISPOSITION_RECONCILIATION_20261107.txt).
+A subsequent Revelation 7:2 review proposed YLT branch B for group 66:8 (ἀναβαίνοντα, present participle, “going up”), created seven phrase groups, and added a stable cross-verse anchor from YLT “saying” at the end of 7:2 to Greek λέγων at the start of 7:3. The exact-edition caveat remains: Stephanus 1550 and Beza 1598 read branch A, while Scrivener 1894 and several other witnesses read branch B. See [the Revelation 7:2 dense phrase and variant report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+Revelation 7:3 group 66:9 remains unresolved. Only the stable λέγων anchor at position 1 is materialized in the YLT candidate sequence; the rest of 7:3 is deliberately withheld pending a source-reading decision. Do not infer a choice from the inherited KJV candidate. See the [current v15 validation](FINAL_VALIDATION_AFTER_REVELATION_7_2_20261107.txt).
 
 ## F. Provenance and change control
 
 - Raw branch payloads and source/parser provenance remain in textual_variant_group and textual_variant_branch.
-- Only the YLT profile's profile_variant_selection rows were updated for these 18 decisions.
-- The Robinson raw-source profile and CrossWire/KJV candidate profile were not changed.
-- The five selected YLT-profile verse sequences were materialized in a later shadow-only milestone. The Revelation 7:3 sequence remains unmaterialized pending independent textual review.
-- No YLT/Greek alignment endpoints, legacy associations, production tables, embeddings, vectorizer settings, API, merge, or deployment were changed.
-- The current selection snapshot is [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
+- The original 18 decisions from the 19-group review updated only the YLT profile's profile_variant_selection rows; the Robinson raw-source profile and CrossWire/KJV candidate profile were not changed.
+- The later Revelation 7:2 update proposes YLT branch B for group 66:8 and records phrase/cross-verse alignments only in the isolated shadow profile. The KJV candidate remains on branch A.
+- Revelation 7:3 group 66:9 remains unresolved; only the stable cross-verse anchor is materialized.
+- No production DDL/DML, legacy rendering, embeddings, vectorizer settings, API, merge, or deployment changes occurred.
+- The current full selection snapshot is [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv).
 
 The controlling principle is to separate verse text from subscription paratext, preserve every raw branch, and leave a translation-insensitive Greek distinction unresolved.
 
+## G. Current profile-wide YLT selection status (2026-11-07, v15)
 
-## G. Current profile-wide YLT selection status (2026-11-07, v14)
-
-The full YLT profile selection ledger now contains 261 rows:
+The full YLT profile selection ledger contains 261 rows:
 
 | Decision status | Current count |
 |---|---:|
-| inherited_provisional | 221 |
-| proposed | 8 |
+| inherited_provisional | 220 |
+| proposed | 9 |
 | reviewed_against_translation | 17 |
 | not_applicable_to_verse_alignment | 14 |
 | unresolved | 1 |
 | **Total** | **261** |
 
-The eight proposed branch selections are:
+The nine proposed branch selections are:
 
 | Reference | Group | Branch | Basis |
 |---|---|---|---|
@@ -115,6 +116,9 @@ The eight proposed branch selections are:
 | 2 Corinthians 7:12 | 47:4 | B | YLT “our” |
 | 2 Corinthians 7:12 | 47:5 | B | YLT “your” |
 | 2 Corinthians 11:10 | 47:7 | B | YLT “shall be stopped” |
+| Revelation 7:2 | 66:8 | B | YLT “going up”; present participle ἀναβαίνοντα is the closer phrase match, but Young’s exact Greek edition remains unconfirmed |
 | Revelation 9:20 | 66:18 | A | YLT “neither did reform”; Received-Text basis and Stephanus 1550 / Beza 1598 reading οὔτε; exact edition remains unconfirmed |
 
-The Revelation 9:20 proposal is intentionally not described as a final textual decision. The Robinson source parser represents οὔτε/οὐ; external apparatus also records οὐδέ. The current 261-row export preserves all YLT profile selections, inherited statuses, rationale, and evidence: [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv). The full shadow validation is [FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt](FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt). See the [Revelation 9:20 branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md).
+The Revelation 7:2 and Revelation 9:20 selections are proposals, not final textual decisions. The current 261-row export preserves all YLT profile selections, inherited statuses, rationale, and evidence: [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv). The [v15 full validation](FINAL_VALIDATION_AFTER_REVELATION_7_2_20261107.txt) passed. See the [Revelation 7:2 case report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [Revelation 9:20 branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md).
+
+Revelation 7:3 group 66:9 remains the single unresolved YLT-profile variant selection. The translation “till we may seal” does not reliably distinguish the present from the aorist subjunctive.
