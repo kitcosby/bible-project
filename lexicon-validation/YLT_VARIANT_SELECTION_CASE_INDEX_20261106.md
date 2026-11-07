@@ -83,7 +83,7 @@ The current ylt_profile_shadow.gnt_sequence_word table contains 2,367 rows acros
 - 1 John 2:23
 - Revelation 7:3
 
-This is an intentional coverage boundary, not evidence that the selected branches were already materialized. The five reviewed choices are stored in profile_variant_selection only. The Revelation 7:3 sequence remains excluded while its branch is unresolved. The next sequence-build milestone should add the five reviewed verses using the exact selected Robinson branches, then validate the resulting positions against the stored YLT verse text. Do not create alignment rows against an unmaterialized sequence.
+The five reviewed choices are now materialized in the YLT candidate sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The stored YLT verse text was hash-checked and inherited Greek tokens were cross-checked against production positions. 1 John 2:23 branch B adds the eight-token bracketed confession clause. The Revelation 7:3 sequence remains excluded while its branch is unresolved; do not infer a choice from the inherited KJV candidate sequence. See [the materialization and contextual review report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md).
 
 ## F. Provenance and change control
 
