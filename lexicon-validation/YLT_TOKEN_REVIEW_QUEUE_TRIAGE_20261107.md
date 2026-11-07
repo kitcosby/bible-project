@@ -218,10 +218,19 @@ Full shadow validation passed after Acts 26:20 and the subsequent Revelation 9:2
 Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
 
 
-## Latest status update after Revelation 7:2 review (2026-11-07)
+## Previous status update after Revelation 7:2 review (superseded by Acts 4:32)
 
 The current YLT token-review queue now contains **446 pending tokens across 116 verses**. The current token-review status totals are **574 proposed, 446 pending_review, 46 legacy_overlap_review, and 2,105 legacy_only**. Of the pending rows, **432** retain the generic discovery reason and **14** are annotated grammatical/variant cases.
 
 The Revelation 7:2 review moved nine YLT tokens to proposed alignments. Two additional English articles (“the” before “rising” and “a” before “seal”) have alignment-level `not_expressed` dispositions but remain pending in the YLT token table because that table has no `not_expressed` status. Three legacy overlaps were preserved. See the [Revelation 7:2 report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
 
 The current row-level export is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) (446 rows). The current stratification report is [YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md). The full [v15 shadow validation](FINAL_VALIDATION_AFTER_REVELATION_7_2_20261107.txt) passes; production row counts and all 31,102 stored embeddings remain unchanged.
+
+
+## Latest status update after Acts 4:32 review (2026-11-07)
+
+The current YLT token-review queue now contains **437 pending tokens across 116 verses**. Current token-review status totals are **583 proposed, 437 pending_review, 47 legacy_overlap_review, and 2,104 legacy_only**. The pending queue contains **422 generic discovery rows and 15 annotated grammatical/variant cases**.
+
+The Acts 4:32 review moved nine YLT tokens to proposed phrase-member alignments. The remaining “who” token has an explicit alignment-level `not_expressed` disposition because Greek τῶν πιστευσάντων is a substantival articular participle and has no separate relative pronoun; the token-review table has no `not_expressed` status, so it remains pending_review. A possible αὐτῷ→“he” link was retained as legacy_overlap_review, preserving the original legacy associations. See the [Acts 4:32 case report](ACTS_4_32_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+The current row-level export is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) (437 rows). The current stratification report is [YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md). The full [v16 shadow validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt) passes with 88 alignment groups and 684 alignment rows; production row counts and all 31,102 stored embeddings remain unchanged.
