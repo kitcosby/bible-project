@@ -135,5 +135,6 @@ The five newly materialized verses have a separate [46-row contextual alignment 
 
 ## Additional YLT-token phrase cases (2026-11-07)
 
+- [Acts 15:32 variant-sensitive particle case](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md): stable καί → “and” is proposed; branch-specific τε/δέ remains unresolved.
 - [Revelation 9:20](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md): 16 pending English tokens in one verse illustrate finite-verb auxiliaries, subjunctive translation, five repeated article-plus-adjective phrases, a supplied copula, and English infinitive markers. The report proposes phrase-level treatment but has not yet inserted new alignment rows.
 - [YLT token queue triage](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md): current 499-row pending queue across 116 verses, 495 generic discovery rows, and four annotated exceptions.
