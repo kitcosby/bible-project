@@ -162,7 +162,7 @@ The 19 YLT-profile variant groups initially marked unresolved have now been clas
 
 ## Variant-dependent particle case: Acts 15:32
 
-The YLT wording is “Judas also and Silas”. Robinson variant group 44:19 contains branch A τε and branch B δέ. The Robinson source is unselected; CrossWire/KJV selected B algorithmically, and the YLT candidate inherited B provisionally. This inherited sequence is not a YLT editorial decision. The καί at position 3 is stable in both branches and is proposed to YLT “and” (token 3). The particle at position 2 and YLT “also” (token 2) remain unresolved pending independent evidence of the YLT source reading. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+The YLT wording is “Judas also and Silas”. Robinson variant group 44:19 contains branch A τε and branch B δέ. The Robinson source is unselected; CrossWire/KJV selected B algorithmically, and the YLT candidate inherited B provisionally. This inherited sequence is not a YLT editorial decision. The καί at position 3 is stable in both branches and is proposed to YLT “and” (token 3). The YLT-specific review now favors branch A=τε for position 2 → “also” with moderate confidence, based on the wording and pre-1888 Stephanus/Beza edition evidence. The exact exemplar remains unidentified; the current inherited shadow branch B has not yet been changed pending dependency review. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
 
 ## Proposed-alignment counts across status layers
 
