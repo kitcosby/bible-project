@@ -300,5 +300,6 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 - [YLT variant-selection case index](lexicon-validation/YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — classifies the 19 formerly unresolved groups into five YLT-reviewed verse-text choices, 13 subscription/colophon exclusions, and one unresolved reading.
 - [Current YLT variant selection CSV](lexicon-validation/YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv) — machine-readable record of all 19 decisions.
 - [Read-only variant decision validator](lexicon-validation/validate_ylt_variant_decisions.py) — verifies branch choices, paratext exclusions, unresolved Revelation 7:3, sequence coverage boundary, and production baselines.
+- [YLT shadow validation report](lexicon-validation/YLT_PROFILE_SHADOW_VALIDATION_REPORT_20261106.md) — consolidated current counts, integrity results, variant status, and production-preservation checks.
 
 These are working research documents on the validation branch. They do not authorize production changes.
