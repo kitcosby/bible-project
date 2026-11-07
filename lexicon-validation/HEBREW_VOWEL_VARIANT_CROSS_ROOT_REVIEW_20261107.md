@@ -1,7 +1,7 @@
 # Hebrew/Aramaic vowel-only variants — cross-root member review
 
 **Date:** 2026-11-07  
-**Status:** Read-only member-level review completed for all three three-root cases and six prioritized batches of 15 additional cross-root groups (93 distinct groups total). The subsequent isolated shadow build is documented in §10.
+**Status:** Read-only member-level review completed for all three three-root cases and seven prioritized batches of 15 additional cross-root groups (108 distinct groups total). The subsequent isolated shadow build is documented in §10.
 **Parent evidence:** [Live inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md), [schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md).
 
 ## 1. Scope and safeguards
@@ -337,3 +337,35 @@ The member evidence was drawn from stored Strong's values, morphology codes, roo
 - 279 remain pending member review.
 - All groups remain candidate-only; no group has been approved as a lexical equivalence.
 - Production data and the existing embedding/vectorizer corpus were not modified.
+
+
+## 15. Batch 7 — 15 additional high-risk groups
+
+Batch 7 was queried in an explicitly read-only transaction against the isolated `bible_hebrew_variant_shadow_20261107` database. Member evidence includes exact pointed forms, root/form assignments, stored Strong's values, morphology codes, occurrence counts, and sample verse references.
+
+| Signature | Existing member distinction | Sample references / caution |
+|---|---|---|
+| `על֑ה` | verbal “go up” (H5927), foliage/leaf (H5929), and burnt offering (H5930) | 2 Samuel 2:1; Isaiah 1:30; Leviticus 15:15, 15:30. |
+| `רגל֖י` | “my feet” (H7272) versus proper name Ragli (H7273) | 2 Samuel 22:34; Isaiah 60:13; Judges 20:2; 1 Samuel 25:41. |
+| `אחי֙` | “my brother” (H251) versus a proper-name/root assignment (H277) | 2 Samuel 1:26; Genesis 27:11; 1 Chronicles 5:15, 20:5. One member key itself carries both H251 and H277 across occurrences; retain as a data-quality flag. |
+| `אתּם֮` | “with them” (H854) versus “you” (H859) | Daniel 1:19; Genesis 43:16; Jeremiah 26:15; Leviticus 20:24. |
+| `בּע֖ד` | preposition “on behalf of/for” (H1157) versus prefixed “in/with/by” + “while” (H5704) | Genesis 26:8; Jeremiah 42:2; Proverbs 7:6; Psalms 39:2. |
+| `הֽעל֔ה` | verbal “bring up” (H5927) versus “the burnt offering” (H5930) | Habakkuk 1:15; Leviticus 6:5; 2 Chronicles 20:34; Judges 6:28. |
+| `הע֤יר` | “awaken/stir up” (H5782) versus “the city” (H5892) | Ezra 1:5; 2 Chronicles 6:34; Jeremiah 38:18; Zephaniah 2:15. |
+| `העבר֖ים` | Hebrews (H5680/H5682) versus Abarim (H5863) | Exodus 5:3; Numbers 27:12; 33:44, 33:47. |
+| `העל֛ה` | “bring up” (H5927) versus “the burnt offering” (H5930) | 1 Samuel 12:6; Jeremiah 16:14; 23:7; 1 Chronicles 16:40. |
+| `והֽעלה֙` | “and he brought up” (H5927), “and the leaf” (H5929), and article + participial forms (H5927) | Exodus 25:37; Jeremiah 8:13; Jeremiah 48:44; Ezekiel 20:32. |
+| `כּל֥ב` | Caleb (H3612) versus “like the heart” (H3820) | Joshua 14:6; 2 Samuel 17:10; Ezekiel 28:2, 28:6. |
+| `כּלּ֣ה` | “finish/complete” (H3615) versus “all of it” (H3605) | Genesis 24:15, 27:30; Isaiah 16:7; Jeremiah 48:38. |
+| `מא֧ת` | “hundred” (H3967) versus “from/with” (H854) | Exodus 38:27; Genesis 23:15; Deuteronomy 2:8; Jeremiah 52:34. |
+| `מימ֣י` | “from the days of” (H3117) versus “waters of” (H4325) | Ezra 9:7; Jeremiah 36:2; 2 Kings 5:12; Exodus 8:2. |
+| `מלּ֣א` | “fill/fulfil” (H4390) versus the place-name Millo (H3810) | Isaiah 33:5; Job 22:18; Psalms 83:17; 2 Samuel 17:27. |
+
+These findings demonstrate lexical and morphological divergence under the strict vowel-stripped signature. They are member-level database observations, not exhaustive contextual adjudications or approval to merge roots, Strong's values, morphology, or lexicon records. The within-member H251/H277 variation under `אחי֙` is specifically retained as a source-data flag rather than “corrected” by this cross-reference project.
+
+### Updated review status
+
+- 108 of 372 cross-root groups have member-level review notes (three three-root cases plus seven batches of 15).
+- 264 remain pending member review.
+- All groups remain candidate-only; no group has been approved as a lexical equivalence.
+- Batch 7 used the isolated shadow snapshot read-only; production data and the existing embedding/vectorizer corpus remain untouched.
