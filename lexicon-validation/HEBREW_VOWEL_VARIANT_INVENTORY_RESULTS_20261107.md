@@ -93,3 +93,17 @@ The current evidence supports a dedicated, explicit variant-group/member relatio
 The group/member relation should cover all 3,349 candidate groups for explicit, uniform lookup, even though 2,977 groups are already siblings beneath one root/form parent. The 372 cross-root/form groups are the cases that cannot be linked by the existing root/form hierarchy alone.
 
 Before any database write, review the full CSV in batches, especially groups with multiple root/form parents, and validate morphology/Strong's/lexicon associations. The next implementation step should be a reversible shadow-only prototype and validator, not a production migration.
+
+
+The corpus contains one Hebrew row with an empty `pointed` value. It was included in the 264,217 rows-scanned total but excluded from signature formation.
+
+Additional cross-root/form examples from the highest-occurrence groups:
+
+| Shared pointed-form signature | Root/form IDs | Occurrences | Existing root entries |
+|---|---|---:|---|
+| `אֲדֹנִ֣י`, `אֲדֹנֵ֣י`, `אֲדֹנָ֣י`, `אַדְנֵ֣י` | `256.2`, `257.1` | 217 | `אדנ`, `אדני` |
+| `אֱלֹהֵ֣י`, `אֱלֹהַ֣י` | `2051.6`, `2052.1` | 179 | `אלה`, `אלהי` |
+| `בְּנִ֣י`, `בְּנֵ֣י`, `בָּנִ֣י`, `בָּנַ֣י` | `6105.5`, `6627.1` | 396 | `בנ`, `בני` |
+| `לְפָנַ֣י`, `לִפְנֵ֣י` | `25056.11`, `25172.47` | 216 | `פנ`, `פני` |
+
+The root-entry labels above are the database's existing root keys, not a linguistic adjudication. These cases demonstrate why the variant relation must point to existing form records rather than merge root entries: the same strict surface consonants can be parsed into different base/root structures.
