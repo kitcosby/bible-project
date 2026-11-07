@@ -54,6 +54,8 @@ No legacy or production rows were changed by this contextual review. Earlier sha
 
 ## B. Original 39 Greek-token review rows: historical post-eight-proposal snapshot: 31 pending, 8 proposed
 
+The following rows preserve the original review-set snapshot. For current status, use the 2026-11-07 dual-status export; in particular, Acts 21:8 περί is no longer a wholly unlinked candidate but a phrase-group member under legacy-overlap review.
+
 These 39 rows were captured from the isolated YLT-profile review queue at the initial review point. Eight now have shadow-only proposed alignments and 31 remain pending. The table retains the original contextual cues; the latest CSV is authoritative for current row-level status. Proposed rows are not accepted production mappings. The 39 positions are listed in canonical book/verse/sequence order.
 
 | Reference | Greek position | Greek form | Strong's | Morphology | Initial review cue |
@@ -73,7 +75,7 @@ These 39 rows were captured from the isolated YLT-profile review queue at the in
 | Acts 15:32 | 2 | δέ | G1161 | CONJ | Discourse connective; may be absorbed into YLT clause. |
 | Acts 19:27 | 7 | τό | G3588 | T-ASN | Check exact surface/context; do not infer from article form alone. |
 | Acts 19:27 | 27 | τήν | G3588 | T-ASF | Article in object phrase; YLT “her greatness” uses possessive construction. |
-| Acts 21:8 | 6 | περί | G4012 | PREP | Preposition in “those about Paul”; idiomatic phrase boundary. |
+| Acts 21:8 | 6 | περί | G4012 | PREP | Phrase member in οἱ περὶ τὸν Παῦλον → YLT “Paul and his company”; candidate contribution to “company” is retained in legacy-overlap review because the legacy “company” token points to positions [7,8]. See the 2026-11-07 phrase review. |
 | Acts 22:25 | 14 | εἰ | G1487 | COND | Conditional particle “if”; clause segmentation determines link. |
 | Acts 22:25 | 17 | καί | G2532 | CONJ | Coordinating conjunction within quoted question; inspect YLT syntax. |
 | Acts 26:18 | 29 | τῇ | G3588 | T-DSF | PROPOSED, moderate: τῇ introduces the attributive phrase rendered “that is toward me”; phrase-member link to “that”. |
