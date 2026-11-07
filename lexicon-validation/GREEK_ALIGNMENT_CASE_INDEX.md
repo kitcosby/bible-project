@@ -182,7 +182,11 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 
 - [Live Hebrew/Aramaic vowel-only candidate inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md): the read-only PostgreSQL scan processed 264,217 canonical word rows and found 3,323 Hebrew and 26 Aramaic candidate groups, mapping to 7,148 member keys and 32,676 occurrences. A total of 372 groups span multiple `root_form` parents. The separate `word_variants` apparatus contains 1,204 MT Qere rows, not included in this canonical inventory.
 
-- [Hebrew vowel-only variant schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md): proposes a reversible group/member relation referencing existing `root_vowel` keys, with validators and explicit no-merge safeguards. Proposal only; no database changes.
+- [Hebrew vowel-only variant schema and isolated prototype](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md): the language-scoped group/member design is implemented in a dedicated shadow database, with composite constraints on language, algorithm version, and source snapshot. Production remains unchanged.
+
+- [Shadow build results](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md): a verified 187 MB custom-format source dump (SHA-256 recorded) was restored into `bible_hebrew_variant_shadow_20261107`. The builder inserted 3,349 groups and 7,148 language-scoped members; the independent validator passed exact inventory/member comparison, source-table row-count parity, lexicon/root-vowel resolution, language-scope checks, and Qere separation. The existing Greek bridge test DB was not reused.
+
+- Reproducible shadow scripts: [builder](build_hebrew_variant_shadow.py) and [independent read-only validator](validate_hebrew_variant_shadow.py). The validator confirms 7,145 unique root-vowel keys across 7,148 language-scoped membership rows; three keys are members in both candidate populations. Eight cross-root member keys have occurrences in both language populations, though only three are members in both candidate populations.
 
 - [Cross-root member review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md): records member-level inspection of all three three-root groups and the 15 highest-occurrence cross-root groups. The examples include distinct roots, Strong's values, morphology patterns, and affix analyses under identical non-vowel signatures. This confirms that the relation is an orthographic cross-reference, not a lemma or translation-equivalence key.
 
