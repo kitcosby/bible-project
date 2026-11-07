@@ -290,7 +290,8 @@ The YLT lexicon validation work includes a companion field guide and case index 
 - [39-case contextual notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammatical assessments and proposal rationales.
 - [Greek token disposition audit](lexicon-validation/GREEK_TOKEN_ALIGNMENT_DISPOSITION_AUDIT_20261107.md) and [dual-status queue](lexicon-validation/GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv) — 20 additional confidence reviews, four orphaned proposed-status reconciliations, the Acts 21:8 phrase group, and the Acts 15:32 branch-dependent connective review; 32 alignment-level not_expressed dispositions (27 high, five moderate) and one genuinely unresolved particle.
 - [Revelation 9:20 dense phrase-alignment case](lexicon-validation/REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) — 16 pending YLT tokens across finite-verb auxiliaries, subjunctive phrasing, five substantival-adjective phrases, supplied copula, and infinitive markers.
-- [YLT token-review queue triage and corner cases](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md) — 503 pending tokens, book/verse concentration, and three explicit grammatical-supply cases that should not be forced into Greek token links.
+- [YLT token-review queue triage and corner cases](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md) — 499 pending tokens across 116 verses, 495 generic discovery cases, and four annotated exceptions.
+- [YLT pending queue stratification](lexicon-validation/YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) — surface frequencies, current status counts, and suggested review batches.
 - [Acts 21:8 “Paul and his company” phrase review](lexicon-validation/ACTS_21_8_PAUL_COMPANY_PHRASE_REVIEW_20261107.md) — phrase-member candidates and preserved legacy overlap.
 - [Acts 15:32 δέ/τε + καί variant review](lexicon-validation/ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md) — stable καί → “and” proposal; branch-dependent particle remains unresolved.
 - [Latest v10 shadow validator](eval/validate_ylt_profile_shadow_context_review_20261107.py) and [final validation output](lexicon-validation/FINAL_VALIDATION_AFTER_DISPOSITION_RECONCILIATION_20261107.txt).
@@ -301,7 +302,8 @@ The YLT lexicon validation work includes a companion field guide and case index 
 - [Fourteen phrase-group definitions](lexicon-validation/FIVE_VERSE_CONTEXTUAL_ALIGNMENT_GROUPS_20261106.csv) — preserves the multi-token and phrase-level relationships.
 - [Final shadow validation output](lexicon-validation/FINAL_VALIDATION_AFTER_CONTEXT_REVIEW_20261106.txt) and [reproducible validator](eval/validate_ylt_profile_shadow_context_review_20261106.py).
 - [Initial 45-token YLT pending snapshot](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) — historical queue before contextual alignment review.
-- [Current YLT pending queue](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — all 505 pending YLT tokens.
+- [Current YLT pending queue](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) — all 499 pending YLT tokens.
+- [Historical YLT pending queue snapshot](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — 505 pending tokens at the earlier export.
 - [Eight remaining YLT pending tokens in the five new verses](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_PENDING_20261106.csv) — current residual after contextual proposals.
 - [Post-eight-proposal queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv) and [reconciled queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — provenance and both review-status layers.
 - [Function-word alignment milestone](lexicon-validation/FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 267 positions across 116 verse contexts; 228 candidate direct/phrase proposals and 39 retained cases.
