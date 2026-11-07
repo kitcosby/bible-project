@@ -134,23 +134,27 @@ Four YLT token-review rows already had proposed alignment endpoints but still ca
 The 499-row distribution above is a historical snapshot and should not be treated as the current pending queue. Revelation 9:20 was reviewed as a dense phrase case: 15 tokens received proposed phrase-member links, and “are” received an alignment-level not_expressed disposition while remaining token-table pending because the token-review schema has no not_expressed status. Current YLT-token counts are 536 proposed, 484 pending_review, 42 legacy_overlap_review, and 2,109 legacy_only. See the [Revelation 9:20 case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and [v12 final validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt).
 
 
-## Current queue status after Revelation 9:20 (2026-11-07)
+## Current queue status after Acts 19:27 (2026-11-07)
 
-The current YLT-profile token-review queue contains **484 pending tokens across 116 verses**. Reason counts are:
+The current YLT-profile token-review queue contains **474 pending tokens across 116 verses**. Reason counts:
 
 | Reason | Count |
 |---|---:|
-| No direct proposal identified in this review set | 479 |
+| No direct proposal identified in this review set | 466 |
 | Branch-dependent “also” (Acts 15:32) | 1 |
 | Supplied copula “be” (Romans 16:27) | 1 |
 | Supplied English article “the” (Romans 16:27) | 1 |
 | Supplied subject pronoun “he” (1 John 2:23) | 1 |
 | Supplied copula “are” (Revelation 9:20; alignment-level not_expressed) | 1 |
+| Supplied article “the” (Acts 19:27; alignment-level not_expressed) | 1 |
+| Supplied copula “is” (Acts 19:27; alignment-level not_expressed) | 2 |
 
-Current YLT-token status totals: **536 proposed, 484 pending_review, 42 legacy_overlap_review, 2,109 legacy_only**. Current pending counts by book: Acts 101; Luke 54; Matthew 49; Revelation 34; Colossians 33; Mark 30; John 25; 1 Corinthians 21; Romans 20; 2 Corinthians 17; Hebrews 16; 1 Timothy 15; 1 Thessalonians 12; Philippians 12; 2 Peter 10; James 8; Jude 6; 1 Peter 5; 1 John 4; 2 John 4; 2 Timothy 3; Titus 3; Philemon 2.
+Current YLT-token status totals: **546 proposed, 474 pending_review, 43 legacy_overlap_review, 2,108 legacy_only**. Current pending counts by book: Acts 91; Luke 54; Matthew 49; Revelation 34; Colossians 33; Mark 30; John 25; 1 Corinthians 21; Romans 20; 2 Corinthians 17; Hebrews 16; 1 Timothy 15; 1 Thessalonians 12; Philippians 12; 2 Peter 10; James 8; Jude 6; 1 Peter 5; 1 John 4; 2 John 4; 2 Timothy 3; Titus 3; Philemon 2.
 
-The largest remaining verse clusters are Acts 19:27 (13), 1 Corinthians 5:11 (12), Acts 26:20 (11), Revelation 7:2 (11), Acts 4:32 (10), Acts 21:8 (10), and Acts 22:25 (9). Revelation 9:20 is no longer the largest pending cluster; only the supplied “are” remains pending at token-review level.
+The largest remaining verse clusters are 1 Corinthians 5:11 (12), Acts 26:20 (11), Revelation 7:2 (11), Acts 4:32 (10), Acts 21:8 (10), and Acts 22:25 (9). Acts 19:27 now has three pending tokens at token-review level; these are supplied English article/copula cases with alignment-level not_expressed dispositions.
 
-The 479 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
+The 466 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
 
-Full shadow validation passed after the Revelation 9:20 update. The schema-only shadow backup is recorded in the companion case report. Production tables, embeddings, vectorizer, API, and deployment remain unchanged.
+Full shadow validation passed after the Acts 19:27 update. See the [Acts 19:27 case report](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_ACTS_19_27_20261107.txt), and refreshed [474-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+
+Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
