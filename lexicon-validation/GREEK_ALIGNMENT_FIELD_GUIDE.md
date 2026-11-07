@@ -156,11 +156,12 @@ As of 2026-11-06:
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
 - The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
 - Current shadow review counts: 521 proposed, 20 not_expressed, and 11 unresolved alignment rows; 479 proposed, 31 pending, and 25 legacy-overlap rows in the Greek-token review table.
-- 19 Robinson variant groups remain unresolved.
+- The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved.
+- The five selected verse-text branches and the unresolved Revelation 7:3 case are not materialized in the current 116-verse sequence fixture. Do not align against those six references until the selected sequences are built and validated.
 - 502 YLT token review cases remain pending.
 - The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
 
-See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases and the corrected 31-row pending queue.
+See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the 31-row pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
 
 ## Non-goals and cautions
 
