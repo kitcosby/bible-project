@@ -289,6 +289,8 @@ The YLT lexicon validation work includes a companion study guide for interpretin
 - [Original Greek token review queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) — historical snapshot of the original 39 cases before the eight shadow proposals.
 - [Current pending Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — exact 31 rows still pending in the shadow database, including token-review and alignment-review statuses.
 - [39-case contextual review notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammar/phrase assessments, including the eight proposals and the 31 still-pending cases.
+- [267-position function-word review milestone](lexicon-validation/FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 228 candidate direct/phrase alignments and 39 retained cases across 116 verse contexts.
+- [Complete function-word review bundle index](lexicon-validation/FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) — review categories, disposition counts, and overlap cautions.
 - [Reconciled Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — pre-correction alignment status/confidence and provenance for all 39 rows.
 - [Intermediate Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — snapshot after the Acts 5:12 proposal (38 pending, one proposed).
 - [Intermediate Greek token queue CSV](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv) — snapshot after six proposals (33 pending, six proposed).
