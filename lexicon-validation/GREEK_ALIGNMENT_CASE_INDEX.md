@@ -137,5 +137,6 @@ The five newly materialized verses have a separate [46-row contextual alignment 
 
 - [Acts 15:32 variant-sensitive particle case](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md): stable καί → “and” is proposed; branch-specific τε/δέ remains unresolved.
 - [Revelation 9:20](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md): 16 originally pending English tokens; 15 now have phrase-member proposals across 10 groups, while the supplied copula “are” is alignment-level not_expressed. Legacy links were preserved.
-- [YLT token queue triage](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md): current 484-row pending queue across 116 verses, 479 generic discovery rows, and five annotated grammatical/variant cases.
-- [Latest full shadow validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt): 44 phrase groups, 621 alignment rows, and unchanged production row/embedding counts.
+- [Acts 19:27](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md): 13 originally pending tokens; 10 received phrase-member proposals, three supplied English article/copula tokens are alignment-level not_expressed, and a prior εἰς→“to” candidate was corrected to εἰς→“for”. The “be” legacy conflict and δέ/τε variant dependency are preserved.
+- [YLT token queue triage](YLT_TOKEN_REVIEW_QUEUE_TRIAGE_20261107.md): current 474-row pending queue across 116 verses, 466 generic discovery rows, and eight annotated grammatical/variant cases.
+- [Latest full shadow validation](FINAL_VALIDATION_AFTER_REVELATION_9_20_20261107.txt): 56 phrase groups, 635 alignment rows, and unchanged production row/embedding counts.
