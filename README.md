@@ -285,13 +285,16 @@ flowchart TB
 The YLT lexicon validation work includes a companion field guide and case index for difficult Greek-to-YLT token and phrase alignments. These are research documents; shadow proposals are not production approvals.
 
 - [YLT–Greek Alignment Field Guide](lexicon-validation/GREEK_ALIGNMENT_FIELD_GUIDE.md) — review method, recurring grammatical/phrase corner cases, and variant-aware safeguards.
-- [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases and the original 39-case token-review set (31 pending, eight proposed).
+- [YLT–Greek Alignment Case Index](lexicon-validation/GREEK_ALIGNMENT_CASE_INDEX.md) — 20 contextualized legacy-overlap cases, the historical 39-case subset, and the expanded current review queues.
 - [Full 20-case positional-divergence report](lexicon-validation/LEGACY_POSITIONAL_DIVERGENCE_DECISIONS_20261106.md) — complete verse/Greek context, legacy position evidence, and classifications.
 - [39-case contextual notes](lexicon-validation/GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) — full-verse grammatical assessments and proposal rationales.
-- [Original 39-case queue snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv) and [current 31-row pending queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — separate historical and current status snapshots.
+- [Original 39-case queue snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_20261106.csv), [historical 39-case post-proposal snapshot](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), and [current 61-row pending queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_PENDING_20261106.csv) — distinct historical and current status snapshots.
+- [Current Greek pending queue (CSV)](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) — all 61 pending Greek positions after the five new verse materializations.
+- [Five-verse YLT sequence materialization report](lexicon-validation/FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md) — John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23; shadow-only changes and validation results.
+- [45 newly pending YLT tokens](lexicon-validation/YLT_TOKEN_REVIEW_QUEUE_FIVE_NEW_VERSES_20261106.csv) — token-level queue added by those five verses.
 - [Post-eight-proposal queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv) and [reconciled queue](lexicon-validation/GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv) — provenance and both review-status layers.
 - [Function-word alignment milestone](lexicon-validation/FUNCTION_WORD_ALIGNMENT_MILESTONE_20261106.md) — 267 positions across 116 verse contexts; 228 candidate direct/phrase proposals and 39 retained cases.
 - [Complete function-word review bundle index](lexicon-validation/FUNCTION_WORD_ALIGNMENT_COMPLETE_REVIEW_BUNDLE_20261106.md) — review dispositions and legacy-overlap cautions.
-- [YLT variant-selection case index](lexicon-validation/YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — 19 formerly unresolved groups, with the remaining Revelation 7:3 distinction left open.
+- [YLT variant-selection case index](lexicon-validation/YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) — 19 formerly unresolved groups: five verse-text selections now materialized, 13 paratext exclusions, and Revelation 7:3 still unresolved.
 
-These materials preserve the distinction between the 39-case shadow queue and the separate 267-position function-word review. No production database, legacy alignment, embeddings, vectorizer, API, or deployment changes are included in this documentation set.
+These materials preserve the distinction between the original 39-case review subset and the separate 267-position function-word review. The current shadow database now has 61 pending Greek token rows and 547 pending YLT token rows. No production database, legacy alignment, embeddings, vectorizer, API, or deployment changes were made.
