@@ -119,3 +119,23 @@ A second read-only validation joined every candidate occurrence to `root_vowel` 
 - Candidate member keys with a corresponding `lexicon` row: **7,148; 0 missing**.
 
 There are 7,124 distinct NFC pointed forms but 7,148 root-vowel keys because the same pointed form can occur under more than one root/form assignment. This confirms that a group/member relation can safely reference existing `root_vowel` keys while preserving each existing lexicon record; it does not justify merging those records.
+
+
+### Cross-root group complexity
+
+The 372 cross-root/form groups break down as follows:
+
+- 367 Hebrew groups span exactly two root entries.
+- 3 Hebrew groups span exactly three root entries.
+- 2 Aramaic groups span exactly two root entries.
+- No cross-root/form candidate in this inventory spans more than three root entries.
+
+The three Hebrew groups spanning three root entries include:
+
+| Pointed forms | Root/form IDs | Occurrences |
+|---|---|---:|
+| `לִבְנִ֥י`, `לִבְנֵ֥י` | `17764.1`, `6105.28`, `6627.44` | 56 |
+| `לְבָנַ֖י`, `לִבְנִ֖י`, `לִבְנֵ֖י` | `17764.1`, `6105.28`, `6627.44` | 11 |
+| `לְכָ֔ה`, `לֵכָ֔ה` | `14608.6`, `17908.2`, `17918.1` | 4 |
+
+These are high-priority manual-review cases because one strict surface signature crosses several existing root entries. Preserve all existing root and lexicon records; the proposed relation is a cross-reference, not a normalization.
