@@ -202,3 +202,10 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 The read-only member-level review now covers 93 of 372 cross-root candidate groups: all three three-root cases plus six prioritized batches of 15. There are 279 pending groups. Batch 5 and batch 6 findings are recorded in [the cross-root review report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md); the [complete 372-group index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv) records the review status and batch for each group.
 
 The review is not lexical approval. Candidate groups remain orthographic cross-references only; distinct Strong's, morphology, root assignments, and contextual senses are preserved. Qere/Ketiv apparatus readings remain outside this relation. The isolated shadow database remains separate from production.
+
+
+## Hebrew vowel-only variant cross-root review — batch 7 update
+
+The member-level review now covers 108 of 372 cross-root candidate groups: all three three-root cases plus seven prioritized batches of 15. There are 264 pending groups. Batch 7 is documented in [the cross-root review report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md), and the [372-group CSV index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv) records each group's review status and batch. The `אחי֙` batch-7 group also exposes a Strong's-value inconsistency within one existing member key (H251/H277); this remains a source-data flag, not a reason to alter the lexicon.
+
+All candidate links remain orthographic cross-references only. No production schema/data or embedding/vectorizer changes were made.
