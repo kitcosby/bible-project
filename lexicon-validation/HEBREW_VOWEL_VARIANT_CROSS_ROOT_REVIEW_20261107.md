@@ -1,7 +1,7 @@
 # Hebrew/Aramaic vowel-only variants — cross-root member review
 
 **Date:** 2026-11-07  
-**Status:** Read-only member-level review completed for all three three-root cases and two prioritized batches of 15 additional cross-root groups (30 distinct groups total). The subsequent isolated shadow build is documented in §10.  
+**Status:** Read-only member-level review completed for all three three-root cases and four prioritized batches of 15 additional cross-root groups (63 distinct groups total). The subsequent isolated shadow build is documented in §10.  
 **Parent evidence:** [Live inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md), [schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md).
 
 ## 1. Scope and safeguards
