@@ -192,6 +192,6 @@ The governing principle is conservative: preserve evidence, represent phrase and
 
 ## YLT-token review queue: phrase expansion examples (2026-11-07)
 
-The 503 pending YLT tokens are not all missing Greek equivalents. The queue triage report separates 500 generic “no direct proposal identified” rows from three documented English grammatical-supply cases (Romans 16:27 twice; 1 John 2:23 once). The generic rows remain unadjudicated; do not classify them as not_expressed merely because no proposal is recorded.
+The 499 pending YLT tokens are not all missing Greek equivalents. The queue triage report separates 495 generic “no direct proposal identified” rows from four annotated exceptions: supplied English “he” (1 John 2:23), branch-dependent “also” (Acts 15:32), and the supplied article/copula (Romans 16:27). All 499 lack legacy Greek position spans and none has a proposed alignment endpoint. The generic rows remain unadjudicated; do not classify them as not_expressed merely because no proposal is recorded.
 
 Revelation 9:20 is the densest pending verse (16 tokens). Its case report illustrates one Greek finite verb rendered “did reform”; one subjunctive rendered “may bow before”; five Greek article-plus-adjective phrases rendered “those of [material]”; a supplied English copula “are”; and three English infinitive markers “to”. These require phrase-aware modeling, not fabricated Greek tokens or forced one-to-one glosses. The report is a contextual proposal only; no new alignment rows have yet been inserted.
