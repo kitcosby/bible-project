@@ -6,6 +6,8 @@
 
 This index separates the 20 legacy-overlap positional-divergence cases already read in context from the 39 Greek-token review rows that remain pending.
 
+[Contextual notes for all 39 pending Greek-token rows](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md) provide a full-verse grammatical assessment while keeping their database status pending.
+
 ## A. Twenty contextualized legacy-overlap cases
 
 These cases were reviewed against the full YLT verse and the profile-specific Greek sequence. Classifications describe the nature of the relationship; they do not imply every proposed target is a literal one-word gloss.
