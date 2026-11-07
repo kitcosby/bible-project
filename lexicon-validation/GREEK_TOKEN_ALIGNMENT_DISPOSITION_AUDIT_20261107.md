@@ -49,7 +49,7 @@ The row-level export is [GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv](G
 
 ## Scope and safeguards
 
-The full v10 shadow validator passed. Changes affected only the isolated shadow schema ylt_profile_shadow. Production tables, legacy associations, embeddings, vectorizer, API, and deployment were not changed.
+The full v11 shadow validator passed. Changes affected only the isolated shadow schema ylt_profile_shadow. Production tables, legacy associations, embeddings, vectorizer, API, and deployment were not changed.
 
 Production read-only counts remain unchanged:
 
