@@ -11,10 +11,10 @@ Prepare repeatable, evidence-rich review queues for pending cross-root Hebrew/Ar
 - Review status changes are made only by the explicit batch-review step after evidence inspection.
 
 ## Current state
-- 153 groups have member-level review notes (three initial three-root cases plus batches 1–10).
-- 219 groups remain pending.
-- Full context extraction currently covers all 249 pending groups and 1,459 verse occurrences.
-- Remaining review queue: batches 11–24 (15 groups each), batch 25 (9 groups).
+- 168 groups have member-level review notes (three initial three-root cases plus batches 1–11).
+- 204 groups remain pending.
+- Full context extraction currently covers all 249 pending groups and 1,429 verse occurrences.
+- Remaining review queue: batches 12–24 (15 groups each), batch 25 (9 groups).
 
 ## Run the evidence preparation pipeline
 From Windows PowerShell:
