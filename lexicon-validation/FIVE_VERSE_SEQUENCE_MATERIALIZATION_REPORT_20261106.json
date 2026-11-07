@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-06",
+  "materialized_verses": [
+    "John 8:6",
+    "Acts 3:3",
+    "Romans 16:27",
+    "Ephesians 6:24",
+    "1 John 2:23"
+  ],
+  "new_ylt_tokens": 95,
+  "new_greek_sequence_words": 77,
+  "initial_ylt_pending_tokens": 45,
+  "initial_greek_pending_tokens": 30,
+  "contextual_pair_candidates": 40,
+  "contextual_proposed_pairs": 38,
+  "contextual_legacy_overlap_pairs": 2,
+  "contextual_not_expressed_greek": 1,
+  "new_phrase_groups": 10,
+  "final_alignment_group_rows": 26,
+  "final_alignment_rows": 593,
+  "final_greek_pending_total": 32,
+  "final_ylt_pending_total": 510,
+  "new_verse_ylt_pending_rows": 8,
+  "greek_review_statuses": [
+    [
+      "legacy_overlap_review",
+      27
+    ],
+    [
+      "pending_review",
+      32
+    ],
+    [
+      "proposed",
+      506
+    ]
+  ],
+  "ylt_review_statuses": [
+    [
+      "legacy_only",
+      2112
+    ],
+    [
+      "legacy_overlap_review",
+      39
+    ],
+    [
+      "pending_review",
+      510
+    ],
+    [
+      "proposed",
+      510
+    ]
+  ],
+  "alignment_review_statuses": [
+    [
+      "legacy_overlap_review",
+      2
+    ],
+    [
+      "not_expressed",
+      21
+    ],
+    [
+      "proposed",
+      559
+    ],
+    [
+      "unresolved",
+      11
+    ]
+  ],
+  "sequence_word_rows": 2444
+}
