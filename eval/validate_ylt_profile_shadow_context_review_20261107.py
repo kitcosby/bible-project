@@ -104,11 +104,50 @@ q.execute("select count(*) from ylt_profile_shadow.ylt_greek_alignment a left jo
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1 order by 1");align_status=q.fetchall()
 assert align_status==[('legacy_overlap_review',6),('not_expressed',32),('proposed',566),('unresolved',1)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.ylt_token_review group by 1 order by 1");ylt_status=q.fetchall()
-assert ylt_status==[('legacy_only',2109),('legacy_overlap_review',42),('pending_review',503),('proposed',517)]
+assert ylt_status==[('legacy_only',2109),('legacy_overlap_review',42),('pending_review',499),('proposed',521)]
 q.execute("select review_status,count(*) from ylt_profile_shadow.gnt_token_review group by 1 order by 1");gnt_status=q.fetchall()
 assert gnt_status==[('legacy_overlap_review',31),('pending_review',33),('proposed',509)]
 q.execute("select source_kind,review_status,count(*) from ylt_profile_shadow.ylt_greek_alignment group by 1,2 order by 1,2");source_status=q.fetchall()
 q.execute("select variant_dependency_groups,count(*) from ylt_profile_shadow.ylt_greek_alignment where variant_dependency_groups<>'[]'::jsonb group by 1 order by 1");deps=q.fetchall()
+
+
+# YLT token-review statuses must agree with proposed alignment endpoint existence.
+q.execute("""select count(*) from ylt_profile_shadow.ylt_token_review r
+ where r.profile_id=4 and r.review_status='pending_review' and exists(
+  select 1 from ylt_profile_shadow.ylt_greek_alignment a where a.alignment_profile_id=4
+  and a.ylt_verse_id=r.ylt_verse_id and a.ylt_word_pos=r.ylt_word_pos and a.review_status='proposed')""")
+assert q.fetchone()[0]==0
+q.execute("""select count(*) from ylt_profile_shadow.ylt_token_review r
+ where r.profile_id=4 and r.review_status='proposed' and not exists(
+  select 1 from ylt_profile_shadow.ylt_greek_alignment a where a.alignment_profile_id=4
+  and a.ylt_verse_id=r.ylt_verse_id and a.ylt_word_pos=r.ylt_word_pos and a.review_status='proposed')""")
+assert q.fetchone()[0]==0
+q.execute("select count(*) from ylt_profile_shadow.ylt_token_review where profile_id=4 and review_status='pending_review'")
+assert q.fetchone()[0]==499
+# Four previously pending YLT tokens already had proposed alignment rows; their token status is now reconciled.
+q.execute("""select b.code,v.chapter,v.verse,t.ylt_word_pos,t.surface,r.review_status,r.proposed_alignment_count
+ from ylt_profile_shadow.ylt_token_review r join ylt_profile_shadow.ylt_token t using(ylt_verse_id,ylt_word_pos)
+ join public.ylt_verses y on y.verse_id=t.ylt_verse_id join public.verses v using(verse_id)
+ join public.gnt_books b on b.book_id=v.book_id
+ where r.profile_id=4 and ((b.code='1CO' and v.chapter=13 and v.verse=2 and t.ylt_word_pos=9)
+ or (b.code='AC' and v.chapter=5 and v.verse=12 and t.ylt_word_pos=2)
+ or (b.code='AC' and v.chapter=26 and v.verse=20 and t.ylt_word_pos=3)
+ or (b.code='MT' and v.chapter=2 and v.verse=23 and t.ylt_word_pos=15))
+ order by b.code,v.chapter,v.verse,t.ylt_word_pos""")
+assert q.fetchall()==[('1CO',13,2,9,'the','proposed',1),('AC',5,12,2,'through','proposed',1),
+ ('AC',26,20,3,'those','proposed',1),('MT',2,23,15,'that','proposed',1)]
+# The four YLT pending corner cases are distinct: three supplied/added words and one branch-dependent particle.
+q.execute("""select b.code,v.chapter,v.verse,t.ylt_word_pos,t.surface,r.review_status
+ from ylt_profile_shadow.ylt_token_review r join ylt_profile_shadow.ylt_token t using(ylt_verse_id,ylt_word_pos)
+ join public.ylt_verses y on y.verse_id=t.ylt_verse_id join public.verses v using(verse_id)
+ join public.gnt_books b on b.book_id=v.book_id
+ where r.profile_id=4 and r.review_status='pending_review' and
+ ((b.code='1JO' and v.chapter=2 and v.verse=23 and t.ylt_word_pos=10)
+ or (b.code='AC' and v.chapter=15 and v.verse=32 and t.ylt_word_pos=2)
+ or (b.code='RO' and v.chapter=16 and v.verse=27 and t.ylt_word_pos in (2,11)))
+ order by b.code,v.chapter,v.verse,t.ylt_word_pos""")
+assert q.fetchall()==[('1JO',2,23,10,'he','pending_review'),('AC',15,32,2,'also','pending_review'),
+ ('RO',16,27,2,'the','pending_review'),('RO',16,27,11,'be','pending_review')]
 
 # Five additional YLT-profile variant sequences materialized after the 116-verse fixture.
 sequence_specs=[('JOH',8,6,20,0,0,['43:6']),('AC',3,3,13,0,0,['44:3']),('RO',16,27,13,2,1,['45:7']),('EPH',6,24,14,0,0,['49:3']),('1JO',2,23,17,1,0,['62:3'])]
