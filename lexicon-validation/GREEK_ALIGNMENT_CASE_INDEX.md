@@ -159,6 +159,10 @@ Robinson group 66:9 records A=σφραγίζωμεν (present active subjunctive
 
 ## Hebrew vowel-only variant policy (2026-11-07)
 
+A source-code audit is now documented in [HEBREW_VOWEL_VARIANT_AUDIT_20261107.md](HEBREW_VOWEL_VARIANT_AUDIT_20261107.md). Findings: OSHB pointed text is preserved, but its unpointed export removes all non-letter marks indiscriminately; the current spelling builder does not create niqqud-only links; qere is already a separate textual apparatus; and word_variants has no cross-occurrence group key. The proposed implementation is a dedicated form-group/member relation with strict comparison that removes only vowel-point code points and retains consonants, matres lectionis, final forms, dagesh, shin/sin dots, meteg, cantillation, and separators. This is a code review only; corpus-wide candidate counts remain unknown and no database or parser changes were made.
+
+
+
 Hebrew forms with identical consonantal spelling that differ only in vowel points / niqqud must be linked as branches of a shared variant group. Preserve exact vocalized source strings and provenance; do not collapse the forms into one token or lexical entry, because vocalization can change morphology, pronunciation, and sense. Use Hebrew-aware Unicode normalization and niqqud-specific comparison, not indiscriminate removal of combining marks. Differences involving consonant letters or matres lectionis, cantillation, qere/ketiv, or uncertain normalization require separate review rather than automatic vowel-only grouping. The [field guide](GREEK_ALIGNMENT_FIELD_GUIDE.md#hebrew-vowel-only-variants) records the deterministic validation conditions and edge cases. This is a policy addition only; no Hebrew database records or parser behavior were changed.
 
 ## Current YLT profile-wide variant-selection ledger (v17)
