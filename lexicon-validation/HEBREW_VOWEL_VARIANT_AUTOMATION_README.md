@@ -11,10 +11,10 @@ Prepare repeatable, evidence-rich review queues for pending cross-root Hebrew/Ar
 - Review status changes are made only by the explicit batch-review step after evidence inspection.
 
 ## Current state
-- 123 groups have member-level review notes (three initial three-root cases plus batches 1–8).
-- 249 groups remain pending.
-- Full context extraction currently covers all 249 pending groups and 1,542 verse occurrences.
-- Remaining review queue: batches 9–24 (15 groups each), batch 25 (9 groups).
+- 153 groups have member-level review notes (three initial three-root cases plus batches 1–10).
+- 219 groups remain pending.
+- Full context extraction currently covers all 249 pending groups and 1,459 verse occurrences.
+- Remaining review queue: batches 11–24 (15 groups each), batch 25 (9 groups).
 
 ## Run the evidence preparation pipeline
 From Windows PowerShell:
@@ -35,7 +35,7 @@ From Windows PowerShell:
 2. Inspect the Hebrew verse word sequences, member assignments, morphology, Strong’s, and any lexical-source references available.
 3. Record observations and uncertainty. Do not infer equivalence from a shared consonantal signature.
 4. Change only that batch's index rows to `reviewed_member_level` after inspection; do not use `approved`.
-5. Regenerate pending evidence and contexts. Queue numbering begins at batch 9 after batch 8.
+5. Regenerate pending evidence and contexts. Queue numbering is calculated from the highest completed batch number in the review CSV.
 6. Commit the report and updated CSV to the working GitHub branch.
 
 Member-level review is not exhaustive contextual lexicographic adjudication. Preserve ambiguous cases as pending or flag them for specialist review.
