@@ -14,7 +14,7 @@ The 455 pending rows divide by recorded reason:
 - **443** generic rows: “No direct proposal identified in this review set.”
 - **12** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
-The 443 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The ten annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
+The 443 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The twelve annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
 ## Four earlier proposal-status reconciliations
 
@@ -139,6 +139,7 @@ Frequencies prioritize review batches; they do not establish that repeated Engli
 | Acts 26:18 | 7 |
 | Acts 19:27 | 3 |
 | 1 Corinthians 5:11 | 2 |
+| Acts 26:20 | 2 |
 
 Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed phrase-member endpoints and “are” has an alignment-level not_expressed disposition. Acts 19:27 was reviewed next; 10 tokens gained phrase proposals and three supplied English article/copula tokens received alignment-level not_expressed dispositions, leaving three pending at token-review level.
 
@@ -147,7 +148,7 @@ Revelation 9:20 is no longer a large pending cluster: 15 tokens have proposed ph
 1. Review the 50 remaining “to” occurrences by full verse and Greek construction, distinguishing prepositions from infinitive markers and supplied English syntax.
 2. Review the 33 “the” occurrences, especially repeated Greek articles, articular infinitives, and articles introduced or omitted in English.
 3. Review auxiliaries and participial expansions (“may”, “did”, “was”, “having”, “is”) as constructions before proposing individual Greek tokens.
-4. Keep the ten annotated cases above separate from the 454 generic pending rows.
+4. Keep the twelve annotated cases above separate from the 443 generic pending rows.
 5. Preserve legacy links; contextual alternatives should remain overlap candidates until occurrence identity is established.
 
 The current row-level queue is [YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv). It contains exactly 455 rows.
@@ -168,3 +169,8 @@ The verse’s 12 original pending tokens were reviewed: ten now have phrase-memb
 ## Acts 26:20 review result
 
 The verse’s 11 original pending tokens were reviewed: nine received phrase-member proposals and two (“to” and “those” in “to those in Jerusalem”) received alignment-level not_expressed dispositions. Robinson group 44:36 contrasts A=ἀπαγγέλλων (participle) with B=ἀπήγγελλον (first-person imperfect). YLT “I was preaching” supports a proposed YLT-specific B selection. The KJV profile remains on A. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+
+## Acts 26:20 review result
+
+The verse’s 11 original pending tokens were reviewed: nine received phrase-member proposals and two (“to” and “those” in “to those in Jerusalem”) received alignment-level not_expressed dispositions. Robinson group 44:36 contrasts A=ἀπαγγέλλων (present participle) with B=ἀπήγγελλον (first-person imperfect). YLT “I was preaching” supports a proposed YLT-specific B selection. The KJV profile remains on A. See the [Acts 26:20 case report](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
