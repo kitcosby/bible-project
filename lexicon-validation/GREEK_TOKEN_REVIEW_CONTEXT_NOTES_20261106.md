@@ -58,7 +58,7 @@ The 39 Greek-token rows were inspected in their complete YLT verse and complete 
 - **Article absorbed into possessive or noun phrase:** Matthew 10:10; Matthew 21:7; Acts 8:19; Acts 19:27; Acts 26:20; Romans 1:27; 1 Corinthians 5:7; 1 Corinthians 13:2; 2 Corinthians 7:12; 2 Corinthians 11:10; Colossians 4:10; James 2:18; Revelation 18:5.
 - **Connective, relative, or clause-level contribution:** Acts 9:35; Acts 15:32; Acts 22:25.
 - **Idiomatic prepositional phrase:** Acts 21:8; Romans 16:20.
-- **Clear English token candidates:** Acts 5:12 (“through”); Acts 26:20 (“those”); 1 Corinthians 13:2 (article rendered as “the” in “all the secrets”).
+- **Clear English token candidates:** Acts 5:12 (“through”); Acts 26:20 (“those”); 1 Corinthians 13:2 (article rendered as “the” in “all the secrets”). Additional phrase-member proposals link Matthew 2:23 τό to “that”, Jude 1:24 τῷ to “Him”, and Acts 26:18 τῇ to “that”; these remain moderate-confidence proposals.
 - **Potentially unexpressed or absorbed in English syntax:** Luke 2:34; Luke 4:16; Acts 22:25; Revelation 7:2, among others.
 
 These categories overlap because the same Greek token can be both part of a phrase and contribute grammatical information. They are review annotations, not a new controlled vocabulary in the database.
@@ -85,4 +85,6 @@ The reconciled machine-readable export is [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_2
 
 The full-verse review identified one clear error in the prior function-word assessment. Greek διά at profile position 1 directly corresponds to YLT token 2, “through”, in “through the hands of the apostles”. The existing Greek-only row (alignment_id 466) was converted in place to a high-confidence proposed function-word alignment; the matching gnt_token_review row was changed to proposed with one proposal. This is documented in [ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md).
 
-The current queue therefore contains **38 pending rows and one proposed row** among the original 39. The updated [current queue CSV](GREEK_TOKEN_REVIEW_QUEUE_CURRENT_20261106.csv) records this state. The earlier 39-row exports remain as historical snapshots. The remaining 38 pending rows still have unresolved confidence; the 22 tentative not_expressed classifications are not final decisions.
+The next contextual pass added five more shadow proposals: Matthew 2:23 τό → “that” (phrase member); Acts 26:20 τοῖς → “those” (function word); 1 Corinthians 13:2 τά → “the” (function word); Jude 1:24 τῷ → “Him” (phrase member); and Acts 26:18 τῇ → “that” (phrase member). See [FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
+
+The original 39-row set now contains **33 pending rows and six proposed rows** (including Acts 5:12 διά → “through”). The latest [post-context proposal queue CSV](GREEK_TOKEN_REVIEW_QUEUE_POST_CONTEXT_PROPOSALS_20261106.csv) records this state. Earlier queue exports remain historical snapshots. The 33 pending rows retain unresolved confidence; do not treat the remaining not_expressed classifications as final decisions.
