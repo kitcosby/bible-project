@@ -99,7 +99,7 @@ def main():
             raw = row["pointed"] or ""
             normalized = unicodedata.normalize("NFC", raw)
             signature = strict_signature(normalized)
-            if not signature or not any(ord(c) in VOWEL_POINTS for c in normalized):
+            if not signature:
                 continue
             item = dict(row)
             item["raw_pointed"] = raw
