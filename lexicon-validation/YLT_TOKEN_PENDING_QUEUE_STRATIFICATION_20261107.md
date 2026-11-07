@@ -14,7 +14,7 @@ The 464 pending rows divide by recorded reason:
 - **454** generic rows: “No direct proposal identified in this review set.”
 - **10** annotated corner cases: Acts 15:32 (“also”); 1 John 2:23 (“he”); Romans 16:27 (“the” and “[be]”); Revelation 9:20 (“are”); and Acts 19:27 (“the” and two instances of “is”).
 
-The 454 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The eight annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
+The 454 generic rows remain a candidate-discovery queue. They are not proven unexpressed cases. The ten annotated rows retain their actual grammatical or textual disposition; pending_review is the token-table status, not a claim that every case is undecided.
 
 ## Four earlier proposal-status reconciliations
 
