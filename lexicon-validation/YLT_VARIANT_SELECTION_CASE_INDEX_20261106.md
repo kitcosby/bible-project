@@ -3,7 +3,8 @@
 **Prepared:** 2026-11-06; updated 2026-11-07  
 **Environment:** Isolated database bible_greek_bridge_test_20261106, schema ylt_profile_shadow.  
 **Scope:** The 19 YLT-profile variant-selection rows that were unresolved at the start of this review.  
-**Companion snapshot:** [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv)
+**Companion snapshot for these 19 groups:** [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv)  
+**Current full-profile ledger:** [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv)
 
 ## Executive result
 
@@ -59,7 +60,7 @@ The selected_branch field remains null for these groups. No source payload was d
 
 The English rendering does not reliably distinguish the present from the aorist subjunctive here. Choosing a branch from this translation alone would overstate the evidence. The YLT profile selection remains unresolved and null. A separate Greek textual-evidence review is required.
 
-## D. Updated YLT-profile selection counts
+## D. YLT-profile selection counts at the original 19-group review milestone
 
 | Decision status | Count |
 |---|---:|
@@ -70,7 +71,7 @@ The English rendering does not reliably distinguish the present from the aorist 
 | unresolved | 1 |
 | **Total** | **261** |
 
-The five reviewed verse-text groups and thirteen not-applicable subscriptions account for 18 of the 19 formerly unresolved groups. Revelation 7:3 remains the sole unresolved YLT-profile group in this set.
+The five reviewed verse-text groups and thirteen not-applicable subscriptions account for 18 of the 19 formerly unresolved groups. Revelation 7:3 remains the sole unresolved YLT-profile group in this set. These counts are a historical milestone snapshot, not the current profile-wide totals.
 
 ## E. Sequence materialization boundary
 
@@ -88,3 +89,32 @@ Revelation 7:3 remains excluded while its branch is unresolved; do not infer a c
 - The current selection snapshot is [YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
 
 The controlling principle is to separate verse text from subscription paratext, preserve every raw branch, and leave a translation-insensitive Greek distinction unresolved.
+
+
+## G. Current profile-wide YLT selection status (2026-11-07, v14)
+
+The full YLT profile selection ledger now contains 261 rows:
+
+| Decision status | Current count |
+|---|---:|
+| inherited_provisional | 221 |
+| proposed | 8 |
+| reviewed_against_translation | 17 |
+| not_applicable_to_verse_alignment | 14 |
+| unresolved | 1 |
+| **Total** | **261** |
+
+The eight proposed branch selections are:
+
+| Reference | Group | Branch | Basis |
+|---|---|---|---|
+| Mark 8:24 | 41:12 | A | YLT “that” phrase / branch sequence |
+| Mark 8:24 | 41:13 | B | YLT “I see” / walking sequence |
+| Acts 26:20 | 44:36 | B | YLT “I was preaching” |
+| 1 Corinthians 5:11 | 46:2 | B | YLT phrase and clause context |
+| 2 Corinthians 7:12 | 47:4 | B | YLT “our” |
+| 2 Corinthians 7:12 | 47:5 | B | YLT “your” |
+| 2 Corinthians 11:10 | 47:7 | B | YLT “shall be stopped” |
+| Revelation 9:20 | 66:18 | A | YLT “neither did reform”; Received-Text basis and Stephanus 1550 / Beza 1598 reading οὔτε; exact edition remains unconfirmed |
+
+The Revelation 9:20 proposal is intentionally not described as a final textual decision. The Robinson source parser represents οὔτε/οὐ; external apparatus also records οὐδέ. The current 261-row export preserves all YLT profile selections, inherited statuses, rationale, and evidence: [YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv](YLT_PROFILE_VARIANT_SELECTIONS_CURRENT_20261107.csv). The full shadow validation is [FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt](FINAL_VALIDATION_AFTER_RE9_20_YLT_BRANCH_A_PROPOSAL_20261107.txt). See the [Revelation 9:20 branch-A proposal report](REVELATION_9_20_YLT_BRANCH_A_PROPOSAL_20261107.md).
