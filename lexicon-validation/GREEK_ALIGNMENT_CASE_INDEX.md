@@ -41,22 +41,22 @@ Many cases are not actual contradictions. They reflect differences between word-
 
 No legacy or production rows were changed by this contextual review. Earlier shadow-only corrections to four alignment targets are documented in the separate overlap audit.
 
-## B. Thirty-nine Greek token review rows still pending
+## B. Original 39 Greek-token review rows: current status 31 pending, 8 proposed
 
-These rows were read from the isolated YLT-profile review queue where the review status was pending. They are an open queue, not accepted alignments. The 39 positions are listed in canonical book/verse/sequence order.
+These 39 rows were captured from the isolated YLT-profile review queue at the initial review point. Eight now have shadow-only proposed alignments and 31 remain pending. The table retains the original contextual cues; the latest CSV is authoritative for current row-level status. Proposed rows are not accepted production mappings. The 39 positions are listed in canonical book/verse/sequence order.
 
 | Reference | Greek position | Greek form | Strong's | Morphology | Initial review cue |
 |---|---:|---|---|---|---|
-| Matthew 2:23 | 10 | τό | G3588 | T-NSN | Articular participle/nominal clause: “that was spoken”; likely grammatical contribution. |
+| Matthew 2:23 | 10 | τό | G3588 | T-NSN | PROPOSED, moderate: substantival article τὸ ῥηθέν contributes to YLT “that was spoken”; phrase-member link to “that”. |
 | Matthew 4:13 | 3 | τήν | G3588 | T-ASF | Article + adjective phrase “by the sea”; not an independent article. |
 | Matthew 10:10 | 16 | τῆς | G3588 | T-GSF | Genitive article in “his nourishment”; possessive rendering. |
 | Matthew 21:7 | 11 | τά | G3588 | T-APN | Article + “garments”; English also has possessive “their”. |
 | Luke 2:4 | 21 | τό | G3588 | T-ASN | Articular infinitive διὰ τὸ εἶναι (“because of his being”). |
 | Luke 2:34 | 21 | τῷ | G3588 | T-DSM | Article in ἐν τῷ Ἰσραήλ; no separate YLT “the”. |
-| Luke 2:39 | 5 | τά | G3588 | T-APN | τά πάντα; “all things” construction. |
+| Luke 2:39 | 5 | τά | G3588 | T-APN | PROPOSED, moderate: ἅπαντα τὰ κατὰ τὸν νόμον; τὰ nominalizes the following phrase, represented by YLT “things”. |
 | Luke 4:16 | 4 | τήν | G3588 | T-ASF | Article in the Nazareth phrase; verify exact profile context and target. |
 | Luke 4:16 | 12 | τό | G3588 | T-ASN | Articular construction κατὰ τὸ εἰωθός (“according to his custom”). |
-| Acts 5:12 | 1 | διά | G1223 | PREP | Direct candidate “through”; inspect following conjunction and phrase. |
+| Acts 5:12 | 1 | διά | G1223 | PREP | PROPOSED, high: διά directly matches YLT “through” (token 2). |
 | Acts 8:19 | 4 | τήν | G3588 | T-ASF | Article in requested phrase; review full clause and exact token target. |
 | Acts 9:35 | 11 | οἵτινες | G3748 | R-NPM | Relative pronoun; likely clause-level “who/which”. |
 | Acts 15:32 | 2 | δέ | G1161 | CONJ | Discourse connective; may be absorbed into YLT clause. |
@@ -65,13 +65,13 @@ These rows were read from the isolated YLT-profile review queue where the review
 | Acts 21:8 | 6 | περί | G4012 | PREP | Preposition in “those about Paul”; idiomatic phrase boundary. |
 | Acts 22:25 | 14 | εἰ | G1487 | COND | Conditional particle “if”; clause segmentation determines link. |
 | Acts 22:25 | 17 | καί | G2532 | CONJ | Coordinating conjunction within quoted question; inspect YLT syntax. |
-| Acts 26:18 | 29 | τῇ | G3588 | T-DSF | Article in “by faith that is toward me”; grammatical contribution. |
-| Acts 26:20 | 2 | τοῖς | G3588 | T-DPM | Article in dative plural phrase; inspect English “those” construction. |
+| Acts 26:18 | 29 | τῇ | G3588 | T-DSF | PROPOSED, moderate: τῇ introduces the attributive phrase rendered “that is toward me”; phrase-member link to “that”. |
+| Acts 26:20 | 2 | τοῖς | G3588 | T-DPM | PROPOSED, high: τοῖς is substantival and corresponds to YLT “those” (token 3). |
 | Acts 26:20 | 26 | τῆς | G3588 | T-GSF | Genitive article; likely absorbed by English syntax. |
 | Romans 1:27 | 22 | τήν | G3588 | T-ASF | Article in later phrase; distinguish from repeated article/pronoun sequence. |
-| Romans 16:20 | 13 | ἐν | G1722 | PREP | Preposition; test direct “in” rendering and phrase boundaries. |
+| Romans 16:20 | 13 | ἐν | G1722 | PREP | PROPOSED, moderate: ἐν τάχει is the idiom “quickly”; phrase-member link to YLT token 14, alongside τάχει. |
 | 1 Corinthians 5:7 | 15 | τό | G3588 | T-NSN | Article in a clause construction; inspect exact Greek/YLT phrase. |
-| 1 Corinthians 13:2 | 7 | τά | G3588 | T-APN | Article + plural object phrase; may be included in English “all”. |
+| 1 Corinthians 13:2 | 7 | τά | G3588 | T-APN | PROPOSED, high: τὰ μυστήρια πάντα is “all the secrets”; τὰ corresponds to explicit YLT “the” (token 9). |
 | 2 Corinthians 7:12 | 16 | τοῦ | G3588 | T-GSN | Article within variant-sensitive phrase; retain YLT branch provenance. |
 | 2 Corinthians 7:12 | 18 | τήν | G3588 | T-ASF | Article in same variant-sensitive clause; inspect phrase grouping. |
 | 2 Corinthians 7:12 | 21 | τήν | G3588 | T-ASF | Repeated article occurrence; morphology alone cannot identify it. |
@@ -82,14 +82,14 @@ These rows were read from the isolated YLT-profile review queue where the review
 | James 2:18 | 23 | τῶν | G3588 | T-GPN | Article in ἐκ τῶν ἔργων; YLT “out of thy works”. |
 | James 2:18 | 26 | τήν | G3588 | T-ASF | Article in final τὴν πίστιν μου; English order differs. |
 | James 4:15 | 2 | τοῦ | G3588 | T-GSN | Articular infinitive ἀντὶ τοῦ λέγειν (“instead of your saying”). |
-| Jude 1:24 | 1 | τῷ | G3588 | T-DSM | Substantival article with δυναμένῳ: “to Him who is able”. |
+| Jude 1:24 | 1 | τῷ | G3588 | T-DSM | PROPOSED, moderate: τῷ δυναμένῳ is “to Him who is able”; phrase-member link to “Him”. |
 | Revelation 2:5 | 20 | τήν | G3588 | T-ASF | Article before λυχνίαν; direct “the” candidate in “the lamp-stand”. |
 | Revelation 7:2 | 22 | αὐτοῖς | G846 | P-DPM | Pronoun “to them”; check exact clause attachment. |
 | Revelation 18:5 | 13 | τά | G3588 | T-APN | Article before ἀδικήματα; YLT “her unrighteousness” compresses phrase. |
 
 **Important:** the initial review cue is a hypothesis to guide the next pass, not a resolved classification. In particular, the Acts 19:27 and Luke 4:16 entries must be checked against the exact stored profile sequence and verse text before assigning a status.
 
-A raw machine-readable snapshot of the 39 open rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The latest export, [GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), records the current state: 31 pending and eight proposed. The proposals are Acts 5:12 διά → “through”; Matthew 2:23 τό → “that”; Acts 26:20 τοῖς → “those”; 1 Corinthians 13:2 τά → “the”; Jude 1:24 τῷ → “Him”; Acts 26:18 τῇ → “that”; Luke 2:39 τά → “things”; and Romans 16:20 ἐν → “quickly”. The latter two are phrase-member proposals; see [the two-proposal report](TWO_ADDITIONAL_PHRASE_MEMBER_PROPOSALS_20261106.md). Before proposals, all 39 rows had matching unaligned_greek records; their confidence was unresolved. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md), [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md), and [five-proposal report](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
+The initial machine-readable snapshot of the 39 rows is available as [GREEK_TOKEN_REVIEW_QUEUE_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_20261106.csv). The reconciled export, [GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_RECONCILED_20261106.csv), records the pre-correction alignment-row status, confidence, and provenance. The latest export, [GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv](GREEK_TOKEN_REVIEW_QUEUE_POST_EIGHT_PROPOSALS_20261106.csv), records the current state: 31 pending and eight proposed. The proposals are Acts 5:12 διά → “through”; Matthew 2:23 τό → “that”; Acts 26:20 τοῖς → “those”; 1 Corinthians 13:2 τά → “the”; Jude 1:24 τῷ → “Him”; Acts 26:18 τῇ → “that”; Luke 2:39 τά → “things”; and Romans 16:20 ἐν → “quickly”. The latter two are phrase-member proposals; see [the two-proposal report](TWO_ADDITIONAL_PHRASE_MEMBER_PROPOSALS_20261106.md). Before proposals, all 39 rows had matching unaligned_greek records; their confidence was unresolved. See the [context notes](GREEK_TOKEN_REVIEW_CONTEXT_NOTES_20261106.md), [Acts 5:12 correction report](ACTS_5_12_ALIGNMENT_CORRECTION_20261106.md), and [five-proposal report](FIVE_FUNCTION_TOKEN_PROPOSALS_20261106.md).
 
 ## C. Open review totals
 
