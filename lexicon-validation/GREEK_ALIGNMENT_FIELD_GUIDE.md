@@ -156,7 +156,7 @@ As of 2026-11-06:
 - 502 YLT token review cases remain pending.
 - The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
 
-See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases and 39-item open queue.
+See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases and the corrected 31-row pending queue.
 
 ## Non-goals and cautions
 
