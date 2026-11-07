@@ -98,3 +98,20 @@ The code-point set must be validated against the Unicode Hebrew block and the co
 **Not established:** number of eligible vowel-only pairs in the corpus; how many are already co-located under the same root_vowel parent; how many strict vowel-only pairs cross existing root/form boundaries; or whether the live database has additional local changes not present in GitHub.
 
 **No changes performed:** no database writes, schema changes, parser changes, corpus-wide query, embedding/vectorizer operation, production access, or deployment. This report is a code-level audit and implementation design only.
+
+
+## 7. Read-only corpus inventory tool
+
+Added `lexicon-validation/audit_hebrew_vowel_variants.py`. It opens SQLite with URI `mode=ro`, accepts the v2 `words.pointed` schema and the legacy `words.word_pointed` form, and writes a CSV of candidate form groups plus a JSON summary. It does not write to the database.
+
+Example (run against a verified copy or the live DB using read-only access):
+
+```bash
+python3 lexicon-validation/audit_hebrew_vowel_variants.py \
+  --db /path/to/bible_v2.db \
+  --out-prefix /path/to/audit-output/hebrew-vowel-variants
+```
+
+Review the JSON summary first, then inspect candidate rows in the CSV. The report includes the exact pointed forms, word IDs, verse references where available, Aramaic flag values, and existing `root_id.root_form_seq.root_vowel_seq` identifiers. It deliberately includes a form with no vowel marks when it shares the same strict signature with a pointed form: absence of a vowel mark can itself be the only difference.
+
+**Important:** this script has been committed but has not yet been executed against the corpus. Its output is a candidate inventory, not a set of approved variants. Before interpreting counts, run it on a read-only snapshot and independently verify the Unicode mark classification and a sample of candidates. In particular, inspect slash-separated morphemes, Qere/Ketiv rows, cantillation, shin/sin dots, dagesh/mapiq, and Aramaic forms. No schema, source text, root numbering, lexicon rows, embeddings, or production data were changed.
