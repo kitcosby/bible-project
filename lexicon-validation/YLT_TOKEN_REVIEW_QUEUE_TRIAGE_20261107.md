@@ -158,3 +158,31 @@ The 466 generic rows remain unadjudicated. “No direct proposal identified” i
 Full shadow validation passed after the Acts 19:27 update. See the [Acts 19:27 case report](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_ACTS_19_27_20261107.txt), and refreshed [474-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
+
+
+## Current queue status after 1 Corinthians 5:11 (2026-11-07)
+
+The current YLT-profile token-review queue contains **464 pending tokens across 116 verses**. Reason counts:
+
+| Reason | Count |
+|---|---:|
+| No direct proposal identified in this review set | 454 |
+| Branch-dependent “also” (Acts 15:32) | 1 |
+| Supplied copula “be” (Romans 16:27) | 1 |
+| Supplied English article “the” (Romans 16:27) | 1 |
+| Supplied subject pronoun “he” (1 John 2:23) | 1 |
+| Supplied copula “are” (Revelation 9:20; alignment-level not_expressed) | 1 |
+| Supplied article “the” (Acts 19:27; alignment-level not_expressed) | 1 |
+| Supplied copula “is” (Acts 19:27; alignment-level not_expressed) | 2 |
+| Bracketed supplied pronoun “[him]” (1 Corinthians 5:11; alignment-level not_expressed) | 1 |
+| Supplied article “a” (1 Corinthians 5:11; alignment-level not_expressed) | 1 |
+
+Current YLT-token status totals: **556 proposed, 464 pending_review, 43 legacy_overlap_review, 2,108 legacy_only**. Current pending counts by book: Acts 91; Luke 54; Matthew 49; Revelation 34; Colossians 33; Mark 30; John 25; Romans 20; 2 Corinthians 17; Hebrews 16; 1 Timothy 15; 1 Thessalonians 12; Philippians 12; 1 Corinthians 11; 2 Peter 10; James 8; Jude 6; 1 Peter 5; 1 John 4; 2 John 4; 2 Timothy 3; Titus 3; Philemon 2.
+
+The largest remaining verse clusters are Acts 26:20 (11), Revelation 7:2 (11), Acts 4:32 (10), Acts 21:8 (10), and Acts 22:25 (9). 1 Corinthians 5:11 now has two token-table pending cases, both with alignment-level not_expressed dispositions: bracketed “[him]” and supplied “a”. The same verse also has a proposed YLT-specific branch-B selection for Robinson group 46:2 (ᾖ, “may be”); the CrossWire/KJV profile remains branch A.
+
+The 454 generic rows remain unadjudicated. “No direct proposal identified” is not a finding of `not_expressed` and must not be treated as one.
+
+Full shadow validation passed after the 1 Corinthians 5:11 update. See the [1 Corinthians 5:11 case report](FIRST_CORINTHIANS_5_11_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md), [latest full validation](FINAL_VALIDATION_AFTER_1CO_5_11_20261107.txt), and refreshed [464-row pending-token export](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
+
+Production tables, legacy renderings, embeddings, vectorizer, API, and deployment remain unchanged.
