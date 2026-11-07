@@ -119,3 +119,12 @@ Review the JSON summary first, then inspect candidate rows in the CSV. The repor
 ### Additional safeguard: language-population separation
 
 The inventory script now keys candidate groups by both the strict consonantal/non-vowel signature and the corpus `is_aramaic` flag. Hebrew, Aramaic, and unclassified rows are reported separately; a Hebrew form cannot become a candidate partner for an Aramaic form merely because its spelling matches. U+05BA is labeled specifically as HOLAM HASER FOR VAV. This is a code-level safeguard; it does not substitute for corpus review or Unicode edge-case validation.
+
+
+## 8. Live corpus inventory completed
+
+The read-only inventory has now been run against Lampy's live PostgreSQL `bible` database. The reproducible PostgreSQL runner is `lexicon-validation/audit_hebrew_vowel_variants_postgres.py`; the earlier SQLite runner remains available for verified SQLite snapshots.
+
+Results and methodology are recorded in [HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md). In brief: 264,217 word rows scanned; 3,323 Hebrew and 26 Aramaic candidate groups; 7,124 distinct pointed forms across 32,676 occurrences. All 3,349 groups map to at least two existing `root_vowel` IDs. 2,977 groups are contained within one `root_form`; 372 span multiple `root_form` parents. The full CSV and JSON exports were written to Lampy's `/tmp` only and their SHA-256 values are recorded in the results report.
+
+The candidate inventory is not an approval to merge lexical records. Qere/ketiv remains separate: the live `word_variants` table has 1,204 MT qere rows, which were not included in this canonical `words.pointed` scan. The database transaction was read-only; no database changes were made.
