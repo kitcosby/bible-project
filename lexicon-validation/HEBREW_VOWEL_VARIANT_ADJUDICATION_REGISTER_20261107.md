@@ -132,3 +132,12 @@ A fresh read-only query against Lampy's live `bible` database confirms the exact
 This confirms the live database's current assignments, including the combination of H935 with HNp for both לְבֹא tokens and H5892 with HNp for both לָעִיר tokens. It does **not** establish whether those morphology values originate in the pinned OSHB XML or were introduced by a later parser/crosswalk step.
 
 The project's OSHB provenance file pins the upstream source to commit `3d15126fb1ef74867fc1434be1942e837932691f` (2024-08-27), with the per-book files under `wlc/*.xml`. Direct retrieval of the large upstream XML files was not successful in this session, so the exact source-XML comparison remains outstanding. No correction has been applied.
+
+
+### בְּנִיהֶם / בְּנֵיהֶם — Septuagint evidence checked
+
+The Hebrew Masoretic text is displayed as **בְּנִיהֶם** in Ezekiel 27:32 and parsed by the project as preposition ב + the rare singular noun נִי (“wailing”) + 3mp suffix. The Greek Septuagint text displayed for the verse reads **καὶ λήμψονται οἱ υἱοὶ αὐτῶν ἐπὶ σὲ θρῆνον** (“and their sons will take up a lament for you”), which corresponds to the alternative Hebrew vocalization **בְּנֵיהֶם** (“their sons”), not the MT's “in their wailing” analysis. BDB records the same alternative in eleven manuscripts, early editions, and ancient versions, while explicitly calling the MT lexical reading doubtful.
+
+**Updated assessment:** this is a substantive textual/lexical ambiguity within the same consonantal spelling, not merely two meanings of one securely established MT lemma. The LXX supports the “their sons” reading; the MT preserves “in their wailing.” Keep the MT word row and any external-witness reading separate. The project has no local qere row for word_id 238432, so do not manufacture a Masoretic qere entry. A future apparatus proposal should record the witness, reading, and provenance explicitly.
+
+Sources: [WLC and Hebrew analysis, Ezekiel 27:32](https://www.cnbible.com/text/ezekiel/27-32.htm); [Greek Septuagint and MT interlinear, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Strong's H5204 textual note](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
