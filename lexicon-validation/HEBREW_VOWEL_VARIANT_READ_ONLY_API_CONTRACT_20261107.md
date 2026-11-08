@@ -204,6 +204,7 @@ Observed table shapes:
 - `words`: `word_id`, `orig_word_id`, `verse_id`, `word_pos`, `pointed`, `unpointed`, `letters`, `strongs`, `strongs_source_id`, `morph_pattern_id`, `is_aramaic`, `root_id`, `root_form_seq`, `root_vowel_seq`.
 - `verses`: `verse_id`, `book_id`, `chapter`, `verse`; `books`: `book_id`, `name_en`, `name_he`.
 - `morph_patterns`: `pattern_id`, `pattern`, `language`, `parse_status`, `parse_notes`.
+- `glosses`: `strongs`, `source`, `gloss`; 17,347 rows in this snapshot, with source-specific rows per Strong's entry.
 
 The legacy `words.is_aramaic` column is `bigint`, not boolean. In the inspected source snapshot, value `0` occurs on 259,812 Hebrew words and value `1` on 4,405 Aramaic words. The shadow group/member language flag is boolean. The query layer must map this explicitly and verify unexpected values fail closed.
 
@@ -248,3 +249,20 @@ The current shadow group status distribution is 3,349 `candidate` and zero rows 
 A read-only catalog query identified a separate `glosses` table with columns `strongs`, `source`, and `gloss` (17,347 rows in this snapshot). It is keyed by Strong's text in the observed data and may return multiple source-specific gloss rows for one Strong's entry. For the Ezekiel fixture, H5204 has BDB “wailing” and Strong's Hebrew “lamentation”; H1121 has BDB and Strong's Hebrew gloss records for “son” and related senses.
 
 If the API includes glosses, join them from each occurrence's `words.strongs` to `glosses.strongs`, and return each `source` and `gloss` separately. Do not collapse them into one authoritative gloss or attach them to a vowel-variant member as though the orthographic relation itself establishes lexical identity. Add `glosses` to the read-only privilege list only if this display is included in the first release.
+
+
+## 11. Minimum runtime read set and least-privilege plan
+
+For the three proposed operations, the query layer needs these relations:
+- Always: `hebrew_vowel_variant_group`, `hebrew_vowel_variant_member`, `words`.
+- Member detail: `root_vowel`, `root_entry`, and `root_form`.
+- Occurrence context: `verses`, `books`, and `morph_patterns`.
+- Optional source-labelled gloss display: `glosses`.
+
+The `lexicon` table is a build/validation integrity check, not required by the runtime response query. The `strongs` table is also not required for the proposed response because Strong's identifiers are already stored on `words`; source-labelled glosses are in `glosses`. Do not grant either table to the API role unless a separately verified query needs it.
+
+Prefer column-level `SELECT` grants or narrow read-only views rather than table-wide SELECT, especially for `words`. The required occurrence columns are `word_id, verse_id, word_pos, pointed, unpointed, strongs, morph_pattern_id, is_aramaic, root_id, root_form_seq, root_vowel_seq`. Do not expose `orig_word_id`, `letters`, or `strongs_source_id` unless a reviewed API requirement needs them. On `hebrew_vowel_variant_group`, the runtime does not need `non_vowel_signature`; it needs the group ID, language flag, algorithm/snapshot metadata, normalization form, and (while status semantics remain provisional) a candidate-only filter. The runtime member query needs the composite member key and group/language/snapshot fields. Other table columns should be granted only when included in an approved response.
+
+The first release should serve only groups with `review_status='candidate'`, since all 3,349 current groups have that value and the meaning of any future `reviewed` state is not yet sufficiently precise. Do not expose this field as a lexical-adjudication state. If status values outside `candidate` appear in the selected snapshot, fail closed until their serving semantics are reviewed.
+
+This privilege list is a proposal for review; no role, grant, view, or schema change has been made.
