@@ -328,3 +328,27 @@ Sources:
 - Ingrid E. Lilly, *Papyrus 967: A Variant Literary Edition of Ezekiel* (2010), discussion of the Göttingen edition's P967 supplement; the previously circulating Emory URL must be revalidated against the dissertation title page before citation in a final bibliography.
 
 **Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** No source text, H5204 annotation, YLT data, alignment, or production database is changed.
+
+
+## 15. Operational disposition: retain the MT as the project default
+
+**Decision:** use the Masoretic Text as the default source text for Ezekiel 27:32 in the YLT lexicon and BibleApp. This is a project-level base-text policy decision, not a finding that the MT reading is demonstrably the earliest or original reading.
+
+Preserve the existing MT token exactly as sourced:
+
+- Word ID: `238432`
+- Pointed form: `בְּנִיהֶם֙`
+- Strong's: `H5204`
+- Morphology: `HR/Ncmsc/Sp3mp`
+- Root: `ני`
+- Source annotation: OSHB token `26F8P`, lemma `b/5204`, segmented form `בְּ/נִי/הֶם֙`
+
+Retain `בְּנֵיהֶם֙` (“their sons”) as a separately documented alternative associated with H1121 and the Old Greek reading. Do not convert it into an MT qere, overwrite the MT token, merge the two lexical records, or infer semantic equivalence from their shared non-vowel signature. The existing YLT rendering “their sons” remains translation/alignment evidence, not independent proof of the Hebrew source reading.
+
+### Status terminology
+
+- **Text-critical status:** OPEN / unresolved. The reported Hebrew codex count has not been traced to identifiable manuscript sigla, and the relevant Göttingen apparatus and Princeton P967 edition have not been directly collated at this locus.
+- **Operational status:** DEFAULT_TO_MT. The MT is the stable project base text unless a future, directly verified source-critical decision authorizes a change.
+- **Data status:** NO CHANGE. No production source text, lexical entry, morphology, YLT alignment, or database record was modified by this decision.
+
+Further investigation is optional and should be reopened only if a directly inspectable apparatus, manuscript image/transcription, or materially new scholarly argument becomes available. The unresolved alternative remains documented; the project need not block on it.
