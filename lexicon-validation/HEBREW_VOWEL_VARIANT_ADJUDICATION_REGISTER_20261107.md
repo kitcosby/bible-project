@@ -28,7 +28,7 @@ The alternative reading has significant support, but BDB also records that Corni
 The local `word_variants` rows for word_id 238432 contain spelling variants only; there is no textual qere row attached to this word. The alternative is therefore an external textual/reading tradition, not a stored MT qere. The consonantal sequence is the same; the contrast is chiefly vocalization and lexical segmentation/interpretation: preposition + rare noun נִי (“wailing”) versus בְּנֵי + suffix (“sons of them”).
 
 **Disposition:** retain the MT source form and its H5204 analysis, while recording the well-attested “their sons” alternative separately. Textual priority remains unresolved. Do not replace the MT reading, create a qere row, or merge the lexical records.  
-Sources: [BDB/Gesenius entry H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html); [Keil and Delitzsch, Ezekiel 27](https://bible.armeniancathedral.org/comments/kad/Ezek_27.htm); [Werner Bible Commentary, Ezekiel 27:32](https://wernerbiblecommentary.org/?q=node%2F919); [LXX and WLC comparison](https://www.blueletterbible.org/verse/wlc/eze/27/32/).
+Sources: [BDB/Gesenius entry H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html); [Gesenius-Kautzsch-Cowley, Hebrew Grammar §23](https://www.studylight.org/lexicons/eng/gesenius/23.html); [Keil and Delitzsch, Ezekiel 27](https://bible.armeniancathedral.org/comments/kad/Ezek_27.htm); [Werner Bible Commentary, Ezekiel 27:32](https://wernerbiblecommentary.org/?q=node%2F919); [LXX and WLC comparison](https://www.blueletterbible.org/verse/wlc/eze/27/32/); [pinned OSHB Ezekiel.xml](https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ezek.xml).
 
 ### 2. לְבֹא חֲמָת: infinitive or toponym?
 
