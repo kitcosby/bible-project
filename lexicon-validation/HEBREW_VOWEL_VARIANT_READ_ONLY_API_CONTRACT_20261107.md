@@ -64,9 +64,11 @@ Return:
 - Language as a stable enum: `hebrew` or `aramaic`.
 - Relation label: `vowel-only-orthographic-variant`.
 - Algorithm version, normalization form, and source snapshot identifier.
-- Member list, each resolved from the existing `root_vowel` record and associated lexicon records.
-- Exact pointed form as stored in the source record; do not normalize the returned display value.
-- Existing root/root-form identifiers, Strong's entries, morphology, glosses, and occurrence count where the underlying records support them.
+- Member list, each resolved from the existing `root_vowel`, `root_entry`, and `root_form` records.
+- Exact pointed form from `root_vowel.vowel_pattern`; do not normalize the returned display value.
+- Root and root-form identifiers/labels from `root_entry` and `root_form`.
+- Occurrence count computed from matching `words` rows in the selected source snapshot.
+- Strong's and morphology are occurrence-level data (`words.strongs` and `words.morph_pattern_id` joined to `morph_patterns.pattern`), not intrinsic member properties. If the UI summarizes them, label them as observed occurrence assignments and preserve per-occurrence detail. The `lexicon` table itself contains only the `(root_id, root_form_seq, vowel_seq)` membership key; no gloss column was found in it.
 - An explicit statement that the relation does not adjudicate lexical identity or meaning.
 
 Do not return the non-vowel signature as a replacement spelling or a user-facing form. It may be included in maintainer-only diagnostics, not the ordinary reader response.
@@ -78,10 +80,12 @@ Do not return the non-vowel signature as a replacement spelling or a user-facing
 Purpose: support drill-down without returning the full corpus in the group response.
 
 Return paginated occurrence records containing:
-- Stable source `wordId`.
-- Book/chapter/verse reference.
-- Exact raw source token from the occurrence row.
-- Language.
+- Stable source `wordId` (`words.word_id`).
+- Book/chapter/verse reference via `words.verse_id` → `verses` → `books`.
+- Exact raw source token from `words.pointed` (and optionally `words.unpointed`).
+- `word_pos` for within-verse order.
+- Occurrence-level Strong's (`words.strongs`) and morphology (`words.morph_pattern_id` → `morph_patterns.pattern`) where present.
+- Language mapped explicitly from the source `words.is_aramaic` flag (`0` Hebrew, `1` Aramaic in the inspected snapshot); do not assume this legacy integer column has the same type as the shadow group's boolean flag.
 - Any source-snapshot or corpus provenance required to trace the token.
 
 The raw occurrence token must come from the source occurrence record, not be reconstructed from the normalized signature or copied from a representative member form. The cursor must be opaque and stable for the selected snapshot. Clamp `limit` to a documented maximum (proposed maximum: 100). Invalid cursor or limit: `400`.
@@ -112,7 +116,8 @@ Illustrative shape only; field names and identifier serialization must be reconc
           "vowelSeq": 0
         },
         "pointedForm": "exact stored pointed form",
-        "lexicalEntries": [],
+        "root": "root label from root_entry",
+        "rootForm": "form metadata from root_form",
         "occurrenceCount": 0
       }
     ],
@@ -170,8 +175,8 @@ The operational BibleApp default remains MT for this verse. The underlying text-
 ## 8. Implementation sequence
 
 1. Confirm the deployed branch, commit, working tree, and live service entrypoint before editing. The deployed checkout and public default branch are not interchangeable.
-2. Inspect the exact shadow table definitions, source-table joins, occurrence fields, and current grants using read-only inspection.
-3. Finalize the query plan and exact JSON schema from verified columns.
+2. Inspect the exact shadow table definitions, source-table joins, occurrence fields, and current grants using read-only inspection. **The table/column and occurrence-join inspection is now complete; see §10.**
+3. Finalize and independently execute the read-only query plan against the shadow DB; verify row-level language mapping and all join counts.
 4. Define a dedicated read-only role and connection plan; review privileges before applying any grant.
 5. Add OpenAPI operations to the deployed branch's contract, generate client schemas, and add GET-only handlers with explicit authorization.
 6. Test against the isolated shadow database only. Include unauthorized, malformed input, absent membership, Hebrew, Aramaic, same-root, cross-root, and Ezekiel 27:32 fixtures.
@@ -183,4 +188,34 @@ The operational BibleApp default remains MT for this verse. The underlying text-
 
 **Contract drafted for review; implementation not started.** No API files were changed. No database grants, schema, or data were changed. No service was restarted or deployed.
 
-The next technical blocker is to inspect the actual shadow database schema and source occurrence joins from the deployed Lampy environment, then replace the schematic response with a schema-verified contract.
+The schema and source occurrence joins have now been inspected read-only. The next blocker is to execute and independently validate the proposed read-only query set, then review the dedicated database role and privilege boundary. No role or grant has been created.
+
+## 10. Read-only schema inspection completed on Lampy
+
+Inspected the isolated database `bible_hebrew_variant_shadow_20261107` through PostgreSQL read-only catalog and SELECT queries. No DDL, DML, grants, or service changes were made.
+
+Observed table shapes:
+- `hebrew_vowel_variant_group`: `variant_group_id`, `is_aramaic` (boolean), `non_vowel_signature`, `normalization_form`, `algorithm_version`, `source_snapshot_id`, `source_relation`, `review_status`, `created_at`.
+- `hebrew_vowel_variant_member`: `variant_group_id`, `is_aramaic`, `algorithm_version`, `source_snapshot_id`, `root_id`, `root_form_seq`, `vowel_seq`.
+- `root_vowel`: member key plus `vowel_pattern` and `word_count`.
+- `root_entry`: `root_id`, `root`, `word_count`.
+- `root_form`: keyed by `root_id, form_seq` (the column is `form_seq`, not `root_form_seq`); contains affix/display metadata and example forms.
+- `lexicon`: only the three-column member key `root_id, root_form_seq, vowel_seq`; it does not itself contain gloss, Strong's, or morphology fields.
+- `words`: `word_id`, `orig_word_id`, `verse_id`, `word_pos`, `pointed`, `unpointed`, `letters`, `strongs`, `strongs_source_id`, `morph_pattern_id`, `is_aramaic`, `root_id`, `root_form_seq`, `root_vowel_seq`.
+- `verses`: `verse_id`, `book_id`, `chapter`, `verse`; `books`: `book_id`, `name_en`, `name_he`.
+- `morph_patterns`: `pattern_id`, `pattern`, `language`, `parse_status`, `parse_notes`.
+
+The legacy `words.is_aramaic` column is `bigint`, not boolean. In the inspected source snapshot, value `0` occurs on 259,812 Hebrew words and value `1` on 4,405 Aramaic words. The shadow group/member language flag is boolean. The query layer must map this explicitly and verify unexpected values fail closed.
+
+The occurrence join path was verified with a SELECT:
+`words` joins `verses` on `verse_id`, then `books` on `book_id`; morphology joins `morph_patterns` on `pattern_id = words.morph_pattern_id`. Strong's is stored directly on each `words` occurrence as text. Therefore Strong's and morphology must be returned as occurrence-level observations, not asserted as one fixed attribute of a member.
+
+**Ezekiel 27:32 fixture observed in group 504:**
+- Member 1: root_id 6627, root `בני`, root_form_seq 4, vowel_seq 11, pointed form `בְּנֵיהֶם֙`, root_vowel word_count 2.
+- Member 2: root_id 21384, root `ני`, root_form_seq 3, vowel_seq 1, pointed form `בְּנִיהֶם֙`, root_vowel word_count 1.
+- Matching `words` query returns exactly three occurrences: H1121 in Jeremiah 11:22 and Jeremiah 17:2; H5204 at Ezekiel 27:32 (word_id 238432). Exact pointed forms and occurrence-level morphology were returned from source rows.
+- Group 504 carries algorithm `nfc-remove-u05b0-u05bb-u05c7-v1` and source snapshot `sha256:2ea0a1b12a4335d11393c1baddd1d0e0327f67f70059973f82f52c9bb557a540`.
+
+A catalog query returned no foreign-key constraints for the inspected legacy corpus tables (`words`, `lexicon`, `root_vowel`, `root_form`, `root_entry`, `verses`). The API must not rely on those legacy joins being database-enforced; query validation and integrity checks must explicitly verify them. This observation does not negate the declared foreign keys on the two new shadow variant tables.
+
+**Implication for the contract:** member forms come from `root_vowel.vowel_pattern`; root labels come from `root_entry.root`; root-form metadata joins using `root_form.form_seq`; exact occurrences and Strong's/morphology come from `words`; verse display joins through `verses` and `books`. The current response sketch has been corrected accordingly.
