@@ -231,3 +231,50 @@ The evidential status must be stated carefully:
 This source therefore modestly improves the lexical case for retaining a mourning interpretation as a serious possibility. It does not change the textual-critical disposition: **OPEN_TEXT_CRITICAL_REVIEW**.
 
 Source: [Friedrich-Emanuel Focken, “Ezechiels Schriftrolle” (2016), pp. 163–164](https://www.academia.edu/27043588/Ezechiels_Schriftrolle_Die_Konzeption_seiner_Prophetie_im_Berufungsbericht_in_F_E_Focken_M_R_Ott_Hgg_Metatexte_Erz%C3%A4hlungen_von_schrifttragenden_Artefakten_in_der_alttestamentlichen_und_mittelalterlichen_Literatur_Materiale_Textkulturen_15_Berlin_Boston_2016_145_175).
+
+
+## 11. Critical-edition pathway refined and medieval lexical reception (2026-11-08)
+
+### Göttingen edition: distinguish the base edition from its P967 addendum
+
+The bibliographic trail now clarifies that Joseph Ziegler's *Ezechiel* was first published in 1952, with a second revised edition in 1977 (some later catalogues/retail records date the issue or printing 1978). The 1977 second edition includes a substantial addendum by Detlef Fraenkel, pp. 331–352, incorporating further P967 material. A Leuven Septuagint introduction explains that the more recently discovered P967 portions were collated by Fraenkel and incorporated in this addendum.
+
+Therefore, for Ezekiel 27:32, the relevant consultation is not simply the base critical text or an undifferentiated “1978 edition.” The exact addendum and apparatus entry must be checked, alongside the main apparatus. A scholarly bibliography describes the 1977 edition/addendum as providing full details of P967 variants. This is a more precise lead than the earlier generic reference to two apparatus modules.
+
+The apparatus entry at 27:32 has still **not** been directly inspected. Do not report its sigla or infer a separate Theodotion reading from the edition's general structure.
+
+### P967 publication history
+
+The Scheide leaves are one part of the dispersed publication history of P967. The 1938 Princeton edition publishes the Scheide collection; the Chester Beatty leaves were published by Kenyon, and additional Madrid leaves covering Ezekiel 28:19–43:9 were published by Fernández-Galiano in 1971. The codex's surviving portions were therefore issued in multiple publications. This prevents the mistaken assumption that the Princeton volume is a complete edition of all surviving P967 Ezekiel text.
+
+### Additional published collation at Ezekiel 27:32
+
+Ingrid E. Lilly's *Papyrus 967: A Variant Literary Edition of Ezekiel* (Emory dissertation, 2010; subsequently published as *Two Books of Ezekiel*, VTSup 150, 2012) provides a verse-specific textual-variant list. At Ezekiel 27:32, Lilly lists P967 among witnesses omitting the Hebrew clause מי כצור כדמה בתוך הים (“Who is like Tyre, like one destroyed in the midst of the sea?”). This is an omission of the **closing question**, not the preceding “their sons” clause.
+
+Werner's commentary separately states that P967 retains the “their sons” reading in the preceding clause and omits v.31. Thus the defensible description is:
+- P967 retains the Greek clause “their sons will take up a lament” in v.32;
+- P967 omits the final question in v.32;
+- P967 omits MT v.31.
+
+Lilly's collation is a published scholarly collation, not a substitute for inspecting the 1938 transcription and plates. The precise papyrus line, physical condition, correction status, and editorial apparatus at the word remain to be checked directly. Greek οἱ υἱοὶ αὐτῶν supports the sons interpretation, but does not establish Hebrew vowel points in P967's Vorlage.
+
+### Medieval Hebrew reception of MT בְּנִיהֶם
+
+A check of *Mikra'ot Gedolot HaKeter* at Ezekiel 27:32 shows:
+- Rashi explains the form as בנְהִי שלהם (“their lament”).
+- Radak identifies the sense with נהי but records disagreement about the root and offers a different morphological explanation.
+- Malbim also relates בניהם to נהי, describing a lament-and-response pattern.
+
+These are reception-history and grammatical witnesses, not independent ancient textual witnesses. They strengthen the evidence that the MT form was traditionally understood as a mourning expression, while confirming that its derivation was not considered straightforward. They do not prove the exact noun morphology or settle the priority of the MT and “sons” readings.
+
+### Updated source references
+
+- Lilly, *Papyrus 967: A Variant Literary Edition of Ezekiel* (2010), Emory repository copy, textual variant list at Ezekiel 27:32: https://etd.library.emory.edu/downloads/79407x487?locale=en
+- Werner Bible Commentary, Ezekiel 27:1–36, notes on vv.31–32: https://wernerbiblecommentary.org/?q=node/919
+- Leuven, “Septuagint Ezekiel: Introduction,” describing Ziegler's 1977 second edition and Fraenkel's P967 addendum: https://theo.kuleuven.be/uploads/file/ezekiel/Septuagint_Ezekiel_Intro.pdf
+- Conroy, “Ezekiel: text transmission and text criticism: bibliography,” P967 publication history and Ziegler addendum: https://www.cjconroy.net/bib/ezek-text.htm
+- Olley, “Trajectories in the Textual History of Ezekiel,” discussion of Ziegler/Fraenkel's P967 variant data: https://citeseerx.ist.psu.edu/document?doi=03168eb7b95d7711d0355f32f8c82b98d4f0b46a&repid=rep1&type=pdf
+- HaKeter, Ezekiel 27:32 and medieval commentaries: https://www.mgketer.org/tanach/14/27/32
+- Malbim on Ezekiel 27: https://he.wikisource.org/wiki/מלבי%22ם_על_יחזקאל_כז
+
+**Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** Preserve MT source text, H5204, morphology, YLT, alignment, and production data. No source correction or semantic merge is authorized or warranted by this evidence.
