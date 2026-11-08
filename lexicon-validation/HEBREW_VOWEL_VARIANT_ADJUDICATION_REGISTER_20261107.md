@@ -1,0 +1,82 @@
+# Hebrew vowel-only variant adjudication register
+
+**Date:** 2026-11-07  
+**Scope:** First source-based adjudication pass over the unresolved or potentially misleading cases surfaced by the 372-group member-level review.  
+**Status:** Research register only. No production or shadow database writes; no source lexical, morphology, Strong's, root, or alignment records were changed.
+
+## Governing distinction
+
+The 372-group index is an **orthographic candidate inventory**, not a semantic-equivalence table. The strict signature algorithm remains unchanged. This register adds a second, independent layer: what the evidence currently says about selected lexical, morphological, textual, and source-annotation questions.
+
+The following status labels are deliberately not interchangeable:
+
+- **Resolved** means the specific uncertainty named in the case has been answered from the database morphology, the lexical source, or the cited context. It does not authorize merging.
+- **Related Strong's entries** means two IDs are derivationally or lexically related; the original IDs remain intact.
+- **Open** means a real source, textual, geographical, or vocalization question remains.
+- **Probable source annotation conflict** is a diagnostic, not a correction.
+
+## Findings
+
+### 1. Disputed reading: בְּנִיהֶם in Ezekiel 27:32
+
+The Lampy source row is word_id **238432**, pointed **בְּנִיהֶם**, Strong's **H5204**, morphology **HR/Ncmsc/Sp3mp**. In the database this is preposition ב + a masculine singular noun in construct with a third masculine plural suffix: “in their wailing.”
+
+The BDB entry for H5204 explicitly marks the reading as doubtful. It reports that eleven manuscripts, early editions, and ancient versions have **בְּנֵיהֶם**, “their sons,” rather than the Masoretic **בְּנִיהֶם**. The local `word_variants` rows for word_id 238432 contain spelling variants only; there is no textual qere row attached to this word. Thus the external witness reading must not be silently treated as a stored MT qere.
+
+**Disposition:** keep the MT reading and the alternative witness reading distinct. This is a textual-critical question, not an ordinary semantic variant.  
+Sources: [BDB/Strong's H5204](https://biblehub.com/strongs/hebrew/5204.htm); [Ezekiel 27:32 Hebrew analysis](https://www.openbible.com/text/ezekiel/27-32.htm).
+
+### 2. לְבֹא חֲמָת: infinitive or toponym?
+
+The database assigns **HNp** (proper name) to לְבֹא in Numbers 13:21 and 34:8. Other occurrences of the same form family are parsed as **HR/Vqc** (preposition + Qal infinitive construct), H935. Independent grammatical analyses parse the phrase as “to/unto the entrance of Hamath.” The UBS translator handbook notes that some translations treat “Lebo” as part of the place-name, while other renderings translate “entrance of Hamath”; it recommends the place-name rendering for Numbers 13:21 on geographical/contextual grounds.
+
+**Disposition:** genuinely ambiguous boundary between a verbal infinitive/nominalized “entrance” and a toponymic reading. The database's proper-name parse is not disproved by grammar alone. This remains open pending OSHB source annotation and geographical review.  
+Sources: [Numbers 34:8, Mechon-Mamre](https://www.mechon-mamre.org/p/pt/pt0434.htm); [Numbers 13:21, UBS translator handbook](https://tips.translation.bible/tip_verse/num-1321/); [Numbers 34:8, Hebrew analysis](https://biblehub.com/text/numbers/34-8.htm).
+
+### 3. לָעִיר in 2 Kings 19:13 / Isaiah 37:13
+
+The project database assigns **HNp** to the forms in the parallel 2 Kings/Isaiah passages, despite Strong's H5892 (“city”). The parallel phrase is conventionally read “the king of the city of Sepharvaim”; an independent Hebrew text analysis explicitly parses לָעִיר as “of the city.” Micah 6:9 has the same common noun with morphology **HRd/Ncfsa** (preposition + definite article + common feminine singular noun).
+
+**Disposition:** probable source morphology inconsistency. Do not change the source parse until the exact OSHB XML and parallel token records have been checked.  
+Sources: [2 Kings 19:13 Hebrew analysis](https://mail.cnbible.com/text/2_kings/19-13.htm); [Isaiah/2 Kings parallel text analysis](https://bibliaparalela.com/text/2_kings/19-13.htm).
+
+### 4. Resolved lexical collisions and rare forms
+
+- **בְּכַר, Genesis 31:34 (H3733):** BDB/Strong's includes “basket-saddle” or camel saddle; the context is Rachel placing the teraphim in the camel's gear. This is not H1060 “firstborn.” [H3733 lexical entry](https://biblehub.com/strongs/hebrew/H3733.htm).
+- **הָדָה, Isaiah 11:8 (H1911):** the verb means “stretch out the hand”; the clause says the weaned child stretches out his hand toward/on the viper's den. **הֹדֹה**, Jeremiah 22:18 (H1935), is the noun “majesty/splendour” with a suffix. Distinct lexemes. [H1911](https://biblehub.com/bdb/1911.htm); [H1935](https://biblehub.com/bdb/1935.htm).
+- **וַיִּגְלֹם, 2 Kings 2:8 (H1563):** BDB defines the verb “wrap up, fold, fold together,” matching Elijah's wrapping/folding of his mantle. The other member, וַיַּגְלֵם in 1 Chronicles 5:26, is H1540 with a 3mp object suffix and means “carry them into exile.” Distinct verbal lexemes. [H1563 BDB](https://biblehub.com/bdb/1563.htm).
+- **רָדָה, Judges 14:9 (H7287):** BDB has a distinct second entry for רָדָה, “scrape out,” and explicitly cites the scraping of honey from the lion's carcass. The other member רְדָה in Genesis 45:9 and Ezekiel 32:19 is the imperative of ירד, “go down.” Distinct lexemes and forms. [H7287 BDB](https://www.studylight.org/lexicons/eng/hebrew/7287.html).
+- **עַלְוָה, 1 Chronicles 1:51 (H5933):** BDB identifies this as an Edomite male proper name, Alvah. The other member is עַל + a pronominal suffix, H5921 (“upon her/it”). Distinct lexemes.
+
+### 5. Related Strong's entries, not proven data errors
+
+- **רֹעַי:** the source assigns H7473 in Genesis 13:8 and H7462 in Ezekiel 34:8 to the same pointed/member key and morphology. H7473 is explicitly derived from the active participle of H7462 and means “shepherd” as a substantive. This is a related-lemma/Strong's distinction; it is not, by itself, evidence of corrupt data. [H7473](https://primebible.com/strongs/hebrew/H7473).
+- **מהר family:** H4118 is derived from H4116; H4120 is the feminine noun/adverb from H4118 (“haste, quickly”). These are related derivational forms, not interchangeable lexical records. [H4120](https://studybible.info/strongs/H4120).
+
+### 6. Morphology questions resolved against the OSHB code legend
+
+The official OSHB code table defines the verb stem and conjugation positions separately: `q` in the stem position is Qal; `p` in the conjugation position is perfect; `v` is imperative; `h` is Hiphil; `N` is Niphal; `r` is active participle; `a` is infinitive absolute; `Sh` is paragogic he; `Ti` is an interrogative particle; `Td` is the definite article. [Official OSHB Hebrew Morphology Codes](https://hb.openscriptures.org/parsing/HebrewMorphologyCodes.html).
+
+- **הֲרֹאֶה, Ezekiel 8:6:** database pattern **HTi/Vqrmsa** = interrogative particle + Qal active participle masculine singular absolute. The following explicit pronoun **אַתָּה** is second masculine singular. The clause addresses Ezekiel: “Are you seeing…?” This resolves the earlier uncertainty about whether the participle's subject was “he” or “you.”
+- **הֵאִירָה / הָאִירָה:** pattern IDs 2866/2908 are **HVhp3fs** versus **HVhv2ms/Sh**: Hiphil perfect 3fs versus Hiphil imperative 2ms + paragogic he.
+- **הֵאָכֹל / הָאֹכֵל:** pattern IDs 2640/2381 are **HVNa** versus **HTd/Vqrmsa**: Niphal infinitive absolute versus definite article + Qal active participle masculine singular absolute.
+- **שִׁלְחָה / שָׁלְחָה** and **שִׁמְעָה / שָׁמְעָה:** pattern IDs 3360/3283 are **HVqv2ms/Sh** versus **HVqp3fs**: Qal imperative 2ms + paragogic he versus Qal perfect 3fs.
+
+These code checks resolve morphology labels, not every translation nuance. The source codes are preserved.
+
+### 7. Vocalization/source-text review still open: עֳלֶיהָ / עָלֶיהָ
+
+The final batch found one Isaiah 37:33 occurrence with **עֳלֶיהָ** and 32 other occurrences with **עָלֶיהָ**. Both are assigned H5921 and the same morphology **HR/Sp3fs** (preposition עַל + 3fs suffix). No grammatical or semantic difference is supplied by the current database.
+
+**Disposition:** preserve both raw pointed forms; compare the exact WLC/OSHB source tokens and Masoretic vocalization before deciding whether this is a source-text difference, normalization issue, or legitimate vocalization variant. Do not create a second lexical identity on the current evidence.
+
+## Recommended next sequence
+
+1. Resolve the two source-annotation candidates by checking the exact OSHB XML: לָעִיר (2 Kings 19:13 / Isaiah 37:13) and לְבֹא (Numbers 13:21 / 34:8).
+2. Review the textual apparatus for Ezekiel 27:32 and decide whether the alternative בְּנֵיהֶם reading belongs in a separate textual-witness record; do not insert it into the MT word row.
+3. Compare the WLC/OSHB source for עֳלֶיהָ / עָלֶיהָ.
+4. Only after those checks, propose any source corrections or app presentation changes. The orthographic candidate layer remains separate from lexical identity and textual apparatus.
+
+## Preservation statement
+
+This register was built from read-only queries of the Lampy `bible` database and the existing review reports, plus cited lexical/morphological sources. No production or shadow database rows, source annotations, root assignments, Strong's values, morphology, alignments, embeddings, or vectorizers were changed.
