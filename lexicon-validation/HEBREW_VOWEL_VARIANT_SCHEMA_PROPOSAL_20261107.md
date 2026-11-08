@@ -113,3 +113,19 @@ The earlier draft used algorithm version without a source-snapshot identifier. T
 
 
 The prototype contains 7,148 language-scoped membership rows over 7,145 unique root-vowel keys. Three keys are members in both Hebrew and Aramaic candidate populations. A further five cross-root member keys have occurrences in both language populations but are not candidate members in both; in total, eight cross-root keys have cross-language occurrences. This distinction is recorded in the validator and the [build results](HEBREW_VOWEL_VARIANT_SHADOW_BUILD_RESULTS_20261107.md).
+
+
+## 7. External textual witnesses are a separate layer
+
+The Ezekiel 27:32 review demonstrates a case that the vowel-only group schema must not absorb as an ordinary member:
+
+- The MT word is `בְּנִיהֶם` (project word_id 238432; H5204, “in their wailing”).
+- The LXX reads `οἱ υἱοὶ αὐτῶν` (“their sons”), corresponding to the alternative Hebrew vocalization `בְּנֵיהֶם`.
+- BDB reports this “their sons” reading in eleven manuscripts, early editions, and ancient versions.
+- This is not a local MT qere row; the project's `word_variants` table has no qere entry for this token.
+
+If BibleApp later exposes such evidence, it should be represented in a **separate textual-witness/apparatus relation**, not inserted as a canonical `hebrew_vowel_variant_member` and not fabricated as `variant_type='qere'`. The apparatus record should identify at least the witness/source, edition or manuscript, reading language, exact reading, reference/token scope, evidence/provenance, and the relationship to the MT reading. The MT `words` row and its lexical assignments remain unchanged.
+
+YLT renderings and word alignments are another separate layer. In this verse, the YLT translation follows “their sons,” but the current alignment table bridges the MT H5204 token to “And/lifted” and leaves “their sons” unaligned. This is documented as a U-1 alignment anomaly; no YLT text or alignment row was changed.
+
+**Design boundary:** orthographic cross-reference groups, external textual witnesses, and translation/alignment records must remain distinct linked layers. Similar consonants or vowel patterns do not authorize merging them.
