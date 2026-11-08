@@ -129,3 +129,10 @@ The [BibleApp presentation and schema safety review](HEBREW_VOWEL_VARIANT_BIBLEA
 ## 9. Read-only BibleApp API contract
 
 The [read-only API contract](HEBREW_VOWEL_VARIANT_READ_ONLY_API_CONTRACT_20261107.md) records the proposed route shapes, response semantics, shadow-database isolation, authorization, validation/freshness gates, and Ezekiel 27:32 acceptance fixture. It also documents an important integration boundary: the deployed Lampy API branch and the public default branch of BibleApp are not interchangeable, and the existing `bible_app` translation-authoring connection is not the corpus/shadow database connection. The contract is a draft only; no API, grant, schema, or deployment change has been made.
+
+
+## 10. Lampy API and shadow-database inspection
+
+Read-only inspection of the deployed Lampy checkout and isolated shadow database grounded the [API contract](HEBREW_VOWEL_VARIANT_READ_ONLY_API_CONTRACT_20261107.md) in the actual schema. The occurrence join is `words → verses → books`; occurrence-level Strong's and morphology are stored on `words` and `morph_patterns`, while the `lexicon` table is only a root-vowel membership key. The legacy language flag is integer-valued (0 Hebrew, 1 Aramaic in the inspected snapshot), unlike the shadow group's boolean flag. Ezekiel 27:32 group 504 returned the two expected pointed forms and exactly three occurrences, including word_id 238432.
+
+The shadow database currently has no application reader role or application table grants; only PostgreSQL has database connection privileges. The existing `bible_app_api` role is not authorized for this database and must not be reused. No role, grant, API code, production data, or service was changed. The next step is to independently test the read-only query plan and review a dedicated least-privilege role before any access grant.
