@@ -145,3 +145,8 @@ The proposed lookup, member-detail, and occurrence SQL was then smoke-tested in 
 
 
 A further schema check found source-labelled glosses in a separate `glosses` table keyed by Strong's text. For H5204, the database contains distinct BDB and Strong's Hebrew gloss rows (“wailing” / “lamentation”); H1121 likewise has multiple source-labelled glosses. If exposed, these must remain attached to occurrence-level Strong's and retain their source labels, not be collapsed into a single gloss or attributed to the orthographic group. The API contract now includes a minimum runtime read set and a column-level least-privilege proposal; no database role or grant has been created.
+
+
+## 11. Distinct pointed-form validator update
+
+The independent shadow validator now checks the actual member rows and requires at least two distinct NFC pointed forms per group. It also includes a negative fixture proving that two different member entries with the same pointed form are rejected, plus a positive Ezekiel 27:32 fixture. The full run passed: all 3,349 groups have at least two distinct forms (minimum 2, maximum 6), and the source/shadow counts and prior language, lexical-parent, and qere-separation checks remain valid. The reproducible script is [`scripts/validate_hebrew_variant_shadow.py`](scripts/validate_hebrew_variant_shadow.py); execution details are in the [validation report](HEBREW_VOWEL_VARIANT_SHADOW_VALIDATION_20261107.md). The script ran read-only; no database data or schema changed.
