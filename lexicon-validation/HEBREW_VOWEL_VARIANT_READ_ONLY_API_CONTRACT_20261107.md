@@ -241,3 +241,10 @@ An additional read-only SQL check was run across all shadow groups, joining memb
 The proposed word lookup, group-member detail, and occurrence query paths were executed successfully inside an explicit PostgreSQL `BEGIN READ ONLY` transaction, followed by `COMMIT`. For word_id 238432, the lookup resolved group 504. The detail query returned the two expected member keys and exact `root_vowel.vowel_pattern` forms. The occurrence query returned exactly three rows with source tokens, Strong's, morphology, book, chapter, verse, and word position. No data was changed.
 
 The current shadow group status distribution is 3,349 `candidate` and zero rows in the other illustrative status values. This describes candidate-generation status only; it does not establish lexical or textual-critical review. The SQL smoke test is evidence for the join plan and fixture, not yet a deployed endpoint test or a least-privilege authorization test.
+
+
+### Gloss-source inspection
+
+A read-only catalog query identified a separate `glosses` table with columns `strongs`, `source`, and `gloss` (17,347 rows in this snapshot). It is keyed by Strong's text in the observed data and may return multiple source-specific gloss rows for one Strong's entry. For the Ezekiel fixture, H5204 has BDB “wailing” and Strong's Hebrew “lamentation”; H1121 has BDB and Strong's Hebrew gloss records for “son” and related senses.
+
+If the API includes glosses, join them from each occurrence's `words.strongs` to `glosses.strongs`, and return each `source` and `gloss` separately. Do not collapse them into one authoritative gloss or attach them to a vowel-variant member as though the orthographic relation itself establishes lexical identity. Add `glosses` to the read-only privilege list only if this display is included in the first release.
