@@ -173,3 +173,17 @@ A separate read-only query of the live YLT alignment tables found a likely align
 - YLT positions **7 “their”** and **8 “sons”** have no alignment rows; the YLT translation appears to follow the “their sons” interpretation rather than the MT “in their wailing” lexical analysis.
 
 **Assessment:** this is a strong candidate for a U-1 YLT alignment defect or an unresolved alternative-reading alignment, not proof that the MT word row should be changed. The existing YLT text and all `ylt_renderings` rows are preserved. Do not recompute or rewrite the alignment as part of this Hebrew variant task. Create a separate alignment review item if the YLT alignment project is resumed.
+
+
+### Exact cross-root candidate membership for Ezekiel 27:32
+
+A read-only query of the isolated shadow database confirms this is candidate group **504**, signature `בּניהם֙`, with two distinct root-vowel members:
+
+| Member | Pointed form | Root | Strong's | Morphology | Occurrences |
+|---|---|---|---|---|---|
+| Sons member | `בְּנֵיהֶם֙` | `בני` (root_id 6627) | H1121 | HNcmpc/Sp3mp | Jeremiah 11:22 (word_id 213637); Jeremiah 17:2 (word_id 215100) |
+| Wailing member | `בְּנִיהֶם֙` | `ני` (root_id 21384) | H5204 | HR/Ncmsc/Sp3mp | Ezekiel 27:32 (word_id 238432) |
+
+The consonantal signature, retained dagesh, and retained cantillation mark match exactly; only the specified vowel points differ. The LXX “their sons” reading corresponds to the existing **sons member** already attested in Jeremiah, while the MT Ezekiel token remains the separate **wailing member**. This is a verified cross-root orthographic candidate, not evidence that the two lexemes should be merged.
+
+**Disposition:** retain group 504 as an orthographic cross-reference; preserve the two roots, Strong's numbers, morphology, and occurrences separately. Keep the textual-critical question of which reading is earlier/open unresolved. Any external-witness apparatus entry must identify its witness and must not be converted into an MT qere.
