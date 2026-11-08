@@ -141,3 +141,10 @@ The Hebrew Masoretic text is displayed as **בְּנִיהֶם** in Ezekiel 27:3
 **Updated assessment:** this is a substantive textual/lexical ambiguity within the same consonantal spelling, not merely two meanings of one securely established MT lemma. The LXX supports the “their sons” reading; the MT preserves “in their wailing.” Keep the MT word row and any external-witness reading separate. The project has no local qere row for word_id 238432, so do not manufacture a Masoretic qere entry. A future apparatus proposal should record the witness, reading, and provenance explicitly.
 
 Sources: [WLC and Hebrew analysis, Ezekiel 27:32](https://www.cnbible.com/text/ezekiel/27-32.htm); [Greek Septuagint and MT interlinear, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Strong's H5204 textual note](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
+
+
+### Morphology provenance narrowed
+
+Inspection of the project's pinned-source parser, `worker-out/oshb/parse_oshb.py`, shows that it reads `morph = el.get('morph') or ''` and writes that value directly to the TSV. The accompanying `worker-out/oshb/README.txt` explicitly defines the `morph` column as OSHB `@morph` “verbatim.” No morphology-code transformation is present in this parser.
+
+**Implication:** the live HNp values for the two לְבֹא tokens and the two לָעִיר tokens are likely inherited from the pinned OSHB XML annotation, not introduced by this parser. This narrows the question from “did the local parser corrupt the code?” to “is the upstream OSHB annotation defensible, and does the independent interlinear analysis parse the same text/word segmentation?” The exact XML attributes are still not directly retrieved, so this is a provenance-supported inference, not a direct XML inspection. No parser or database correction is proposed.
