@@ -142,3 +142,6 @@ A further read-only SQL check across all 3,349 shadow groups confirmed that ever
 
 
 The proposed lookup, member-detail, and occurrence SQL was then smoke-tested in an explicit PostgreSQL read-only transaction. The Ezekiel 27:32 word lookup resolved group 504; the detail query returned two member forms; the occurrence query returned the three expected Jeremiah/Ezekiel occurrences with exact source tokens, Strong's, morphology, and verse references. No rows were changed. This validates the query path for the fixture only, not an HTTP endpoint, API authorization, or a new database role.
+
+
+A further schema check found source-labelled glosses in a separate `glosses` table keyed by Strong's text. For H5204, the database contains distinct BDB and Strong's Hebrew gloss rows (“wailing” / “lamentation”); H1121 likewise has multiple source-labelled glosses. If exposed, these must remain attached to occurrence-level Strong's and retain their source labels, not be collapsed into a single gloss or attributed to the orthographic group. The API contract now includes a minimum runtime read set and a column-level least-privilege proposal; no database role or grant has been created.
