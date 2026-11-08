@@ -229,3 +229,8 @@ A read-only catalog inspection of `pg_database`, `pg_roles`, `pg_class`, and `pg
 - No table-level SELECT grants to an application role were returned for the required relation set.
 
 This confirms that the existing `bible_app_api` connection cannot simply be reused. A dedicated role and narrowly scoped SELECT grants would be needed before the API could connect. **No role or grant was created.** This remains a separate reviewed action, not part of the documentation work.
+
+
+### Additional distinct-form invariant check
+
+An additional read-only SQL check was run across all shadow groups, joining members to `root_vowel` and counting distinct `normalize(vowel_pattern, NFC)` values per group. Result: 3,349 groups checked; zero groups had fewer than two distinct NFC pointed forms; minimum was 2 and maximum was 6. This verifies the current shadow data satisfies the missing distinct-form invariant. The independent validator still needs this assertion and a negative regression fixture (two distinct member keys with the same pointed form) before the API release gate can be considered complete.
