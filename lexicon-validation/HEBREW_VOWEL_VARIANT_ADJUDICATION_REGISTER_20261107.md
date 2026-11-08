@@ -200,3 +200,8 @@ The translation evidence is divided. YLT renders “their sons,” matching the 
 This confirms that the “sons” reading is an ancient and materially attested alternative, but it does not establish that it should replace the MT reading in this project. Keep the MT H5204 member, the H1121 “sons” member, and the external-witness evidence distinct. The YLT rendering is a translation decision and must not be treated as independent proof of the Hebrew Vorlage.
 
 Sources: [KJV/JPS and MT text, Ezekiel 27:32](https://bible.sabda.org/verse.php?book=26&chapter=27&mode=print&verse=32); [NET translation and note, Ezekiel 27:32](https://classic.net.bible.org/passage.php?passage=eze+27%3A1-36); [LXX text, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Gesenius textual note, H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
+
+
+### Operational disposition — Ezekiel 27:32
+
+The project will use the **Masoretic Text as its default source text** for this verse. This does not resolve the textual-critical question: the “their sons” reading remains a significant alternative supported by the Old Greek and reported Hebrew manuscript evidence, while the exact manuscript witnesses and pointing have not been independently verified. Preserve MT `בְּנִיהֶם֙` (H5204; `HR/Ncmsc/Sp3mp`; root `ני`) and the separate H1121 “sons” member. No qere conversion, lexical merge, source-text edit, or production-data change is authorized or implied. Status is therefore **text-critically open; operationally defaulted to MT**. See [the detailed follow-up](HEBREW_VOWEL_VARIANT_EZEKIEL_27_32_FOLLOWUP_20261108.md).
