@@ -190,11 +190,11 @@ The current 261-row YLT profile ledger contains 219 inherited_provisional select
 
 - The completed shadow database has a second verified custom-format backup (SHA-256 `3cbb5efb19c7c11db7ea996458372a0835c3bb94f988767e08ae5d8136e869a0`, 349-entry restore listing). PUBLIC CONNECT/TEMP privileges were revoked; only the postgres owner can connect. See [restore](restore_hebrew_variant_shadow.sh) and [backup](backup_built_hebrew_shadow.sh) procedures.
 
-- [Cross-root member review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md): records member-level inspection of all three three-root groups and five prioritized batches of 15 cross-root groups (75), plus the three separate three-root cases (78 distinct groups total). The examples include distinct roots, Strong's values, morphology patterns, and affix analyses under identical non-vowel signatures. This confirms that the relation is an orthographic cross-reference, not a lemma or translation-equivalence key.
+- [Cross-root member review](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md): at the earlier batch-5 checkpoint, records member-level inspection of all three three-root groups and five prioritized batches of 15 cross-root groups (78 distinct groups total). The later completion reconciliation below supersedes that historical count.
 
-- [Complete language-scoped cross-root index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv): all 372 cross-root groups, sorted by Strong's/morphology divergence, with root labels, affix-profile counts, language-scope flags, and review-batch/status columns (78 reviewed; 294 pending). The language-filtered recheck confirms 185 groups with multiple Strong's values and 370 with multiple morphology patterns; an unfiltered diagnostic overcount was rejected and documented.
+- [Complete language-scoped cross-root index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv): at the batch-5 checkpoint, the 372-row index recorded 78 reviewed and 294 pending. The later completion reconciliation below supersedes that historical status. The language-filtered recheck confirms 185 groups with multiple Strong's values and 370 with multiple morphology patterns; an unfiltered diagnostic overcount was rejected and documented.
 
-- The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged. Review of the remaining 294 cross-root groups is still outstanding.
+- The live inventory's lexical-safety check found multiple morphology patterns in 2,955/3,349 groups and multiple Strong's values in 1,226 groups. The proposed relationship is therefore explicitly cross-referential; lexical records must not be merged. At the batch-5 checkpoint, 294 cross-root groups remained; see the completion reconciliation below for the final status.
 
 
 ## Hebrew vowel-only variant cross-root review — 2026-11-07
@@ -209,3 +209,12 @@ The review is not lexical approval. Candidate groups remain orthographic cross-r
 The member-level review now covers 108 of 372 cross-root candidate groups: all three three-root cases plus seven prioritized batches of 15. There are 264 pending groups. Batch 7 is documented in [the cross-root review report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md), and the [372-group CSV index](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv) records each group's review status and batch. The `אחי֙` batch-7 group also exposes a Strong's-value inconsistency within one existing member key (H251/H277); this remains a source-data flag, not a reason to alter the lexicon.
 
 All candidate links remain orthographic cross-references only. No production schema/data or embedding/vectorizer changes were made.
+
+
+## Hebrew vowel-only variant cross-root review — completion reconciliation (2026-11-08)
+
+Member-level inspection is complete for **372 of 372** cross-root candidate groups: the three three-root cases, batches 1–24 (15 groups each), and final batch 25 (9 groups). **Zero groups remain pending.** The [main review report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md) now includes the batch-8 member ledger and a reconciliation index for the individual [batch 8–25 reports](HEBREW_VOWEL_VARIANT_CROSS_ROOT_REVIEW_20261107.md). The [372-row CSV](HEBREW_VOWEL_VARIANT_CROSS_ROOT_INDEX_20261107.csv) was verified to contain 372 unique language/signature keys, all `reviewed_member_level`, with the complete batch allocation.
+
+Language scope remains explicit: the two Aramaic cross-root groups occur separately (one in batch 10 and one in batch 21); the other 370 groups are Hebrew. The isolated shadow database still marks all 3,349 groups as `candidate`, so member review is not lexical approval. The 1,204 MT Qere rows remain in the separate apparatus relation. Identical consonants and a shared non-vowel signature do not establish shared lemma, meaning, or translation. Proper names, homographs, source-data anomalies, and within-member Strong's/morphology inconsistencies remain flags for independent source/lexicon review.
+
+The 2026-11-08 reconciliation queried only `bible_hebrew_variant_shadow_20261107` in read-only transactions. Production `bible` was not accessed or modified; no lexical, morphology, alignment, embedding, vectorizer, API, or deployment changes were made.
