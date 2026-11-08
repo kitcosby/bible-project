@@ -83,15 +83,27 @@ This register was built from read-only queries of the Lampy `bible` database and
 
 ## 8. Further source-text checks (2026-11-07 continuation)
 
-### לְבֹא חֲמָת — both grammatical and geographical analyses remain viable
+### לְבֹא חֲמָת — source toponymic analysis is defensible
 
-The WLC transcription gives the same pointed token, **לְבֹא**, in Numbers 13:21 and 34:8. Independent WLC text analyses classify it as a verb with Strong's H935; one renders the token “entering,” and the other “to the Lebo-Hamath.” This supports the infinitive analysis at the grammatical level but does not settle whether the phrase functions as a place-name.
+The WLC transcription gives **לְבֹא** in Numbers 13:21 and 34:8. Independent WLC analyses assign H935 and parse the form verbally, while the UBS *Handbook on Numbers* reports both “Lebo-hamath” and “entrance/pass of Hamath.” For Numbers 13:21 the handbook recommends “Lebo-hamath,” noting that “Lebo” was part of the name in 1 Kings 8:65; for Numbers 34:8 it renders “to the entrance of Hamath” but refers readers back to 13:21. The geographical function as a northern boundary point is clear even though the proper-name versus literal-entrance analysis remains debated.
 
-The UBS *Handbook on Numbers* explicitly reports both renderings. For Numbers 13:21 it recommends “Lebo-hamath” on the basis that “Lebo” was part of the name in 1 Kings 8:65, while also noting “Hamath Pass” as plausible. Its Numbers 34:8 discussion renders the phrase “to the entrance of Hamath” and refers readers back to 13:21. A separate UBS note says the exact meaning is unclear and presents the city-name and entrance/pass options.
+A live database occurrence audit adds useful context:
 
-**Updated assessment:** retain the case as genuinely open. Do not mark the database's HNp annotation as disproved solely because independent interlinear tools parse the form as H935. Morphological analysis of the token and interpretation of the phrase boundary are related but distinct questions.
+| Reference | word_id | Pointed form | Strong's | Morphology | Root |
+|---|---:|---|---|---|---|
+| Numbers 13:21 | 47351 | `לְבֹ֥א` | H935 | HNp | `לבא` |
+| Numbers 34:8 | 55394 | `לְבֹ֣א` | H935 | HNp | `לבא` |
+| Joshua 13:5 | 72946 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
+| Judges 3:3 | 77824 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
+| 1 Kings 8:65 | 111942 | `מִלְּב֥וֹא` | H935 | HR/Np | `לבוא` |
+| 2 Kings 14:25 | 124316 | `מִלְּב֥וֹא` | H935 | HR/Ncmsc | `לבוא` |
+| Ezekiel 47:15 | 245631 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
 
-Sources: [WLC analysis, Numbers 13:21](https://cnbible.com/text/numbers/13-21.htm); [WLC analysis, Numbers 34:8](https://cnbible.com/text/numbers/34-8.htm); [UBS Handbook, Numbers 13:21](https://tips.translation.bible/tip_verse/num-1321/); [UBS Handbook, Numbers 34:8](https://tips.translation.bible/tip_verse/num-34-8/); [UBS discussion of the phrase](https://tips.translation.bible/tip_source/omanson-ellington-2008/page/162/).
+The source uses HNp for several boundary-place occurrences, but also has a common-noun construct analysis in 2 Kings 14:25. The Numbers forms use root key `לבא`, while the plene forms use `לבוא`. Because the strict variant rule retains matres, the additional vav is significant and these spellings must not be forced into one vowel-only group.
+
+**Disposition: RESOLVED_TOPONYMIC_INTERPRETATION (with a retained alternative).** The project HNp annotation for the two Numbers tokens is defensible and consistent with other boundary-place occurrences; the verbal H935 is compatible with the name's etymological relationship to בוא (“come/enter”). The literal “entrance of Hamath” / “Hamath Pass” interpretation remains a valid translation alternative. Do not change the stored Strong's, morphology, root, or pointed forms.
+
+Sources: [WLC analysis, Numbers 13:21](https://cnbible.com/text/numbers/13-21.htm); [WLC analysis, Numbers 34:8](https://cnbible.com/text/numbers/34-8.htm); [UBS Handbook, Numbers 13:21](https://tips.translation.bible/tip_verse/num-1321/); [UBS Handbook, Numbers 34:8](https://tips.translation.bible/tip_verse/num-34-8/); [NET 1 Kings 8:65](https://classic.net.bible.org/verse.php?book=1Ki&chapter=8&theme=false&verse=65); [NET 2 Kings 14:25](https://classic.net.bible.org/verse.php?book=2Ki&chapter=14&theme=false&verse=25).
 
 ### לָעִיר — common noun versus place-name Lair
 
