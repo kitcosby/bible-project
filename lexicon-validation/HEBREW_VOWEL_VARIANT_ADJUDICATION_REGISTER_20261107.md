@@ -148,3 +148,16 @@ Sources: [WLC and Hebrew analysis, Ezekiel 27:32](https://www.cnbible.com/text/e
 Inspection of the project's pinned-source parser, `worker-out/oshb/parse_oshb.py`, shows that it reads `morph = el.get('morph') or ''` and writes that value directly to the TSV. The accompanying `worker-out/oshb/README.txt` explicitly defines the `morph` column as OSHB `@morph` “verbatim.” No morphology-code transformation is present in this parser.
 
 **Implication:** the live HNp values for the two לְבֹא tokens and the two לָעִיר tokens are likely inherited from the pinned OSHB XML annotation, not introduced by this parser. This narrows the question from “did the local parser corrupt the code?” to “is the upstream OSHB annotation defensible, and does the independent interlinear analysis parse the same text/word segmentation?” The exact XML attributes are still not directly retrieved, so this is a provenance-supported inference, not a direct XML inspection. No parser or database correction is proposed.
+
+
+### YLT alignment check for word_id 238432
+
+A separate read-only query of the live YLT alignment tables found a likely alignment anomaly in Ezekiel 27:32:
+
+- The YLT verse text is: “And lifted up for thee have their sons a lamentation, And they have lamented over thee, who [is] as Tyre? As the cut-off one in the midst of the sea?”
+- The verse has 30 whitespace-delimited YLT tokens but only 14 distinct token positions in `ylt_renderings`.
+- MT word_id **238432** (`בְּנִיהֶם֙`, H5204, morphology `HR/Ncmsc/Sp3mp`) is linked by rows labeled `bridged` to YLT positions **1 “And”** and **2 “lifted”**.
+- The preceding Hebrew verb word_id **238430** (`וְנָשְׂאוּ`, H5375) has no YLT alignment rows.
+- YLT positions **7 “their”** and **8 “sons”** have no alignment rows; the YLT translation appears to follow the “their sons” interpretation rather than the MT “in their wailing” lexical analysis.
+
+**Assessment:** this is a strong candidate for a U-1 YLT alignment defect or an unresolved alternative-reading alignment, not proof that the MT word row should be changed. The existing YLT text and all `ylt_renderings` rows are preserved. Do not recompute or rewrite the alignment as part of this Hebrew variant task. Create a separate alignment review item if the YLT alignment project is resumed.
