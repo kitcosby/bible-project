@@ -1,12 +1,12 @@
 # Hebrew/Aramaic vowel-only variants — cross-root member review
 
-**Date:** 2026-11-07  
-**Status:** Read-only member-level review completed for all three three-root cases and seven prioritized batches of 15 additional cross-root groups (108 distinct groups total). The subsequent isolated shadow build is documented in §10.
+**Date:** 2026-11-08  
+**Status:** Member-level inspection is complete for all 372 cross-root candidate groups: three three-root cases plus batches 1–24 (15 groups each) and final batch 25 (9 groups). Zero groups remain pending. Batches 8–25 have individual reports linked in §17; the isolated shadow build is documented in §10.
 **Parent evidence:** [Live inventory results](HEBREW_VOWEL_VARIANT_INVENTORY_RESULTS_20261107.md), [schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md).
 
 ## 1. Scope and safeguards
 
-The review resumed against Lampy's live PostgreSQL `bible` database through the ToE → WSL `lampy` execution path. Queries ran as the local PostgreSQL account against `127.0.0.1` and used explicitly read-only transactions. The existing inventory JSON in `/tmp/hebrew-vowel-variants-20261107.summary.json` was used to identify candidate member keys.
+The original corpus inventory and early member-level passes used read-only queries against Lampy's live PostgreSQL `bible` database. After the isolated shadow snapshot was built and independently validated (§10), batches 6–25 were reviewed with explicitly read-only transactions against `bible_hebrew_variant_shadow_20261107`. The 2026-11-08 reconciliation queried only that shadow database; the production `bible` database was not accessed in this run. No production or shadow writes were made during this reconciliation.
 
 The review joined candidate members to:
 
@@ -369,3 +369,38 @@ These findings demonstrate lexical and morphological divergence under the strict
 - 264 remain pending member review.
 - All groups remain candidate-only; no group has been approved as a lexical equivalence.
 - Batch 7 used the isolated shadow snapshot read-only; production data and the existing embedding/vectorizer corpus remain untouched.
+
+
+## 16. Batch 8 — independently revalidated against the isolated shadow
+
+The repository already contained a dedicated [Batch 8 report](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH8_REVIEW_20261107.md). Because the index and batch report already marked these groups complete, this run did not duplicate or reassign them. Instead, all 15 signatures were independently re-queried in an explicit read-only transaction against `bible_hebrew_variant_shadow_20261107`, joining group/member rows to `root_entry`, `root_form`, `root_vowel`, `lexicon`, `words`, `morph_patterns`, `verses`, and `books`.
+
+**Independent check:** 15 groups, 33 language-scoped member rows, and 51 word occurrences; all 15 groups are Hebrew. Every `words.pointed` value matched its `root_vowel.vowel_pattern` (zero mismatches). Each member key had exactly one Strong's value; two member keys had more than one morphology ID: `בְּרִ֣יחַ` (H1280; IDs 1846/1849) and `הֲדֹ֣ם` (H1916; IDs 1846/1849). The Strong's differences below are across distinct member keys, not multiple Strong's values within one pointed member.
+
+Member ledger (member key is `root_id.root_form_seq.vowel_seq`; `n` is the count of canonical `words` occurrences):
+
+- `מעל֣ות` (4): `מַעֲל֣וֹת` — root `מעלות`, `19774.1.5`, H4609, morph 1795, n=2 (1 Kings 10:19; 2 Chronicles 9:18); `מֵעֲל֣וֹת` — root `עלות`, `24081.8.1`, H5927, morph 2180, n=2 (1 Kings 12:28; Nehemiah 4:15).
+- `מעלֽות׃` (4): `מַעֲלֽוֹת׃` — root `מעלות`, `19774.1.6`, H4609, morph 1795, n=3 (2 Kings 20:9, 20:10, 20:11); `מֵעֹלֽוֹת׃` — root `עלות`, `24081.8.2`, H5930, morph 1982, n=1 (Hosea 6:6).
+- `מצּב֔ה` (4): `מַצֵּבָ֔ה` — root `מצבה`, `19925.1.3`, H4676, morph 1807, n=3 (Genesis 28:22; Genesis 31:13; Exodus 24:4); `מִצֹּבָ֔ה` — root `צבה`, `25523.2.1`, H6678, morph 2038, n=1 (2 Samuel 23:36).
+- `מרח֑ק` (4): `מֶרְחָ֑ק` — root `מרחק`, `20210.1.1`, H4801, morph 1846, n=1 (Jeremiah 6:20); `מֵרָחֹ֑ק` — root `רחק`, `26693.5.3`, H7350, morph 1904, n=3 (Genesis 37:18; Exodus 2:4; Exodus 20:21).
+- `מרחֽק׃` (4): `מֶרְחָֽק׃` — root `מרחק`, `20210.1.3`, H4801, morph 1846, n=1 (Proverbs 25:25); `מֵרָחֹֽק׃` — root `רחק`, `26693.5.5`, H7350, morph 1904, n=3 (Genesis 22:4; Exodus 24:1; Jeremiah 23:23).
+- `עיר֑ם` (4): `עִירָ֑ם` — root `עיר`, `23220.5.1`, H5892, morph 1820, n=1 (Genesis 34:20); `עֲיָרִ֑ם` — root `עירמ`, `23232.1.1`, H5895, morph 1833, n=1 (Judges 12:14); `עִירָ֑ם` — root `עירמ`, `23232.1.2`, H5902, morph 1869, n=2 (Genesis 36:43; 1 Chronicles 1:54). The exact pointed string `עִירָ֑ם` occurs under two root assignments: “their city” versus the proper name Iram.
+- `אמר֖י` (3): `אֲמָרַ֖י` — root `אמר`, `2752.3.2`, H561, morph 1837, n=1 (Psalms 5:2); `אֱמֹרִ֖י` — root `אמרי`, `2764.1.1`, H567, morph 1867, n=1 (Numbers 21:29); `אִמְרִ֖י` — root `אמרי`, `2764.1.3`, H559, morph 3351, n=1 (Jeremiah 48:19).
+- `אתּ֣י` (3): `אִתִּ֣י` — root `את`, `4060.6.7`, H854, morph 2080, n=2 (Jeremiah 40:4; Judges 1:3); `אִתַּ֣י` — root `אתי`, `5585.1.2`, H863, morph 1869, n=1 (2 Samuel 18:2). The latter is the proper name Ittai.
+- `בּניהם֙` (3): `בְּנֵיהֶם֙` — root `בני`, `6627.4.11`, H1121, morph 1844, n=2 (Jeremiah 11:22; Jeremiah 17:2); `בְּנִיהֶם֙` — root `ני`, `21384.3.1`, H5204, morph 2034, n=1 (Ezekiel 27:32). Keep the H5204 assignment distinct; its precise gloss and the textual question remain open in the separate Ezekiel 27:32 case work.
+- `בּר֣יח` (3): `בְּרִ֣יחַ` — root `בריח`, `6960.1.1`, H1280, morphs 1846/1849, n=2 (Amos 1:5; Job 38:10); `בְּרֵ֣יחַ` — root `ריח`, `26713.7.2`, H7381, morph 2026, n=1 (Ezekiel 20:41).
+- `דּע֣י` (3): `דֵּעִ֣י` — root `דע`, `8153.4.3`, H1843, morph 1853, n=2 (Job 32:6; Job 32:10); `דְּעִ֣י` — root `דעי`, `8160.1.2`, H3045, morph 3351, n=1 (Jeremiah 3:13).
+- `הד֣ם` (3): `הֲדַ֣ם` — root `דמ`, `8113.14.1`, H1818, morph 2416, n=1 (1 Chronicles 11:19); `הֲדֹ֣ם` — root `הדמ`, `8477.1.1`, H1916, morphs 1846/1849, n=2 (Isaiah 66:1; Psalms 110:1).
+- `הזּ֥ה` (3): `הַזֵּ֥ה` — root `הזה`, `8707.1.1`, H5137, morph 2907, n=1 (Numbers 8:7); `הַזֶּ֥ה` — root `זה`, `10194.8.14`, H2088, morph 2331, n=2 (Genesis 31:48; Jeremiah 19:6).
+- `העל֜ה` (3): `הֶעֱלָ֜ה` — root `העלה`, `9345.1.4`, H5927, morph 2871, n=1 (Jeremiah 16:15); `הָעֹלָ֜ה` — root `עלה`, `24069.4.11`, H5930, morph 2307, n=2 (Leviticus 6:18; 2 Chronicles 35:12).
+- `העל֣ה` (3): `הֶעֱלָ֣ה` — root `העלה`, `9345.1.5`, H5927, morph 2871, n=1 (Ezra 1:11); `הֶעָלֶ֣ה` — root `עלה`, `24069.4.1`, H5929, morph 2415, n=1 (Job 13:25); `הָעֹלֶ֣ה` — root `עלה`, `24069.4.5`, H5927, morph 2381, n=1 (Joshua 12:7).
+
+The main distinctions in the batch are proper-name/common-noun or proper-name/preposition collisions (`מצּב֔ה`, `עיר֑ם`, `אתּ֣י`), an ethnonym/noun/verb collision (`אמר֖י`), and clear lexical or grammatical contrasts under the same non-vowel signature. These examples show why identical consonants do not establish semantic equivalence. The `בְּנִיהֶם֙` member remains explicitly uncertain. No member in this batch has multiple Strong's values within one pointed member; the two multi-morphology members are retained as source observations, not corrected here.
+
+## 17. Completion reconciliation — batches 8–25 and final index state
+
+The branch already contains individual reports for every later batch: [Batch 8](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH8_REVIEW_20261107.md), [Batch 9](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH9_REVIEW_20261107.md), [Batch 10](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH10_REVIEW_20261107.md), [Batch 11](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH11_REVIEW_20261107.md), [Batch 12](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH12_REVIEW_20261107.md), [Batch 13](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH13_REVIEW_20261107.md), [Batch 14](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH14_REVIEW_20261107.md), [Batch 15](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH15_REVIEW_20261107.md), [Batch 16](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH16_REVIEW_20261107.md), [Batch 17](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH17_REVIEW_20261107.md), [Batch 18](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH18_REVIEW_20261107.md), [Batch 19](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH19_REVIEW_20261107.md), [Batch 20](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH20_REVIEW_20261107.md), [Batch 21](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH21_REVIEW_20261107.md), [Batch 22](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH22_REVIEW_20261107.md), [Batch 23](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH23_REVIEW_20261107.md), [Batch 24](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH24_REVIEW_20261107.md), and [Batch 25](HEBREW_VOWEL_VARIANT_CROSS_ROOT_BATCH25_REVIEW_20261107.md).
+
+The 372-row CSV index was independently checked: 372 unique `(language, signature)` keys, 18 columns per row, no malformed rows or duplicate keys, and all 372 statuses set to `reviewed_member_level`. Batch assignment is complete and non-overlapping: three `three_root_cases`; batches 1–24 contain 15 groups each; batch 25 contains 9. The two Aramaic cross-root groups remain separate from Hebrew and appear one each in batches 10 and 21; all other cross-root rows are Hebrew. There are zero pending groups.
+
+A read-only shadow query confirms all 3,349 group rows still have `review_status='candidate'`; member review is not linguistic approval. The separate apparatus relation still contains 1,204 MT Qere rows and remains outside canonical vowel-only membership. This run accessed only `bible_hebrew_variant_shadow_20261107`; production `bible` was not accessed or modified. No lexical, Strong's, morphology, alignment, embedding, vectorizer, API, or deployment changes were made.
