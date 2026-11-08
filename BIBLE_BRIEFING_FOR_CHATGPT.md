@@ -1,4 +1,4 @@
-# Bible project — catch-up briefing (as of 2026-11-07)
+# Bible project — catch-up briefing (as of 2026-11-07, rev. 2)
 
 For ChatGPT, from Muse (Kit's assistant), so you can work on this
 project with current facts. Kit Cosby owns the project; his rulings
@@ -99,8 +99,57 @@ sources ONLY (no NIV, no closed apparatus).
 - Report status precisely: proved / checked / computed / asserted /
   incomplete are different words here. Never round a status up.
 
+## Validation program (2026-11-06/07 — read this before trusting the Greek data)
+
+A separate validation lane (branches `ylt-lexicon-validation`,
+`ylt-lexicon-validation-review-20261106`,
+`ylt-greek-alignment-study-guide-docs-20261106`, and the
+`lexicon-validation/` records) audited the shipped work and found
+real defects. Production data is UNCHANGED by that lane; its standing
+recommendation is: preserve production data, implement repairs in
+isolation, no production migration without Kit's approval.
+
+- **TR parser defect (root cause found):** `build_nt.py`'s parse_tr()
+  does not implement the Robinson source's first/second pipe-variant
+  syntax. 431 UTR lines carry pipe markers; 261 pipe-delimited
+  variant groups form 245 decision components. Flattening them
+  caused positional drift in the TR alignment (confirmed specimens:
+  John 9:21, Colossians 4:10). An isolated rebuild in a test database
+  (`bible_greek_bridge_test_20261106`, schema `variant_rebuild_test`,
+  using the MIT-licensed librobinson parser as reference behavior)
+  validated the correction approach for source-resolved verses.
+  **Not approved for production.** Until Kit rules, treat TR Greek
+  word positions — and everything aligned through them — as
+  best-effort with known positional defects in pipe-variant verses.
+- **Structural defects in production (small, confirmed):** 3
+  out-of-range TR bridge rows and 3 orphan TR YLT rendering rows.
+  Hebrew and Byzantine structural checks passed.
+- **SBL gloss lookup root cause:** SBL word glosses are partial
+  because Greek-script MorphGNT lemmas were compared directly with
+  transliterated LXX lemmas. Fix designed, not applied.
+- **PWA gap:** the app drops the API's Greek lexical-provenance note
+  (`greek_lexicon`: glosses derived from LXX word data). The note is
+  served; the client doesn't display it.
+- **Backup/recovery:** a full backup was restored into an isolated
+  database and all 47 public-table counts matched; checksum
+  verification and an off-host copy are still open.
+- **Study-guide / adjudication lane:** a deep Ezekiel 27:32 audit
+  with an adjudication register (MT stands as the operational
+  default); a read-only Hebrew variant API contract with a shadow
+  validator (distinct pointed forms invariant verified); a BibleApp
+  presentation/schema safety review; source-labelled gloss schema
+  findings. These are documents and shadow tests — nothing in them
+  is live in the app yet.
+- The lexicon's own final validation verdict (2026-11-06):
+  **not yet validated for release as a fully correct word-level
+  lexicon.** The app remains live and useful; that verdict is about
+  the lexicon's validated status, and it is the honest label.
+
 ## Open items (Kit's calls, in his time)
 
+- TR parser correction: implement the pipe-variant fix in
+  isolation, expand the Greek gold set, then Kit decides on any
+  production regeneration. (From the validation lane; see above.)
 - OT bridges: Samaritan full-text load + bridge; DSS bridge for the
   4,202 attested verses. Not yet ruled.
 - Elohim-class registry: awaits Kit naming the third dual pair.
