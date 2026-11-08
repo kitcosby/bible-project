@@ -303,3 +303,28 @@ Keil–Delitzsch's contextual argument is interpretive, not manuscript evidence.
 Source: Keil and Delitzsch, commentary on Ezekiel 27:31–32, online text at https://app.pastordin.us/chapters/ezekiel-27/ (commentary text at the lines discussing v.32); compare the Gesenius report reproduced at https://www.studylight.org/lexicons/eng/hebrew/5204.html .
 
 **Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** The repeated count of eleven is now documented as a repeated secondary report, not as a verified census of eleven independent witnesses. No source text or database record is changed.
+
+
+## 14. Reassessment of the eleven-codex report and Göttingen edition (2026-11-08)
+
+### Eleven codices: what the report does and does not say
+
+Keil–Delitzsch's note at Ezekiel 27:32 explicitly reports the alternative “sons” reading as adopted by the LXX, Theodotion, Syriac, and eleven codices. It then rejects that reading on contextual grounds. The online text gives no codex shelfmarks, dates, genealogical relationships, or individual transcriptions. Its count is therefore a secondary report, not a reproducible manuscript census.
+
+The printed Hebrew form in this note is not sufficient to establish the exact vocalization in each codex. In particular, the report must not be paraphrased as “eleven manuscripts independently attest the fully pointed form בְּנֵיהֶם” unless the underlying apparatus or manuscripts are recovered. At present, the responsible formulation is: **eleven Hebrew codices are reported by Keil–Delitzsch as supporting the alternative reading; the identities and precise pointing are unverified.**
+
+The repetition of this count in Gesenius and Keil–Delitzsch does not create independent evidence. They may ultimately rely on one earlier collation. The next step is to trace their bibliographic references backward to Kennicott, de Rossi, or another apparatus and then identify the codex sigla actually cited there. No such trace has yet been completed.
+
+### Göttingen edition: correct edition history
+
+The relevant edition is Joseph Ziegler, *Ezechiel*, 2nd edition (Göttingen, 1977), with Detlef Fraenkel's supplement (*Nachtrag*), pp. 331–352. The second edition reprints the 1952 critical text and adds the supplement; it is not a wholly new recension of the base text. The supplement was prompted in part by publication of further P967 fragments. The 1977 volume must be consulted together with the supplement; later bibliographic catalogues may describe the reprint as 1978 or 2006.
+
+The exact entry at Ezekiel 27:32 and its sigla have **not** been inspected. No claim is made here about whether Fraenkel records P967 at this locus, what the papyrus reads, or whether the apparatus supports the “sons” clause. This remains an explicit outstanding collation task.
+
+Sources:
+- Keil and Delitzsch, *Biblical Commentary on the Old Testament*, Ezekiel 27:32, online transcription: https://biblehub.com/commentaries/kad/ezekiel/27.htm .
+- J. C. Conroy, “Ezekiel: text transmission and text criticism,” bibliography entry for Ziegler/Fraenkel: https://www.cjconroy.net/bib/ezek-text.htm .
+- Joseph Ziegler, *Ezechiel*, 2nd ed. (1977), bibliographic record: https://openlibrary.org/books/OL16597319M/Ezechiel .
+- Ingrid E. Lilly, *Papyrus 967: A Variant Literary Edition of Ezekiel* (2010), discussion of the Göttingen edition's P967 supplement; the previously circulating Emory URL must be revalidated against the dissertation title page before citation in a final bibliography.
+
+**Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** No source text, H5204 annotation, YLT data, alignment, or production database is changed.
