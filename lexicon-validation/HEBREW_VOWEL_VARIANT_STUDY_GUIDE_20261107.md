@@ -114,3 +114,8 @@ Never label the members “synonyms” merely because they share a non-vowel sig
 The candidate schema and data have been built and independently validated only in the isolated shadow database `bible_hebrew_variant_shadow_20261107`. Production `bible` schema and rows remain unchanged. No lexical merges, Strong's changes, morphology changes, YLT alignment changes, embedding/vectorizer changes, API changes, or deployment have been performed.
 
 The related proposal is documented in [the schema proposal](HEBREW_VOWEL_VARIANT_SCHEMA_PROPOSAL_20261107.md). The work remains in draft PR [#11](https://github.com/kitcosby/bible-project/pull/11).
+
+
+## 7. Ezekiel 27:32 — operational default
+
+For the project base text, default to the MT form `בְּנִיהֶם֙` (H5204; “in their wailing”). Keep the alternative `בְּנֵיהֶם֙` (“their sons,” H1121) visible as a separate lexical member and textual alternative. The historical priority of the readings remains unresolved; **default-to-MT is an operational policy, not a textual-critical proof**. Do not merge the lexical records, rewrite the MT source token, or treat the alternative as an MT qere. See [the full verse follow-up](HEBREW_VOWEL_VARIANT_EZEKIEL_27_32_FOLLOWUP_20261108.md).
