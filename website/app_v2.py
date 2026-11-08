@@ -42,6 +42,11 @@ PG_HOST = os.environ.get('PG_HOST', '/tmp')
 PG_USER = os.environ.get('PG_USER', 'postgres')
 BIBLE_DB = os.environ.get('BIBLE_DB', 'bible')
 APP_DB = os.environ.get('APP_DB', 'bible_app')
+# Optional connection URLs make the corpus and application databases
+# independently deployable. Keep these values in the process environment or
+# a secret manager; never commit them or log them.
+BIBLE_DATABASE_URL = os.environ.get('BIBLE_DATABASE_URL')
+BIBLE_APP_DATABASE_URL = os.environ.get('BIBLE_APP_DATABASE_URL')
 SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
@@ -63,7 +68,10 @@ def _load_secret():
     return key
 
 
-app.secret_key = _load_secret()
+SESSION_SECRET = os.environ.get('BIBLEAPP_SESSION_SECRET')
+if SESSION_SECRET and len(SESSION_SECRET.encode('utf-8')) < 32:
+    raise RuntimeError('BIBLEAPP_SESSION_SECRET must be at least 32 bytes')
+app.secret_key = SESSION_SECRET or _load_secret()
 
 # ---------------------------------------------------------------- mount prefix
 class PrefixMiddleware:
@@ -108,7 +116,14 @@ def bible():
     so row['col'] access works as before. Kit 2026-10-01's fold_finals is
     now a native PL/pgSQL function in the database."""
     if 'bible' not in g:
-        con = psycopg2.connect(dbname=BIBLE_DB, host=PG_HOST, user=PG_USER)
+        if BIBLE_DATABASE_URL:
+            con = psycopg2.connect(
+                BIBLE_DATABASE_URL, connect_timeout=10,
+                application_name='bibleapp-corpus')
+        else:
+            con = psycopg2.connect(
+                dbname=BIBLE_DB, host=PG_HOST, user=PG_USER,
+                connect_timeout=10, application_name='bibleapp-corpus')
         g.bible = PGWrapper(con)
     return g.bible
 
@@ -116,7 +131,14 @@ def appdb():
     """Application database (PostgreSQL `bible_app`): user accounts,
     translations, lemma defaults, reading positions."""
     if 'appdb' not in g:
-        con = psycopg2.connect(dbname=APP_DB, host=PG_HOST, user=PG_USER)
+        if BIBLE_APP_DATABASE_URL:
+            con = psycopg2.connect(
+                BIBLE_APP_DATABASE_URL, connect_timeout=10,
+                application_name='bibleapp-authoring')
+        else:
+            con = psycopg2.connect(
+                dbname=APP_DB, host=PG_HOST, user=PG_USER,
+                connect_timeout=10, application_name='bibleapp-authoring')
         db = PGWrapper(con)
         # migration: lemma defaults for sticky choices (2026-09-30);
         # idempotent so existing databases pick it up.
