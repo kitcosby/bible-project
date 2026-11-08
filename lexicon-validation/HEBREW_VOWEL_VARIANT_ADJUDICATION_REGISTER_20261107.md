@@ -187,3 +187,12 @@ A read-only query of the isolated shadow database confirms this is candidate gro
 The consonantal signature, retained dagesh, and retained cantillation mark match exactly; only the specified vowel points differ. The LXX “their sons” reading corresponds to the existing **sons member** already attested in Jeremiah, while the MT Ezekiel token remains the separate **wailing member**. This is a verified cross-root orthographic candidate, not evidence that the two lexemes should be merged.
 
 **Disposition:** retain group 504 as an orthographic cross-reference; preserve the two roots, Strong's numbers, morphology, and occurrences separately. Keep the textual-critical question of which reading is earlier/open unresolved. Any external-witness apparatus entry must identify its witness and must not be converted into an MT qere.
+
+
+### Translation evidence and limits for Ezekiel 27:32
+
+The translation evidence is divided. YLT renders “their sons,” matching the LXX phrase `οἱ υἱοὶ αὐτῶν` and the alternative Hebrew vocalization `בְּנֵיהֶם`. KJV and JPS 1917 render “in their wailing,” following the MT form; the NET renders “as they wail,” also retaining a wailing interpretation. The NET footnote about Dahood's proposal for `dmt` concerns the later expression `כְּדֻמָה` (“like a tower”), not the reading of `בְּנִיהֶם`; do not conflate these two textual/lexical questions.
+
+This confirms that the “sons” reading is an ancient and materially attested alternative, but it does not establish that it should replace the MT reading in this project. Keep the MT H5204 member, the H1121 “sons” member, and the external-witness evidence distinct. The YLT rendering is a translation decision and must not be treated as independent proof of the Hebrew Vorlage.
+
+Sources: [KJV/JPS and MT text, Ezekiel 27:32](https://bible.sabda.org/verse.php?book=26&chapter=27&mode=print&verse=32); [NET translation and note, Ezekiel 27:32](https://classic.net.bible.org/passage.php?passage=eze+27%3A1-36); [LXX text, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Gesenius textual note, H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
