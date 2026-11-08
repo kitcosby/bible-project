@@ -139,3 +139,6 @@ The shadow database currently has no application reader role or application tabl
 
 
 A further read-only SQL check across all 3,349 shadow groups confirmed that every group currently contains at least two distinct NFC pointed forms (minimum 2; maximum 6). The validator still needs this invariant and a negative regression fixture encoded in its own test suite; the live-data check does not replace that test.
+
+
+The proposed lookup, member-detail, and occurrence SQL was then smoke-tested in an explicit PostgreSQL read-only transaction. The Ezekiel 27:32 word lookup resolved group 504; the detail query returned two member forms; the occurrence query returned the three expected Jeremiah/Ezekiel occurrences with exact source tokens, Strong's, morphology, and verse references. No rows were changed. This validates the query path for the fixture only, not an HTTP endpoint, API authorization, or a new database role.
