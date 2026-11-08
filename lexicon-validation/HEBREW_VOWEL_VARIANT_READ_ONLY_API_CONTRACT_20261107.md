@@ -75,7 +75,7 @@ Do not return the non-vowel signature as a replacement spelling or a user-facing
 
 ### 3.3 Read occurrences for a member
 
-`GET /api/lexicon/hebrew-vowel-variants/{variantGroupId}/members/{memberKey}/occurrences?limit=50&cursor=...`
+`GET /api/lexicon/hebrew-vowel-variants/{variantGroupId}/members/{rootId}/{rootFormSeq}/{vowelSeq}/occurrences?limit=50&cursor=...`
 
 Purpose: support drill-down without returning the full corpus in the group response.
 
@@ -90,7 +90,7 @@ Return paginated occurrence records containing:
 
 The raw occurrence token must come from the source occurrence record, not be reconstructed from the normalized signature or copied from a representative member form. The cursor must be opaque and stable for the selected snapshot. Clamp `limit` to a documented maximum (proposed maximum: 100). Invalid cursor or limit: `400`.
 
-The exact member-key URL encoding and occurrence join columns must be fixed only after the deployed source schema is inspected and the query is independently tested. Do not guess column names or construct the route around unverified assumptions.
+The member path uses the existing numeric composite key `(root_id, root_form_seq, vowel_seq)`. The occurrence join columns have now been inspected; the complete read-only query still requires independent execution and validation before implementation. Do not infer missing rows from a member's representative `root_form.example_pointed` field.
 
 ## 4. Response contract sketch
 
