@@ -214,3 +214,20 @@ The Princeton edition's publication is especially important because its leaves c
 - [Accordance catalogue entry for Ziegler, *Ezechiel* (Göttingen Septuagint XVI/1, 1978), including its two apparatus modules](https://www.accordancebible.com/product/lxx-gottingen-with-apparatus-ezekiel/).
 
 The adjudication remains **OPEN_TEXT_CRITICAL_REVIEW**. No source text, lexicon entry, YLT wording, alignment, or production database has been modified.
+
+
+## 10. Additional lexical discussion of נִי as a short lament-form (2026-11-08)
+
+A further scholarly discussion was located in Friedrich-Emanuel Focken, “Ezechiels Schriftrolle. Die Konzeption seiner Prophetie im Berufungsbericht (Ez 1–3),” in Focken and Ott (eds.), *Metatexte* (Materiale Textkulturen 15; Berlin/Boston: De Gruyter, 2016), especially pp. 163–164.
+
+Focken notes that within Ezekiel, the forms `הן` (Ezek 7:11) and `ני` (Ezek 27:32) have been interpreted as shortened forms of the noun `נהי` (“lamentation / dirge”), citing Gesenius (2013), pp. 787 and 814, and the literature cited there. This is relevant because it places the Ezekiel 27:32 analysis in a broader intra-book pattern rather than treating `נִי` only as an isolated lexical item.
+
+The evidential status must be stated carefully:
+- This is a modern scholarly report of an interpretation, not a manuscript witness.
+- Focken attributes the proposal to Gesenius and its cited literature; it is not presented as a newly demonstrated derivation.
+- It is conceptually related to the GKC §23 proposal that MT `בְּנִיהֶם` may reflect a contracted form involving `נְהִי`, but the two explanations should not be collapsed without checking their exact morphological assumptions.
+- The possibility that `נִי` is a shortened form of `נְהִי` strengthens the plausibility of a mourning interpretation of the MT, but does not eliminate BDB's lexical uncertainty or resolve the external “their sons” reading.
+
+This source therefore modestly improves the lexical case for retaining a mourning interpretation as a serious possibility. It does not change the textual-critical disposition: **OPEN_TEXT_CRITICAL_REVIEW**.
+
+Source: [Friedrich-Emanuel Focken, “Ezechiels Schriftrolle” (2016), pp. 163–164](https://www.academia.edu/27043588/Ezechiels_Schriftrolle_Die_Konzeption_seiner_Prophetie_im_Berufungsbericht_in_F_E_Focken_M_R_Ott_Hgg_Metatexte_Erz%C3%A4hlungen_von_schrifttragenden_Artefakten_in_der_alttestamentlichen_und_mittelalterlichen_Literatur_Materiale_Textkulturen_15_Berlin_Boston_2016_145_175).
