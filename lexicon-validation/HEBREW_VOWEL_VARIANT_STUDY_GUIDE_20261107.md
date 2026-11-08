@@ -124,3 +124,8 @@ For the project base text, default to the MT form `בְּנִיהֶם֙` (H5204;
 ## 8. BibleApp presentation and release safeguards
 
 The [BibleApp presentation and schema safety review](HEBREW_VOWEL_VARIANT_BIBLEAPP_PRESENTATION_REVIEW_20261107.md) defines the pre-production requirements: at least two distinct normalized pointed forms per group; precise separation of member-level review from lexical adjudication; raw occurrence provenance; source-snapshot freshness; separate apparatus and translation layers; and a read-only, validated API as the first production-facing step. The shadow prototype is suitable for continued research, but it is not approved for production adoption. No production changes have been made.
+
+
+## 9. Read-only BibleApp API contract
+
+The [read-only API contract](HEBREW_VOWEL_VARIANT_READ_ONLY_API_CONTRACT_20261107.md) records the proposed route shapes, response semantics, shadow-database isolation, authorization, validation/freshness gates, and Ezekiel 27:32 acceptance fixture. It also documents an important integration boundary: the deployed Lampy API branch and the public default branch of BibleApp are not interchangeable, and the existing `bible_app` translation-authoring connection is not the corpus/shadow database connection. The contract is a draft only; no API, grant, schema, or deployment change has been made.
