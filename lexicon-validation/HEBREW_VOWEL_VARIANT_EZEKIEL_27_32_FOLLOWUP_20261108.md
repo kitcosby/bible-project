@@ -278,3 +278,28 @@ This omission is a separate textual variant from the Hebrew vocalization dispute
 Source: Ingrid E. Lilly, *Papyrus 967: A Variant Literary Edition of Ezekiel* (PhD diss., Emory University, 2010), variant list, printed p. 86 / PDF lines 3746–3755: https://etd.library.emory.edu/downloads/79407x487?locale=en . See also Werner Bible Commentary, Ezekiel 27:1–36: https://wernerbiblecommentary.org/?q=node/919 .
 
 **Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** No MT source text, H5204 record, morphology, YLT wording, alignment, shadow-group membership, or production data is changed.
+
+
+## 13. Keil–Delitzsch report and the manuscript-count problem (2026-11-08)
+
+A directly accessible edition of Keil and Delitzsch's commentary on Ezekiel 27:32 independently displays the same traditional report: the reading “their sons” is adopted by the LXX, Theodotion, Syriac, and “eleven Codd.” The commentary prints the Hebrew alternative unpointed as בניהם and argues that it is contextually unsuitable because the seamen themselves, not their sons, are the mourners. It interprets the MT בְּנִיהֶם as *in lamento eorum* (“in their lament”) and proposes נִי as contracted from נְהִי, comparing Jeremiah 9:17–18 and Ezekiel 2:10.
+
+This source adds two useful pieces of evidence but does not resolve the text:
+1. The eleven-codex report appears in more than one secondary reference (Gesenius and Keil–Delitzsch). These repetitions must not be counted as independent manuscript collations; they may descend from the same earlier apparatus or report.
+2. Keil–Delitzsch's form בניהם is unpointed in the commentary text. It therefore does not, by itself, show that all eleven manuscripts carry the specific Tiberian vocalization בְּנֵיהֶם. It reports a consonantal spelling/read-form. Gesenius's pointed presentation is a separate secondary statement, but the underlying codices and their pointing remain unidentified.
+
+Keil–Delitzsch's contextual argument is interpretive, not manuscript evidence. The alternative reading can be construed as “their sons [of the mariners] will raise a lament”; whether that is contextually intended must be evaluated against the syntax and the literary sequence, not dismissed solely because the immediately preceding mourning actions are performed by seafarers. Conversely, the Greek makes the sons reading explicit; it does not establish the Hebrew pointing.
+
+### Updated manuscript-report status
+
+| Claim | Status |
+|---|---|
+| Eleven Hebrew codices were reported with the consonantal reading בניהם | Repeated secondary report (Gesenius; Keil–Delitzsch); not yet traced to named codices |
+| Those eleven codices specifically point בְּנֵיהֶם | Not independently established |
+| The eleven reports represent eleven independent textual witnesses | Not established |
+| Theodotion and Syriac support the sons reading | Repeated in secondary sources; exact locus-level critical apparatus still required |
+| K&D's rejection of the sons reading settles the question | No; this is a contextual judgment |
+
+Source: Keil and Delitzsch, commentary on Ezekiel 27:31–32, online text at https://app.pastordin.us/chapters/ezekiel-27/ (commentary text at the lines discussing v.32); compare the Gesenius report reproduced at https://www.studylight.org/lexicons/eng/hebrew/5204.html .
+
+**Disposition remains OPEN_TEXT_CRITICAL_REVIEW.** The repeated count of eleven is now documented as a repeated secondary report, not as a verified census of eleven independent witnesses. No source text or database record is changed.
