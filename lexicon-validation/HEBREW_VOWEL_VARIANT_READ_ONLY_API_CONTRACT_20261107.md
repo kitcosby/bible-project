@@ -219,3 +219,13 @@ The occurrence join path was verified with a SELECT:
 A catalog query returned no foreign-key constraints for the inspected legacy corpus tables (`words`, `lexicon`, `root_vowel`, `root_form`, `root_entry`, `verses`). The API must not rely on those legacy joins being database-enforced; query validation and integrity checks must explicitly verify them. This observation does not negate the declared foreign keys on the two new shadow variant tables.
 
 **Implication for the contract:** member forms come from `root_vowel.vowel_pattern`; root labels come from `root_entry.root`; root-form metadata joins using `root_form.form_seq`; exact occurrences and Strong's/morphology come from `words`; verse display joins through `verses` and `books`. The current response sketch has been corrected accordingly.
+
+### Database access boundary observed
+
+A read-only catalog inspection of `pg_database`, `pg_roles`, `pg_class`, and `pg_namespace` found:
+- The shadow database ACL is `{postgres=CTc/postgres}`; only the `postgres` role currently has database CONNECT/TEMP/CREATE privileges.
+- The existing login role `bible_app_api` exists, but the proposed `bible_variant_reader` role does not.
+- The inspected source and shadow tables are owned by `postgres` and have no explicit per-table ACL entries. The `public` schema grants USAGE but not CREATE to PUBLIC.
+- No table-level SELECT grants to an application role were returned for the required relation set.
+
+This confirms that the existing `bible_app_api` connection cannot simply be reused. A dedicated role and narrowly scoped SELECT grants would be needed before the API could connect. **No role or grant was created.** This remains a separate reviewed action, not part of the documentation work.
