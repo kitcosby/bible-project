@@ -119,3 +119,8 @@ The related proposal is documented in [the schema proposal](HEBREW_VOWEL_VARIANT
 ## 7. Ezekiel 27:32 — operational default
 
 For the project base text, default to the MT form `בְּנִיהֶם֙` (H5204; “in their wailing”). Keep the alternative `בְּנֵיהֶם֙` (“their sons,” H1121) visible as a separate lexical member and textual alternative. The historical priority of the readings remains unresolved; **default-to-MT is an operational policy, not a textual-critical proof**. Do not merge the lexical records, rewrite the MT source token, or treat the alternative as an MT qere. See [the full verse follow-up](HEBREW_VOWEL_VARIANT_EZEKIEL_27_32_FOLLOWUP_20261108.md).
+
+
+## 8. BibleApp presentation and release safeguards
+
+The [BibleApp presentation and schema safety review](HEBREW_VOWEL_VARIANT_BIBLEAPP_PRESENTATION_REVIEW_20261107.md) defines the pre-production requirements: at least two distinct normalized pointed forms per group; precise separation of member-level review from lexical adjudication; raw occurrence provenance; source-snapshot freshness; separate apparatus and translation layers; and a read-only, validated API as the first production-facing step. The shadow prototype is suitable for continued research, but it is not approved for production adoption. No production changes have been made.
