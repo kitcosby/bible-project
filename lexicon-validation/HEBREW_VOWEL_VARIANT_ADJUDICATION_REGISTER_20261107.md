@@ -80,3 +80,37 @@ The final batch found one Isaiah 37:33 occurrence with **עֳלֶיהָ** and 32
 ## Preservation statement
 
 This register was built from read-only queries of the Lampy `bible` database and the existing review reports, plus cited lexical/morphological sources. No production or shadow database rows, source annotations, root assignments, Strong's values, morphology, alignments, embeddings, or vectorizers were changed.
+
+## 8. Further source-text checks (2026-11-07 continuation)
+
+### לְבֹא חֲמָת — both grammatical and geographical analyses remain viable
+
+The WLC transcription gives the same pointed token, **לְבֹא**, in Numbers 13:21 and 34:8. Independent WLC text analyses classify it as a verb with Strong's H935; one renders the token “entering,” and the other “to the Lebo-Hamath.” This supports the infinitive analysis at the grammatical level but does not settle whether the phrase functions as a place-name.
+
+The UBS *Handbook on Numbers* explicitly reports both renderings. For Numbers 13:21 it recommends “Lebo-hamath” on the basis that “Lebo” was part of the name in 1 Kings 8:65, while also noting “Hamath Pass” as plausible. Its Numbers 34:8 discussion renders the phrase “to the entrance of Hamath” and refers readers back to 13:21. A separate UBS note says the exact meaning is unclear and presents the city-name and entrance/pass options.
+
+**Updated assessment:** retain the case as genuinely open. Do not mark the database's HNp annotation as disproved solely because independent interlinear tools parse the form as H935. Morphological analysis of the token and interpretation of the phrase boundary are related but distinct questions.
+
+Sources: [WLC analysis, Numbers 13:21](https://cnbible.com/text/numbers/13-21.htm); [WLC analysis, Numbers 34:8](https://cnbible.com/text/numbers/34-8.htm); [UBS Handbook, Numbers 13:21](https://tips.translation.bible/tip_verse/num-1321/); [UBS Handbook, Numbers 34:8](https://tips.translation.bible/tip_verse/num-34-8/); [UBS discussion of the phrase](https://tips.translation.bible/tip_source/omanson-ellington-2008/page/162/).
+
+### לָעִיר — common-noun reading is strongly supported
+
+The WLC text in both 2 Kings 19:13 and Isaiah 37:13 has **לָעִיר** in the phrase naming “the king of the city of Sepharvaim.” Independent WLC analyses assign Strong's H5892 and identify the token as the common noun “city,” not a proper name. This supports the register's existing diagnosis of a probable source morphology inconsistency where the project database assigns HNp.
+
+**Updated assessment:** retain **OPEN_SOURCE_MORPHOLOGY_QA**, with high priority. The common-noun reading is strongly supported by the parallel syntax and independent analysis, but the exact OSHB XML/word annotation and the project's source-to-database mapping still need to be checked before proposing a correction.
+
+Sources: [WLC analysis, 2 Kings 19:13](https://cnbible.com/text/2_kings/19-13.htm); [WLC analysis, Isaiah 37:13](https://cnbible.com/text/isaiah/37-13.htm).
+
+### עֳלֶיהָ / עָלֶיהָ — WLC form is corroborated; another text display differs
+
+The pointed WLC text of Isaiah 37:33 is independently displayed as **עֳלֶיהָ** by CNBible, BibleHub, BibleGateway's WLC, and Israel.com. CNBible's WLC analysis identifies it as the preposition “against/upon” (H5921). Sefaria's Isaiah 37:33 display instead has **עָלֶיהָ**. These are different vowel-point sequences on the same consonantal form, and the project's two member records share H5921 and morphology HR/Sp3fs.
+
+**Updated assessment:** the WLC vocalization **עֳלֶיהָ** is externally corroborated; it should not be dismissed as an obvious database typo. A different pointed display exists in Sefaria, but its precise textual base/normalization policy has not been established here, so this is not yet proof of a distinct manuscript witness. Preserve both raw forms and source provenance; do not create a separate lexical identity or merge the source member assignments.
+
+Sources: [CNBible WLC, Isaiah 37:33](https://www.cnbible.com/text/isaiah/37-33.htm); [BibleHub WLC, Isaiah 37:33](https://biblehub.com/texts/isaiah/37-33.htm); [BibleGateway WLC, Isaiah 37:33](https://www.biblegateway.com/passage/?search=Isaiah+37&version=WLC); [Sefaria, Isaiah 37:33](https://www.sefaria.org/Isaiah.37.1-38.22).
+
+### Methodological note: key-only NFC validation
+
+The OSHB repository README warns against NFC normalization of Hebrew source text. A new read-only live-corpus test found that 138,497 word rows change code-point order under NFC, while the raw source strings remain preserved. The current NFC comparison inventory is nevertheless reproducible: NFC-then-vowel-removal and vowel-removal-then-NFC produce identical 3,349 candidate groups and identical normalized member sets (zero mismatches). See [HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md](HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md).
+
+**Disposition:** retain NFC for comparison keys only under the current tested convention; never rewrite raw source strings. Keep this test as a regression requirement when the corpus or normalization implementation changes.
