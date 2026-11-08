@@ -234,3 +234,10 @@ This confirms that the existing `bible_app_api` connection cannot simply be reus
 ### Additional distinct-form invariant check
 
 An additional read-only SQL check was run across all shadow groups, joining members to `root_vowel` and counting distinct `normalize(vowel_pattern, NFC)` values per group. Result: 3,349 groups checked; zero groups had fewer than two distinct NFC pointed forms; minimum was 2 and maximum was 6. This verifies the current shadow data satisfies the missing distinct-form invariant. The independent validator still needs this assertion and a negative regression fixture (two distinct member keys with the same pointed form) before the API release gate can be considered complete.
+
+
+### Read-only endpoint query smoke test
+
+The proposed word lookup, group-member detail, and occurrence query paths were executed successfully inside an explicit PostgreSQL `BEGIN READ ONLY` transaction, followed by `COMMIT`. For word_id 238432, the lookup resolved group 504. The detail query returned the two expected member keys and exact `root_vowel.vowel_pattern` forms. The occurrence query returned exactly three rows with source tokens, Strong's, morphology, book, chapter, verse, and word position. No data was changed.
+
+The current shadow group status distribution is 3,349 `candidate` and zero rows in the other illustrative status values. This describes candidate-generation status only; it does not establish lexical or textual-critical review. The SQL smoke test is evidence for the join plan and fixture, not yet a deployed endpoint test or a least-privilege authorization test.
