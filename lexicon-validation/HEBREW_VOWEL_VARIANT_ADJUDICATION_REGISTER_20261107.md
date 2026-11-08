@@ -93,13 +93,13 @@ The UBS *Handbook on Numbers* explicitly reports both renderings. For Numbers 13
 
 Sources: [WLC analysis, Numbers 13:21](https://cnbible.com/text/numbers/13-21.htm); [WLC analysis, Numbers 34:8](https://cnbible.com/text/numbers/34-8.htm); [UBS Handbook, Numbers 13:21](https://tips.translation.bible/tip_verse/num-1321/); [UBS Handbook, Numbers 34:8](https://tips.translation.bible/tip_verse/num-34-8/); [UBS discussion of the phrase](https://tips.translation.bible/tip_source/omanson-ellington-2008/page/162/).
 
-### לָעִיר — common-noun reading is strongly supported
+### לָעִיר — common noun versus place-name Lair
 
-The WLC text in both 2 Kings 19:13 and Isaiah 37:13 has **לָעִיר** in the phrase naming “the king of the city of Sepharvaim.” Independent WLC analyses assign Strong's H5892 and identify the token as the common noun “city,” not a proper name. This supports the register's existing diagnosis of a probable source morphology inconsistency where the project database assigns HNp.
+The WLC text in both 2 Kings 19:13 and Isaiah 37:13 has **לָעִיר** in the list of kings associated with Hamath, Arpad, Sepharvaim, Hena, and Ivvah. Independent WLC analyses assign Strong's H5892 and parse it as the common noun “city,” yielding “the king of the city of Sepharvaim.” However, the UBS *Handbook on 1–2 Kings* explicitly records another interpretation: some take `laʿir` as the name of a separate city, Lahir/Lair, and the handbook judges that to be the most likely reading in 2 Kings 19:13. The parallel Isaiah 37:13 preserves the same ambiguity.
 
-**Updated assessment:** retain **OPEN_SOURCE_MORPHOLOGY_QA**, with high priority. The common-noun reading is strongly supported by the parallel syntax and independent analysis, but the exact OSHB XML/word annotation and the project's source-to-database mapping still need to be checked before proposing a correction.
+**Updated assessment:** keep **OPEN_LEXICAL_AND_TOPONYMIC_REVIEW**. The project's HNp morphology may intentionally encode the Lair proper-name interpretation; it should not be called a parser error or corrected to common noun on the basis of interlinear parsing alone. The Strong's H5892/common-noun analysis and the Lair toponym hypothesis both need to be represented as competing interpretations until stronger textual/geographical evidence resolves the issue. The project parser copies OSHB `@morph` verbatim, so HNp is likely upstream. No correction is proposed.
 
-Sources: [WLC analysis, 2 Kings 19:13](https://cnbible.com/text/2_kings/19-13.htm); [WLC analysis, Isaiah 37:13](https://cnbible.com/text/isaiah/37-13.htm).
+Sources: [WLC analysis, 2 Kings 19:13](https://cnbible.com/text/2_kings/19-13.htm); [WLC analysis, Isaiah 37:13](https://cnbible.com/text/isaiah/37-13.htm); [UBS Handbook, 2 Kings 19:13](https://tips.translation.bible/story/translation-commentary-on-2-kings-1913/).
 
 ### עֳלֶיהָ / עָלֶיהָ — WLC form is corroborated; another text display differs
 
