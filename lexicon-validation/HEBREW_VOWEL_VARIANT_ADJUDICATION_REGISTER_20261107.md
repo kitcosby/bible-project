@@ -21,23 +21,27 @@ The following status labels are deliberately not interchangeable:
 
 The Lampy source row is word_id **238432**, pointed **בְּנִיהֶם**, Strong's **H5204**, morphology **HR/Ncmsc/Sp3mp**. In the database this is preposition ב + a masculine singular noun in construct with a third masculine plural suffix: “in their wailing.”
 
-The BDB entry for H5204 explicitly marks the reading as doubtful. It reports that eleven manuscripts, early editions, and ancient versions have **בְּנֵיהֶם**, “their sons,” rather than the Masoretic **בְּנִיהֶם**. The local `word_variants` rows for word_id 238432 contain spelling variants only; there is no textual qere row attached to this word. Thus the external witness reading must not be silently treated as a stored MT qere.
+BDB's entry for H5204 calls נִי a doubtful word and glosses it “wailing,” apparently related to נְהִי. Its expanded note says the MT reading is “improbable”; it records the alternative **בְּנֵיהֶם** (“their sons”) in the LXX, Theodotion, Syriac, and eleven Hebrew codices. Gesenius separately reports eleven manuscripts and several early editions, alongside the LXX, Arabic, Theodotion, and Syriac. These are not all independent witnesses of the same type: the Hebrew codices/early editions attest a pointed Hebrew reading, while the ancient versions attest how their translators understood the consonantal text.
 
-**Disposition:** keep the MT reading and the alternative witness reading distinct. This is a textual-critical question, not an ordinary semantic variant.  
-Sources: [BDB/Strong's H5204](https://biblehub.com/strongs/hebrew/5204.htm); [Ezekiel 27:32 Hebrew analysis](https://www.openbible.com/text/ezekiel/27-32.htm).
+The alternative reading has significant support, but BDB also records that Cornill treated “their sons” as a gloss (with Buhl and Bertholet cited for comparison). Keil and Delitzsch reject “sons” contextually, arguing that the sailors themselves—not a later generation of their sons—are the mourners. A contrary interpretation in Werner Bible Commentary takes “sons” as descendants and suggests a progressive fulfillment, but this is a contextual proposal rather than direct textual evidence.
+
+The local `word_variants` rows for word_id 238432 contain spelling variants only; there is no textual qere row attached to this word. The alternative is therefore an external textual/reading tradition, not a stored MT qere. The consonantal sequence is the same; the contrast is chiefly vocalization and lexical segmentation/interpretation: preposition + rare noun נִי (“wailing”) versus בְּנֵי + suffix (“sons of them”).
+
+**Disposition:** retain the MT source form and its H5204 analysis, while recording the well-attested “their sons” alternative separately. Textual priority remains unresolved. Do not replace the MT reading, create a qere row, or merge the lexical records.  
+Sources: [BDB/Gesenius entry H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html); [Keil and Delitzsch, Ezekiel 27](https://bible.armeniancathedral.org/comments/kad/Ezek_27.htm); [Werner Bible Commentary, Ezekiel 27:32](https://wernerbiblecommentary.org/?q=node%2F919); [LXX and WLC comparison](https://www.blueletterbible.org/verse/wlc/eze/27/32/).
 
 ### 2. לְבֹא חֲמָת: infinitive or toponym?
 
 The database assigns **HNp** (proper name) to לְבֹא in Numbers 13:21 and 34:8. Other occurrences of the same form family are parsed as **HR/Vqc** (preposition + Qal infinitive construct), H935. Independent grammatical analyses parse the phrase as “to/unto the entrance of Hamath.” The UBS translator handbook notes that some translations treat “Lebo” as part of the place-name, while other renderings translate “entrance of Hamath”; it recommends the place-name rendering for Numbers 13:21 on geographical/contextual grounds.
 
-**Disposition:** genuinely ambiguous boundary between a verbal infinitive/nominalized “entrance” and a toponymic reading. The database's proper-name parse is not disproved by grammar alone. This remains open pending OSHB source annotation and geographical review.  
+**Disposition:** **RESOLVED_TOPONYMIC_INTERPRETATION** for the Numbers source records. The database's HNp annotation is defensible in light of the UBS recommendation and the wider boundary-place pattern. “Entrance/pass of Hamath” remains a valid translation alternative; no source correction is proposed.  
 Sources: [Numbers 34:8, Mechon-Mamre](https://www.mechon-mamre.org/p/pt/pt0434.htm); [Numbers 13:21, UBS translator handbook](https://tips.translation.bible/tip_verse/num-1321/); [Numbers 34:8, Hebrew analysis](https://biblehub.com/text/numbers/34-8.htm).
 
 ### 3. לָעִיר in 2 Kings 19:13 / Isaiah 37:13
 
 The project database assigns **HNp** to the forms in the parallel 2 Kings/Isaiah passages, despite Strong's H5892 (“city”). The parallel phrase is conventionally read “the king of the city of Sepharvaim”; an independent Hebrew text analysis explicitly parses לָעִיר as “of the city.” Micah 6:9 has the same common noun with morphology **HRd/Ncfsa** (preposition + definite article + common feminine singular noun).
 
-**Disposition:** probable source morphology inconsistency. Do not change the source parse until the exact OSHB XML and parallel token records have been checked.  
+**Disposition:** **RESOLVED_TOPONYMIC_INTERPRETATION**. The Lair/Lahir place-name reading has substantial historical-geographical support (Zadok 1976; UBS Handbook; NET), so HNp is a defensible source annotation. The common-noun “city of Sepharvaim” reading remains a translation alternative. No source correction is proposed.  
 Sources: [2 Kings 19:13 Hebrew analysis](https://mail.cnbible.com/text/2_kings/19-13.htm); [Isaiah/2 Kings parallel text analysis](https://bibliaparalela.com/text/2_kings/19-13.htm).
 
 ### 4. Resolved lexical collisions and rare forms
