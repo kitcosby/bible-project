@@ -114,3 +114,21 @@ Sources: [CNBible WLC, Isaiah 37:33](https://www.cnbible.com/text/isaiah/37-33.h
 The OSHB repository README warns against NFC normalization of Hebrew source text. A new read-only live-corpus test found that 138,497 word rows change code-point order under NFC, while the raw source strings remain preserved. The current NFC comparison inventory is nevertheless reproducible: NFC-then-vowel-removal and vowel-removal-then-NFC produce identical 3,349 candidate groups and identical normalized member sets (zero mismatches). See [HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md](HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md).
 
 **Disposition:** retain NFC for comparison keys only under the current tested convention; never rewrite raw source strings. Keep this test as a regression requirement when the corpus or normalization implementation changes.
+
+
+## 9. Live database row-level confirmation
+
+A fresh read-only query against Lampy's live `bible` database confirms the exact records underlying the open cases:
+
+| Reference | `word_id` | Stored pointed form | Strong's | Stored morphology |
+|---|---:|---|---|---|
+| Numbers 13:21 | 47351 | `לְבֹ֥א` | H935 | HNp |
+| Numbers 34:8 | 55394 | `לְבֹ֣א` | H935 | HNp |
+| 2 Kings 19:13 | 126492 | `לָעִ֣יר` | H5892 | HNp |
+| Isaiah 37:13 | 202764 | `לָעִ֣יר` | H5892 | HNp |
+| Isaiah 37:33 | 203026 | `עֳלֶ֖יהָ` | H5921 | HR/Sp3fs |
+| Ezekiel 27:32 | 238432 | `בְּנִיהֶם֙` | H5204 | HR/Ncmsc/Sp3mp |
+
+This confirms the live database's current assignments, including the combination of H935 with HNp for both לְבֹא tokens and H5892 with HNp for both לָעִיר tokens. It does **not** establish whether those morphology values originate in the pinned OSHB XML or were introduced by a later parser/crosswalk step.
+
+The project's OSHB provenance file pins the upstream source to commit `3d15126fb1ef74867fc1434be1942e837932691f` (2024-08-27), with the per-book files under `wlc/*.xml`. Direct retrieval of the large upstream XML files was not successful in this session, so the exact source-XML comparison remains outstanding. No correction has been applied.
