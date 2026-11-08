@@ -96,3 +96,61 @@ The most useful next checks are: (1) inspect Allen 2:83 and Block 2:85–86 dire
 - John Screnock, “A New Approach to Using the Old Greek in Hebrew Bible Textual Criticism,” *Textus* (2018), [DOI](https://doi.org/10.1163/2589255x-02701008).
 
 This note is an evidence audit, not a final textual-critical verdict.
+
+
+## 8. Additional witness and reception audit (2026-11-08)
+
+A further check located a directly displayed Targum Jonathan text at Ezekiel 27:31–32, together with Rashi's comment on the Hebrew phrase. This adds evidence for the history of interpretation, but it does **not** establish that the Targum or Rashi preserves the alternative “their sons.”
+
+### Targum Jonathan
+
+The displayed Aramaic at v.32 is:
+
+`וְיִטְלוּן עֲלָךְ בְּעִינוּיֵהוֹן אִילְיָא וְיֵלִילוּן עֲלָךְ`
+
+The accompanying English translation is: “And in their affliction they shall raise a lamentation over you and wail over you.” The Aramaic has `בְּעִינוּיֵהוֹן` (“in their affliction/distress”) rather than a transparent equivalent of “their sons.” The Targum therefore **does not attest the sons reading in its extant wording**. Its rendering is compatible with a mourning/wailing interpretation of the clause, but it is a targumic paraphrase and cannot be treated as a literal retroversion of the Hebrew vocalization. Its v.31 is also present, unlike the Old Greek sequence.
+
+This is a correction to the earlier source-audit table's overly broad “Targum not verified” statement: the Targum has now been directly inspected in an online text presentation. It should be recorded as a checked versional rendering that supports the mourning sense, not as direct evidence for the MT's precise lexeme נִי or for the alternative בְּנֵיהֶם.
+
+### Rashi
+
+Rashi explicitly glosses the MT phrase `בְּנִיהֶם` as “with their wailing” (בְּעִינוּיֵהוֹן / with their wailing in the displayed commentary translation). This confirms a medieval Jewish interpretation of the received Hebrew pointing as a mourning expression. Rashi is an exegetical witness to the interpretation of the MT form, not an independent manuscript witness to the consonantal or vocalic text.
+
+### The Hebrew manuscript report remains unidentifiable
+
+The additional check of Bullinger's *Companion Bible* note confirms a secondary report that “some codices,” together with two early printed editions, the Septuagint, and Syriac, read “their sons.” Bullinger does not identify those codices or editions in the verse note. This independently confirms the existence of a circulated report of Hebrew manuscript support, but it does not identify or date the manuscripts.
+
+The eleven-manuscript count remains attributable to the Gesenius lexicon report as previously recorded. No primary catalogue, manuscript shelfmark list, or edition-by-edition collation has yet been located to map that count onto named codices. Therefore:
+- Do not turn “eleven manuscripts” into eleven independent witnesses.
+- Do not assume all eleven are ancient; date and provenance are unknown.
+- Do not assume the two early printed editions are independent of the manuscript copies or of each other.
+- Keep the report second-hand until its cited apparatus or source can be identified.
+
+### Revised witness matrix
+
+| Witness | Directly inspected here? | Reading / evidence | Evidential status |
+|---|---:|---|---|
+| WLC / OSHB MT | Yes, through the displayed Hebrew text and pinned OSHB source annotation | בְּנִיהֶם; H5204; “in their wailing” | Directly establishes the project source reading, not priority |
+| Old Greek | Greek wording checked in an online transcription | οἱ υἱοὶ αὐτῶν, “their sons”; v.31 absent in this sequence | Direct versional evidence |
+| P967 | No manuscript image or critical transcription independently collated in this pass | “Their sons” and omission of v.31 reported by Werner | Secondary report pending papyrus collation |
+| Syriac Peshitta | No Syriac manuscript/critical edition directly collated | “Their sons” reported by BDB/Gesenius and Bullinger | Secondary report pending direct check |
+| Theodotion | No | “Their sons” reported by Gesenius | Secondary report pending direct check |
+| Targum Jonathan | Yes, online Aramaic text at vv.31–32 | “In their affliction … lament … wail”; no explicit “sons” | Directly checked versional wording; compatible with mourning sense, not a literal Vorlage claim |
+| Rashi | Yes, displayed commentary | Interprets בְּנִיהֶם as “with their wailing” | Directly checked medieval exegesis; not a textual witness |
+| Eleven Hebrew manuscripts | No; report only | בְּנֵיהֶם reported by Gesenius | Second-hand; identities and dates unresolved |
+| Two early printed editions | No; report only | “Their sons” reported by Bullinger | Second-hand; editions not identified |
+| Arabic | No | Reported by Gesenius alongside LXX | Witness/version not identified |
+| Vulgate | No | No verified reading for this word obtained | Still unverified; do not cite |
+
+### Updated conclusion
+
+The evidence now shows at least three distinguishable interpretive/textual trajectories:
+1. The MT vocalization, understood by BDB, Rashi, and the Targum's rendering as a mourning/wailing expression (although the Targum paraphrases it as “affliction”).
+2. The Old Greek's explicit “their sons,” also reported for Syriac and a set of Hebrew manuscripts/early editions.
+3. Cornill's proposal, reported by BDB, that “their sons” is a gloss and should be removed.
+
+This makes the textual problem more substantive than a simple choice between two equally transparent Hebrew words. The MT's rare noun is lexically doubtful, while the alternative has clearer Hebrew morphology and explicit ancient versional support. Conversely, the “sons” reading is not unanimous across the ancient versions, and its Hebrew manuscript support remains insufficiently documented. The source MT must remain unchanged, and the adjudication case remains open.
+
+**New direct source:** [Sefaria, Targum Jonathan on Ezekiel 27:31–32](https://www.sefaria.org/Targum_Jonathan_on_Ezekiel.27.31?with=all).  
+**Additional interpretive source:** [Ezekiel 27:32 with Rashi and Targum Jonathan](https://fa.israel.fm/texts/ezekiel/27/32/).  
+**Secondary manuscript-report source:** [Bullinger, *Companion Bible*, Ezekiel 27](https://www.truthaccordingtoscripture.com/commentaries/bul/ezekiel-27.php).
