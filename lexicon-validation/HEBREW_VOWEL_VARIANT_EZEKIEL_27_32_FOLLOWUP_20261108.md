@@ -154,3 +154,63 @@ This makes the textual problem more substantive than a simple choice between two
 **New direct source:** [Sefaria, Targum Jonathan on Ezekiel 27:31–32](https://www.sefaria.org/Targum_Jonathan_on_Ezekiel.27.31?with=all).  
 **Additional interpretive source:** [Ezekiel 27:32 with Rashi and Targum Jonathan](https://fa.israel.fm/texts/ezekiel/27/32/).  
 **Secondary manuscript-report source:** [Bullinger, *Companion Bible*, Ezekiel 27](https://www.truthaccordingtoscripture.com/commentaries/bul/ezekiel-27.php).
+
+
+## 9. Primary-edition pathway for P967 and Göttingen apparatus (2026-11-08)
+
+### P967: the relevant papyrus passage is covered by the Princeton edition
+
+A bibliographic audit has now identified the exact primary edition needed to collate Papyrus 967 at Ezekiel 27:32:
+
+- Allan Chester Johnson, Henry Snyder Gehman, and Edmund Harris Kase, Jr., eds., *The John H. Scheide Biblical Papyri: Ezekiel* (Princeton: Princeton University Press, 1938), Princeton University Studies in Papyrology 3.
+- The Princeton leaves preserve Ezekiel 19:12–37:4, with gaps. Ezekiel 27:32 falls within that coverage.
+- The edition includes a transcription of the relevant chapters with a critical apparatus and photographic plates.
+- Open Library identifies the volume as a 1938, 181-page Princeton University Press publication and records the collection as 21 leaves / 42 pages from the ancient codex. Its catalog links to the Internet Archive item, but the scan could not be opened in this research session.
+- A Brill bibliographic appendix independently specifies that the Princeton edition transcribes Ezekiel 19:12–37:4 with critical apparatus. This is the decisive lead for a verse-level collation.
+
+**Important limitation:** the papyrus transcription and apparatus at Ezekiel 27:32 have not yet been read directly. Therefore the present record does not upgrade “P967 reads their sons” from secondary report to independently verified papyrus transcription. The Greek Old Greek wording is independently visible in online transcriptions, but that is not a substitute for the Princeton edition's apparatus.
+
+### Göttingen edition identified
+
+The relevant critical edition is Joseph Ziegler, ed., *Ezechiel*, *Septuaginta: Vetus Testamentum Graecum* XVI/1 (Göttingen: Vandenhoeck & Ruprecht, 1978). The currently marketed Göttingen module explicitly includes Ziegler's critical text and apparatus, with two apparatus modules: one for Greek Old Greek textual evidence and another for Hexaplaric/revision evidence (including material associated with Theodotion).
+
+This confirms the correct edition and its apparatus structure. It does **not** supply the apparatus entry at 27:32; that entry has not been directly inspected. The online Greek transcription's `οἱ υἱοὶ αὐτῶν` should therefore not be conflated with a completed Ziegler apparatus collation.
+
+### P967 dating and provenance: tightened description
+
+The current institutional CSNTM catalogue dates Rahlfs 967 to the third century and describes it as an early-third-century papyrus. The University of Cologne's P967 project describes the codex as produced around 200 CE. Scholarly descriptions vary between late second/early third century and first half of the third century. Use **“around the turn of the third century / early third century”** as a cautious working description; avoid an over-precise single date.
+
+The Princeton edition's publication is especially important because its leaves cover the target passage, whereas the Chester Beatty fragments published by Kenyon cover Ezekiel 11:25–17:21 and do not themselves include chapter 27.
+
+### What this does and does not establish
+
+**Established bibliographically**
+- A primary edition exists for the relevant P967 passage.
+- Its published coverage includes Ezekiel 27:32.
+- It includes a critical apparatus, so the exact papyrus reading and editorial treatment should be recoverable from the volume.
+- Ziegler's Göttingen *Ezechiel* (1978) is the correct critical Septuagint edition and contains separate apparatuses for OG and Hexaplaric evidence.
+
+**Not yet established by direct collation**
+- The exact P967 line/column and papyrus spelling at Ezekiel 27:32.
+- Whether the 1938 editors record any lacuna, correction, supralinear mark, or variant at this word.
+- The exact Ziegler apparatus sigla and whether Theodotion is separately attested at this locus.
+- The manuscript identities behind Gesenius's eleven Hebrew manuscripts.
+
+### Next exact operations
+
+1. Obtain and inspect Johnson–Gehman–Kase 1938, transcription and apparatus for Ezekiel 27:32; record page, line/column, papyrus reading, editorial supplements, and apparatus sigla.
+2. Inspect Ziegler 1978, Ezekiel 27:31–32, both apparatuses; transcribe only the relevant sigla and distinguish OG witnesses from Hexaplaric witnesses.
+3. Trace the Gesenius “eleven manuscripts” statement back to its cited source/apparatus, then identify each codex and its date where possible.
+4. Only after those checks, revise the witness weighting. Do not close the case solely because the primary editions have been located.
+
+### Sources added in this pass
+
+- [Open Library catalogue: Johnson, Gehman, and Kase, *The John H. Scheide Biblical Papyri: Ezekiel* (1938)](https://openlibrary.org/books/OL6367418M/The_John_H._Scheide_Biblical_papyri_Ezekiel).
+- [Brill bibliographic appendix: contents of P967 publications](https://brill.com/previewpdf/book/9789004222458/B9789004222458_009.xml).
+- [Princeton University Library Digital PUL: Scheide M 97, Greek Ezekiel papyrus](https://dpul.princeton.edu/global-book-forms/feature/from-papyrus-scroll-to-codex).
+- [CSNTM catalogue: Rahlfs 967](https://manuscripts.csntm.org/manuscript/view/Rahlfs_967).
+- [University of Cologne: P967 codex description and surviving portions](https://papyri.uni-koeln.de/features/rahlfs).
+- [IOSCS overview of critical Septuagint editions and the Göttingen apparatus model](https://septuaginta.uni-goettingen.de/ioscs/editions/).
+- [Accordance catalogue entry for Ziegler, *Ezechiel* (Göttingen Septuagint XVI/1, 1978), including its two apparatus modules](https://www.accordancebible.com/product/lxx-gottingen-with-apparatus-ezekiel/).
+
+The adjudication remains **OPEN_TEXT_CRITICAL_REVIEW**. No source text, lexicon entry, YLT wording, alignment, or production database has been modified.
