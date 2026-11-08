@@ -69,7 +69,7 @@ These are examples where morphology and geographical interpretation must be cons
 - The LXX reads `οἱ υἱοὶ αὐτῶν` (“their sons”); BDB reports the “their sons” reading in eleven manuscripts, early editions, and ancient versions.
 - The isolated shadow inventory places the two pointed forms in candidate group 504, with distinct roots and morphology. The “sons” member occurs in Jeremiah 11:22 and 17:2; the “wailing” member occurs in Ezekiel 27:32.
 
-The candidate link is verified, but the textual priority of the readings remains open. The alternative is not a local MT qere row. Do not invent a qere entry or overwrite the MT token. If BibleApp later exposes the evidence, use a separate external-witness/apparatus layer that records the witness, edition, reading, and provenance.
+The candidate link is verified, but the textual priority of the readings remains open. YLT renders “their sons”; KJV and JPS 1917 render “in their wailing”; NET renders “as they wail.” The NET footnote about Dahood concerns the later word כְּדֻמָה, not this variant. The alternative is not a local MT qere row. Do not invent a qere entry or overwrite the MT token. If BibleApp later exposes the evidence, use a separate external-witness/apparatus layer that records the witness, edition, reading, and provenance.
 
 ### E. Translation alignment is not a textual witness
 
