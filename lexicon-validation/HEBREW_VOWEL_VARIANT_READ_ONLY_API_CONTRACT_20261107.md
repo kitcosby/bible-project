@@ -175,8 +175,8 @@ The operational BibleApp default remains MT for this verse. The underlying text-
 ## 8. Implementation sequence
 
 1. Confirm the deployed branch, commit, working tree, and live service entrypoint before editing. The deployed checkout and public default branch are not interchangeable.
-2. Inspect the exact shadow table definitions, source-table joins, occurrence fields, and current grants using read-only inspection. **The table/column and occurrence-join inspection is now complete; see §10.**
-3. Finalize and independently execute the read-only query plan against the shadow DB; verify row-level language mapping and all join counts.
+2. Inspect the exact shadow table definitions, source-table joins, occurrence fields, and current grants using read-only inspection. **The table/column and occurrence-join inspection is complete; see §10.**
+3. Execute and independently validate the read-only query plan against the shadow DB; the Ezekiel 27:32 lookup/detail/occurrence smoke test passed in a read-only transaction, and the independent validator now passes the distinct-form invariant. Broader endpoint tests and least-privilege authorization tests remain.
 4. Define a dedicated read-only role and connection plan; review privileges before applying any grant.
 5. Add OpenAPI operations to the deployed branch's contract, generate client schemas, and add GET-only handlers with explicit authorization.
 6. Test against the isolated shadow database only. Include unauthorized, malformed input, absent membership, Hebrew, Aramaic, same-root, cross-root, and Ezekiel 27:32 fixtures.
@@ -188,7 +188,7 @@ The operational BibleApp default remains MT for this verse. The underlying text-
 
 **Contract drafted for review; implementation not started.** No API files were changed. No database grants, schema, or data were changed. No service was restarted or deployed.
 
-The schema and source occurrence joins have now been inspected read-only. The next blocker is to execute and independently validate the proposed read-only query set, then review the dedicated database role and privilege boundary. No role or grant has been created.
+The schema and source occurrence joins have now been inspected read-only. The query plan has passed the Ezekiel 27:32 read-only SQL smoke test, and the independent shadow validator now passes with the distinct-form invariant and negative fixture. The next blocker is to review and create a dedicated least-privilege reader role, then implement and test the HTTP endpoints. No role or grant has been created.
 
 ## 10. Read-only schema inspection completed on Lampy
 
@@ -234,7 +234,7 @@ This confirms that the existing `bible_app_api` connection cannot simply be reus
 
 ### Additional distinct-form invariant check
 
-An additional read-only SQL check was run across all shadow groups, joining members to `root_vowel` and counting distinct `normalize(vowel_pattern, NFC)` values per group. Result: 3,349 groups checked; zero groups had fewer than two distinct NFC pointed forms; minimum was 2 and maximum was 6. This verifies the current shadow data satisfies the missing distinct-form invariant. The independent validator still needs this assertion and a negative regression fixture (two distinct member keys with the same pointed form) before the API release gate can be considered complete.
+An additional read-only SQL check was run across all shadow groups, joining members to `root_vowel` and counting distinct `normalize(vowel_pattern, NFC)` values per group. Result: 3,349 groups checked; zero groups had fewer than two distinct NFC pointed forms; minimum was 2 and maximum was 6. This verifies the current shadow data satisfies the missing distinct-form invariant. The independent validator now includes this assertion against actual shadow membership and a negative regression fixture (two member entries with the same pointed form). It was rerun successfully; see [the validation report](HEBREW_VOWEL_VARIANT_SHADOW_VALIDATION_20261107.md) and [reproducible validator](scripts/validate_hebrew_variant_shadow.py). This closes the current-snapshot data-validation gap, but the check remains a release gate for future snapshots.
 
 
 ### Read-only endpoint query smoke test
