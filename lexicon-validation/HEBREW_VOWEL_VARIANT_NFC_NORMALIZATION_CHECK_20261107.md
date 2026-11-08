@@ -30,7 +30,7 @@ Input export SHA-256: `c77f8bb747fe17cfe6ac5a7d12dd155c7df336d51f748c8925fe07dfc
 
 ## 3. Candidate inventory and order-of-operations test
 
-A first raw-string grouping count is 3,486 groups / 7,408 raw pointed forms, because canonically equivalent raw encodings can be counted as distinct forms. Under the established NFC comparison convention the inventory is 3,349 groups / 7,124 distinct normalized pointed forms.
+A first raw-string grouping count is 3,486 groups / 7,408 raw pointed forms, because canonically equivalent raw encodings can be counted as distinct forms. Under the established NFC comparison convention the inventory is 3,349 groups / 7,124 distinct normalized pointed forms. A corrected independent pass also found that **137 of the 3,486 raw-only groups collapse to a single NFC pointed form**; these are not genuine multi-vocalization groups once canonical-equivalent encodings are treated as one form.
 
 Crucially, two comparison pipelines were independently evaluated over the same live export:
 
