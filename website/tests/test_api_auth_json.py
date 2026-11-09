@@ -210,6 +210,7 @@ class WordOptionsTests(unittest.TestCase):
              patch.object(mod, "lemma_phrases", return_value=phrase_maps):
             response = self.client.get("/api/word-options?wordIds=11,10,10")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
         self.assertEqual(corpus.calls[0][1], ([10, 11],))
         self.assertIn("ANY(%s)", corpus.calls[0][0])
         self.assertEqual(response.json["words"], [
