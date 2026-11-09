@@ -165,6 +165,26 @@ class TranslationOwnershipTests(unittest.TestCase):
             self.assertEqual(builtin.status_code, 404)
             write.assert_not_called()
 
+    def test_owner_can_write_choice_in_one_authorized_transaction(self):
+        self.login_as(10)
+        with patch.object(mod, "word_with_lex", return_value={
+                 "word_id": 5, "strongs": "H1", "root_code": "root",
+             }), \
+             patch.object(mod, "other_options", return_value=[]), \
+             patch.object(mod, "dropdown_items", return_value=[
+                 ("default", ""), ("KJV: word", "word"),
+             ]), \
+             patch.object(mod, "write_choice") as write, \
+             patch.object(mod, "record_lemma_default") as lemma:
+            response = self.client.post("/choice?t=100", data={
+                "word_id": "5", "item": "1", "csrf_token": "test-csrf",
+            })
+        self.assertEqual(response.status_code, 302)
+        write.assert_called_once_with(100, 5, 1)
+        lemma.assert_called_once()
+        self.assertEqual(self.db.commits, 1)
+        self.assertTrue(any("for update" in q for q, _ in self.db.calls))
+
     def test_private_read_and_export_reject_non_owner(self):
         self.login_as(20)
         self.assertEqual(self.client.get("/reading/100/1/1/1").status_code, 404)
