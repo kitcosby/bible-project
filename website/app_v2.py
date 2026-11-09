@@ -65,7 +65,7 @@ app.config.update(
 )
 
 
-def _load_secret()
+def _load_secret():
     """Flask session secret, generated once and kept next to app.db so
     logins survive restarts."""
     p = os.path.join(os.path.dirname(APP_DB), 'secret.key')
