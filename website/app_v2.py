@@ -278,7 +278,8 @@ def csrf_token():
 
 def _csrf_valid():
     expected = session.get('_csrf_token', '')
-    supplied = request.form.get('csrf_token', '')
+    supplied = (request.headers.get('X-CSRF-Token')
+                or request.form.get('csrf_token', ''))
     return bool(expected and supplied and hmac.compare_digest(expected, supplied))
 
 
