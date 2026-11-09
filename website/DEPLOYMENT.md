@@ -46,18 +46,18 @@ The staged login-flow changes:
 
 ## Translation ownership (staged)
 
-The legacy Flask routes now enforce the existing \`user_accounts.user_id\` as the owner authority:
+The legacy Flask routes now enforce the existing `user_accounts.user_id` as the owner authority:
 
-- Creating a translation requires an active authenticated Flask account and a valid CSRF token. The server writes \`owner_id\` from the authenticated session; browser-supplied owner identifiers are not used.
+- Creating a translation requires an active authenticated Flask account and a valid CSRF token. The server writes `owner_id` from the authenticated session; browser-supplied owner identifiers are not used.
 - Translation selection, the translation list, reading views, and exports expose private translations only to their owner. Other users and anonymous visitors receive not-found behavior for private translation IDs.
-- \`/choice\` requires authentication, CSRF, and an owner match. It locks the translation row with \`SELECT ... FOR UPDATE\` and commits the word choice, optional Other option, lemma default, and updated timestamp in one transaction.
-- Built-in translation ID 1 (\`KJV\`) and ID 2 (\`Young's\`) remain public and read-only. A read-only metadata inventory found only these two NULL-owner translation rows; it also found no \`word_choice\`, \`other_option\`, or \`lemma_default\` rows attached to either built-in.
+- `/choice` requires authentication, CSRF, and an owner match. It locks the translation row with `SELECT ... FOR UPDATE` and commits the word choice, optional Other option, lemma default, and updated timestamp in one transaction.
+- Built-in translation ID 1 (`KJV`) and ID 2 (`Young's`) remain public and read-only. A read-only metadata inventory found only these two NULL-owner translation rows; it also found no `word_choice`, `other_option`, or `lemma_default` rows attached to either built-in.
 - Any other NULL-owner translation is hidden and denied. No legacy row is automatically assigned to an account, deleted, or made editable.
 - Saved reading positions are revalidated against the current account's translation access before being used.
 
 The metadata inventory was read-only. It did not expose translation contents, credentials, or account details, and it made no database changes.
 
-**Important boundary:** the separate Express API in \`kitcosby/BibleApp\` still gates its \`/api/bible/*\` routes with the server-side \`BIBLE_APP_SANDBOX_TOKEN\`. It does not yet receive or validate a per-user identity and therefore does not implement this owner policy. Keep that API bound to localhost and keep the token server-side. Do not expose its authoring routes publicly or treat Flask ownership enforcement alone as end-to-end API authorization.
+**Important boundary:** the separate Express API in `kitcosby/BibleApp` still gates its `/api/bible/*` routes with the server-side `BIBLE_APP_SANDBOX_TOKEN`. It does not yet receive or validate a per-user identity and therefore does not implement this owner policy. Keep that API bound to localhost and keep the token server-side. Do not expose its authoring routes publicly or treat Flask ownership enforcement alone as end-to-end API authorization.
 
 ## Session signing
 
