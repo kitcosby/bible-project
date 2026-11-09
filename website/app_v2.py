@@ -27,6 +27,9 @@ What changed vs app.py:
 """
 import html
 import os
+import base64
+import json
+import time
 import re
 import hmac
 import secrets
@@ -229,13 +232,31 @@ def book_name(n):
     r = bible().execute('SELECT name_en FROM books WHERE book_id=%s', (n,)).fetchone()
     return r['name_en'] if r else f'Book {n}'
 
+BUILTIN_TRANSLATION_IDS = (1, 2)  # KJV and Young's; public corpus resources, never editable.
+
+def accessible_translation(tid):
+    """Return a built-in read-only translation or the current user's own translation."""
+    try:
+        tid = int(tid)
+    except (TypeError, ValueError):
+        return None
+    row = appdb().execute(
+        'SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    if not row:
+        return None
+    owner_id = row['owner_id']
+    if owner_id is None:
+        expected_name = {1: 'KJV', 2: "Young's"}.get(tid)
+        return row if expected_name and row['name'] == expected_name else None
+    user = current_user()
+    if not user or int(owner_id) != int(user['user_id']):
+        return None
+    return row
+
+
 def current_translation():
     tid = request.args.get('t')
-    if tid and tid.isdigit():
-        r = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
-        if r:
-            return r
-    return None
+    return accessible_translation(tid) if tid and tid.isdigit() else None
 
 
 # ---------------------------------------------------------------- user accounts
@@ -259,8 +280,103 @@ def csrf_token():
 
 def _csrf_valid():
     expected = session.get('_csrf_token', '')
-    supplied = request.form.get('csrf_token', '')
+    supplied = (request.headers.get('X-CSRF-Token')
+                or request.form.get('csrf_token', ''))
     return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
+def _allowed_auth_origin():
+    """Return an explicitly allowed browser Origin, or None."""
+    origin = request.headers.get('Origin', '').rstrip('/')
+    if not origin:
+        return None
+    configured = [x.strip().rstrip('/') for x in
+                  os.environ.get('BIBLEAPP_ALLOWED_ORIGINS', '').split(',')
+                  if x.strip()]
+    if configured:
+        return origin if origin in configured else None
+    # Safe same-origin default for local/single-origin deployments.
+    return origin if origin == request.host_url.rstrip('/') else None
+
+
+def _auth_cors(response, origin):
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Vary'] = 'Origin'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
+
+def _identity_token(user_id):
+    """Mint a five-minute HS256 token for the Express API; secret is env-only."""
+    secret = os.environ.get('BIBLEAPP_IDENTITY_TOKEN_SECRET', '')
+    if len(secret.encode('utf-8')) < 32:
+        raise RuntimeError('BIBLEAPP_IDENTITY_TOKEN_SECRET must be at least 32 bytes')
+    now = int(time.time())
+    def enc(value):
+        return base64.urlsafe_b64encode(
+            json.dumps(value, separators=(',', ':')).encode('utf-8')
+        ).rstrip(b'=').decode('ascii')
+    header = enc({'alg': 'HS256', 'typ': 'JWT'})
+    payload = enc({
+        'iss': 'bibleapp-flask',
+        'aud': 'bibleapp-api',
+        'sub': str(int(user_id)),
+        'iat': now,
+        'exp': now + 300,
+        'jti': secrets.token_urlsafe(16),
+    })
+    signing_input = header + '.' + payload
+    signature = hmac.new(secret.encode('utf-8'),
+                         signing_input.encode('ascii'), 'sha256').digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b'=').decode('ascii')
+    return signing_input + '.' + encoded_signature
+
+
+@app.route('/api/auth/csrf', methods=['GET', 'OPTIONS'])
+def api_auth_csrf():
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        if origin:
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+            response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    return _auth_cors(jsonify({'csrf_token': csrf_token()}), origin)
+
+
+@app.route('/api/auth/token', methods=['POST', 'OPTIONS'])
+def api_auth_token():
+    origin = _allowed_auth_origin()
+    if not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+        response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    if not _csrf_valid():
+        return _auth_cors(jsonify({'error': 'CSRF validation failed'}), origin), 400
+    try:
+        token = _identity_token(user['user_id'])
+    except RuntimeError:
+        return _auth_cors(jsonify({'error': 'Identity service unavailable'}), origin), 503
+    return _auth_cors(jsonify({
+        'access_token': token,
+        'token_type': 'Bearer',
+        'expires_in': 300,
+    }), origin)
 
 
 def _auth_form(action, legend):
@@ -373,8 +489,7 @@ def read_choices(tid):
     return data
 
 def write_choice(tid, word_id, val):
-    """Kit 2026-10-09: UPSERT into word_choice; val=0 deletes the row
-    (sparse = default)."""
+    """Write within the caller's transaction; authorization and commit belong to the route."""
     val = val & 0xFF
     db = appdb()
     if val == 0:
@@ -386,7 +501,6 @@ def write_choice(tid, word_id, val):
                       ON CONFLICT (translation_id, word_id)
                       DO UPDATE SET choice=excluded.choice''',
                    (tid, word_id, val))
-    db.commit()
 
 def other_options(tid):
     return appdb().execute(
@@ -732,9 +846,12 @@ def get_reading_position():
         r = appdb().execute(
             'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=%s',
             (u['user_id'],)).fetchone()
-        if r:
+        if r and accessible_translation(r['translation_id']):
             return (r['book_id'], r['chapter'], r['translation_id'])
-    return tuple(session.get('reading_position', ())) or None
+    pos = tuple(session.get('reading_position', ())) or None
+    if pos and len(pos) == 3 and accessible_translation(pos[2]):
+        return pos
+    return None
 
 def save_reading_position(n, c, tid):
     u = current_user()
@@ -839,8 +956,9 @@ def verse(n, c, v):
             sel = ' selected' if i == cur else ''
             opts.append(f'<option value="{i}"{sel}>{html.escape(label)}</option>')
         ctl = ''
-        if trans:
+        if trans and trans['owner_id'] is not None:
             ctl = f'''<form method="post" action="{u("/choice" + tqs(trans))}" style="display:inline">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
 <input type="hidden" name="word_id" value="{wid}">
 <input type="hidden" name="next" value="/verse/{n}/{c}/{v}{tqs(trans)}">
 <select name="item">{"".join(opts)}</select>
@@ -858,16 +976,32 @@ def verse(n, c, v):
 
 @app.route('/choice', methods=['POST'])
 def choice():
-    """Save one byte: the selected drop-down item number for the word.
-    A non-empty other_txt adds a new multi-value Other option first.
-    A non-default choice also becomes the new lemma default (forward-only)
-    for the rest of the text for that word's lemma (see record_lemma_default)."""
-    trans = current_translation()
-    if not trans:
-        return 'No translation selected', 400
-    tid = trans['translation_id']
-    wid = int(request.form['word_id'])
+    """Save a word choice only for a translation owned by the authenticated account."""
+    user = current_user()
+    if not user:
+        return 'Authentication required', 401
+    if not _csrf_valid():
+        return 'Security check failed', 400
+    raw_tid = request.args.get('t', '')
+    if not raw_tid.isdigit():
+        return 'Translation not found', 404
+    tid = int(raw_tid)
+    try:
+        wid = int(request.form.get('word_id', ''))
+    except ValueError:
+        return 'Invalid word_id', 400
+    if not 1 <= wid <= N_WORDS:
+        return 'Invalid word_id', 400
+
     db = appdb()
+    # Lock the translation row so ownership cannot change between authorization
+    # and the choice/option/lemma-default writes in this transaction.
+    trans = db.execute(
+        'SELECT * FROM translation WHERE translation_id=%s FOR UPDATE',
+        (tid,)).fetchone()
+    if not trans or trans['owner_id'] is None or int(trans['owner_id']) != int(user['user_id']):
+        return 'Translation not found', 404
+
     new_other = request.form.get('other_txt', '').strip()
     others = other_options(tid)
     if new_other:
@@ -878,8 +1012,8 @@ def choice():
             idx = max([o['idx'] for o in others] + [0]) + 1
             db.execute('INSERT INTO other_option(translation_id, idx, text) VALUES (%s,%s,%s)',
                        (tid, idx, new_other))
-            db.commit()
             others = other_options(tid)
+
     w = word_with_lex(wid)
     if not w:
         return 'Unknown word', 404
@@ -896,7 +1030,6 @@ def choice():
             item = 0
     write_choice(tid, wid, item)
     # Kit's translation-source integer: 1=KJV, 2=Young's, 3=user-defined.
-    # Source 3 links to other_option via other_option_id.
     src, ooid = None, None
     if 0 < item < len(items):
         label = items[item][0]
@@ -914,10 +1047,16 @@ def choice():
     db.commit()
     return redirect(u(request.form.get('next', '/')))
 
+
 @app.route('/translations', methods=['GET', 'POST'])
 def translations():
     db = appdb()
+    user = current_user()
     if request.method == 'POST':
+        if not user:
+            return 'Authentication required', 401
+        if not _csrf_valid():
+            return 'Security check failed', 400
         name = request.form.get('name', '').strip() or 'Untitled'
         desc = request.form.get('description', '').strip()
         urow = db.execute('SELECT user_id FROM app_user LIMIT 1').fetchone()
@@ -926,11 +1065,10 @@ def translations():
             uid = cur.fetchone()['user_id']
         else:
             uid = urow['user_id']
-        owner = current_user()
         cur = db.execute(
             'INSERT INTO translation(user_id, name, description, owner_id)'
             ' VALUES(%s,%s,%s,%s) RETURNING translation_id',
-            (uid, name, desc, owner['user_id'] if owner else None))
+            (uid, name, desc, user['user_id']))
         new_tid = cur.fetchone()['translation_id']
         db.commit()
         return redirect(u(f'/translations?t={new_tid}'))
@@ -938,7 +1076,12 @@ def translations():
     rows = db.execute('''SELECT t.*, a.display_name AS owner_name
         FROM translation t LEFT JOIN user_accounts a
           ON a.user_id=t.owner_id
-        ORDER BY t.updated_at DESC''').fetchall()
+        WHERE (t.owner_id IS NULL AND
+               ((t.translation_id=1 AND t.name='KJV') OR
+                (t.translation_id=2 AND t.name='Young''s')))
+           OR t.owner_id=%s
+        ORDER BY t.updated_at DESC''',
+        (user['user_id'] if user else -1,)).fetchall()
     items = []
     for r in rows:
         tid = r['translation_id']
@@ -946,19 +1089,24 @@ def translations():
             'SELECT COUNT(*) c FROM word_choice WHERE translation_id=%s',
             (tid,)).fetchone()['c']
         n_other = db.execute('SELECT COUNT(*) c FROM other_option WHERE translation_id=%s', (tid,)).fetchone()['c']
-        owner_txt = (f' by {html.escape(r["owner_name"])}'
-                     if r['owner_name'] else '')
+        owner_txt = (' (built-in; read-only)'
+                     if r['owner_id'] is None and tid in BUILTIN_TRANSLATION_IDS
+                     else (f' by {html.escape(r["owner_name"])}'
+                           if r['owner_name'] else ''))
         items.append(
             f'<li><a href="{u("/verse/1/1/1?t=" + str(tid))}">{html.escape(r["name"])}</a>'
             f' <span style="color:#666">{html.escape(r["description"])}'
             f' (updated {r["updated_at"]}; {n_chosen} words chosen, {n_other} Other options)'
             f'{owner_txt}</span>'
             f' | <a href="{u("/export/" + str(tid))}">export</a></li>')
-    body = f'''<ul>{"".join(items)}</ul>
-<h2>New translation</h2>
-<form method="post"><input type="text" name="name" placeholder="name">
+    create_form = (f'''<h2>New translation</h2>
+<form method="post">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
+<input type="text" name="name" placeholder="name">
 <input type="text" name="description" placeholder="description">
 <button type="submit">create</button></form>'''
+        if user else '<p><a href="' + u('/login') + '">Log in</a> to create your own translation.</p>')
+    body = f'<ul>{"".join(items)}</ul>{create_form}'
     return render('My translations', body, trans)
 
 # ---------------------------------------------------------------- clean reading
@@ -979,9 +1127,9 @@ line-height:1.9;font-size:1.3em;color:#1a1a1a;background:#fdfbf5}
 
 @app.route('/reading/<int:tid>/<int:n>/<int:c>/<int:v>')
 def reading(tid, n, c, v):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    trans = accessible_translation(tid)
     if not trans:
-        return 'Unknown translation', 404
+        return 'Translation not found', 404
     choices = read_choices(tid)
     others = other_options(tid)
     words = bible().execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
@@ -1061,11 +1209,13 @@ def read_default():
 
 @app.route('/read/<int:n>/<int:c>')
 def read_chapter(n, c):
-    trans = current_translation()
-    if not trans:
-        # default to KJV (translation_id 1)
-        trans = appdb().execute(
-            'SELECT * FROM translation WHERE translation_id=1').fetchone()
+    if 't' in request.args:
+        trans = current_translation()
+        if not trans:
+            return 'Translation not found', 404
+    else:
+        # KJV is a built-in public read-only corpus resource.
+        trans = accessible_translation(1)
     if not trans:
         return 'No translations available', 500
     tid = trans['translation_id']
@@ -1095,7 +1245,14 @@ def read_chapter(n, c):
             if nxt else '<span></span>')
     nav += '</div>'
     # translation picker
-    alltrans = appdb().execute('SELECT translation_id, name FROM translation ORDER BY translation_id').fetchall()
+    user = current_user()
+    alltrans = appdb().execute('''SELECT translation_id, name FROM translation
+        WHERE (owner_id IS NULL AND
+               ((translation_id=1 AND name='KJV') OR
+                (translation_id=2 AND name='Young''s')))
+           OR owner_id=%s
+        ORDER BY translation_id''',
+        (user['user_id'] if user else -1,)).fetchall()
     opts = ''.join(f'<option value="{t["translation_id"]}"{" selected" if t["translation_id"] == tid else ""}>'
                    f'{html.escape(t["name"])}</option>' for t in alltrans)
     picker = (f'<div class="trans-picker"><label>Translation: '
@@ -1113,9 +1270,9 @@ def read_chapter(n, c):
 
 @app.route('/export/<int:tid>')
 def export(tid):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    trans = accessible_translation(tid)
     if not trans:
-        return 'Unknown translation', 404
+        return 'Translation not found', 404
     choices = read_choices(tid)
     others = other_options(tid)
     b = bible()
@@ -2470,8 +2627,9 @@ def interlinear(n, c, v):
         for i, (label, text) in enumerate(items):
             s = ' selected' if i == cur else ''
             topts.append(f'<option value="{i}"{s}>{html.escape(label)}</option>')
-        if trans:
+        if trans and trans['owner_id'] is not None:
             tctl = (f'''<form method="post" action="{u("/choice" + t_qs)}" style="display:inline">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
 <input type="hidden" name="word_id" value="{wid}">
 <input type="hidden" name="next" value="/interlinear/{n}/{c}/{v}{t_qs}{wv_qs}">
 <select name="item" class="tr-sel">{"".join(topts)}</select>
