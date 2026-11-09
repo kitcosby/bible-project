@@ -2649,6 +2649,37 @@ def api_word(strongs):
             for r in occ_rows]})
 
 
+@app.route('/api/word-options')
+def api_word_options():
+    """Return legacy dropdown phrase groups for a bounded set of Hebrew word IDs.
+
+    This is a public, read-only corpus endpoint. It deliberately returns the
+    lemma key as well as phrase groups so clients can preserve root-code
+    fallback semantics for Hebrew words without a Strong's identifier.
+    """
+    raw_ids = (request.args.get('wordIds') or '').split(',')
+    if not raw_ids or len(raw_ids) > 100 or any(not x.isdigit() for x in raw_ids):
+        return _api_json({'error': 'wordIds must contain 1–100 numeric IDs'}, 400)
+    word_ids = sorted({int(x) for x in raw_ids})
+    if not word_ids or any(not 1 <= wid <= N_WORDS for wid in word_ids):
+        return _api_json({'error': 'wordIds contains an out-of-range word ID'}, 400)
+
+    db = bible()
+    rows = db.execute(
+        f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id = ANY(%s) ORDER BY w.word_id',
+        (word_ids,)).fetchall()
+    kjv_lp, _, ylt_lp, _ = lemma_phrases(db)
+    return _api_json({
+        'words': [{
+            'wid': row['word_id'],
+            'lemma': lemma_key(row),
+            'strongs': row['strongs'],
+            'kjv_phrases': kjv_lp.get(lemma_key(row), [])[:N_PHRASES],
+            'ylt_phrases': ylt_lp.get(lemma_key(row), [])[:N_PHRASES],
+        } for row in rows]
+    })
+
+
 @app.route('/api/search')
 def api_search():
     import json as _json
