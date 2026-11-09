@@ -34,15 +34,14 @@ The current Flask account system remains authoritative. The staged hardening cha
 
 The staged login-flow changes:
 
-- Keep Werkzeug `check_password_hash` for existing credentials.
-- Require 12–1024 characters for newly registered passwords; this does not impose a new minimum on existing accounts at login.
-- Add session-bound CSRF tokens to signup, login, and logout.
+- Preserve Werkzeug password verification for existing accounts.
+- Require 12–1024 characters for newly registered passwords.
+- Add session-bound CSRF validation to signup, login, logout, and translation-authoring mutations.
 - Change logout from GET to POST.
-- Clear session state at successful signup/login boundaries and issue a fresh CSRF token.
-- Mark authenticated sessions permanent with a 12-hour lifetime and disable sliding refresh.
-- Set session cookies HttpOnly and SameSite=Lax; enable Secure cookies with `BIBLEAPP_COOKIE_SECURE=1` when served over HTTPS.
+- Rotate session and CSRF state at successful authentication boundaries.
+- Use a fixed 12-hour session lifetime with HttpOnly and SameSite=Lax cookies by default; cross-site deployments require Secure cookies.
 
-**Important remaining work:** this is only the first authentication-hardening slice. Persistent login throttling, server-side session revocation, and account recovery/email verification remain outstanding. The staged translation-ownership slice below adds CSRF and owner checks to the legacy Flask authoring routes, but the separate Express API still uses a shared sandbox token and does not yet enforce per-user identity. Do not expose public authoring or treat these branches as production-ready until the Express identity boundary and full cross-service tests are complete.
+Translation ownership enforcement is included in the preceding section. The Flask-issued API identity-token exchange is documented below. Persistent login throttling, immediate server-side session revocation, and account recovery/email verification remain outstanding. This staged stack is not production-ready until the full cross-service flow is configured and tested.
 
 ## Translation ownership (staged)
 
@@ -58,6 +57,28 @@ The legacy Flask routes now enforce the existing `user_accounts.user_id` as the 
 The metadata inventory was read-only. It did not expose translation contents, credentials, or account details, and it made no database changes.
 
 **Important boundary:** the separate Express API in `kitcosby/BibleApp` still gates its `/api/bible/*` routes with the server-side `BIBLE_APP_SANDBOX_TOKEN`. It does not yet receive or validate a per-user identity and therefore does not implement this owner policy. Keep that API bound to localhost and keep the token server-side. Do not expose its authoring routes publicly or treat Flask ownership enforcement alone as end-to-end API authorization.
+
+## Flask-to-Express user identity token (staged)
+
+The existing Flask account/session remains the only identity authority. After an authenticated Flask session is established, the browser may exchange that session for a short-lived API bearer token:
+
+1. GET /api/auth/csrf returns the session-bound CSRF token for an active account.
+2. POST /api/auth/token requires the same authenticated session, a matching X-CSRF-Token header, and an allowed browser Origin.
+3. Flask signs an HS256 JWT with issuer bibleapp-flask, audience bibleapp-api, the existing user_accounts.user_id in sub, an issue time, a five-minute expiry, and a random token ID.
+4. The browser sends this token as Authorization: Bearer ... to the Express /api/bible/* API. Keep it in memory only; never store it in localStorage/sessionStorage or put it in URLs or logs.
+5. Express validates the HMAC signature in constant time and checks issuer, audience, account ID, issue/expiry times, and the maximum five-minute lifetime.
+
+Required environment variables (configure out-of-band; never commit or display their values):
+
+- BIBLEAPP_IDENTITY_TOKEN_SECRET: one independently generated random secret of at least 32 UTF-8 bytes, identical in Flask and Express. It must be distinct from BIBLEAPP_SESSION_SECRET and BIBLE_APP_SANDBOX_TOKEN.
+- BIBLEAPP_ALLOWED_ORIGINS: comma-separated exact HTTPS origins, with no path or wildcard. Configure the frontend origin on both Flask and Express.
+- BIBLEAPP_COOKIE_SAMESITE=None and BIBLEAPP_COOKIE_SECURE=1: required only when the frontend and Flask API are cross-site. Flask rejects SameSite=None unless Secure is enabled. Same-origin deployments retain the default Lax cookie.
+
+The token endpoint returns Cache-Control: no-store and credentialed CORS only for the explicit origin allowlist. The Express API uses bearer authorization and non-credentialed CORS. A browser must first obtain the token from Flask with credentials: "include", then call Express with the bearer header and without ambient cookies.
+
+**Revocation limitation:** a token already issued remains valid until its five-minute expiry, including immediately after logout or account deactivation. This is not server-side session revocation. Keep the token lifetime short and do not use this mechanism for high-risk operations requiring immediate revocation.
+
+This is a staged cross-service contract. It does not expose the Express API publicly, configure production secrets, restart services, or alter production databases.
 
 ## Session signing
 
