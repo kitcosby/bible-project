@@ -42,7 +42,22 @@ The staged login-flow changes:
 - Mark authenticated sessions permanent with a 12-hour lifetime and disable sliding refresh.
 - Set session cookies HttpOnly and SameSite=Lax; enable Secure cookies with `BIBLEAPP_COOKIE_SECURE=1` when served over HTTPS.
 
-**Important remaining work:** this is only the first authentication-hardening slice. It does not yet implement persistent login throttling, server-side session revocation, account recovery/email verification, or CSRF protection for the existing translation-authoring POST routes. Translation ownership checks are also still required. Do not expose public authoring or treat this branch as production-ready until those controls and cross-user tests are complete.
+**Important remaining work:** this is only the first authentication-hardening slice. Persistent login throttling, server-side session revocation, and account recovery/email verification remain outstanding. The staged translation-ownership slice below adds CSRF and owner checks to the legacy Flask authoring routes, but the separate Express API still uses a shared sandbox token and does not yet enforce per-user identity. Do not expose public authoring or treat these branches as production-ready until the Express identity boundary and full cross-service tests are complete.
+
+## Translation ownership (staged)
+
+The legacy Flask routes now enforce the existing \`user_accounts.user_id\` as the owner authority:
+
+- Creating a translation requires an active authenticated Flask account and a valid CSRF token. The server writes \`owner_id\` from the authenticated session; browser-supplied owner identifiers are not used.
+- Translation selection, the translation list, reading views, and exports expose private translations only to their owner. Other users and anonymous visitors receive not-found behavior for private translation IDs.
+- \`/choice\` requires authentication, CSRF, and an owner match. It locks the translation row with \`SELECT ... FOR UPDATE\` and commits the word choice, optional Other option, lemma default, and updated timestamp in one transaction.
+- Built-in translation ID 1 (\`KJV\`) and ID 2 (\`Young's\`) remain public and read-only. A read-only metadata inventory found only these two NULL-owner translation rows; it also found no \`word_choice\`, \`other_option\`, or \`lemma_default\` rows attached to either built-in.
+- Any other NULL-owner translation is hidden and denied. No legacy row is automatically assigned to an account, deleted, or made editable.
+- Saved reading positions are revalidated against the current account's translation access before being used.
+
+The metadata inventory was read-only. It did not expose translation contents, credentials, or account details, and it made no database changes.
+
+**Important boundary:** the separate Express API in \`kitcosby/BibleApp\` still gates its \`/api/bible/*\` routes with the server-side \`BIBLE_APP_SANDBOX_TOKEN\`. It does not yet receive or validate a per-user identity and therefore does not implement this owner policy. Keep that API bound to localhost and keep the token server-side. Do not expose its authoring routes publicly or treat Flask ownership enforcement alone as end-to-end API authorization.
 
 ## Session signing
 
@@ -61,8 +76,8 @@ Use a reverse proxy with TLS. Keep PostgreSQL private to the application host/ne
 ## Current portability blockers / deferred work
 
 1. The current `/api/search` implementation still calls Ollama at the hard-coded `127.0.0.1:11434` endpoint using `nomic-embed-text` and searches the existing YLT verse embedding table. Kit has directed that search be retooled after the separate 528,565-row word-variant embedding rebuild completes and is validated. Do not treat the Ollama implementation as the final portable search design.
-2. The legacy Flask translation UI uses a local signed session, but its translation selection and write handlers do not enforce translation ownership. Do not expose authoring publicly until a canonical identity/ownership policy and cross-user tests are implemented.
-3. The current account password minimum is four characters. This legacy policy must not be carried into a new public signup flow without security review.
+2. The Flask translation UI's staged ownership checks protect its legacy routes, but the separate Express API still uses a shared sandbox token without per-user identity. Keep Express private until a verifiable per-user identity and owner checks are implemented there too.
+3. New Flask signups in the staged authentication branch require 12–1024 characters; existing accounts continue to authenticate using their existing Werkzeug hashes. Persistent login throttling and account recovery remain outstanding.
 4. The Flask service still serves both legacy HTML UI and read-only JSON API routes. The eventual portable deployment should keep the core API boundary explicit and may separate UI from API, but do not remove existing routes before parity is verified.
 5. The application DB setup runs DDL at runtime, as noted above. Replace this with versioned migrations before treating a fresh-host bootstrap as production-ready.
 
