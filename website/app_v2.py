@@ -266,6 +266,16 @@ def current_user():
         (uid,)).fetchone()
 
 
+@app.after_request
+def prevent_html_response_caching(response):
+    # Private translation pages, exports, and login/CSRF forms must not remain
+    # in browser caches after logout or an account switch. Keep the public
+    # read-only JSON corpus API cacheable for offline PWA use.
+    if not request.path.startswith('/api/'):
+        response.headers['Cache-Control'] = 'private, no-store'
+    return response
+
+
 def csrf_token():
     """Return the session-bound CSRF token, creating it when needed."""
     token = session.get('_csrf_token')
