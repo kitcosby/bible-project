@@ -80,6 +80,24 @@ The token endpoint returns Cache-Control: no-store and credentialed CORS only fo
 
 This is a staged cross-service contract. It does not expose the Express API publicly, configure production secrets, restart services, or alter production databases.
 
+## PWA JSON authentication endpoints
+
+The PWA may use the same Flask account store through these JSON routes. All responses are `Cache-Control: no-store`; browser requests must use `credentials: "include"` so the Flask session cookie is sent.
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/auth/bootstrap` | GET | Creates/returns a pre-authentication session-bound CSRF token. Also reports whether the session is already authenticated and, if so, the minimal user profile. |
+| `/api/auth/login` | POST | Accepts JSON `username` and `password`; validates CSRF and Origin; verifies the existing Werkzeug password hash; clears the prior session and issues a new authenticated session and CSRF token. |
+| `/api/auth/signup` | POST | Accepts JSON `username` and `password`; validates CSRF and Origin; applies the existing 12–1024-character password policy; creates a row in `user_accounts` and signs the new account in. |
+| `/api/auth/logout` | POST | Validates CSRF and Origin, clears the authenticated session, and returns a fresh pre-authentication CSRF token. |
+| `/api/auth/token` | POST | Exchanges the authenticated Flask session for the five-minute Express bearer token described above. |
+
+For cross-origin frontend hosting, configure the exact frontend origin in `BIBLEAPP_ALLOWED_ORIGINS` and use `credentials: "include"`. If frontend and Flask are cross-site, configure `BIBLEAPP_COOKIE_SAMESITE=None` and `BIBLEAPP_COOKIE_SECURE=1`; modern browser third-party-cookie restrictions may still affect cross-site cookie delivery, so same-site hosting is preferable where practical.
+
+Every mutating route requires the current session's token in `X-CSRF-Token`. Bootstrap is intentionally available before login; the token is rotated after successful login, signup, and logout. The PWA should keep the CSRF token in runtime memory and reacquire it through bootstrap after reload. It must not persist passwords, CSRF tokens, or bearer tokens in localStorage/sessionStorage.
+
+These endpoints do not yet add persistent login throttling, email verification, account recovery, or immediate bearer-token revocation. The HTML login/signup/logout routes remain available for the existing web interface.
+
 ## Session signing
 
 Set `BIBLEAPP_SESSION_SECRET` to a stable, randomly generated value of at least 32 bytes on any portable/production host. It is read into the Flask process and is never returned to clients.
