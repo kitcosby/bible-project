@@ -122,6 +122,7 @@ class TranslationOwnershipTests(unittest.TestCase):
         response = self.client.get("/translations")
         body = response.get_data(as_text=True)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers.get("Cache-Control"), "private, no-store")
         self.assertIn("KJV", body)
         self.assertIn("Bob private", body)
         self.assertNotIn("Alice private", body)
