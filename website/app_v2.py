@@ -334,6 +334,160 @@ def _identity_token(user_id):
     return signing_input + '.' + encoded_signature
 
 
+
+def _auth_json_origin():
+    """Require an explicitly allowed Origin for browser auth mutations."""
+    origin = _allowed_auth_origin()
+    if not origin:
+        return None
+    return origin
+
+
+def _auth_json_preflight(origin, methods='POST, OPTIONS'):
+    response = Response(status=204)
+    response.headers['Access-Control-Allow-Methods'] = methods
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+    response.headers['Access-Control-Max-Age'] = '300'
+    return _auth_cors(response, origin)
+
+
+def _auth_json_error(message, status, origin):
+    return _auth_cors(jsonify({'error': message}), origin), status
+
+
+def _auth_json_payload():
+    if not request.is_json:
+        return None
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
+
+
+def _auth_json_user(user):
+    return {
+        'user_id': int(user['user_id']),
+        'username': user['username'],
+        'display_name': user.get('display_name') or user['username'],
+    }
+
+
+@app.route('/api/auth/bootstrap', methods=['GET', 'OPTIONS'])
+def api_auth_bootstrap():
+    """Create a pre-auth session and CSRF token for the PWA login flow."""
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin, 'GET, POST, OPTIONS')
+    user = current_user()
+    payload = {
+        'csrf_token': csrf_token(),
+        'authenticated': bool(user),
+        'user': _auth_json_user(user) if user else None,
+    }
+    return _auth_cors(jsonify(payload), origin)
+
+
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
+def api_auth_login():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str) or not password:
+        return _auth_json_error('Username and password are required', 400, origin)
+    db = appdb()
+    row = db.execute(
+        'SELECT * FROM user_accounts WHERE username=%s AND is_active=1',
+        (username,)).fetchone()
+    if not row or not check_password_hash(row['password_hash'], password):
+        return _auth_json_error('Incorrect username or password', 401, origin)
+    session.clear()
+    session['user_id'] = row['user_id']
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (row['user_id'],))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin)
+
+
+@app.route('/api/auth/signup', methods=['POST', 'OPTIONS'])
+def api_auth_signup():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str):
+        return _auth_json_error('Username and password are required', 400, origin)
+    if len(password) < 12 or len(password) > 1024:
+        return _auth_json_error(
+            'Use a password or passphrase between 12 and 1024 characters',
+            400, origin)
+    db = appdb()
+    try:
+        cur = db.execute(
+            'INSERT INTO user_accounts(username, password_hash, display_name) '
+            'VALUES(%s,%s,%s) RETURNING user_id',
+            (username, generate_password_hash(password), username))
+        new_uid = cur.fetchone()['user_id']
+        db.commit()
+    except psycopg2.IntegrityError:
+        db.rollback()
+        return _auth_json_error('That username is taken', 409, origin)
+    session.clear()
+    session['user_id'] = new_uid
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (new_uid,))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin), 201
+
+
+@app.route('/api/auth/logout', methods=['POST', 'OPTIONS'])
+def api_auth_logout():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    session.clear()
+    rotated_csrf = csrf_token()
+    return _auth_cors(jsonify({
+        'authenticated': False,
+        'user': None,
+        'csrf_token': rotated_csrf,
+    }), origin)
+
+
 @app.route('/api/auth/csrf', methods=['GET', 'OPTIONS'])
 def api_auth_csrf():
     origin = _allowed_auth_origin()
