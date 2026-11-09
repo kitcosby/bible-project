@@ -54,6 +54,7 @@ The legacy Flask routes now enforce the existing `user_accounts.user_id` as the 
 - Built-in translation ID 1 (`KJV`) and ID 2 (`Young's`) remain public and read-only. A read-only metadata inventory found only these two NULL-owner translation rows; it also found no `word_choice`, `other_option`, or `lemma_default` rows attached to either built-in.
 - Any other NULL-owner translation is hidden and denied. No legacy row is automatically assigned to an account, deleted, or made editable.
 - Saved reading positions are revalidated against the current account's translation access before being used.
+- Non-API Flask responses use `Cache-Control: private, no-store`, preventing private translation pages, exports, and login/CSRF forms from being reused from browser cache after logout or account switching. Public read-only `/api/*` corpus responses retain their existing cache behavior for offline PWA reading.
 
 The metadata inventory was read-only. It did not expose translation contents, credentials, or account details, and it made no database changes.
 
