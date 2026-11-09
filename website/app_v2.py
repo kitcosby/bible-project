@@ -2669,7 +2669,7 @@ def api_word_options():
         f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id = ANY(%s) ORDER BY w.word_id',
         (word_ids,)).fetchall()
     kjv_lp, _, ylt_lp, _ = lemma_phrases(db)
-    return _api_json({
+    response = _api_json({
         'words': [{
             'wid': row['word_id'],
             'lemma': lemma_key(row),
@@ -2678,6 +2678,10 @@ def api_word_options():
             'ylt_phrases': ylt_lp.get(lemma_key(row), [])[:N_PHRASES],
         } for row in rows]
     })
+    # The byte choice index depends on the exact phrase ordering. Do not let
+    # browser or service-worker caches serve an older ordering to an editor.
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 @app.route('/api/search')
