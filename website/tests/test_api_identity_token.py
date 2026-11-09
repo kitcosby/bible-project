@@ -1,5 +1,7 @@
 import base64
 import json
+import hashlib
+import hmac
 import os
 import sys
 import time
@@ -102,7 +104,27 @@ class ApiIdentityTokenTests(unittest.TestCase):
         self.assertEqual(claims["exp"] - claims["iat"], 300)
         self.assertGreaterEqual(claims["exp"], int(time.time()))
         self.assertGreaterEqual(len(claims["jti"]), 16)
-        self.assertTrue(signature)
+        signing_input = ".".join(response.json["access_token"].split(".")[:2])
+        expected_signature = base64.urlsafe_b64encode(
+            hmac.new(
+                os.environ["BIBLEAPP_IDENTITY_TOKEN_SECRET"].encode("utf-8"),
+                signing_input.encode("ascii"),
+                hashlib.sha256,
+            ).digest()
+        ).rstrip(b"=").decode("ascii")
+        self.assertEqual(signature, expected_signature)
+
+    def test_token_preflight_is_scoped_to_allowed_origin(self):
+        response = self.client.options("/api/auth/token", headers={
+            "Origin": "https://reader.example",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type,x-csrf-token",
+        })
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.headers["Access-Control-Allow-Origin"],
+                         "https://reader.example")
+        self.assertIn("X-CSRF-Token",
+                      response.headers["Access-Control-Allow-Headers"])
 
     def test_missing_signing_secret_fails_closed(self):
         self.login()
