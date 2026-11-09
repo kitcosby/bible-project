@@ -243,7 +243,8 @@ def accessible_translation(tid):
         return None
     owner_id = row['owner_id']
     if owner_id is None:
-        return row if tid in BUILTIN_TRANSLATION_IDS else None
+        expected_name = {1: 'KJV', 2: "Young's"}.get(tid)
+        return row if expected_name and row['name'] == expected_name else None
     user = current_user()
     if not user or int(owner_id) != int(user['user_id']):
         return None
@@ -747,7 +748,7 @@ def get_reading_position():
         r = appdb().execute(
             'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=%s',
             (u['user_id'],)).fetchone()
-        if r:
+        if r and accessible_translation(r['translation_id']):
             return (r['book_id'], r['chapter'], r['translation_id'])
     pos = tuple(session.get('reading_position', ())) or None
     if pos and len(pos) == 3 and accessible_translation(pos[2]):
