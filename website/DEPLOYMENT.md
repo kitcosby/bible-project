@@ -92,6 +92,8 @@ The PWA may use the same Flask account store through these JSON routes. All resp
 | `/api/auth/logout` | POST | Validates CSRF and Origin, clears the authenticated session, and returns a fresh pre-authentication CSRF token. |
 | `/api/auth/token` | POST | Exchanges the authenticated Flask session for the five-minute Express bearer token described above. |
 
+The read-only corpus endpoint `GET /api/word-options?wordIds=...` accepts 1–100 Hebrew word IDs and returns each word's lemma key plus the exact KJV and Young's phrase groups used by the legacy dropdown. It supports the Strong's-number and root-code lemma keys. Its response is deliberately `Cache-Control: no-store`: the stored choice byte is positional, so a stale phrase ordering could silently select a different rendering. The PWA service worker must bypass its shared cache for this route.
+
 For cross-origin frontend hosting, configure the exact frontend origin in `BIBLEAPP_ALLOWED_ORIGINS` and use `credentials: "include"`. If frontend and Flask are cross-site, configure `BIBLEAPP_COOKIE_SAMESITE=None` and `BIBLEAPP_COOKIE_SECURE=1`; modern browser third-party-cookie restrictions may still affect cross-site cookie delivery, so same-site hosting is preferable where practical.
 
 Every mutating route requires the current session's token in `X-CSRF-Token`. Bootstrap is intentionally available before login; the token is rotated after successful login, signup, and logout. The PWA should keep the CSRF token in runtime memory and reacquire it through bootstrap after reload. It must not persist passwords, CSRF tokens, or bearer tokens in localStorage/sessionStorage.
