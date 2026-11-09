@@ -170,8 +170,6 @@ class JsonAuthTests(unittest.TestCase):
         self.assertEqual(denied.status_code, 401)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class RowsCursor:
@@ -230,3 +228,6 @@ class WordOptionsTests(unittest.TestCase):
         self.assertEqual(bad.status_code, 400)
         self.assertEqual(too_many.status_code, 400)
         self.assertEqual(corpus.calls, [])
+
+if __name__ == "__main__":
+    unittest.main()
