@@ -27,6 +27,7 @@ What changed vs app.py:
 """
 import html
 import os
+import base64
 import re
 import hmac
 import secrets
@@ -279,6 +280,100 @@ def _csrf_valid():
     expected = session.get('_csrf_token', '')
     supplied = request.form.get('csrf_token', '')
     return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
+def _allowed_auth_origin():
+    """Return an explicitly allowed browser Origin, or None."""
+    origin = request.headers.get('Origin', '').rstrip('/')
+    if not origin:
+        return None
+    configured = [x.strip().rstrip('/') for x in
+                  os.environ.get('BIBLEAPP_ALLOWED_ORIGINS', '').split(',')
+                  if x.strip()]
+    if configured:
+        return origin if origin in configured else None
+    # Safe same-origin default for local/single-origin deployments.
+    return origin if origin == request.host_url.rstrip('/') else None
+
+
+def _auth_cors(response, origin):
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Vary'] = 'Origin'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
+
+def _identity_token(user_id):
+    """Mint a five-minute HS256 token for the Express API; secret is env-only."""
+    secret = os.environ.get('BIBLEAPP_IDENTITY_TOKEN_SECRET', '')
+    if len(secret.encode('utf-8')) < 32:
+        raise RuntimeError('BIBLEAPP_IDENTITY_TOKEN_SECRET must be at least 32 bytes')
+    now = int(time.time())
+    def enc(value):
+        return base64.urlsafe_b64encode(
+            json.dumps(value, separators=(',', ':')).encode('utf-8')
+        ).rstrip(b'=').decode('ascii')
+    header = enc({'alg': 'HS256', 'typ': 'JWT'})
+    payload = enc({
+        'iss': 'bibleapp-flask',
+        'aud': 'bibleapp-api',
+        'sub': str(int(user_id)),
+        'iat': now,
+        'exp': now + 300,
+        'jti': secrets.token_urlsafe(16),
+    })
+    signing_input = header + '.' + payload
+    signature = hmac.new(secret.encode('utf-8'),
+                         signing_input.encode('ascii'), 'sha256').digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b'=').decode('ascii')
+    return signing_input + '.' + encoded_signature
+
+
+@app.route('/api/auth/csrf', methods=['GET', 'OPTIONS'])
+def api_auth_csrf():
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        if origin:
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+            response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    return _auth_cors(jsonify({'csrf_token': csrf_token()}), origin)
+
+
+@app.route('/api/auth/token', methods=['POST', 'OPTIONS'])
+def api_auth_token():
+    origin = _allowed_auth_origin()
+    if not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+        response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    if not _csrf_valid():
+        return _auth_cors(jsonify({'error': 'CSRF validation failed'}), origin), 400
+    try:
+        token = _identity_token(user['user_id'])
+    except RuntimeError:
+        return _auth_cors(jsonify({'error': 'Identity service unavailable'}), origin), 503
+    return _auth_cors(jsonify({
+        'access_token': token,
+        'token_type': 'Bearer',
+        'expires_in': 300,
+    }), origin)
 
 
 def _auth_form(action, legend):
