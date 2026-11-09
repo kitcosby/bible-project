@@ -978,7 +978,10 @@ def translations():
     rows = db.execute('''SELECT t.*, a.display_name AS owner_name
         FROM translation t LEFT JOIN user_accounts a
           ON a.user_id=t.owner_id
-        WHERE t.translation_id IN (1, 2) OR t.owner_id=%s
+        WHERE (t.owner_id IS NULL AND
+               ((t.translation_id=1 AND t.name='KJV') OR
+                (t.translation_id=2 AND t.name='Young''s')))
+           OR t.owner_id=%s
         ORDER BY t.updated_at DESC''',
         (user['user_id'] if user else -1,)).fetchall()
     items = []
@@ -1146,7 +1149,10 @@ def read_chapter(n, c):
     # translation picker
     user = current_user()
     alltrans = appdb().execute('''SELECT translation_id, name FROM translation
-        WHERE translation_id IN (1, 2) OR owner_id=%s
+        WHERE (owner_id IS NULL AND
+               ((translation_id=1 AND name='KJV') OR
+                (translation_id=2 AND name='Young''s')))
+           OR owner_id=%s
         ORDER BY translation_id''',
         (user['user_id'] if user else -1,)).fetchall()
     opts = ''.join(f'<option value="{t["translation_id"]}"{" selected" if t["translation_id"] == tid else ""}>'
