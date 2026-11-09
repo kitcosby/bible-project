@@ -28,6 +28,9 @@ What changed vs app.py:
 import html
 import os
 import re
+import hmac
+import secrets
+from datetime import timedelta
 import psycopg2
 import psycopg2.extras
 import psycopg2.errors
@@ -50,6 +53,16 @@ BIBLE_APP_DATABASE_URL = os.environ.get('BIBLE_APP_DATABASE_URL')
 SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
+
+# Browser-session defaults. Set BIBLEAPP_COOKIE_SECURE=1 behind HTTPS.
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=os.environ.get('BIBLEAPP_COOKIE_SECURE', '0').lower()
+        in ('1', 'true', 'yes', 'on'),
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
+    SESSION_REFRESH_EACH_REQUEST=False,
+)
 
 
 def _load_secret():
@@ -235,17 +248,35 @@ def current_user():
         (uid,)).fetchone()
 
 
+def csrf_token():
+    """Return the session-bound CSRF token, creating it when needed."""
+    token = session.get('_csrf_token')
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session['_csrf_token'] = token
+    return token
+
+
+def _csrf_valid():
+    expected = session.get('_csrf_token', '')
+    supplied = request.form.get('csrf_token', '')
+    return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
 def _auth_form(action, legend):
     return f'''<h2>{legend}</h2>
 <form method="post" action="{u(action)}">
-<label>Username: <input type="text" name="username"></label><br>
-<label>Password: <input type="password" name="password"></label><br>
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
+<label>Username: <input type="text" name="username" autocomplete="username"></label><br>
+<label>Password: <input type="password" name="password" autocomplete="current-password"></label><br>
 <button type="submit">{legend}</button></form>'''
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        if not _csrf_valid():
+            return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         db = appdb()
@@ -253,9 +284,9 @@ def signup():
             return render('Sign up',
                           '<p>Username and password are required.</p>'
                           + _auth_form('/signup', 'Sign up'))
-        if len(password) < 4:
+        if len(password) < 12 or len(password) > 1024:
             return render('Sign up',
-                          '<p>Password must be at least 4 characters.</p>'
+                          '<p>Use a password or passphrase between 12 and 1024 characters.</p>'
                           + _auth_form('/signup', 'Sign up'))
         try:
             cur = db.execute(
@@ -269,7 +300,10 @@ def signup():
             return render('Sign up',
                           '<p>That username is taken.</p>'
                           + _auth_form('/signup', 'Sign up'))
+        session.clear()
         session['user_id'] = new_uid
+        session.permanent = True
+        csrf_token()  # rotate the pre-authentication token at the login boundary
         db.execute("UPDATE user_accounts SET last_login_at=now()"
                    ' WHERE user_id=%s', (new_uid,))
         db.commit()
@@ -280,6 +314,8 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        if not _csrf_valid():
+            return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         db = appdb()
@@ -290,7 +326,10 @@ def login():
             return render('Login',
                           '<p>Incorrect username or password.</p>'
                           + _auth_form('/login', 'Login'))
+        session.clear()
         session['user_id'] = row['user_id']
+        session.permanent = True
+        csrf_token()  # rotate the pre-authentication token at the login boundary
         db.execute("UPDATE user_accounts SET last_login_at=now()"
                    ' WHERE user_id=%s', (row['user_id'],))
         db.commit()
@@ -298,9 +337,11 @@ def login():
     return render('Login', _auth_form('/login', 'Login'))
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id', None)
+    if not _csrf_valid():
+        return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
+    session.clear()
     return redirect(u('/'))
 
 # ---------------------------------------------------------------- choice index: 1 byte per word
@@ -631,7 +672,9 @@ NAV = '''
  | <a href="{{u0}}/variants">Word variants</a>
  | <a href="{{u0}}/translations">My translations</a>
 {% if user %} | logged in as <b>{{user['display_name'] or user['username']}}</b>
- (<a href="{{u0}}/logout">logout</a>)
+ <form method="post" action="{{u0}}/logout" style="display:inline">
+ <input type="hidden" name="csrf_token" value="{{csrf_token}}">
+ <button type="submit">logout</button></form>
 {% else %} | <a href="{{u0}}/login">login</a> | <a href="{{u0}}/signup">sign up</a>{% endif %}
 {% if trans %} | working on translation: <b>{{trans['name']}}</b>
   (<a href="{{u0}}/translations?t={{trans['translation_id']}}">switch</a>){% endif %}
@@ -658,6 +701,7 @@ a{color:#5a3c0a}
 def render(title, body, trans=None):
     return render_template_string(PAGE, title=title, body=body, trans=trans,
                                    user=current_user(),
+                                   csrf_token=csrf_token(),
                                    u0=request.script_root or '',
                                    tile=u('/papyrus-tile.png'))
 

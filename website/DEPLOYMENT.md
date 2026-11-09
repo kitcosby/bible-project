@@ -28,6 +28,22 @@ This preserves the current local peer-auth deployment behavior. These are databa
 
 **Important:** `appdb()` currently performs idempotent `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE` operations during connection initialization. A portable deployment must account for those current DDL operations. A later hardening step should move schema changes into explicit versioned migrations and remove DDL from request-time connection setup.
 
+## Existing account login hardening (staged)
+
+The current Flask account system remains authoritative. The staged hardening change preserves `user_accounts.user_id`, usernames, and existing Werkzeug password hashes; it does not introduce a second account store or require existing users to reset passwords.
+
+The staged login-flow changes:
+
+- Keep Werkzeug `check_password_hash` for existing credentials.
+- Require 12–1024 characters for newly registered passwords; this does not impose a new minimum on existing accounts at login.
+- Add session-bound CSRF tokens to signup, login, and logout.
+- Change logout from GET to POST.
+- Clear session state at successful signup/login boundaries and issue a fresh CSRF token.
+- Mark authenticated sessions permanent with a 12-hour lifetime and disable sliding refresh.
+- Set session cookies HttpOnly and SameSite=Lax; enable Secure cookies with `BIBLEAPP_COOKIE_SECURE=1` when served over HTTPS.
+
+**Important remaining work:** this is only the first authentication-hardening slice. It does not yet implement persistent login throttling, server-side session revocation, account recovery/email verification, or CSRF protection for the existing translation-authoring POST routes. Translation ownership checks are also still required. Do not expose public authoring or treat this branch as production-ready until those controls and cross-user tests are complete.
+
 ## Session signing
 
 Set `BIBLEAPP_SESSION_SECRET` to a stable, randomly generated value of at least 32 bytes on any portable/production host. It is read into the Flask process and is never returned to clients.
