@@ -34,15 +34,37 @@ The current Flask account system remains authoritative. The staged hardening cha
 
 The staged login-flow changes:
 
-- Keep Werkzeug `check_password_hash` for existing credentials.
+- Keep Werkzeug check_password_hash for existing credentials.
 - Require 12–1024 characters for newly registered passwords; this does not impose a new minimum on existing accounts at login.
 - Add session-bound CSRF tokens to signup, login, and logout.
 - Change logout from GET to POST.
 - Clear session state at successful signup/login boundaries and issue a fresh CSRF token.
 - Mark authenticated sessions permanent with a 12-hour lifetime and disable sliding refresh.
-- Set session cookies HttpOnly and SameSite=Lax; enable Secure cookies with `BIBLEAPP_COOKIE_SECURE=1` when served over HTTPS.
+- Set session cookies HttpOnly and SameSite=Lax by default; support Secure cookies with BIBLEAPP_COOKIE_SECURE=1. Cross-site frontend deployments can explicitly set BIBLEAPP_COOKIE_SAMESITE=None, which requires Secure.
 
-**Important remaining work:** this is only the first authentication-hardening slice. It does not yet implement persistent login throttling, server-side session revocation, account recovery/email verification, or CSRF protection for the existing translation-authoring POST routes. Translation ownership checks are also still required. Do not expose public authoring or treat this branch as production-ready until those controls and cross-user tests are complete.
+The Flask-issued API token contract is documented below. Translation ownership enforcement is developed separately in PR #14; the Express authorization branch adds corresponding owner checks. Persistent login throttling, server-side session revocation, and account recovery/email verification remain outstanding. Do not treat these staged changes as production-ready or expose authoring until the full cross-service flow is tested and configured.
+
+## Flask-to-Express user identity token (staged)
+
+The existing Flask account/session remains the only identity authority. After an authenticated Flask session is established, the browser may exchange that session for a short-lived API bearer token:
+
+1. GET /api/auth/csrf returns the session-bound CSRF token for an active account.
+2. POST /api/auth/token requires the same authenticated session, a matching X-CSRF-Token header, and an allowed browser Origin.
+3. Flask signs an HS256 JWT with issuer bibleapp-flask, audience bibleapp-api, the existing user_accounts.user_id in sub, an issue time, a five-minute expiry, and a random token ID.
+4. The browser sends this token as Authorization: Bearer ... to the Express /api/bible/* API. Keep it in memory only; never store it in localStorage/sessionStorage or put it in URLs or logs.
+5. Express validates the HMAC signature in constant time and checks issuer, audience, account ID, issue/expiry times, and the maximum five-minute lifetime.
+
+Required environment variables (configure out-of-band; never commit or display their values):
+
+- BIBLEAPP_IDENTITY_TOKEN_SECRET: one independently generated random secret of at least 32 UTF-8 bytes, identical in Flask and Express. It must be distinct from BIBLEAPP_SESSION_SECRET and BIBLE_APP_SANDBOX_TOKEN.
+- BIBLEAPP_ALLOWED_ORIGINS: comma-separated exact HTTPS origins, with no path or wildcard. Configure the frontend origin on both Flask and Express.
+- BIBLEAPP_COOKIE_SAMESITE=None and BIBLEAPP_COOKIE_SECURE=1: required only when the frontend and Flask API are cross-site. Flask rejects SameSite=None unless Secure is enabled. Same-origin deployments retain the default Lax cookie.
+
+The token endpoint returns Cache-Control: no-store and credentialed CORS only for the explicit origin allowlist. The Express API uses bearer authorization and non-credentialed CORS. A browser must first obtain the token from Flask with credentials: "include", then call Express with the bearer header and without ambient cookies.
+
+**Revocation limitation:** a token already issued remains valid until its five-minute expiry, including immediately after logout or account deactivation. This is not server-side session revocation. Keep the token lifetime short and do not use this mechanism for high-risk operations requiring immediate revocation.
+
+This is a staged cross-service contract. It does not expose the Express API publicly, configure production secrets, restart services, or alter production databases.
 
 ## Session signing
 
@@ -61,8 +83,8 @@ Use a reverse proxy with TLS. Keep PostgreSQL private to the application host/ne
 ## Current portability blockers / deferred work
 
 1. The current `/api/search` implementation still calls Ollama at the hard-coded `127.0.0.1:11434` endpoint using `nomic-embed-text` and searches the existing YLT verse embedding table. Kit has directed that search be retooled after the separate 528,565-row word-variant embedding rebuild completes and is validated. Do not treat the Ollama implementation as the final portable search design.
-2. The legacy Flask translation UI uses a local signed session, but its translation selection and write handlers do not enforce translation ownership. Do not expose authoring publicly until a canonical identity/ownership policy and cross-user tests are implemented.
-3. The current account password minimum is four characters. This legacy policy must not be carried into a new public signup flow without security review.
+2. Translation ownership checks are staged in the separate Flask PR #14 and the Express identity/owner-enforcement PR. Both must be reviewed and merged in dependency order before public authoring.
+3. Persistent login throttling, immediate server-side session revocation, and account recovery/email verification remain outstanding.
 4. The Flask service still serves both legacy HTML UI and read-only JSON API routes. The eventual portable deployment should keep the core API boundary explicit and may separate UI from API, but do not remove existing routes before parity is verified.
 5. The application DB setup runs DDL at runtime, as noted above. Replace this with versioned migrations before treating a fresh-host bootstrap as production-ready.
 
