@@ -172,3 +172,61 @@ class JsonAuthTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RowsCursor:
+    def __init__(self, rows):
+        self.rows = rows
+
+    def fetchall(self):
+        return self.rows
+
+
+class FakeCorpus:
+    def __init__(self, rows):
+        self.rows = rows
+        self.calls = []
+
+    def execute(self, sql, params=()):
+        self.calls.append((sql, params))
+        return RowsCursor(self.rows)
+
+
+class WordOptionsTests(unittest.TestCase):
+    def setUp(self):
+        self.client = mod.app.test_client()
+
+    def test_word_options_returns_occurrence_lemma_and_exact_phrase_groups(self):
+        rows = [
+            {"word_id": 10, "strongs": "H430", "root_code": "10.1.1"},
+            {"word_id": 11, "strongs": None, "root_code": "11.1.2"},
+        ]
+        corpus = FakeCorpus(rows)
+        phrase_maps = (
+            {"H430": ["God", "gods"], "root:11.1.2": ["a root rendering"]},
+            {},
+            {"H430": ["Gods"], "root:11.1.2": ["root Young's"]},
+            {},
+        )
+        with patch.object(mod, "bible", return_value=corpus), \
+             patch.object(mod, "lemma_phrases", return_value=phrase_maps):
+            response = self.client.get("/api/word-options?wordIds=11,10,10")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(corpus.calls[0][1], ([10, 11],))
+        self.assertIn("ANY(%s)", corpus.calls[0][0])
+        self.assertEqual(response.json["words"], [
+            {"wid": 10, "lemma": "H430", "strongs": "H430",
+             "kjv_phrases": ["God", "gods"], "ylt_phrases": ["Gods"]},
+            {"wid": 11, "lemma": "root:11.1.2", "strongs": None,
+             "kjv_phrases": ["a root rendering"], "ylt_phrases": ["root Young's"]},
+        ])
+
+    def test_word_options_rejects_invalid_or_oversized_ids_before_query(self):
+        corpus = FakeCorpus([])
+        with patch.object(mod, "bible", return_value=corpus):
+            bad = self.client.get("/api/word-options?wordIds=0")
+            too_many = self.client.get("/api/word-options?wordIds=" +
+                                       ",".join(str(i) for i in range(1, 102)))
+        self.assertEqual(bad.status_code, 400)
+        self.assertEqual(too_many.status_code, 400)
+        self.assertEqual(corpus.calls, [])
