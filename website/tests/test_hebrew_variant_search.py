@@ -21,9 +21,12 @@ class FakeVariantDB:
         self.exact_rows = exact_rows
         self.semantic_rows = semantic_rows
         self.statements = []
+        self.fail_exact = None
 
     def execute(self, statement, params=()):
         self.statements.append((statement, params))
+        if "FROM word_variants v" in statement and self.fail_exact is not None:
+            raise self.fail_exact
         if statement.startswith("SET ivfflat.probes"):
             return Cursor()
         if "e.embedding" in statement:
@@ -34,8 +37,9 @@ class FakeVariantDB:
 
 
 class FakeEmbeddingResponse:
-    def __init__(self, prompt):
+    def __init__(self, prompt, dimensions=768):
         self.prompt = prompt
+        self.dimensions = dimensions
 
     def __enter__(self):
         return self
@@ -44,7 +48,7 @@ class FakeEmbeddingResponse:
         return False
 
     def read(self):
-        return json.dumps({"embedding": [0.0] * 768}).encode("utf-8")
+        return json.dumps({"embedding": [0.0] * self.dimensions}).encode("utf-8")
 
 
 def result_row(word_id, variant_seq, spelling, score_marker=None):
@@ -144,6 +148,85 @@ class HebrewVariantSearchTests(unittest.TestCase):
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0]["match_type"], "exact")
         self.assertIsNone(response.json[0]["score"])
+
+
+    def test_error_responses_all_carry_no_store(self):
+        cases = [
+            ("non-Hebrew 400", lambda: self.client.get("/api/search/variants?q=creation")),
+            ("database 503", self._database_failure_response),
+            ("embedding dimension 502", self._dimension_failure_response),
+        ]
+        for label, make_response in cases:
+            with self.subTest(label=label):
+                response = make_response()
+                self.assertIn(response.status_code, (400, 502, 503))
+                self.assertEqual(response.headers.get("Cache-Control"), "no-store")
+
+    def _database_failure_response(self):
+        self.db.fail_exact = RuntimeError("postgres://admin:super-secret-token@db.internal/search")
+        return self.client.get("/api/search/variants?q=בראשית")
+
+    def _dimension_failure_response(self):
+        self.db.exact_rows = []
+        with patch("urllib.request.urlopen", return_value=FakeEmbeddingResponse("בראשית", 512)):
+            return self.client.get("/api/search/variants?q=בראשית")
+
+    def test_database_exception_does_not_leak_secret_or_internal_detail(self):
+        secret = "postgres://admin:super-secret-token@db.internal/search"
+        self.db.fail_exact = RuntimeError(secret)
+        response = self.client.get("/api/search/variants?q=בראשית")
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json, {"error": "Hebrew variant search unavailable"})
+        self.assertNotIn(secret, response.get_data(as_text=True))
+        self.assertNotIn("db.internal", response.get_data(as_text=True))
+        self.assertEqual(response.headers.get("Cache-Control"), "no-store")
+
+    def test_wrong_embedding_dimension_returns_generic_502(self):
+        self.db.exact_rows = []
+        with patch("urllib.request.urlopen", return_value=FakeEmbeddingResponse("בראשית", 512)):
+            response = self.client.get("/api/search/variants?q=בראשית")
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.json, {"error": "unexpected embedding dimensions"})
+        self.assertEqual(response.headers.get("Cache-Control"), "no-store")
+
+    def test_limit_is_clamped_to_one_and_twenty_five_and_honors_two(self):
+        self.db.exact_rows = [
+            result_row(i, 1, f"בראשית{i}") for i in range(1, 31)
+        ]
+        self.db.semantic_rows = []
+        with patch("urllib.request.urlopen", return_value=FakeEmbeddingResponse("בראשית")):
+            zero = self.client.get("/api/search/variants?q=בראשית&limit=0")
+            two = self.client.get("/api/search/variants?q=בראשית&limit=2")
+            large = self.client.get("/api/search/variants?q=בראשית&limit=999")
+        self.assertEqual(len(zero.json), 1)
+        self.assertEqual(len(two.json), 2)
+        self.assertEqual(len(large.json), 25)
+        exact_limits = [
+            params[-1] for statement, params in self.db.statements
+            if "FROM word_variants v" in statement
+        ]
+        semantic_limits = [
+            params[-1] for statement, params in self.db.statements
+            if "e.embedding" in statement
+        ]
+        self.assertEqual(exact_limits[-3:], [1, 2, 25])
+        self.assertEqual(semantic_limits[-3:], [3, 6, 75])
+
+    def test_three_hundred_hebrew_characters_are_accepted(self):
+        query = "א" * 300
+        captured = {}
+
+        def fake_urlopen(request, timeout=0):
+            captured["prompt"] = json.loads(request.data.decode("utf-8"))["prompt"]
+            return FakeEmbeddingResponse(query)
+
+        self.db.exact_rows = []
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
+            response = self.client.get("/api/search/variants?q=" + query)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(captured["prompt"], query)
+        self.assertEqual(len(captured["prompt"]), 300)
+        self.assertEqual(response.headers.get("Cache-Control"), "no-store")
 
     def test_missing_variant_database_configuration_fails_closed(self):
         with patch.object(mod, "BIBLE_VARIANT_SEARCH_DATABASE_URL", None):
