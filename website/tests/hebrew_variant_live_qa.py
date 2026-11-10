@@ -172,21 +172,12 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
         self.assertEqual(status, 200, body)
         self.assertIsInstance(payload, list)
 
-    def test_07_ivfflat_top_ten_matches_exact_sequential_scan(self):
+    def test_07_ivfflat_top_ten_is_within_exact_distance_boundary(self):
         import psycopg2
         db_url = os.environ.get("BIBLE_VARIANT_SEARCH_DATABASE_URL")
         self.assertTrue(db_url, "staging BIBLE_VARIANT_SEARCH_DATABASE_URL is not configured")
-        embedding_request = urllib.request.Request(
-            OLLAMA_BASE + "/api/embeddings",
-            data=json.dumps({"model": "nomic-embed-text:latest", "prompt": "בראשית"}).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(embedding_request, timeout=45) as response:
-            vector = json.loads(response.read())["embedding"]
-        self.assertEqual(len(vector), 768)
-        vector_literal = "[" + ",".join(repr(float(value)) for value in vector) + "]"
         sql = """
-            SELECT word_id, variant_seq
+            SELECT word_id, variant_seq, embedding <=> %s::vector AS distance
             FROM word_variant_embeddings
             ORDER BY embedding <=> %s::vector
             LIMIT 10
@@ -195,22 +186,56 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
         try:
             connection.set_session(readonly=True, autocommit=False)
             with connection.cursor() as cursor:
-                cursor.execute("SET ivfflat.probes = 16")
-                cursor.execute("SET enable_seqscan = off")
-                cursor.execute("EXPLAIN " + sql, (vector_literal,))
-                plan = "\n".join(str(row[0]) for row in cursor.fetchall())
-                self.assertIn("Index Scan", plan, "IVFFlat index was not selected: " + plan)
-                cursor.execute(sql, (vector_literal,))
-                indexed = cursor.fetchall()
-                cursor.execute("SET enable_indexscan = off")
-                cursor.execute("SET enable_bitmapscan = off")
-                cursor.execute("SET enable_seqscan = on")
-                cursor.execute(sql, (vector_literal,))
-                sequential = cursor.fetchall()
-            self.assertEqual(indexed, sequential, "IVFFlat top-10 differs from exact sequential-scan top-10")
+                for query in ("בראשית", "בראשיט"):
+                    with self.subTest(query=query):
+                        embedding_request = urllib.request.Request(
+                            OLLAMA_BASE + "/api/embeddings",
+                            data=json.dumps({
+                                "model": "nomic-embed-text:latest",
+                                "prompt": query,
+                            }).encode("utf-8"),
+                            headers={"Content-Type": "application/json"},
+                        )
+                        with urllib.request.urlopen(embedding_request, timeout=45) as response:
+                            vector = json.loads(response.read())["embedding"]
+                        self.assertEqual(len(vector), 768, "unexpected embedding dimension for " + query)
+                        vector_literal = "[" + ",".join(repr(float(value)) for value in vector) + "]"
+
+                        cursor.execute("SET ivfflat.probes = 16")
+                        cursor.execute("SET enable_seqscan = off")
+                        cursor.execute("EXPLAIN " + sql, (vector_literal, vector_literal))
+                        plan = "\\n".join(str(row[0]) for row in cursor.fetchall())
+                        self.assertIn("Index Scan", plan, "IVFFlat index was not selected for %s: %s" % (query, plan))
+                        cursor.execute(sql, (vector_literal, vector_literal))
+                        indexed = cursor.fetchall()
+
+                        cursor.execute("SET enable_indexscan = off")
+                        cursor.execute("SET enable_bitmapscan = off")
+                        cursor.execute("SET enable_seqscan = on")
+                        cursor.execute(sql, (vector_literal, vector_literal))
+                        sequential = cursor.fetchall()
+
+                        self.assertEqual(len(indexed), 10, "IVFFlat did not return ten rows for " + query)
+                        self.assertEqual(len(sequential), 10, "exact scan did not return ten rows for " + query)
+                        exact_rank_10_distance = float(sequential[-1][2])
+                        tolerance = 1e-6
+                        worst_indexed_distance = max(float(row[2]) for row in indexed)
+                        self.assertLessEqual(
+                            worst_indexed_distance,
+                            exact_rank_10_distance + tolerance,
+                            "%s: IVFFlat returned a row beyond exact rank-10 distance "
+                            "(indexed worst=%.12f, exact boundary=%.12f, tolerance=%.1e)"
+                            % (query, worst_indexed_distance, exact_rank_10_distance, tolerance),
+                        )
+                        print(
+                            "IVFFLAT query=%s probes=16 exact_rank10=%.12f indexed_worst=%.12f "
+                            "recall_boundary=PASS" %
+                            (query, exact_rank_10_distance, worst_indexed_distance)
+                        )
         finally:
             connection.rollback()
             connection.close()
+
 
 
 if __name__ == "__main__":
