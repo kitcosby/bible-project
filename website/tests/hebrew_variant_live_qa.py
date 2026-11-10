@@ -121,6 +121,9 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
         self.assertTrue(medial_rows, "medial-form query returned no exact rows")
         self.assertEqual({r["spelling"] for r in final_rows}, {"שלום"})
         self.assertEqual({r["spelling"] for r in medial_rows}, {"שלומ"})
+        final_keys = {(r.get("word_id"), r.get("variant_seq")) for r in final_rows}
+        medial_keys = {(r.get("word_id"), r.get("variant_seq")) for r in medial_rows}
+        self.assertTrue(final_keys.isdisjoint(medial_keys), "final-form and medial-form exact rows overlap")
 
     def test_03_exact_order_scores_and_duplicate_suppression(self):
         status, headers, payload, _, body = search("בראשית")
