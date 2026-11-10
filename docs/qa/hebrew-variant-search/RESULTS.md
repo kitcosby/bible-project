@@ -13,11 +13,11 @@
 |---|---:|---|
 | 1. Flask mock-based unit tests | **9 passed, 0 failed** | Passed |
 | 2. Live API + staging index battery | **8 passed, 0 failed** | Passed on the tie-aware exact-distance boundary for both exact-form and fuzzy-form queries |
-| 3. Ollama outage/restore | **BLOCKED** | Required explicit `OLLAMA_STOP_COMMAND` and `OLLAMA_START_COMMAND` not supplied; no service state changed |
+| 3. Ollama outage/restore | **4 passed, 0 failed** | Exact-match fallback, documented 503 for no-exact query, Ollama restoration, and semantic-search recovery all passed |
 | 4. PWA tests (runner) | **25 total: 24 passed, 0 failed, 1 TODO** | Functional tests passed; D11 remains a TODO |
 | 5. Staging integrity | **6 passed, 0 failed, 0 blocked** | Hashes/config overrides and live route all passed |
 
-**Evidence scope:** Layer 2 was rerun after the criterion change. Layers 1, 4, and 5 remain verified by the immediately preceding full post-reboot run; they were not rerun as part of this Layer 2-only follow-up. Layer 3 remains safely blocked. The earlier Layer 2 failure is superseded by the passing tie-aware rerun.  
+**Evidence scope:** Layer 2 was rerun after the criterion change. Layer 3 was subsequently run after explicit authorization, using the Supervisor-managed Ollama program for stop and restore. Layers 1, 4, and 5 remain verified by the immediately preceding full post-reboot run; they were not rerun during the Layer 2/3 follow-ups. The earlier Layer 2 failure is superseded by the passing tie-aware rerun.  
 **Standalone PWA rerun:** **25 tests, 24 pass, 0 fail, 1 TODO**, duration **213.162038 ms**.
 
 ## Hebrew search latency
@@ -59,15 +59,28 @@ The two latency values above are the first and repeat requests during this post-
 
 The test intentionally does not assert ordered identity equality within tied distances. This is a correction to the QA criterion, not a relaxation of the search implementation's API ordering contract: API exact-result ordering and deduplication remain covered by the separate live API tests.
 
-## Layer 3 — blocked safely
+## Layer 3 — Ollama outage and recovery
+
+**Authorization:** Owner explicitly authorized the controlled interruption on 2026-11-10, noting that no one was monitoring production. The test was run against staging; Ollama is shared with production passage search, so the Ollama outage also temporarily interrupted that dependency. No production requests or data were changed.
+
+**Service control:** Read-only inspection confirmed the active Supervisor configuration at `/etc/supervisor/conf.d/lampy.conf` defines `[program:ollama]`. The test used `supervisorctl -c /etc/supervisor/conf.d/lampy.conf stop ollama` and the corresponding `start ollama` command. The test harness's `finally` cleanup attempted restoration after the outage assertions.
 
 Actual output:
 
 ```text
-BLOCKED Layer 3: OLLAMA_STOP_COMMAND and OLLAMA_START_COMMAND must be supplied; no service state changed
+PASS exact matches survive Ollama outage with exposed semantic-unavailable header
+PASS no-exact-match query returns documented generic 503 during Ollama outage
+PASS RESTORE: Ollama is healthy again (or remained healthy)
+PASS RESUME: normal semantic search returned HTTP 200 after Ollama restart
 ```
 
-The services were up, but the harness requires explicit approved commands for both stop and restore. No outage was induced. This avoids an unapproved service interruption and leaves the current running state intact.
+Post-test Supervisor status:
+
+```text
+ollama                           RUNNING   pid 1629, uptime 0:00:08
+```
+
+**Result:** 4 assertions passed, 0 failed. Exact matches remain usable without embeddings; a query with no exact matches returns the documented generic 503 and `no-store`; Ollama was restored; and normal semantic search resumed. The post-test Supervisor status independently confirms Ollama was running again.
 
 ## Layer 4 — PWA results and known issue
 
@@ -104,17 +117,16 @@ STAGING INTEGRITY COUNTS passes=6 failures=0 blocked=0
 
 Staging `config.js` intentionally retains the staging-only `/stage-bible` and `/api-stage` overrides. It was not overwritten. The other three staged files match their expected branch hashes.
 
-## Reboot and stack lifecycle finding
+## Reboot and stack lifecycle hardening
 
-Owner/QA-side verification: terminating the Lampy distro and waiting approximately 90 seconds left a fresh distro with no supervisor and all services down. Running the existing `LampyStackBoot` scheduled task restored the stack; production Flask (5057) and Ollama (11434) were verified answering. Staging Flask (5058) is not a supervisor program and had to be restarted manually. It will not survive a distro reboot under the current arrangement.
+Owner-reported verification on 2026-11-10: after terminating the Lampy distro at 06:54 and taking no manual action, the `LampyStackWatchdog` scheduled task's 07:05 cycle brought the full stack back. The confirmation probe reported all services RUNNING, all three ports open, and both staging Hebrew search and production answering HTTP 200.
 
-This is an operational finding, not a change made by this QA run. Recommend a separate hardening decision: decide whether the boot task itself should start the supervisor automatically and whether staging Flask should be managed as a supervisor program or another controlled service. No automation or service configuration was changed here.
+The owner reports two changes: (1) `LampyStackWatchdog` checks every five minutes and starts the stack only when the supervisor is not already running; a healthy-stack test reportedly confirmed it is a no-op and does not spawn duplicates; (2) staging Flask is now a supervised service. The supervisor configuration was backed up before modification, and the staging documentation was updated. These are owner-reported operational changes and test results; this QA session did not independently inspect the watchdog task or repeat the hands-off reboot test.
 
 ## Safety and deployment state
 
 - Suite executed against staging only; production was not queried or modified by the suite.
 - No staging files/configuration were restaged or modified by the suite.
-- No services were stopped or restarted by the suite.
-- Layer 3 did not execute because explicit outage/restore commands were not supplied.
+- Layer 3 deliberately stopped and restarted the Supervisor-managed Ollama service under explicit owner authorization; post-test service health was confirmed.
 - No merge or PR state change was made.
 - Both PRs remain open drafts; backend PR #18 still has the failing live index-quality test.
