@@ -2903,6 +2903,7 @@ def api_search_variants():
     response = _api_json(results[:limit])
     if semantic_unavailable:
         response.headers['X-Hebrew-Semantic-Search'] = 'unavailable'
+        response.headers['Access-Control-Expose-Headers'] = 'X-Hebrew-Semantic-Search'
     response.headers['Cache-Control'] = 'no-store'
     return response
 
