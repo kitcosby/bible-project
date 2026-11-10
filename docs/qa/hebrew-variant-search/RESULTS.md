@@ -1,40 +1,44 @@
-# Hebrew spelling-variant search QA — restored-staging rerun
+# Hebrew spelling-variant search QA — post-reboot rerun
 
-**Run date:** 2026-11-10 (Lampy local time, after the QA-side staging recovery reported at approximately 06:30 PT).  
-**Runner:** `website/tests/run_hebrew_variant_qa.sh`; standalone repeat: `node --test tests/*.test.mjs`.  
-**Environment:** Lampy WSL; isolated QA copies under `/tmp/variant-search-qa`; Python 3; Node v24.22.1. Live target was staging Flask at `127.0.0.1:5058`, staging database, and Ollama at `127.0.0.1:11434`.  
-**Backend application branch at run:** `f5441e2e406e830d984286dda221738b4d51d107` (PR #18). The staging-integrity expectation was changed in this rerun to exempt the deliberately customized staging `config.js` from branch-default hash comparison and validate its two staging overrides instead. That exact change is now committed as `fe6154de40dfc614ae167e0ab5a5f2709a93db47`.  
-**PWA branch at run:** `6ccac910a72b1c5ba75647db1ee2d07062ff22bc` (PR #5).
+**Run date:** 2026-11-10, after the owner/QA-side reboot and staging restoration.  
+**Runner:** `website/tests/run_hebrew_variant_qa.sh`; standalone PWA repeat: `node --test tests/*.test.mjs`.  
+**Environment:** Lampy WSL; isolated QA workspace `/tmp/variant-search-qa`; Python 3; Node v24.22.1. Live target: staging Flask at `127.0.0.1:5058`, staging database, and Ollama at `127.0.0.1:11434`.  
+**Backend branch:** `feat/hebrew-variant-embedding-search`; current PR #18 head at the start of this rerun included the staging-config integrity expectation fix.  
+**PWA branch:** `feat/hebrew-variant-embedding-search`, PR #5 head `6ccac910a72b1c5ba75647db1ee2d07062ff22bc`.  
+**Integrity behavior:** staged `config.js` is deliberately staging-specific; it is checked for `/stage-bible` and `/api-stage` overrides rather than compared to branch-default hash. All other staged files retain exact-hash checks.
 
 ## Outcome by layer
 
 | Layer | Actual runner output | Interpretation |
 |---|---:|---|
 | 1. Flask mock-based unit tests | **9 passed, 0 failed** | Passed |
-| 2. Live API + staging index battery | **8 tests: 7 passed, 1 failed** | API behavior checks passed; pgvector IVFFlat top-10 did not equal exact sequential-scan top-10 |
-| 3. Ollama outage/restore | **BLOCKED** | Explicit `OLLAMA_STOP_COMMAND` and `OLLAMA_START_COMMAND` were not supplied. No service state was changed |
-| 4. PWA tests (runner) | **25 total: 24 passed, 0 failed, 1 TODO** | Functional tests passed; D11 remains a TODO, not a passing UX result |
-| 5. Staging integrity | **6 passed, 0 failed, 0 blocked** | All staged hashes required to match and the staging-only config overrides were verified; live staging route returned HTTP 200 |
+| 2. Live API + staging index battery | **8 tests: 7 passed, 1 failed** | Live API checks passed; IVFFlat top-10 still differs from exact sequential-scan top-10 |
+| 3. Ollama outage/restore | **BLOCKED** | Required explicit `OLLAMA_STOP_COMMAND` and `OLLAMA_START_COMMAND` not supplied; no service state changed |
+| 4. PWA tests (runner) | **25 total: 24 passed, 0 failed, 1 TODO** | Functional tests passed; D11 remains a TODO |
+| 5. Staging integrity | **6 passed, 0 failed, 0 blocked** | Hashes/config overrides and live route all passed |
 
-**Runner exit:** **1**, due only to Layer 2's IVFFlat-vs-exact top-10 assertion failure. Layer 1, Layer 3's blocked-safe exit, Layer 4, and Layer 5 returned exit 0.
+**Runner layer summary:** Layer 1 exit=0; Layer 2 exit=1; Layer 3 exit=0 (safe block); Layer 4 exit=0; Layer 5 exit=0. Layer 2 is the only failing layer.  
+**Standalone PWA rerun:** **25 tests, 24 pass, 0 fail, 1 TODO**, duration **213.162038 ms**.
 
-**Measured Hebrew-search latency:** the live battery measured **1.307 s first query** and **0.204 s repeat query**. The first request is explicitly **first/warm-ish**, not a true cold start: Ollama was already running after the QA-side restore. The second is the warm repeat. No latency threshold flags were emitted.
+## Hebrew search latency
 
-**Standalone PWA rerun:** `node --test tests/*.test.mjs` independently returned **25 tests, 24 pass, 0 fail, 1 TODO**, duration **243.089534 ms**. This corroborates the PWA result from Layer 4.
+**Live battery measurements:** first query **1.750 s**, repeat query **0.261 s**; no latency threshold flags. The first battery request was after the stack reboot, but the model may have been pre-warmed by stack startup. Label it **first query after reboot / warm state unknown**, not a true cold start. The repeat is the warm repeat.
+
+**Owner's independent post-reboot spot check:** first Hebrew search returned HTTP 200 in **1.5 s**; warm repeat **0.12 s**. This is owner-reported spot-check evidence, separate from the suite's own 1.750/0.261 s measurements. It is also correctly labeled first-after-reboot, not pure cold.
 
 ## Layer 2 failure — full diagnostic
 
-Seven live tests passed:
+The seven other live tests passed:
 
 - Pointed, unpointed, and cantillation forms normalized to the same exact result set.
 - Final and medial mem remained distinct exact conventions.
 - Exact results preceded semantic neighbors; Genesis 1:1 was first; exact scores were null; embedding scores numeric; duplicates suppressed.
 - Surrounding whitespace preserved results.
-- Invalid queries returned the expected 400 bodies and `Cache-Control: no-store`.
+- Invalid queries returned expected 400 bodies and `Cache-Control: no-store`.
 - Passage search regression returned HTTP 200.
-- The latency measurement test passed.
+- Latency recording completed.
 
-The remaining test, `test_07_ivfflat_top_ten_matches_exact_sequential_scan`, **failed**. It verified that PostgreSQL selected an IVFFlat index scan, then compared the indexed top ten against a sequential exact scan. The two ordered result lists differed:
+The remaining test, `test_07_ivfflat_top_ten_matches_exact_sequential_scan`, **failed again**. It confirmed index use, then compared the ordered indexed top ten with the exact sequential-scan top ten at the configured probe count. Actual failure:
 
 ```text
 FAIL: test_07_ivfflat_top_ten_matches_exact_sequential_scan (__main__.LiveHebrewVariantApiTests)
@@ -42,51 +46,62 @@ FAIL: test_07_ivfflat_top_ten_matches_exact_sequential_scan (__main__.LiveHebrew
 Traceback (most recent call last):
   File "/tmp/variant-search-qa/backend/website/tests/hebrew_variant_live_qa.py", line 210, in test_07_ivfflat_top_ten_matches_exact_sequential_scan
     self.assertEqual(indexed, sequential, "IVFFlat top-10 differs from exact sequential-scan top-10")
-AssertionError: Lists differ: [(217985, 1), (218340, 2), (218340, 1), (1, 1), (226403, 1), (226403, 2), (217985, 2), (218678, 2), (218678, 1), (1, 2)] != [(1, 1), (1, 2), (217985, 2), (217985, 1), (218678, 1), (218678, 2), (218340, 2), (218340, 1), (226403, 2), (226403, 1)]
+AssertionError: Lists differ: [(217985, 1), (218340, 2), (218340, 1), (1,[72 chars], 2)] != [(1, 2), (218678, 1), (226403, 1), (218678,[72 chars], 2)]
 
 First differing element 0:
 (217985, 1)
-(1, 1)
+(1, 2)
 
++ [(1, 2),
 - [(217985, 1),
-? ^
+? ^    - -
 
-+ [(1, 1),
-? ^
-
-+  (1, 2),
-+  (217985, 2),
-  (217985, 1),
 +  (218678, 1),
+? ^   ++
+
+-  (218340, 2),
+-  (218340, 1),
+?    ^^^
+
++  (226403, 1),
+?    ^^  +
+
 +  (218678, 2),
-  (218340, 2),
-  (218340, 1),
--  (1, 1),
+   (1, 1),
 -  (226403, 1),
-  (226403, 2),
--  (217985, 2),
+   (226403, 2),
+   (217985, 2),
 -  (218678, 2),
 -  (218678, 1),
--  (1, 2)] : IVFFlat top-10 differs from exact sequential-scan top-10
+?      ^^^
+
++  (217985, 1),
+?     ++ ^
+
++  (218340, 1),
+-  (1, 2)]
++  (218340, 2)]
+?   + ++++
+ : IVFFlat top-10 differs from exact sequential-scan top-10
 
 ----------------------------------------------------------------------
-Ran 8 tests in 9.677s
+Ran 8 tests in 8.765s
 
 FAILED (failures=1)
-LATENCY cold=1.307s warm=0.204s flags=none
+LATENCY cold=1.750s warm=0.261s flags=none
 ```
 
-This is a substantive retrieval/index-quality discrepancy, not a service-availability failure. The test proves the IVFFlat index was selected but does **not** prove its approximate top ten equals the exact top ten at `ivfflat.probes = 16`. Do not weaken or remove this assertion merely to obtain a green suite. Investigate index lists/probes, recall requirements, and whether the expected behavior is exact top-k or acceptable approximate recall before changing implementation or test criteria.
+The test output's legacy labels `cold` and `warm` are not semantically accurate for this post-reboot run: the first measurement is reported here as first-after-reboot / warm state unknown. Do not interpret the index discrepancy as a service outage. It is a retrieval/index-quality issue. Do not weaken the exact comparison without first agreeing on the required recall/accuracy criterion.
 
 ## Layer 3 — blocked safely
 
-The outage harness reported:
+Actual output:
 
 ```text
 BLOCKED Layer 3: OLLAMA_STOP_COMMAND and OLLAMA_START_COMMAND must be supplied; no service state changed
 ```
 
-The staging API and Ollama were reachable, but the test deliberately refuses to stop Ollama unless both explicit service-manager commands are configured. No outage was induced and no restoration action was needed. A separate authorization/owner-provided command pair is required to exercise this layer.
+The services were up, but the harness requires explicit approved commands for both stop and restore. No outage was induced. This avoids an unapproved service interruption and leaves the current running state intact.
 
 ## Layer 4 — PWA results and known issue
 
@@ -101,11 +116,11 @@ skipped 0
 todo 1
 ```
 
-The single TODO is D11:
+The TODO is D11:
 
 `KNOWN-ISSUE D11: initial non-sample footer reports database connected before data status is known`
 
-It remains documented behavior awaiting a separate footer-state fix. It is not counted as a pass or a test failure.
+It remains a documented UX issue, not a passing test and not a test failure.
 
 ## Layer 5 — staging integrity
 
@@ -121,13 +136,19 @@ PASS running Flask process serves variant-search route: HTTP 200
 STAGING INTEGRITY COUNTS passes=6 failures=0 blocked=0
 ```
 
-Staging `config.js` intentionally remains a staging-specific variant (SHA-256 begins `c9126f16a3d8`). It was **not** overwritten and is no longer compared to the branch's default config hash. Its required `/stage-bible` and `/api-stage` overrides are asserted directly. The other three staged files retain exact-hash checks.
+Staging `config.js` intentionally retains the staging-only `/stage-bible` and `/api-stage` overrides. It was not overwritten. The other three staged files match their expected branch hashes.
+
+## Reboot and stack lifecycle finding
+
+Owner/QA-side verification: terminating the Lampy distro and waiting approximately 90 seconds left a fresh distro with no supervisor and all services down. Running the existing `LampyStackBoot` scheduled task restored the stack; production Flask (5057) and Ollama (11434) were verified answering. Staging Flask (5058) is not a supervisor program and had to be restarted manually. It will not survive a distro reboot under the current arrangement.
+
+This is an operational finding, not a change made by this QA run. Recommend a separate hardening decision: decide whether the boot task itself should start the supervisor automatically and whether staging Flask should be managed as a supervisor program or another controlled service. No automation or service configuration was changed here.
 
 ## Safety and deployment state
 
-- QA ran against staging only. Production Flask, production database, and production Ollama were not used for these tests.
-- No staging files or configuration were restaged or modified by the run.
-- No services were stopped or restarted by the test run.
-- The outage test did not execute because no explicit stop/start commands were supplied.
-- No merge was performed; PR #18 and PWA PR #5 were not changed in state.
-- No PWA branch source was changed during this rerun.
+- Suite executed against staging only; production was not queried or modified by the suite.
+- No staging files/configuration were restaged or modified by the suite.
+- No services were stopped or restarted by the suite.
+- Layer 3 did not execute because explicit outage/restore commands were not supplied.
+- No merge or PR state change was made.
+- Both PRs remain open drafts; backend PR #18 still has the failing live index-quality test.
