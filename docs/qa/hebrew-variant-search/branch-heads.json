@@ -1,0 +1,23 @@
+{
+  "qa_run_date": "2026-11-10",
+  "backend": {
+    "repository": "kitcosby/bible-project",
+    "branch": "feat/hebrew-variant-embedding-search",
+    "pull_request": 18,
+    "head_at_test_run": "80b914fdc8d683e44341212b58e473cf821938ad",
+    "files": {
+      "website/app_v2.py": "ca35e1314c98832f4840ef1ee2d9cb77471ec9b449ed088ac5844c7382a24205"
+    }
+  },
+  "client": {
+    "repository": "kitcosby/BibleApp-pwa",
+    "branch": "feat/hebrew-variant-embedding-search",
+    "pull_request": 5,
+    "head_at_test_run": "6ccac910a72b1c5ba75647db1ee2d07062ff22bc",
+    "files": {
+      "index.html": "9da35996ca6a6db0c107bf43894829d8754732aa03b84c34a587e74d2cede7df",
+      "sw.js": "8154f321893373633d219e1e57a703cde5a7a9a35eef65281acc30dcbbbd28ae",
+      "config.js": "60024580af53583a48d611f624faac87122dd20697b3aa8765d144194142de04"
+    }
+  }
+}
