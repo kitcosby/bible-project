@@ -186,6 +186,9 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
         try:
             connection.set_session(readonly=True, autocommit=False)
             with connection.cursor() as cursor:
+                # Do not compare ordered row identities: embeddings use letters alone,
+                # so many rows with identical letters forms have exact distance ties.
+                # Scan plans may choose different members/order within those tie masses.
                 for query in ("בראשית", "בראשיט"):
                     with self.subTest(query=query):
                         embedding_request = urllib.request.Request(
