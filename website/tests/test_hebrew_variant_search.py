@@ -125,7 +125,21 @@ class HebrewVariantSearchTests(unittest.TestCase):
         with patch("urllib.request.urlopen") as urlopen:
             response = self.client.get("/api/search/variants?q=creation")
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.headers['Cache-Control'], 'no-store')
         urlopen.assert_not_called()
+
+    def test_exact_matches_survive_embedding_service_outage(self):
+        with patch("urllib.request.urlopen", side_effect=OSError("Ollama offline")):
+            response = self.client.get("/api/search/variants?q=בראשית")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
+        self.assertEqual(
+            response.headers["X-Hebrew-Semantic-Search"], "unavailable"
+        )
+        self.assertEqual(len(response.json), 1)
+        self.assertEqual(response.json[0]["match_type"], "exact")
+        self.assertIsNone(response.json[0]["score"])
 
     def test_missing_variant_database_configuration_fails_closed(self):
         with patch.object(mod, "BIBLE_VARIANT_SEARCH_DATABASE_URL", None):
