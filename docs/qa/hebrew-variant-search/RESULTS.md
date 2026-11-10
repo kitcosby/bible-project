@@ -1,9 +1,9 @@
-# Hebrew spelling-variant search QA — post-reboot rerun
+# Hebrew spelling-variant search QA — post-reboot rerun with tie-aware IVFFlat check
 
 **Run date:** 2026-11-10, after the owner/QA-side reboot and staging restoration.  
 **Runner:** `website/tests/run_hebrew_variant_qa.sh`; standalone PWA repeat: `node --test tests/*.test.mjs`.  
 **Environment:** Lampy WSL; isolated QA workspace `/tmp/variant-search-qa`; Python 3; Node v24.22.1. Live target: staging Flask at `127.0.0.1:5058`, staging database, and Ollama at `127.0.0.1:11434`.  
-**Backend branch:** `feat/hebrew-variant-embedding-search`; current PR #18 head at the start of this rerun included the staging-config integrity expectation fix.  
+**Backend branch:** `feat/hebrew-variant-embedding-search`; this update includes the tie-aware IVFFlat criterion change and the new Layer 2 transcript.  
 **PWA branch:** `feat/hebrew-variant-embedding-search`, PR #5 head `6ccac910a72b1c5ba75647db1ee2d07062ff22bc`.  
 **Integrity behavior:** staged `config.js` is deliberately staging-specific; it is checked for `/stage-bible` and `/api-stage` overrides rather than compared to branch-default hash. All other staged files retain exact-hash checks.
 
@@ -12,86 +12,52 @@
 | Layer | Actual runner output | Interpretation |
 |---|---:|---|
 | 1. Flask mock-based unit tests | **9 passed, 0 failed** | Passed |
-| 2. Live API + staging index battery | **8 tests: 7 passed, 1 failed** | Live API checks passed; IVFFlat top-10 still differs from exact sequential-scan top-10 |
+| 2. Live API + staging index battery | **8 passed, 0 failed** | Passed on the tie-aware exact-distance boundary for both exact-form and fuzzy-form queries |
 | 3. Ollama outage/restore | **BLOCKED** | Required explicit `OLLAMA_STOP_COMMAND` and `OLLAMA_START_COMMAND` not supplied; no service state changed |
 | 4. PWA tests (runner) | **25 total: 24 passed, 0 failed, 1 TODO** | Functional tests passed; D11 remains a TODO |
 | 5. Staging integrity | **6 passed, 0 failed, 0 blocked** | Hashes/config overrides and live route all passed |
 
-**Runner layer summary:** Layer 1 exit=0; Layer 2 exit=1; Layer 3 exit=0 (safe block); Layer 4 exit=0; Layer 5 exit=0. Layer 2 is the only failing layer.  
+**Evidence scope:** Layer 2 was rerun after the criterion change. Layers 1, 4, and 5 remain verified by the immediately preceding full post-reboot run; they were not rerun as part of this Layer 2-only follow-up. Layer 3 remains safely blocked. The earlier Layer 2 failure is superseded by the passing tie-aware rerun.  
 **Standalone PWA rerun:** **25 tests, 24 pass, 0 fail, 1 TODO**, duration **213.162038 ms**.
 
 ## Hebrew search latency
 
-**Live battery measurements:** first query **1.750 s**, repeat query **0.261 s**; no latency threshold flags. The first battery request was after the stack reboot, but the model may have been pre-warmed by stack startup. Label it **first query after reboot / warm state unknown**, not a true cold start. The repeat is the warm repeat.
+**Prior full-run measurements:** first query **1.750 s**, repeat query **0.261 s**; no latency threshold flags. The first request was after reboot, but the model may have been pre-warmed by stack startup. Label it **first query after reboot / warm state unknown**, not a true cold start.
+
+**Tie-aware Layer 2 rerun:** first query **1.059 s**, repeat query **0.182 s**; no latency threshold flags. The test harness still prints the legacy labels `cold` and `warm`; interpret the first as **first query during this post-reboot rerun / warm state unknown**, not a verified cold start.
 
 **Owner's independent post-reboot spot check:** first Hebrew search returned HTTP 200 in **1.5 s**; warm repeat **0.12 s**. This is owner-reported spot-check evidence, separate from the suite's own 1.750/0.261 s measurements. It is also correctly labeled first-after-reboot, not pure cold.
 
-## Layer 2 failure — full diagnostic
+## Layer 2 — tie-aware IVFFlat distance-boundary result
 
-The seven other live tests passed:
+The original ordered-identity assertion was invalid for this corpus. Embeddings were generated from each variant's letters string alone, so rows with identical letters forms have bit-identical vectors and cosine distance zero to the same query vector. The QA-side database investigation measured 617 rows within 1e-6 of the אלהים query vector and 114 within 1e-6 of שלום. Within such large tie groups, top-ten row identity and order can vary by scan plan without indicating an ANN quality loss. The sequential scan's chosen ten identities are therefore not a valid gold standard for an ordered identity comparison.
 
-- Pointed, unpointed, and cantillation forms normalized to the same exact result set.
-- Final and medial mem remained distinct exact conventions.
-- Exact results preceded semantic neighbors; Genesis 1:1 was first; exact scores were null; embedding scores numeric; duplicates suppressed.
-- Surrounding whitespace preserved results.
-- Invalid queries returned expected 400 bodies and `Cache-Control: no-store`.
-- Passage search regression returned HTTP 200.
-- Latency recording completed.
+The test now retains the important index-plan check at ivfflat.probes = 16, but compares each indexed result's distance against the exact sequential scan's rank-10 distance plus a 1e-6 tolerance. It also tests the genuine fuzzy query בראשיט under the same criterion. No returned IVFFlat row may be worse than the exact top-10 distance boundary. Both queries returned ten rows and passed.
 
-The remaining test, `test_07_ivfflat_top_ten_matches_exact_sequential_scan`, **failed again**. It confirmed index use, then compared the ordered indexed top ten with the exact sequential-scan top ten at the configured probe count. Actual failure:
+Actual Layer 2 transcript:
 
 ```text
-FAIL: test_07_ivfflat_top_ten_matches_exact_sequential_scan (__main__.LiveHebrewVariantApiTests)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/tmp/variant-search-qa/backend/website/tests/hebrew_variant_live_qa.py", line 210, in test_07_ivfflat_top_ten_matches_exact_sequential_scan
-    self.assertEqual(indexed, sequential, "IVFFlat top-10 differs from exact sequential-scan top-10")
-AssertionError: Lists differ: [(217985, 1), (218340, 2), (218340, 1), (1,[72 chars], 2)] != [(1, 2), (218678, 1), (226403, 1), (218678,[72 chars], 2)]
-
-First differing element 0:
-(217985, 1)
-(1, 2)
-
-+ [(1, 2),
-- [(217985, 1),
-? ^    - -
-
-+  (218678, 1),
-? ^   ++
-
--  (218340, 2),
--  (218340, 1),
-?    ^^^
-
-+  (226403, 1),
-?    ^^  +
-
-+  (218678, 2),
-   (1, 1),
--  (226403, 1),
-   (226403, 2),
-   (217985, 2),
--  (218678, 2),
--  (218678, 1),
-?      ^^^
-
-+  (217985, 1),
-?     ++ ^
-
-+  (218340, 1),
--  (1, 2)]
-+  (218340, 2)]
-?   + ++++
- : IVFFlat top-10 differs from exact sequential-scan top-10
+test_00_latency_cold_and_warm_record (__main__.LiveHebrewVariantApiTests) ... ok
+test_01_pointed_unpointed_and_cantillation_normalize_to_same_exact_set (__main__.LiveHebrewVariantApiTests) ... ok
+test_02_final_and_medial_mem_are_distinct_exact_conventions (__main__.LiveHebrewVariantApiTests) ... ok
+test_03_exact_order_scores_and_duplicate_suppression (__main__.LiveHebrewVariantApiTests) ... ok
+test_04_surrounding_whitespace_preserves_results (__main__.LiveHebrewVariantApiTests) ... ok
+test_05_invalid_queries_have_standard_400_and_no_store (__main__.LiveHebrewVariantApiTests) ... ok
+test_06_passage_search_is_unchanged (__main__.LiveHebrewVariantApiTests) ... ok
+test_07_ivfflat_top_ten_is_within_exact_distance_boundary (__main__.LiveHebrewVariantApiTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 8 tests in 8.765s
+Ran 8 tests in 15.930s
 
-FAILED (failures=1)
-LATENCY cold=1.750s warm=0.261s flags=none
+OK
+LATENCY cold=1.059s warm=0.182s flags=none
+IVFFLAT query=בראשית probes=16 exact_rank10=0.000000000000 indexed_worst=0.000000000000 recall_boundary=PASS
+IVFFLAT query=בראשיט probes=16 exact_rank10=0.026760801971 indexed_worst=0.026760801971 recall_boundary=PASS
 ```
 
-The test output's legacy labels `cold` and `warm` are not semantically accurate for this post-reboot run: the first measurement is reported here as first-after-reboot / warm state unknown. Do not interpret the index discrepancy as a service outage. It is a retrieval/index-quality issue. Do not weaken the exact comparison without first agreeing on the required recall/accuracy criterion.
+The two latency values above are the first and repeat requests during this post-reboot rerun. Because stack startup may have pre-warmed the embedding model, the first is not asserted to be a true cold start. The earlier 1.750/0.261-second battery measurements and the owner's separate 1.5/0.12-second spot check remain recorded above as distinct observations.
+
+The test intentionally does not assert ordered identity equality within tied distances. This is a correction to the QA criterion, not a relaxation of the search implementation's API ordering contract: API exact-result ordering and deduplication remain covered by the separate live API tests.
 
 ## Layer 3 — blocked safely
 
