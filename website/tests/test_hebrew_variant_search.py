@@ -152,14 +152,14 @@ class HebrewVariantSearchTests(unittest.TestCase):
 
     def test_error_responses_all_carry_no_store(self):
         cases = [
-            ("non-Hebrew 400", lambda: self.client.get("/api/search/variants?q=creation")),
-            ("database 503", self._database_failure_response),
-            ("embedding dimension 502", self._dimension_failure_response),
+            ("non-Hebrew", 400, lambda: self.client.get("/api/search/variants?q=creation")),
+            ("database failure", 503, self._database_failure_response),
+            ("wrong embedding dimensions", 502, self._dimension_failure_response),
         ]
-        for label, make_response in cases:
+        for label, expected_status, make_response in cases:
             with self.subTest(label=label):
                 response = make_response()
-                self.assertIn(response.status_code, (400, 502, 503))
+                self.assertEqual(response.status_code, expected_status)
                 self.assertEqual(response.headers.get("Cache-Control"), "no-store")
 
     def _database_failure_response(self):
@@ -167,6 +167,7 @@ class HebrewVariantSearchTests(unittest.TestCase):
         return self.client.get("/api/search/variants?q=בראשית")
 
     def _dimension_failure_response(self):
+        self.db.fail_exact = None
         self.db.exact_rows = []
         with patch("urllib.request.urlopen", return_value=FakeEmbeddingResponse("בראשית", 512)):
             return self.client.get("/api/search/variants?q=בראשית")
