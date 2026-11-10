@@ -158,8 +158,7 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
         for label, query, expected in cases:
             with self.subTest(label=label):
                 status, headers, payload, _, body = http_get(
-                    API_BASE + "/api/search/variants?q=" + urllib.parse.quote(query)
-                    if False else "/api/search/variants?q=" + urllib.parse.quote(query)
+                    "/api/search/variants?q=" + urllib.parse.quote(query)
                 )
                 self.assertEqual(status, 400, "%s: %s" % (label, body))
                 self.assertEqual(payload, expected, "%s: %s" % (label, body))
