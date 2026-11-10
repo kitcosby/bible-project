@@ -74,6 +74,16 @@ def main():
         print("BLOCKED Layer 3: OLLAMA_STOP_COMMAND and OLLAMA_START_COMMAND must be supplied; no service state changed")
         return 0
 
+    # Prove the outage probe has no exact spelling rows before stopping Ollama.
+    no_exact_query = "א" * 300
+    preflight = get("/api/search/variants?q=" + urllib.parse.quote(no_exact_query))
+    if preflight[0] != 200 or not isinstance(preflight[2], list):
+        print("BLOCKED Layer 3: could not establish a live semantic-search baseline for the no-exact probe")
+        return 0
+    if any(row.get("match_type") == "exact" for row in preflight[2]):
+        print("BLOCKED Layer 3: chosen no-exact probe unexpectedly has exact rows; Ollama was not stopped")
+        return 0
+
     stop_attempted = False
     failure = None
     try:
@@ -92,7 +102,6 @@ def main():
         assert exact[1].get("Cache-Control") == "no-store", "no-store missing during outage"
         print("PASS exact matches survive Ollama outage with exposed semantic-unavailable header")
 
-        no_exact_query = "א" * 300
         no_exact = get("/api/search/variants?q=" + urllib.parse.quote(no_exact_query))
         assert no_exact[0] == 503, "expected documented 503 with no exact matches; got %s: %s" % (no_exact[0], no_exact[3])
         assert no_exact[2] == {"error": "Hebrew variant embedding search unavailable"}, "unexpected no-exact outage body: %s" % no_exact[3]
