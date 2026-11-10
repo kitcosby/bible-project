@@ -24,7 +24,7 @@
 
 **Prior full-run measurements:** first query **1.750 s**, repeat query **0.261 s**; no latency threshold flags. The first request was after reboot, but the model may have been pre-warmed by stack startup. Label it **first query after reboot / warm state unknown**, not a true cold start.
 
-**Tie-aware Layer 2 rerun:** first query **1.059 s**, repeat query **0.182 s**; no latency threshold flags. The test harness still prints the legacy labels `cold` and `warm`; interpret the first as **first query during this post-reboot rerun / warm state unknown**, not a verified cold start.
+**Tie-aware Layer 2 rerun:** first query **1.695 s**, repeat query **0.218 s**; no latency threshold flags. The test harness still prints the legacy labels `cold` and `warm`; interpret the first as **first query during this post-reboot rerun / warm state unknown**, not a verified cold start.
 
 **Owner's independent post-reboot spot check:** first Hebrew search returned HTTP 200 in **1.5 s**; warm repeat **0.12 s**. This is owner-reported spot-check evidence, separate from the suite's own 1.750/0.261 s measurements. It is also correctly labeled first-after-reboot, not pure cold.
 
@@ -47,10 +47,10 @@ test_06_passage_search_is_unchanged (__main__.LiveHebrewVariantApiTests) ... ok
 test_07_ivfflat_top_ten_is_within_exact_distance_boundary (__main__.LiveHebrewVariantApiTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 8 tests in 15.930s
+Ran 8 tests in 17.920s
 
 OK
-LATENCY cold=1.059s warm=0.182s flags=none
+LATENCY cold=1.695s warm=0.218s flags=none
 IVFFLAT query=בראשית probes=16 exact_rank10=0.000000000000 indexed_worst=0.000000000000 recall_boundary=PASS
 IVFFLAT query=בראשיט probes=16 exact_rank10=0.026760801971 indexed_worst=0.026760801971 recall_boundary=PASS
 ```
