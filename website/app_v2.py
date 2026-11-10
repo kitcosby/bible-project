@@ -58,6 +58,14 @@ SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
 
+@app.after_request
+def _variant_search_no_store(response):
+    # Search responses, including validation and failure responses, must not
+    # be retained by browsers, proxies, or service-worker integrations.
+    if request.path == '/api/search/variants':
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+
 # Browser-session defaults. Set BIBLEAPP_COOKIE_SECURE=1 behind HTTPS.
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -2772,20 +2780,9 @@ def api_search_variants():
     if not BIBLE_VARIANT_SEARCH_DATABASE_URL:
         return _api_json({'error': 'Hebrew variant search is not configured'}, 503)
 
+    # Exact matching is independent of Ollama. Query PostgreSQL first so a
+    # temporary embedding-service outage does not hide known spellings.
     try:
-        req = urllib.request.Request(
-            'http://127.0.0.1:11434/api/embeddings',
-            data=_json.dumps({
-                'model': 'nomic-embed-text:latest',
-                'prompt': normalized_q,
-            }).encode(),
-            headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            emb = _json.loads(resp.read())['embedding']
-        if len(emb) != 768:
-            return _api_json({'error': 'unexpected embedding dimensions'}, 502)
-        vec = '[' + ','.join(repr(float(x)) for x in emb) + ']'
-
         db = variant_search_db()
         db.execute('SET ivfflat.probes = 16')
 
@@ -2819,7 +2816,24 @@ def api_search_variants():
             """,
             (normalized_q, normalized_q, normalized_q, normalized_q, limit)
         ).fetchall()
+    except Exception:
+        return _api_json({'error': 'Hebrew variant search unavailable'}, 503)
 
+    semantic_rows = []
+    semantic_unavailable = False
+    try:
+        req = urllib.request.Request(
+            'http://127.0.0.1:11434/api/embeddings',
+            data=_json.dumps({
+                'model': 'nomic-embed-text:latest',
+                'prompt': normalized_q,
+            }).encode(),
+            headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            emb = _json.loads(resp.read())['embedding']
+        if len(emb) != 768:
+            raise ValueError('unexpected embedding dimensions')
+        vec = '[' + ','.join(repr(float(x)) for x in emb) + ']'
         semantic_rows = db.execute(
             'SELECT ' + select_fields + """,
                 1 - (e.embedding <=> %s::vector) AS score
@@ -2835,8 +2849,12 @@ def api_search_variants():
             """,
             (vec, vec, limit * 3)
         ).fetchall()
-    except Exception:
-        return _api_json({'error': 'Hebrew variant embedding search unavailable'}, 503)
+    except Exception as exc:
+        semantic_unavailable = True
+        if not exact_rows:
+            if isinstance(exc, ValueError):
+                return _api_json({'error': 'unexpected embedding dimensions'}, 502)
+            return _api_json({'error': 'Hebrew variant embedding search unavailable'}, 503)
 
     results = []
     seen = set()
@@ -2883,6 +2901,8 @@ def api_search_variants():
             break
 
     response = _api_json(results[:limit])
+    if semantic_unavailable:
+        response.headers['X-Hebrew-Semantic-Search'] = 'unavailable'
     response.headers['Cache-Control'] = 'no-store'
     return response
 
