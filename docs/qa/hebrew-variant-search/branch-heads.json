@@ -4,7 +4,7 @@
     "repository": "kitcosby/bible-project",
     "branch": "feat/hebrew-variant-embedding-search",
     "pull_request": 18,
-    "head_at_test_run": "80b914fdc8d683e44341212b58e473cf821938ad",
+    "head_at_test_run": "a6a2f695b2852be507d0cde179a94e075ac89d67",
     "files": {
       "website/app_v2.py": "ca35e1314c98832f4840ef1ee2d9cb77471ec9b449ed088ac5844c7382a24205"
     }
