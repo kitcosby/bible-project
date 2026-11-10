@@ -4,10 +4,11 @@
     "repository": "kitcosby/bible-project",
     "branch": "feat/hebrew-variant-embedding-search",
     "pull_request": 18,
-    "head_at_test_run": "5bc8b779c67ff07a33e8c97eb7a9840d2a286cf5",
+    "head_at_test_run": "f5441e2e406e830d984286dda221738b4d51d107",
     "files": {
       "website/app_v2.py": "ca35e1314c98832f4840ef1ee2d9cb77471ec9b449ed088ac5844c7382a24205"
-    }
+    },
+    "qa_integrity_check_commit": "fe6154de40dfc614ae167e0ab5a5f2709a93db47"
   },
   "client": {
     "repository": "kitcosby/BibleApp-pwa",
@@ -17,7 +18,9 @@
     "files": {
       "index.html": "9da35996ca6a6db0c107bf43894829d8754732aa03b84c34a587e74d2cede7df",
       "sw.js": "8154f321893373633d219e1e57a703cde5a7a9a35eef65281acc30dcbbbd28ae",
-      "config.js": "60024580af53583a48d611f624faac87122dd20697b3aa8765d144194142de04"
-    }
+      "config_js_branch_default": "60024580af53583a48d611f624faac87122dd20697b3aa8765d144194142de04",
+      "staging_config_js_sha256": "c9126f16a3d80f7c952fce8a1476ae284e1019ae723407108fb4fa8b1ba41c32"
+    },
+    "staging_config_note": "Intentional staging-only overrides /stage-bible and /api-stage; validated by content, not branch-default hash."
   }
 }
