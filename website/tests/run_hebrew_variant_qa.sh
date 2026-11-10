@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
-BACKEND_ROOT="$(cd "$HERE/../../.." && pwd)"
-PWA_DIR="${PWA_DIR:-$BACKEND_ROOT/../../BibleApp-pwa}"
+BACKEND_ROOT="$(cd "$HERE/../.." && pwd)"
+PWA_DIR="${PWA_DIR:-$BACKEND_ROOT/../BibleApp-pwa}"
 echo "=== Layer 1: Flask mock-based unit tests ==="
 (cd "$BACKEND_ROOT" && python3 -m unittest discover -s website/tests -p 'test_hebrew_variant_search.py' -v)
 L1=$?
