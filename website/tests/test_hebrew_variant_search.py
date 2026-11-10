@@ -146,6 +146,7 @@ class HebrewVariantSearchTests(unittest.TestCase):
             with patch("urllib.request.urlopen") as urlopen:
                 response = self.client.get("/api/search/variants?q=בראשית")
         self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
         urlopen.assert_not_called()
 
 
