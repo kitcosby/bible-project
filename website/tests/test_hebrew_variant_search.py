@@ -231,10 +231,12 @@ class HebrewVariantSearchTests(unittest.TestCase):
 
     def test_missing_variant_database_configuration_fails_closed(self):
         with patch.object(mod, "BIBLE_VARIANT_SEARCH_DATABASE_URL", None):
-            with patch("urllib.request.urlopen") as urlopen:
-                response = self.client.get("/api/search/variants?q=בראשית")
+            with patch.object(mod, "variant_search_db") as get_db:
+                with patch("urllib.request.urlopen") as urlopen:
+                    response = self.client.get("/api/search/variants?q=בראשית")
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.headers["Cache-Control"], "no-store")
+        get_db.assert_not_called()
         urlopen.assert_not_called()
 
 
