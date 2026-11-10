@@ -137,6 +137,10 @@ class HebrewVariantSearchTests(unittest.TestCase):
         self.assertEqual(
             response.headers["X-Hebrew-Semantic-Search"], "unavailable"
         )
+        self.assertEqual(
+            response.headers["Access-Control-Expose-Headers"],
+            "X-Hebrew-Semantic-Search",
+        )
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0]["match_type"], "exact")
         self.assertIsNone(response.json[0]["score"])
