@@ -3,7 +3,7 @@
 **Run date:** 2026-11-10  
 **Runner:** `website/tests/run_hebrew_variant_qa.sh`  
 **Environment:** Lampy WSL staging host; isolated temporary test worktree at `/tmp/variant-search-qa`; Python 3 and Node v24.22.1.  
-**Backend branch head at test:** `80b914fdc8d683e44341212b58e473cf821938ad` (PR #18, still draft).  
+**Backend branch head at test:** `a6a2f695b2852be507d0cde179a94e075ac89d67` (PR #18, still draft).  
 **PWA branch head at test:** `6ccac910a72b1c5ba75647db1ee2d07062ff22bc` (PR #5, still draft).
 
 ## Outcome by layer
@@ -49,7 +49,7 @@ test_three_hundred_hebrew_characters_are_accepted (test_hebrew_variant_search.He
 test_wrong_embedding_dimension_returns_generic_502 (test_hebrew_variant_search.HebrewVariantSearchTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 9 tests in 0.017s
+Ran 9 tests in 0.016s
 
 OK
 === Layer 2: live API + staging index battery ===
@@ -69,31 +69,31 @@ OK (skipped=8)
 === Layer 3: Ollama outage / restore regression ===
 BLOCKED Layer 3: staging Flask is not listening at http://127.0.0.1:5058
 === Layer 4: PWA tests (canonical glob invocation) ===
-✔ per-occurrence phrase comes first in each legacy dropdown group (2.303008ms)
-✔ a phrase absent from the top twelve is prepended and the group remains capped (0.723803ms)
-✔ root-code lemma words use the same phrase option builder without a Strong's number (0.5757ms)
-✔ a saved lemma default remains effective when absent from the current phrase shortlist (0.671255ms)
-✔ an available lemma-default phrase selects its existing dropdown index (0.64501ms)
-✔ same-origin defaults preserve the Lampy mount contract (2.805938ms)
-✔ a separately hosted deployment can override all three service origins (0.803154ms)
-✔ passage meaning continues to use the existing verse embedding endpoint (3.537235ms)
-✔ Hebrew spelling uses the separate variant embedding endpoint (1.435663ms)
-✔ Hebrew mode rejects non-Hebrew input before making a request (1.899096ms)
-✔ exact Hebrew spelling results are distinguished from embedding neighbors (1.856081ms)
-✔ passage result labels preserve the computed Young's provenance (1.556699ms)
-✔ the search view exposes both modes and gates the Genesis sample to passage mode (0.474674ms)
-✔ Hebrew variant requests use 45 seconds while passage requests keep 8 seconds (3.511757ms)
-✔ Hebrew exact-only outage warning is shown while exact results remain rendered (1.620584ms)
-✔ Hebrew search never invokes the Genesis sample fallback; passage mode may (2.288685ms)
-✔ switching search modes preserves the typed query and re-renders the selected mode (0.983331ms)
-✔ KNOWN-ISSUE D11: initial non-sample footer reports database connected before data status is known (0.873256ms) # D11 is documented behavior awaiting a separate footer-state fix; do not treat as passing UX.
-✔ CSRF bootstrap GET bypasses the shared API cache (38.293373ms)
-✔ bearer-authenticated translation GET bypasses the shared API cache (0.968311ms)
-✔ public API no-store responses are not inserted into API cache (1.190964ms)
-✔ a previously cached no-store response is deleted rather than served (1.574637ms)
-✔ indexed word-option GET bypasses shared cache to preserve choice-byte order (1.677952ms)
-✔ current service-worker shell version retains the Hebrew variant network-only rule (0.217937ms)
-✔ Hebrew variant search bypasses shared cache because results are query-specific and no-store (0.907935ms)
+✔ per-occurrence phrase comes first in each legacy dropdown group (3.350962ms)
+✔ a phrase absent from the top twelve is prepended and the group remains capped (0.841506ms)
+✔ root-code lemma words use the same phrase option builder without a Strong's number (0.598338ms)
+✔ a saved lemma default remains effective when absent from the current phrase shortlist (1.278924ms)
+✔ an available lemma-default phrase selects its existing dropdown index (0.962375ms)
+✔ same-origin defaults preserve the Lampy mount contract (3.035334ms)
+✔ a separately hosted deployment can override all three service origins (0.848554ms)
+✔ passage meaning continues to use the existing verse embedding endpoint (2.77135ms)
+✔ Hebrew spelling uses the separate variant embedding endpoint (0.81787ms)
+✔ Hebrew mode rejects non-Hebrew input before making a request (0.860143ms)
+✔ exact Hebrew spelling results are distinguished from embedding neighbors (0.836597ms)
+✔ passage result labels preserve the computed Young's provenance (0.762601ms)
+✔ the search view exposes both modes and gates the Genesis sample to passage mode (0.239301ms)
+✔ Hebrew variant requests use 45 seconds while passage requests keep 8 seconds (1.618015ms)
+✔ Hebrew exact-only outage warning is shown while exact results remain rendered (1.104015ms)
+✔ Hebrew search never invokes the Genesis sample fallback; passage mode may (1.948091ms)
+✔ switching search modes preserves the typed query and re-renders the selected mode (1.049167ms)
+✔ KNOWN-ISSUE D11: initial non-sample footer reports database connected before data status is known (0.782873ms) # D11 is documented behavior awaiting a separate footer-state fix; do not treat as passing UX.
+✔ CSRF bootstrap GET bypasses the shared API cache (30.686129ms)
+✔ bearer-authenticated translation GET bypasses the shared API cache (1.406407ms)
+✔ public API no-store responses are not inserted into API cache (1.484128ms)
+✔ a previously cached no-store response is deleted rather than served (1.924266ms)
+✔ indexed word-option GET bypasses shared cache to preserve choice-byte order (1.731086ms)
+✔ current service-worker shell version retains the Hebrew variant network-only rule (0.222207ms)
+✔ Hebrew variant search bypasses shared cache because results are query-specific and no-store (1.232639ms)
 ℹ tests 25
 ℹ suites 0
 ℹ pass 24
@@ -101,7 +101,7 @@ BLOCKED Layer 3: staging Flask is not listening at http://127.0.0.1:5058
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 1
-ℹ duration_ms 121.085041
+ℹ duration_ms 131.370088
 === Layer 5: staging integrity / drift checks ===
 PASS Flask app_v2.py SHA-256 matches branch head: ca35e1314c98832f4840ef1ee2d9cb77471ec9b449ed088ac5844c7382a24205
 FAIL PWA index.html SHA-256 mismatch: staged=e6bdbe2bb5a4674baa247555af59e4089280adb6ea8c86142af8ccaa51b04dee expected=9da35996ca6a6db0c107bf43894829d8754732aa03b84c34a587e74d2cede7df
