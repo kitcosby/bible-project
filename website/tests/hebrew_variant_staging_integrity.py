@@ -15,7 +15,7 @@ EXPECTED = {
     "Flask app_v2.py": ("flask/app_v2.py", "ca35e1314c98832f4840ef1ee2d9cb77471ec9b449ed088ac5844c7382a24205"),
     "PWA index.html": ("pwa/index.html", "9da35996ca6a6db0c107bf43894829d8754732aa03b84c34a587e74d2cede7df"),
     "PWA sw.js": ("pwa/sw.js", "8154f321893373633d219e1e57a703cde5a7a9a35eef65281acc30dcbbbd28ae"),
-    "PWA config.js": ("pwa/config.js", "60024580af53583a48d611f624faac87122dd20697b3aa8765d144194142de04"),
+    # Staging config intentionally differs from branch default; validate its overrides below.
 }
 failures = 0
 blocked = 0
