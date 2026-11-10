@@ -2810,8 +2810,10 @@ def api_search_variants():
             WHERE v.variant_kind = 'spelling'
               AND (v.letters = %s OR v.unpointed = %s
                    OR v.variant_text = %s
-                   OR (v.letters = '' AND v.unpointed = ''
-                       AND v.variant_text = '' AND w.pointed = %s))
+                   OR (COALESCE(v.letters, '') = ''
+                       AND COALESCE(v.unpointed, '') = ''
+                       AND COALESCE(v.variant_text, '') = ''
+                       AND w.pointed = %s))
             ORDER BY v.word_id, v.variant_seq
             LIMIT %s
             """,
