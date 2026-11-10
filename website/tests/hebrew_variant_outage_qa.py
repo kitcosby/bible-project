@@ -74,13 +74,13 @@ def main():
         print("BLOCKED Layer 3: OLLAMA_STOP_COMMAND and OLLAMA_START_COMMAND must be supplied; no service state changed")
         return 0
 
-    stopped = False
+    stop_attempted = False
     failure = None
     try:
+        stop_attempted = True
         result = run_command(STOP)
         if result.returncode != 0:
             raise RuntimeError("Ollama stop command failed (exit %d)" % result.returncode)
-        stopped = True
         if not wait_for_ollama(False):
             raise RuntimeError("Ollama did not stop within 30 seconds")
 
@@ -102,12 +102,15 @@ def main():
         failure = str(exc)
         print("FAIL Layer 3: " + failure)
     finally:
-        if stopped:
-            restored = run_command(START)
-            if restored.returncode != 0 or not wait_for_ollama(True, seconds=45):
-                print("FAIL RESTORE: Ollama restart command failed or service did not become healthy")
-                return 2
-            print("PASS RESTORE: Ollama is healthy again")
+        if stop_attempted:
+            # A stop command can partially succeed and still exit non-zero.
+            # Check the observed service state, not only the command's exit code.
+            if not wait_for_ollama(True, seconds=2):
+                restored = run_command(START)
+                if restored.returncode != 0 or not wait_for_ollama(True, seconds=45):
+                    print("FAIL RESTORE: Ollama restart command failed or service did not become healthy")
+                    return 2
+            print("PASS RESTORE: Ollama is healthy again (or remained healthy)")
 
     if failure:
         return 1
