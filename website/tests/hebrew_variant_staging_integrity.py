@@ -69,6 +69,8 @@ try:
             report("PASS", "running Flask process serves variant-search route", "HTTP 200")
         else:
             report("FAIL", "running Flask process serves variant-search route", "HTTP %s" % response.status)
+except urllib.error.HTTPError as exc:
+    report("FAIL", "running Flask process serves variant-search route", "HTTP %s: %s" % (exc.code, exc.read().decode("utf-8", "replace")))
 except urllib.error.URLError as exc:
     report("BLOCKED", "running Flask process serves variant-search route", "staging listener unavailable: %s" % getattr(exc, "reason", exc))
 except Exception as exc:
