@@ -204,7 +204,7 @@ class LiveHebrewVariantApiTests(unittest.TestCase):
                         cursor.execute("SET ivfflat.probes = 16")
                         cursor.execute("SET enable_seqscan = off")
                         cursor.execute("EXPLAIN " + sql, (vector_literal, vector_literal))
-                        plan = "\\n".join(str(row[0]) for row in cursor.fetchall())
+                        plan = "\n".join(str(row[0]) for row in cursor.fetchall())
                         self.assertIn("Index Scan", plan, "IVFFlat index was not selected for %s: %s" % (query, plan))
                         cursor.execute(sql, (vector_literal, vector_literal))
                         indexed = cursor.fetchall()
