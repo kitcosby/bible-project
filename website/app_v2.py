@@ -53,9 +53,18 @@ APP_DB = os.environ.get('APP_DB', 'bible_app')
 # a secret manager; never commit them or log them.
 BIBLE_DATABASE_URL = os.environ.get('BIBLE_DATABASE_URL')
 BIBLE_APP_DATABASE_URL = os.environ.get('BIBLE_APP_DATABASE_URL')
+BIBLE_VARIANT_SEARCH_DATABASE_URL = os.environ.get('BIBLE_VARIANT_SEARCH_DATABASE_URL')
 SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
+
+@app.after_request
+def _variant_search_no_store(response):
+    # Search responses, including validation and failure responses, must not
+    # be retained by browsers, proxies, or service-worker integrations.
+    if request.path == '/api/search/variants':
+        response.headers['Cache-Control'] = 'no-store'
+    return response
 
 # Browser-session defaults. Set BIBLEAPP_COOKIE_SECURE=1 behind HTTPS.
 app.config.update(
@@ -143,6 +152,20 @@ def bible():
         g.bible = PGWrapper(con)
     return g.bible
 
+
+def variant_search_db():
+    """Read-only, separately deployable database containing the Hebrew
+    spelling-variant vector index. This is optional; passage search continues
+    to use the primary corpus database."""
+    if not BIBLE_VARIANT_SEARCH_DATABASE_URL:
+        raise RuntimeError('Hebrew variant embedding search is not configured')
+    if 'variant_search_db' not in g:
+        con = psycopg2.connect(
+            BIBLE_VARIANT_SEARCH_DATABASE_URL, connect_timeout=10,
+            application_name='bibleapp-variant-search')
+        g.variant_search_db = PGWrapper(con)
+    return g.variant_search_db
+
 def appdb():
     """Application database (PostgreSQL `bible_app`): user accounts,
     translations, lemma defaults, reading positions."""
@@ -222,7 +245,7 @@ def appdb():
 
 @app.teardown_appcontext
 def close_dbs(exc):
-    for k in ('bible', 'appdb'):
+    for k in ('bible', 'appdb', 'variant_search_db'):
         con = g.pop(k, None)
         if con is not None:
             con.close()
@@ -332,6 +355,160 @@ def _identity_token(user_id):
                          signing_input.encode('ascii'), 'sha256').digest()
     encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b'=').decode('ascii')
     return signing_input + '.' + encoded_signature
+
+
+
+def _auth_json_origin():
+    """Require an explicitly allowed Origin for browser auth mutations."""
+    origin = _allowed_auth_origin()
+    if not origin:
+        return None
+    return origin
+
+
+def _auth_json_preflight(origin, methods='POST, OPTIONS'):
+    response = Response(status=204)
+    response.headers['Access-Control-Allow-Methods'] = methods
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+    response.headers['Access-Control-Max-Age'] = '300'
+    return _auth_cors(response, origin)
+
+
+def _auth_json_error(message, status, origin):
+    return _auth_cors(jsonify({'error': message}), origin), status
+
+
+def _auth_json_payload():
+    if not request.is_json:
+        return None
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
+
+
+def _auth_json_user(user):
+    return {
+        'user_id': int(user['user_id']),
+        'username': user['username'],
+        'display_name': user.get('display_name') or user['username'],
+    }
+
+
+@app.route('/api/auth/bootstrap', methods=['GET', 'OPTIONS'])
+def api_auth_bootstrap():
+    """Create a pre-auth session and CSRF token for the PWA login flow."""
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin, 'GET, POST, OPTIONS')
+    user = current_user()
+    payload = {
+        'csrf_token': csrf_token(),
+        'authenticated': bool(user),
+        'user': _auth_json_user(user) if user else None,
+    }
+    return _auth_cors(jsonify(payload), origin)
+
+
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
+def api_auth_login():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str) or not password:
+        return _auth_json_error('Username and password are required', 400, origin)
+    db = appdb()
+    row = db.execute(
+        'SELECT * FROM user_accounts WHERE username=%s AND is_active=1',
+        (username,)).fetchone()
+    if not row or not check_password_hash(row['password_hash'], password):
+        return _auth_json_error('Incorrect username or password', 401, origin)
+    session.clear()
+    session['user_id'] = row['user_id']
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (row['user_id'],))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin)
+
+
+@app.route('/api/auth/signup', methods=['POST', 'OPTIONS'])
+def api_auth_signup():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str):
+        return _auth_json_error('Username and password are required', 400, origin)
+    if len(password) < 12 or len(password) > 1024:
+        return _auth_json_error(
+            'Use a password or passphrase between 12 and 1024 characters',
+            400, origin)
+    db = appdb()
+    try:
+        cur = db.execute(
+            'INSERT INTO user_accounts(username, password_hash, display_name) '
+            'VALUES(%s,%s,%s) RETURNING user_id',
+            (username, generate_password_hash(password), username))
+        new_uid = cur.fetchone()['user_id']
+        db.commit()
+    except psycopg2.IntegrityError:
+        db.rollback()
+        return _auth_json_error('That username is taken', 409, origin)
+    session.clear()
+    session['user_id'] = new_uid
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (new_uid,))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin), 201
+
+
+@app.route('/api/auth/logout', methods=['POST', 'OPTIONS'])
+def api_auth_logout():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    session.clear()
+    rotated_csrf = csrf_token()
+    return _auth_cors(jsonify({
+        'authenticated': False,
+        'user': None,
+        'csrf_token': rotated_csrf,
+    }), origin)
 
 
 @app.route('/api/auth/csrf', methods=['GET', 'OPTIONS'])
@@ -2495,6 +2672,41 @@ def api_word(strongs):
             for r in occ_rows]})
 
 
+@app.route('/api/word-options')
+def api_word_options():
+    """Return legacy dropdown phrase groups for a bounded set of Hebrew word IDs.
+
+    This is a public, read-only corpus endpoint. It deliberately returns the
+    lemma key as well as phrase groups so clients can preserve root-code
+    fallback semantics for Hebrew words without a Strong's identifier.
+    """
+    raw_ids = (request.args.get('wordIds') or '').split(',')
+    if not raw_ids or len(raw_ids) > 100 or any(not x.isdigit() for x in raw_ids):
+        return _api_json({'error': 'wordIds must contain 1–100 numeric IDs'}, 400)
+    word_ids = sorted({int(x) for x in raw_ids})
+    if not word_ids or any(not 1 <= wid <= N_WORDS for wid in word_ids):
+        return _api_json({'error': 'wordIds contains an out-of-range word ID'}, 400)
+
+    db = bible()
+    rows = db.execute(
+        f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id = ANY(%s) ORDER BY w.word_id',
+        (word_ids,)).fetchall()
+    kjv_lp, _, ylt_lp, _ = lemma_phrases(db)
+    response = _api_json({
+        'words': [{
+            'wid': row['word_id'],
+            'lemma': lemma_key(row),
+            'strongs': row['strongs'],
+            'kjv_phrases': kjv_lp.get(lemma_key(row), [])[:N_PHRASES],
+            'ylt_phrases': ylt_lp.get(lemma_key(row), [])[:N_PHRASES],
+        } for row in rows]
+    })
+    # The byte choice index depends on the exact phrase ordering. Do not let
+    # browser or service-worker caches serve an older ordering to an editor.
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
+
 @app.route('/api/search')
 def api_search():
     import json as _json
@@ -2533,6 +2745,167 @@ def api_search():
          'score': round(float(r['score']), 4),
          'snippet': r['chunk'], 'source': 'ylt-computed'}
         for r in rows])
+
+
+@app.route('/api/search/variants')
+def api_search_variants():
+    """Search reconstructed Hebrew spelling-variant embeddings.
+
+    The index is separate from the YLT verse index. It contains one 768-dim
+    vector per spelling-variant key and is queried only when the deployment
+    explicitly configures BIBLE_VARIANT_SEARCH_DATABASE_URL.
+    """
+    import json as _json
+    import unicodedata
+    import urllib.request
+
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return _api_json({'error': 'q required'}, 400)
+
+    # Embeddings were built from unpointed letters. Strip Hebrew combining
+    # marks so pointed user input is embedded in the same representation.
+    normalized_q = ''.join(
+        ch for ch in unicodedata.normalize('NFKC', q)
+        if unicodedata.category(ch) != 'Mn').strip()
+    if not any('\u05D0' <= ch <= '\u05EA' or '\u05F0' <= ch <= '\u05F4'
+               for ch in normalized_q):
+        return _api_json({'error': 'Hebrew spelling query required'}, 400)
+
+    try:
+        limit = max(1, min(25, int(request.args.get('limit', 10))))
+    except ValueError:
+        limit = 10
+
+    if not BIBLE_VARIANT_SEARCH_DATABASE_URL:
+        return _api_json({'error': 'Hebrew variant search is not configured'}, 503)
+
+    # Exact matching is independent of Ollama. Query PostgreSQL first so a
+    # temporary embedding-service outage does not hide known spellings.
+    try:
+        db = variant_search_db()
+        db.execute('SET ivfflat.probes = 16')
+
+        select_fields = """
+            v.word_id, v.variant_seq,
+            COALESCE(NULLIF(v.letters, ''), NULLIF(v.unpointed, ''),
+                     NULLIF(v.variant_text, ''), w.pointed) AS spelling,
+            v.letters, v.unpointed, v.variant_text, v.variant_kind,
+            v.source AS variant_source, v.witness, v.convention,
+            v.variant_type, v.basis,
+            w.pointed, w.strongs, w.word_pos,
+            vv.book_id, vv.chapter, vv.verse, bk.name_en
+        """
+        joins = """
+            FROM word_variants v
+            JOIN words w ON w.word_id = v.word_id
+            JOIN verses vv ON vv.verse_id = w.verse_id
+            JOIN books bk ON bk.book_id = vv.book_id
+        """
+        exact_rows = db.execute(
+            'SELECT ' + select_fields + joins + """
+            WHERE v.variant_kind = 'spelling'
+              AND (v.letters = %s OR v.unpointed = %s
+                   OR v.variant_text = %s
+                   OR (COALESCE(v.letters, '') = ''
+                       AND COALESCE(v.unpointed, '') = ''
+                       AND COALESCE(v.variant_text, '') = ''
+                       AND w.pointed = %s))
+            ORDER BY v.word_id, v.variant_seq
+            LIMIT %s
+            """,
+            (normalized_q, normalized_q, normalized_q, normalized_q, limit)
+        ).fetchall()
+    except Exception:
+        return _api_json({'error': 'Hebrew variant search unavailable'}, 503)
+
+    semantic_rows = []
+    semantic_unavailable = False
+    try:
+        req = urllib.request.Request(
+            'http://127.0.0.1:11434/api/embeddings',
+            data=_json.dumps({
+                'model': 'nomic-embed-text:latest',
+                'prompt': normalized_q,
+            }).encode(),
+            headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            emb = _json.loads(resp.read())['embedding']
+        if len(emb) != 768:
+            raise ValueError('unexpected embedding dimensions')
+        vec = '[' + ','.join(repr(float(x)) for x in emb) + ']'
+        semantic_rows = db.execute(
+            'SELECT ' + select_fields + """,
+                1 - (e.embedding <=> %s::vector) AS score
+            FROM word_variant_embeddings e
+            JOIN word_variants v
+              ON v.word_id = e.word_id AND v.variant_seq = e.variant_seq
+            JOIN words w ON w.word_id = v.word_id
+            JOIN verses vv ON vv.verse_id = w.verse_id
+            JOIN books bk ON bk.book_id = vv.book_id
+            WHERE v.variant_kind = 'spelling'
+            ORDER BY e.embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (vec, vec, limit * 3)
+        ).fetchall()
+    except Exception as exc:
+        semantic_unavailable = True
+        if not exact_rows:
+            if isinstance(exc, ValueError):
+                return _api_json({'error': 'unexpected embedding dimensions'}, 502)
+            return _api_json({'error': 'Hebrew variant embedding search unavailable'}, 503)
+
+    results = []
+    seen = set()
+
+    def pack(row, match_type, score=None):
+        spelling = row['spelling'] or ''
+        return {
+            'word_id': row['word_id'],
+            'variant_seq': row['variant_seq'],
+            'spelling': spelling,
+            'letters': row['letters'],
+            'unpointed': row['unpointed'],
+            'variant_text': row['variant_text'],
+            'pointed': row['pointed'],
+            'strongs': row['strongs'],
+            'word_pos': row['word_pos'],
+            'book_id': row['book_id'],
+            'chapter': row['chapter'],
+            'verse': row['verse'],
+            'ref': f"{row['name_en']} {row['chapter']}:{row['verse']}",
+            'score': (round(float(score), 4) if score is not None else None),
+            'match_type': match_type,
+            'source': 'hebrew-variant-embedding',
+            'variant_source': row['variant_source'],
+            'witness': row['witness'],
+            'convention': row['convention'],
+            'variant_type': row['variant_type'],
+            'basis': row['basis'],
+            'snippet': spelling,
+        }
+
+    for row in exact_rows:
+        key = (row['word_id'], row['spelling'])
+        if key not in seen:
+            results.append(pack(row, 'exact'))
+            seen.add(key)
+
+    for row in semantic_rows:
+        key = (row['word_id'], row['spelling'])
+        if key not in seen:
+            results.append(pack(row, 'embedding', row['score']))
+            seen.add(key)
+        if len(results) >= limit:
+            break
+
+    response = _api_json(results[:limit])
+    if semantic_unavailable:
+        response.headers['X-Hebrew-Semantic-Search'] = 'unavailable'
+        response.headers['Access-Control-Expose-Headers'] = 'X-Hebrew-Semantic-Search'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 @app.route('/interlinear')
