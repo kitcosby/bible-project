@@ -21,6 +21,7 @@ CREATE TABLE verses(
   book_id   INTEGER NOT NULL REFERENCES books(book_id),
   chapter   INTEGER NOT NULL,
   verse     INTEGER NOT NULL,
+  hidden    INTEGER NOT NULL DEFAULT 0,  -- 1 = retained in the grid but never rendered (2026-11-11, issue #23 shells)
   UNIQUE(book_id, chapter, verse)
 );
 -- verses = UNION of (book,chapter,verse) from words, ylt_verses, kjv_words,
