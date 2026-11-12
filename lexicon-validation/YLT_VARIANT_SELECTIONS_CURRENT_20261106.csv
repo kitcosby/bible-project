@@ -1,0 +1,20 @@
+group_key,reference,category,selected_branch,decision_status,ylt_evidence,sequence_materialized
+43:6,John 8:6,verse_text_variant,A,reviewed_against_translation,YLT omits the additional branch-B participial phrase,NO
+44:3,Acts 3:3,verse_text_variant,A,reviewed_against_translation,YLT includes “to receive a kindness” corresponding to λαβεῖν,NO
+45:7,Romans 16:27,verse_text_variant,A,reviewed_against_translation,YLT renders the dative/relative expression as “to him [be] glory”,NO
+45:8,Romans 16:27,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text excludes the written-from/by subscription,NO
+46:7,1 Corinthians 16:24,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+47:10,2 Corinthians 13:14,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+48:2,Galatians 6:18,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+49:3,Ephesians 6:24,verse_text_variant,A,reviewed_against_translation,YLT includes Amen corresponding to ἀμήν,NO
+49:4,Ephesians 6:24,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text excludes the written-from/by subscription,NO
+50:4,Philippians 4:23,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+52:5,1 Thessalonians 5:28,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+53:3,2 Thessalonians 3:18,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+54:5,1 Timothy 6:21,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+55:3,2 Timothy 4:22,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+56:2,Titus 3:15,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+57:2,Philemon 1:25,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+58:9,Hebrews 13:25,paratextual_subscription,,not_applicable_to_verse_alignment,YLT verse text ends with the blessing and Amen; subscription is absent,NO
+62:3,1 John 2:23,verse_text_variant,B,reviewed_against_translation,YLT includes the bracketed clause about the one confessing the Son,NO
+66:9,Revelation 7:3,verse_text_variant,,unresolved,YLT “till we may seal” does not distinguish the present from aorist subjunctive,NO

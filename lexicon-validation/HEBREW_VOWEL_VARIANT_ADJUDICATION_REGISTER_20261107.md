@@ -1,0 +1,207 @@
+# Hebrew vowel-only variant adjudication register
+
+**Date:** 2026-11-07  
+**Scope:** First source-based adjudication pass over the unresolved or potentially misleading cases surfaced by the 372-group member-level review.  
+**Status:** Research register only. No production or shadow database writes; no source lexical, morphology, Strong's, root, or alignment records were changed.
+
+## Governing distinction
+
+The 372-group index is an **orthographic candidate inventory**, not a semantic-equivalence table. The strict signature algorithm remains unchanged. This register adds a second, independent layer: what the evidence currently says about selected lexical, morphological, textual, and source-annotation questions.
+
+The following status labels are deliberately not interchangeable:
+
+- **Resolved** means the specific uncertainty named in the case has been answered from the database morphology, the lexical source, or the cited context. It does not authorize merging.
+- **Related Strong's entries** means two IDs are derivationally or lexically related; the original IDs remain intact.
+- **Open** means a real source, textual, geographical, or vocalization question remains.
+- **Probable source annotation conflict** is a diagnostic, not a correction.
+
+## Findings
+
+### 1. Disputed reading: בְּנִיהֶם in Ezekiel 27:32
+
+The Lampy source row is word_id **238432**, pointed **בְּנִיהֶם**, Strong's **H5204**, morphology **HR/Ncmsc/Sp3mp**. In the database this is preposition ב + a masculine singular noun in construct with a third masculine plural suffix: “in their wailing.”
+
+BDB's entry for H5204 calls נִי a doubtful word and glosses it “wailing,” apparently related to נְהִי. Its expanded note says the MT reading is “improbable”; it records the alternative **בְּנֵיהֶם** (“their sons”) in the LXX, Theodotion, Syriac, and eleven Hebrew codices. Gesenius separately reports eleven manuscripts and several early editions, alongside the LXX, Arabic, Theodotion, and Syriac. These are not all independent witnesses of the same type: the Hebrew codices/early editions attest a pointed Hebrew reading, while the ancient versions attest how their translators understood the consonantal text.
+
+The alternative reading has significant support, but BDB also records that Cornill treated “their sons” as a gloss (with Buhl and Bertholet cited for comparison). There is also a grammatical defense of the MT that complicates the current H5204 analysis: Gesenius-Kautzsch-Cowley, *Hebrew Grammar* §23, suggests that בְּנִיהֶם may be a contracted form of בְּנְהִיהֶם, with syncope of ה, rather than a form of an independent noun נִי. The latter is precisely what Strong's H5204/BDB labels a doubtful word; the ordinary noun נְהִי (H5092), “wailing/elegy,” is well attested elsewhere. This is a plausible grammatical derivation, not a demonstrated reconstruction. The exact pinned OSHB source has now been inspected: at Ezek.27.32 it explicitly encodes `lemma="b/5204"`, `morph="HR/Ncmsc/Sp3mp"`, and segmented text `בְּ/נִי/הֶם֙` (OSHB word id `26F8P`, commit `3d15126fb1ef74867fc1434be1942e837932691f`; [pinned OSHB Ezekiel.xml](https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ezek.xml)). The project database's H5204 and morphology therefore match the pinned OSHB annotation exactly; this is not a parser or import defect. Gesenius §23 remains an alternative grammatical explanation of the MT form, not grounds to change the source lemma. Keil and Delitzsch reject “sons” contextually, arguing that the sailors themselves—not a later generation of their sons—are the mourners. A contrary interpretation in Werner Bible Commentary takes “sons” as descendants and suggests a progressive fulfillment, but this is a contextual proposal rather than direct textual evidence. A further literary-context point matters: the MT includes a full mourning verse at 27:31, after which “in their wailing” at 27:32 continues the same sailors' lament. The Old Greek omits 27:31 but retains “their sons” in 27:32 (attested in P967 as well as the later Greek tradition). The reading may therefore belong to a broader difference in the literary form of the passage, not merely to an isolated change of Hebrew vowels. The Greek version witnesses an ancient interpretation/edition; it does not by itself prove that the MT's Hebrew Vorlage carried a distinct vocalization.
+
+The local `word_variants` rows for word_id 238432 contain spelling variants only; there is no textual qere row attached to this word. The alternative is therefore an external textual/reading tradition, not a stored MT qere. The consonantal sequence is the same; the contrast is chiefly vocalization and lexical segmentation/interpretation: preposition + rare noun נִי (“wailing”) versus בְּנֵי + suffix (“sons of them”).
+
+**Disposition:** retain the MT source form and its H5204 analysis, while recording the well-attested “their sons” alternative separately. Textual priority remains unresolved. Do not replace the MT reading, create a qere row, or merge the lexical records.  
+Sources: [BDB/Gesenius entry H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html); [Gesenius-Kautzsch-Cowley, Hebrew Grammar §23](https://www.studylight.org/lexicons/eng/gesenius/23.html); [Keil and Delitzsch, Ezekiel 27](https://bible.armeniancathedral.org/comments/kad/Ezek_27.htm); [Werner Bible Commentary, Ezekiel 27:32](https://wernerbiblecommentary.org/?q=node%2F919); [LXX and WLC comparison](https://www.blueletterbible.org/verse/wlc/eze/27/32/); [pinned OSHB Ezekiel.xml](https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ezek.xml).
+
+### 2. לְבֹא חֲמָת: infinitive or toponym?
+
+The database assigns **HNp** (proper name) to לְבֹא in Numbers 13:21 and 34:8. Other occurrences of the same form family are parsed as **HR/Vqc** (preposition + Qal infinitive construct), H935. Independent grammatical analyses parse the phrase as “to/unto the entrance of Hamath.” The UBS translator handbook notes that some translations treat “Lebo” as part of the place-name, while other renderings translate “entrance of Hamath”; it recommends the place-name rendering for Numbers 13:21 on geographical/contextual grounds.
+
+**Disposition:** **RESOLVED_TOPONYMIC_INTERPRETATION** for the Numbers source records. The database's HNp annotation is defensible in light of the UBS recommendation and the wider boundary-place pattern. “Entrance/pass of Hamath” remains a valid translation alternative; no source correction is proposed.  
+Sources: [Numbers 34:8, Mechon-Mamre](https://www.mechon-mamre.org/p/pt/pt0434.htm); [Numbers 13:21, UBS translator handbook](https://tips.translation.bible/tip_verse/num-1321/); [Numbers 34:8, Hebrew analysis](https://biblehub.com/text/numbers/34-8.htm).
+
+### 3. לָעִיר in 2 Kings 19:13 / Isaiah 37:13
+
+The project database assigns **HNp** to the forms in the parallel 2 Kings/Isaiah passages, despite Strong's H5892 (“city”). The parallel phrase is conventionally read “the king of the city of Sepharvaim”; an independent Hebrew text analysis explicitly parses לָעִיר as “of the city.” Micah 6:9 has the same common noun with morphology **HRd/Ncfsa** (preposition + definite article + common feminine singular noun).
+
+**Disposition:** **RESOLVED_TOPONYMIC_INTERPRETATION**. The Lair/Lahir place-name reading has substantial historical-geographical support (Zadok 1976; UBS Handbook; NET), so HNp is a defensible source annotation. The common-noun “city of Sepharvaim” reading remains a translation alternative. No source correction is proposed.  
+Sources: [2 Kings 19:13 Hebrew analysis](https://mail.cnbible.com/text/2_kings/19-13.htm); [Isaiah/2 Kings parallel text analysis](https://bibliaparalela.com/text/2_kings/19-13.htm).
+
+### 4. Resolved lexical collisions and rare forms
+
+- **בְּכַר, Genesis 31:34 (H3733):** BDB/Strong's includes “basket-saddle” or camel saddle; the context is Rachel placing the teraphim in the camel's gear. This is not H1060 “firstborn.” [H3733 lexical entry](https://biblehub.com/strongs/hebrew/H3733.htm).
+- **הָדָה, Isaiah 11:8 (H1911):** the verb means “stretch out the hand”; the clause says the weaned child stretches out his hand toward/on the viper's den. **הֹדֹה**, Jeremiah 22:18 (H1935), is the noun “majesty/splendour” with a suffix. Distinct lexemes. [H1911](https://biblehub.com/bdb/1911.htm); [H1935](https://biblehub.com/bdb/1935.htm).
+- **וַיִּגְלֹם, 2 Kings 2:8 (H1563):** BDB defines the verb “wrap up, fold, fold together,” matching Elijah's wrapping/folding of his mantle. The other member, וַיַּגְלֵם in 1 Chronicles 5:26, is H1540 with a 3mp object suffix and means “carry them into exile.” Distinct verbal lexemes. [H1563 BDB](https://biblehub.com/bdb/1563.htm).
+- **רָדָה, Judges 14:9 (H7287):** BDB has a distinct second entry for רָדָה, “scrape out,” and explicitly cites the scraping of honey from the lion's carcass. The other member רְדָה in Genesis 45:9 and Ezekiel 32:19 is the imperative of ירד, “go down.” Distinct lexemes and forms. [H7287 BDB](https://www.studylight.org/lexicons/eng/hebrew/7287.html).
+- **עַלְוָה, 1 Chronicles 1:51 (H5933):** BDB identifies this as an Edomite male proper name, Alvah. The other member is עַל + a pronominal suffix, H5921 (“upon her/it”). Distinct lexemes.
+
+### 5. Related Strong's entries, not proven data errors
+
+- **רֹעַי:** the source assigns H7473 in Genesis 13:8 and H7462 in Ezekiel 34:8 to the same pointed/member key and morphology. H7473 is explicitly derived from the active participle of H7462 and means “shepherd” as a substantive. This is a related-lemma/Strong's distinction; it is not, by itself, evidence of corrupt data. [H7473](https://primebible.com/strongs/hebrew/H7473).
+- **מהר family:** H4118 is derived from H4116; H4120 is the feminine noun/adverb from H4118 (“haste, quickly”). These are related derivational forms, not interchangeable lexical records. [H4120](https://studybible.info/strongs/H4120).
+
+### 6. Morphology questions resolved against the OSHB code legend
+
+The official OSHB code table defines the verb stem and conjugation positions separately: `q` in the stem position is Qal; `p` in the conjugation position is perfect; `v` is imperative; `h` is Hiphil; `N` is Niphal; `r` is active participle; `a` is infinitive absolute; `Sh` is paragogic he; `Ti` is an interrogative particle; `Td` is the definite article. [Official OSHB Hebrew Morphology Codes](https://hb.openscriptures.org/parsing/HebrewMorphologyCodes.html).
+
+- **הֲרֹאֶה, Ezekiel 8:6:** database pattern **HTi/Vqrmsa** = interrogative particle + Qal active participle masculine singular absolute. The following explicit pronoun **אַתָּה** is second masculine singular. The clause addresses Ezekiel: “Are you seeing…?” This resolves the earlier uncertainty about whether the participle's subject was “he” or “you.”
+- **הֵאִירָה / הָאִירָה:** pattern IDs 2866/2908 are **HVhp3fs** versus **HVhv2ms/Sh**: Hiphil perfect 3fs versus Hiphil imperative 2ms + paragogic he.
+- **הֵאָכֹל / הָאֹכֵל:** pattern IDs 2640/2381 are **HVNa** versus **HTd/Vqrmsa**: Niphal infinitive absolute versus definite article + Qal active participle masculine singular absolute.
+- **שִׁלְחָה / שָׁלְחָה** and **שִׁמְעָה / שָׁמְעָה:** pattern IDs 3360/3283 are **HVqv2ms/Sh** versus **HVqp3fs**: Qal imperative 2ms + paragogic he versus Qal perfect 3fs.
+
+These code checks resolve morphology labels, not every translation nuance. The source codes are preserved.
+
+### 7. Vocalization/source-text review still open: עֳלֶיהָ / עָלֶיהָ
+
+The final batch found one Isaiah 37:33 occurrence with **עֳלֶיהָ** and 32 other occurrences with **עָלֶיהָ**. Both are assigned H5921 and the same morphology **HR/Sp3fs** (preposition עַל + 3fs suffix). No grammatical or semantic difference is supplied by the current database.
+
+**Disposition:** preserve both raw pointed forms; compare the exact WLC/OSHB source tokens and Masoretic vocalization before deciding whether this is a source-text difference, normalization issue, or legitimate vocalization variant. Do not create a second lexical identity on the current evidence.
+
+## Recommended next sequence
+
+1. Resolve the two source-annotation candidates by checking the exact OSHB XML: לָעִיר (2 Kings 19:13 / Isaiah 37:13) and לְבֹא (Numbers 13:21 / 34:8).
+2. Review the textual apparatus for Ezekiel 27:32 and decide whether the alternative בְּנֵיהֶם reading belongs in a separate textual-witness record; do not insert it into the MT word row.
+3. Compare the WLC/OSHB source for עֳלֶיהָ / עָלֶיהָ.
+4. Only after those checks, propose any source corrections or app presentation changes. The orthographic candidate layer remains separate from lexical identity and textual apparatus.
+
+## Preservation statement
+
+This register was built from read-only queries of the Lampy `bible` database and the existing review reports, plus cited lexical/morphological sources. No production or shadow database rows, source annotations, root assignments, Strong's values, morphology, alignments, embeddings, or vectorizers were changed.
+
+## 8. Further source-text checks (2026-11-07 continuation)
+
+### לְבֹא חֲמָת — source toponymic analysis is defensible
+
+The WLC transcription gives **לְבֹא** in Numbers 13:21 and 34:8. Independent WLC analyses assign H935 and parse the form verbally, while the UBS *Handbook on Numbers* reports both “Lebo-hamath” and “entrance/pass of Hamath.” For Numbers 13:21 the handbook recommends “Lebo-hamath,” noting that “Lebo” was part of the name in 1 Kings 8:65; for Numbers 34:8 it renders “to the entrance of Hamath” but refers readers back to 13:21. The geographical function as a northern boundary point is clear even though the proper-name versus literal-entrance analysis remains debated.
+
+A live database occurrence audit adds useful context:
+
+| Reference | word_id | Pointed form | Strong's | Morphology | Root |
+|---|---:|---|---|---|---|
+| Numbers 13:21 | 47351 | `לְבֹ֥א` | H935 | HNp | `לבא` |
+| Numbers 34:8 | 55394 | `לְבֹ֣א` | H935 | HNp | `לבא` |
+| Joshua 13:5 | 72946 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
+| Judges 3:3 | 77824 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
+| 1 Kings 8:65 | 111942 | `מִלְּב֥וֹא` | H935 | HR/Np | `לבוא` |
+| 2 Kings 14:25 | 124316 | `מִלְּב֥וֹא` | H935 | HR/Ncmsc | `לבוא` |
+| Ezekiel 47:15 | 245631 | `לְב֥וֹא` | H935 | HNp | `לבוא` |
+
+The source uses HNp for several boundary-place occurrences, but also has a common-noun construct analysis in 2 Kings 14:25. The Numbers forms use root key `לבא`, while the plene forms use `לבוא`. Because the strict variant rule retains matres, the additional vav is significant and these spellings must not be forced into one vowel-only group.
+
+**Disposition: RESOLVED_TOPONYMIC_INTERPRETATION (with a retained alternative).** The project HNp annotation for the two Numbers tokens is defensible and consistent with other boundary-place occurrences; the verbal H935 is compatible with the name's etymological relationship to בוא (“come/enter”). The literal “entrance of Hamath” / “Hamath Pass” interpretation remains a valid translation alternative. Do not change the stored Strong's, morphology, root, or pointed forms.
+
+Sources: [WLC analysis, Numbers 13:21](https://cnbible.com/text/numbers/13-21.htm); [WLC analysis, Numbers 34:8](https://cnbible.com/text/numbers/34-8.htm); [UBS Handbook, Numbers 13:21](https://tips.translation.bible/tip_verse/num-1321/); [UBS Handbook, Numbers 34:8](https://tips.translation.bible/tip_verse/num-34-8/); [NET 1 Kings 8:65](https://classic.net.bible.org/verse.php?book=1Ki&chapter=8&theme=false&verse=65); [NET 2 Kings 14:25](https://classic.net.bible.org/verse.php?book=2Ki&chapter=14&theme=false&verse=25).
+
+### לָעִיר — common noun versus place-name Lair
+
+The WLC text in both 2 Kings 19:13 and Isaiah 37:13 has **לָעִיר** in the list of kings associated with Hamath, Arpad, Sepharvaim, Hena, and Ivvah. Independent WLC analyses assign Strong's H5892 and parse it as the common noun “city,” yielding “the king of the city of Sepharvaim.” However, the UBS *Handbook on 1–2 Kings* explicitly records another interpretation: some take `laʿir` as the name of a separate city, Lahir/Lair, and the handbook judges that to be the most likely reading in 2 Kings 19:13. The parallel Isaiah 37:13 preserves the same ambiguity.
+
+**Disposition: RESOLVED_TOPONYMIC_INTERPRETATION (with a retained alternative).** The Lair proper-name reading has substantial historical-geographical support. Zadok's 1976 study identifies Lair with L'r in Aršam's letters and Lahiru, locates Lahiru in northeastern Babylonia, and notes that Lahiru became an Assyrian province. Zadok also observes that Lair appears in the longer list of kings in the letter (2 Kings 19:13 / Isaiah 37:13) but not in the shorter Rabshakeh address (2 Kings 18:34 / Isaiah 36:19), possibly because it was then understood as an appellative (“of the town”) rather than a proper name. The UBS Handbook and NET notes likewise favor Lair as a city. This makes the project's HNp morphology a defensible intentional annotation, not a likely parser error. The common-noun reading “the city of Sepharvaim” remains a genuine translation alternative and should be retained in notes; do not alter the stored Strong's or morphology.
+
+Sources: [WLC analysis, 2 Kings 19:13](https://cnbible.com/text/2_kings/19-13.htm); [WLC analysis, Isaiah 37:13](https://cnbible.com/text/isaiah/37-13.htm); [UBS Handbook, 2 Kings 19:13](https://tips.translation.bible/story/translation-commentary-on-2-kings-1913/); [NET Bible note, 2 Kings 19:13](https://classic.net.bible.org/passage.php?passage=2Ki+19%3A13-18); [Zadok, “Geographical and Onomastic Notes” (1976), pp. 114–115](https://janes.scholasticahq.com/api/v1/articles/2253-geographical-and-onomastic-notes.pdf).
+
+### עֳלֶיהָ / עָלֶיהָ — WLC form is corroborated; another text display differs
+
+The pointed WLC text of Isaiah 37:33 is independently displayed as **עֳלֶיהָ** by CNBible, BibleHub, BibleGateway's WLC, and Israel.com. CNBible's WLC analysis identifies it as the preposition “against/upon” (H5921). Sefaria's Isaiah 37:33 display instead has **עָלֶיהָ**. These are different vowel-point sequences on the same consonantal form, and the project's two member records share H5921 and morphology HR/Sp3fs.
+
+**Disposition: RESOLVED_SOURCE_FORM.** The WLC vocalization **עֳלֶיהָ** is externally corroborated and is supported for this project’s WLC source snapshot. It shares H5921 and HR/Sp3fs with the ordinary **עָלֶיהָ** form, so the candidate is a valid vowel-only orthographic variant, not a separate lexical identity or obvious database typo. Sefaria displays **עָלֶיהָ**, but its precise textual base/normalization policy remains unidentified; retain that as an edition-comparison note only. Preserve raw forms and source provenance; do not merge the source member assignments.
+
+Sources: [CNBible WLC, Isaiah 37:33](https://www.cnbible.com/text/isaiah/37-33.htm); [BibleHub WLC, Isaiah 37:33](https://biblehub.com/texts/isaiah/37-33.htm); [BibleGateway WLC, Isaiah 37:33](https://www.biblegateway.com/passage/?search=Isaiah+37&version=WLC); [Sefaria, Isaiah 37:33](https://www.sefaria.org/Isaiah.37.1-38.22).
+
+### Methodological note: key-only NFC validation
+
+The OSHB repository README warns against NFC normalization of Hebrew source text. A new read-only live-corpus test found that 138,497 word rows change code-point order under NFC, while the raw source strings remain preserved. The current NFC comparison inventory is nevertheless reproducible: NFC-then-vowel-removal and vowel-removal-then-NFC produce identical 3,349 candidate groups and identical normalized member sets (zero mismatches). See [HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md](HEBREW_VOWEL_VARIANT_NFC_NORMALIZATION_CHECK_20261107.md).
+
+**Disposition:** retain NFC for comparison keys only under the current tested convention; never rewrite raw source strings. Keep this test as a regression requirement when the corpus or normalization implementation changes.
+
+
+## 9. Live database row-level confirmation
+
+A fresh read-only query against Lampy's live `bible` database confirms the exact records underlying the open cases:
+
+| Reference | `word_id` | Stored pointed form | Strong's | Stored morphology |
+|---|---:|---|---|---|
+| Numbers 13:21 | 47351 | `לְבֹ֥א` | H935 | HNp |
+| Numbers 34:8 | 55394 | `לְבֹ֣א` | H935 | HNp |
+| 2 Kings 19:13 | 126492 | `לָעִ֣יר` | H5892 | HNp |
+| Isaiah 37:13 | 202764 | `לָעִ֣יר` | H5892 | HNp |
+| Isaiah 37:33 | 203026 | `עֳלֶ֖יהָ` | H5921 | HR/Sp3fs |
+| Ezekiel 27:32 | 238432 | `בְּנִיהֶם֙` | H5204 | HR/Ncmsc/Sp3mp |
+
+This confirms the live database's current assignments, including the combination of H935 with HNp for both לְבֹא tokens and H5892 with HNp for both לָעִיר tokens. It does **not** establish whether those morphology values originate in the pinned OSHB XML or were introduced by a later parser/crosswalk step.
+
+The project's OSHB provenance file pins the upstream source to commit `3d15126fb1ef74867fc1434be1942e837932691f` (2024-08-27), with the per-book files under `wlc/*.xml`. Direct retrieval of the large upstream XML files was not successful in this session, so the exact source-XML comparison remains outstanding. No correction has been applied.
+
+
+### בְּנִיהֶם / בְּנֵיהֶם — Septuagint evidence checked
+
+The Hebrew Masoretic text is displayed as **בְּנִיהֶם** in Ezekiel 27:32 and parsed by the project as preposition ב + the rare singular noun נִי (“wailing”) + 3mp suffix. The Greek Septuagint text displayed for the verse reads **καὶ λήμψονται οἱ υἱοὶ αὐτῶν ἐπὶ σὲ θρῆνον** (“and their sons will take up a lament for you”), which corresponds to the alternative Hebrew vocalization **בְּנֵיהֶם** (“their sons”), not the MT's “in their wailing” analysis. BDB records the same alternative in eleven manuscripts, early editions, and ancient versions, while explicitly calling the MT lexical reading doubtful.
+
+**Updated assessment:** this is a substantive textual/lexical ambiguity within the same consonantal spelling, not merely two meanings of one securely established MT lemma. The LXX supports the “their sons” reading; the MT preserves “in their wailing.” Keep the MT word row and any external-witness reading separate. The project has no local qere row for word_id 238432, so do not manufacture a Masoretic qere entry. A future apparatus proposal should record the witness, reading, and provenance explicitly.
+
+Sources: [WLC and Hebrew analysis, Ezekiel 27:32](https://www.cnbible.com/text/ezekiel/27-32.htm); [Greek Septuagint and MT interlinear, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Strong's H5204 textual note](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
+
+
+### Morphology provenance narrowed
+
+Inspection of the project's pinned-source parser, `worker-out/oshb/parse_oshb.py`, shows that it reads `morph = el.get('morph') or ''` and writes that value directly to the TSV. The accompanying `worker-out/oshb/README.txt` explicitly defines the `morph` column as OSHB `@morph` “verbatim.” No morphology-code transformation is present in this parser.
+
+**Implication:** the live HNp values for the two לְבֹא tokens and the two לָעִיר tokens are likely inherited from the pinned OSHB XML annotation, not introduced by this parser. This narrows the question from “did the local parser corrupt the code?” to “is the upstream OSHB annotation defensible, and does the independent interlinear analysis parse the same text/word segmentation?” The exact XML attributes are still not directly retrieved, so this is a provenance-supported inference, not a direct XML inspection. No parser or database correction is proposed.
+
+
+### YLT alignment check for word_id 238432
+
+A separate read-only query of the live YLT alignment tables found a likely alignment anomaly in Ezekiel 27:32:
+
+- The YLT verse text is: “And lifted up for thee have their sons a lamentation, And they have lamented over thee, who [is] as Tyre? As the cut-off one in the midst of the sea?”
+- The verse has 30 whitespace-delimited YLT tokens but only 14 distinct token positions in `ylt_renderings`.
+- MT word_id **238432** (`בְּנִיהֶם֙`, H5204, morphology `HR/Ncmsc/Sp3mp`) is linked by rows labeled `bridged` to YLT positions **1 “And”** and **2 “lifted”**.
+- The preceding Hebrew verb word_id **238430** (`וְנָשְׂאוּ`, H5375) has no YLT alignment rows.
+- YLT positions **7 “their”** and **8 “sons”** have no alignment rows; the YLT translation appears to follow the “their sons” interpretation rather than the MT “in their wailing” lexical analysis.
+
+**Assessment:** this is a strong candidate for a U-1 YLT alignment defect or an unresolved alternative-reading alignment, not proof that the MT word row should be changed. The existing YLT text and all `ylt_renderings` rows are preserved. Do not recompute or rewrite the alignment as part of this Hebrew variant task. Create a separate alignment review item if the YLT alignment project is resumed.
+
+
+### Exact cross-root candidate membership for Ezekiel 27:32
+
+A read-only query of the isolated shadow database confirms this is candidate group **504**, signature `בּניהם֙`, with two distinct root-vowel members:
+
+| Member | Pointed form | Root | Strong's | Morphology | Occurrences |
+|---|---|---|---|---|---|
+| Sons member | `בְּנֵיהֶם֙` | `בני` (root_id 6627) | H1121 | HNcmpc/Sp3mp | Jeremiah 11:22 (word_id 213637); Jeremiah 17:2 (word_id 215100) |
+| Wailing member | `בְּנִיהֶם֙` | `ני` (root_id 21384) | H5204 | HR/Ncmsc/Sp3mp | Ezekiel 27:32 (word_id 238432) |
+
+The consonantal signature, retained dagesh, and retained cantillation mark match exactly; only the specified vowel points differ. The LXX “their sons” reading corresponds to the existing **sons member** already attested in Jeremiah, while the MT Ezekiel token remains the separate **wailing member**. This is a verified cross-root orthographic candidate, not evidence that the two lexemes should be merged.
+
+**Disposition:** retain group 504 as an orthographic cross-reference; preserve the two roots, Strong's numbers, morphology, and occurrences separately. Keep the textual-critical question of which reading is earlier/open unresolved. Any external-witness apparatus entry must identify its witness and must not be converted into an MT qere.
+
+
+### Translation evidence and limits for Ezekiel 27:32
+
+The translation evidence is divided. YLT renders “their sons,” matching the LXX phrase `οἱ υἱοὶ αὐτῶν` and the alternative Hebrew vocalization `בְּנֵיהֶם`. KJV and JPS 1917 render “in their wailing,” following the MT form; the NET renders “as they wail,” also retaining a wailing interpretation. The NET footnote about Dahood's proposal for `dmt` concerns the later expression `כְּדֻמָה` (“like a tower”), not the reading of `בְּנִיהֶם`; do not conflate these two textual/lexical questions.
+
+This confirms that the “sons” reading is an ancient and materially attested alternative, but it does not establish that it should replace the MT reading in this project. Keep the MT H5204 member, the H1121 “sons” member, and the external-witness evidence distinct. The YLT rendering is a translation decision and must not be treated as independent proof of the Hebrew Vorlage.
+
+Sources: [KJV/JPS and MT text, Ezekiel 27:32](https://bible.sabda.org/verse.php?book=26&chapter=27&mode=print&verse=32); [NET translation and note, Ezekiel 27:32](https://classic.net.bible.org/passage.php?passage=eze+27%3A1-36); [LXX text, Ezekiel 27:32](https://thecorebible.org/interlinear/?book=26&chapter=27&verse=32); [BDB/Gesenius textual note, H5204](https://www.studylight.org/lexicons/eng/hebrew/5204.html).
+
+
+### Operational disposition — Ezekiel 27:32
+
+The project will use the **Masoretic Text as its default source text** for this verse. This does not resolve the textual-critical question: the “their sons” reading remains a significant alternative supported by the Old Greek and reported Hebrew manuscript evidence, while the exact manuscript witnesses and pointing have not been independently verified. Preserve MT `בְּנִיהֶם֙` (H5204; `HR/Ncmsc/Sp3mp`; root `ני`) and the separate H1121 “sons” member. No qere conversion, lexical merge, source-text edit, or production-data change is authorized or implied. Status is therefore **text-critically open; operationally defaulted to MT**. See [the detailed follow-up](HEBREW_VOWEL_VARIANT_EZEKIEL_27_32_FOLLOWUP_20261108.md).

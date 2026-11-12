@@ -78,25 +78,3 @@ Initial live run (2026-11-06): Hebrew orphan mappings 0; TR out-of-range alignme
 ## Current readiness
 
 The Hebrew gold set already includes 30 manually aligned verses (Genesis 1, Psalm 23 and Isaiah 53), with reported baseline precision 0.7984 and recall 0.5039 at the current operating point. The pipe-delimited TR parser cases now have an executable reproducer at `eval/test_nt_parser_variants.py`. Both tests are marked expected-failure against the current parser; they specify first-reading selection. The upstream librobinson parser supports explicit first/second variant modes, so separate tests for the alternate reading must also be added before the parser correction is accepted. The remaining Greek alignment cases are specifications, not yet a machine-executable gold set. Independent manual annotation is required before treating all expected Greek word associations as gold truth.
-
-## 2026-11-06 — Full stored YLT token-position run
-
-The validator's token comparison was executed against the restored snapshot. It compares each stored rendering word with the corresponding whitespace-delimited token in the linked YLT verse after the builder's punctuation stripping.
-
-| Witness | Rendering rows | Missing text | Out of range | Token mismatches |
-|---|---:|---:|---:|---:|
-| Hebrew | 358,391 | 0 | 0 | 0 |
-| TR | 143,227 | 0 | 0 | 0 |
-| Byzantine | 141,902 | 0 | 0 | 0 |
-| SBL | 135,971 | 0 | 0 | 0 |
-
-This validates stored rendering-word positions and strings against YLT verse text, not semantic Greek-to-English alignment. The existing three TR Greek-position errors and three orphan renderings remain. The builder's canonical YLT token convention is defined in `build_nt.py`'s `parse_ylt()` and `STRIP_CHARS`; the token check is therefore a structural consistency test, not a manually annotated alignment gold set.
-
-The focused parser regression tests were also run against `master/build_nt.py`; both John 9:21 and Colossians 4:10 cases produced the expected failures.
-
-
-## 2026-11-06 — Robinson variant source-comparison dataset
-
-The corpus-wide variant test covered 261 pipe-delimited groups in the 27 NT Robinson source files and compared candidate sequences against CrossWire KJV 3.1 `src`, `lemma.TR`, Strong's, and morphology fields. There were 245 connected decision components: 228 uniquely resolved and 17 tied. The cross-verse Colossians 4:10–18 group was resolved with 151/151 available source checks. Seventeen references remain unresolved and are excluded from the shadow active bridge.
-
-The source-text check covered 7,957 NT KJV verse blocks: 7,943 exact matches to stored KJV tokens and 14 prefix matches with 186 appended suffix tokens; no non-prefix mismatches. The resolved shadow sequence has 137,821 source checks, 99.90% lemma agreement, and zero out-of-range positions. Known cases: John 9:21 position 24 and Colossians 4:10 position 21. See the full report for the unresolved reference list and bridge set comparisons.

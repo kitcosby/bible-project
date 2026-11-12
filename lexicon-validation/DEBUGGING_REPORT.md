@@ -107,17 +107,3 @@ The MIT-licensed byztxt/librobinson project explicitly supports Robinson's file 
 ## Evidence and limitations
 
 The discovery queried live PostgreSQL using READ ONLY transactions, inspected source code and pinned Robinson/CrossWire source artifacts, and inspected the serving Flask/PWA implementation. The Robinson source repository commit and the JOH/COL source blob IDs are recorded in issue #1. No production repair or recomputation has occurred.
-
-
-## 2026-11-06 — Robinson variant handling confirmed
-
-The current NT builder's token extraction does not implement the pipe-delimited variant state handled by upstream `librobinson`. The upstream parser normalizes three variant encodings and selects first/second readings; the current builder flattens alternatives. A per-group deterministic reconstruction against CrossWire KJV 3.1 `src`, `lemma.TR`, Strong's, and Robinson morphology resolved 242 of 261 groups (19 groups across 17 verses remain tied). The resolved sequence achieved 99.90% lemma agreement across 137,821 source checks and zero out-of-range positions. See [ROBINSON_VARIANT_REBUILD_REPORT.md](ROBINSON_VARIANT_REBUILD_REPORT.md) for provenance and full metrics.
-
-The isolated shadow bridge also confirms the two known defects: John 9:21 now contains position 24 `λαλησει`, and Colossians 4:10 now contains position 21 `auton`. The existing YLT rendering edges were already present; they became valid once the Greek sequence was corrected. No production data or vectorizer was changed.
-
-
-## 2026-11-06 — YLT bridge provenance and profile separation
-
-The YLT rendering table must not be treated as independent lexical evidence: the shadow builder first aligns YLT words to KJV words, then inherits KJV-to-Greek positions. This explains why 975 of 3,076 YLT tokens in the low-margin review packet have no Greek-position row and why a mapped row can still point to the wrong person/number (e.g., 2 Corinthians 7:12 “our” → ὑμῶν). Retain this as a legacy KJV-mediated bridge; a YLT profile needs its own selections and explicit unmatched-token reason codes.
-
-The reviewed shadow profile contains 15 proposed group selections, 2 retracted hypotheses, 2 held unresolved groups, and 99 not yet decided. No proposed selection was applied. Parser comparison counts were corrected: 7,954 exact common first-variant sequences and 7,947 exact common second-variant sequences; Luke 17:36 is an upstream-only empty verse key, and Revelation 17:7–8 remains excluded.
