@@ -631,4 +631,19 @@ The variant vectors live in a separate search database and are accessed through 
 
 The two indexes have different scopes: passage vectors retrieve YLT verses by meaning; variant vectors retrieve Hebrew spelling records by model proximity. Similarity is not proof of lexical identity, common morphology, or textual equivalence. Result payloads retain source and witness metadata.
 
-This feature is staged only. The production Flask process and production corpus database have not been configured or modified for the new variant index. Production database import, secret/configuration changes, and service restart remain separate deployment steps.
+## Hebrew spelling embedding search — production status (2026-11-12)
+
+The 2026-11-09 staging-only statement above is historical and superseded by the production promotion recorded here. The separate Hebrew spelling-variant search database is now configured for the live Flask process through `BIBLE_VARIANT_SEARCH_DATABASE_URL`; the application uses the read-only PostgreSQL role `bible_search_prod_ro`. The live route is `GET /api/search/variants?q=<Hebrew spelling>`.
+
+**Production target:** PostgreSQL database `bible_search_prod_20261111`. The canonical corpus remains PostgreSQL database `bible`; the search database is a separate retrieval store and does not replace or duplicate the verse-semantic embedding store `bible.ylt_verses_embedding_store`.
+
+**Verified synchronization (2026-11-12):**
+- `word_variant_embeddings`: 528,565 rows; ordered `(word_id, variant_seq)` keys and vector-content fingerprint match the recovery dataset and the compared search-store copies.
+- Embeddings remain 768-dimensional `nomic-embed-text:latest` vectors. The 14 empty-text/paseq rows remain represented; no vectors were regenerated.
+- The production search database's `word_variants`, `words`, `verses`, and `books` search fields were compared with `bible`. The three stale `words` metadata fields (`strongs`, `word_pos`, `verse_id`) were refreshed for 1,781 rows; the full 264,217-row target table then matched the source exactly.
+- A persistent pre-update snapshot is retained as `public.words_merge_rollback_20261112` in `bible_search_prod_20261111` (264,217 rows; owner `postgres`). The update transaction committed only after exact full-table comparison. Its source and post-update SHA-256 are both `9c1b71b2feba53a0bc8a8724c00258fd3fdadb23cc19a69319b670c62ec086ae`.
+- Post-update parity fingerprints matched for spelling-variant keys, spelling-variant content, word search fields, verse search fields, and book search fields.
+- The production cosine IVFFlat index `word_variant_embeddings_cosine_ivfflat` remains present with `lists=512`; the primary-key index remains present.
+- The live variant-search endpoint returned HTTP 200 with 10 JSON records after the update. The app role retained SELECT-only access to the search tables; no write privileges were granted.
+
+**Scope and limitations:** no production corpus rows in `bible` were modified; no embedding vectors were regenerated; no application code, credentials, service configuration, or running services were changed or restarted. The separate reconciliation database `bible_reconcile_20261111` still lacks the IVFFlat cosine index; that database is not the live search target and no index was added there. The 2026-11-09 staging description above is retained as historical context, not current deployment status.
