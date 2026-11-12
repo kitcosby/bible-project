@@ -2245,6 +2245,127 @@ def _greek_lex():
 _GREEK_PHRASES = None
 
 
+# ---------------------------------------------------------------------------
+# Word-page rendering-list cleanup (QA audit 2026-11-11, defects CR-1/CR-3).
+#
+# The aggregated phrase lists behind /api/word carried ~19.5% noise
+# (graded sample, n=430): the phrase builders shed a clause's function
+# words onto content words, so cards offered "of", "that", "If", "who"
+# as renderings of G2424 and 12/12 debris for H3068. Two display-layer
+# rules, applied ONLY at the /api/word serve sites (the editor's
+# drop-down indices are stored choice bytes and must never shift):
+#   CR-1  drop a phrase made only of closed-class function tokens,
+#         unless the Strong's itself is a function-class lexeme
+#         (kai -> "and" is a real rendering; David -> "of" is not).
+#   CR-3  drop a phrase that merely repeats a shorter token block
+#         ("Holy holy holy", "month the month") -- one occurrence's
+#         phrase absorbing its neighbours; the single form is listed
+#         on its own line.
+# Function-class lexemes are derived from the corpus itself (>=90% of a
+# Strong's occurrences carry a function part of speech: OSHB head POS
+# for Hebrew/Aramaic, Robinson morph class for Greek), cached per DB
+# like the phrase maps. Some ambiguous English tokens are deliberately
+# NOT treated as function words because they carry content for real
+# lexemes: "one" (numerals), "said"/"saith" (H559), "do" (G4160,
+# H6213), "will" (G2307/G2309), "behold" (G2657).
+_FUNC_TOKENS = frozenset("""
+a an the of to in on for by with from at into unto upon over under
+through against among between before after about as and or but that if
+when while because than he she it they we you i him her them us me his hers
+its their our your my mine who whom whose which this these those
+himself herself itself themselves is are was were be been being am
+does did have has had shall would can could may might must let not no
+even also then there here so yet now thee thou thy thine ye o oh per
+via toward towards within without beside besides off up down out away
+since until till lest either neither both each every any some none
+nor""".split())
+_DUP_JOINERS = frozenset({'and', 'the', 'to'})
+_OT_FUNC_POS = frozenset('CRTPDS')
+_NT_FUNC_CLASS = frozenset({
+    'CONJ', 'PREP', 'PRT', 'ADV', 'P', 'T', 'D', 'C', 'COND', 'K', 'S',
+    'I', 'Q', 'R', 'X', 'INJ'})
+_FUNCTION_LEXEMES = {}
+
+
+def _phrase_tokens(phrase):
+    return [t for t in re.split(r"[^a-z']+", phrase.lower())
+            if t and t != "'"]
+
+
+def _oshb_head_pos(pattern):
+    """Head part of speech of an OSHB morph pattern: the main segment's
+    POS letter, skipping prefix clitics and stopping at a suffix."""
+    head = None
+    for seg in pattern[1:].split('/'):
+        if not seg:
+            continue
+        letter = seg[0]
+        if letter == 'S':
+            break
+        if letter in 'VNAPD':
+            head = letter
+        elif head is None:
+            head = letter
+    return head
+
+
+def _function_lexemes(db=None):
+    if BIBLE_DB not in _FUNCTION_LEXEMES:
+        db = db or bible()
+        counts = {}
+        for row in db.execute(
+                'SELECT w.strongs AS s, mp.pattern AS p, COUNT(*) AS n '
+                'FROM words w JOIN morph_patterns mp '
+                'ON mp.pattern_id = w.morph_pattern_id '
+                'WHERE w.strongs IS NOT NULL AND mp.pattern IS NOT NULL '
+                'GROUP BY w.strongs, mp.pattern'):
+            head = _oshb_head_pos(row['p'])
+            if head:
+                c = counts.setdefault(row['s'], [0, 0])
+                c[1] += row['n']
+                if head in _OT_FUNC_POS:
+                    c[0] += row['n']
+        for row in db.execute(
+                'SELECT strongs AS s, morph AS m, COUNT(*) AS n '
+                'FROM gnt_words WHERE strongs IS NOT NULL '
+                'AND morph IS NOT NULL GROUP BY strongs, morph'):
+            c = counts.setdefault(row['s'], [0, 0])
+            c[1] += row['n']
+            if row['m'].split('-')[0] in _NT_FUNC_CLASS:
+                c[0] += row['n']
+        _FUNCTION_LEXEMES[BIBLE_DB] = {
+            s for s, (f, t) in counts.items() if t and f / t >= 0.9}
+    return _FUNCTION_LEXEMES[BIBLE_DB]
+
+
+def _is_dup_phrase(phrase):
+    t = [x for x in _phrase_tokens(phrase) if x not in _DUP_JOINERS]
+    n = len(t)
+    if n < 2:
+        return False
+    for m in range(1, n // 2 + 1):
+        if n % m == 0 and t == t[:m] * (n // m):
+            return True
+    return False
+
+
+def _clean_phrases(phrases, strongs):
+    """CR-1/CR-3 filter for one word-page rendering list. Order and the
+    surviving phrases are untouched; callers slice to 12 afterwards so
+    deeper legitimate phrases backfill the freed slots."""
+    func = strongs in _function_lexemes()
+    out = []
+    for p in phrases:
+        if _is_dup_phrase(p):
+            continue
+        if not func:
+            t = _phrase_tokens(p)
+            if t and all(x in _FUNC_TOKENS for x in t):
+                continue
+        out.append(p)
+    return out
+
+
 def _greek_phrases():
     """Strong's -> {'kjv': [phrases by frequency], 'ylt': [...]} for NT
     words, aggregated corpus-wide from the CrossWire alignment (KJV)
@@ -2293,8 +2414,10 @@ def _greek_phrases():
     out = {}
     for s in set(kjv_acc) | set(ylt_acc):
         out[s] = {
-            'kjv': [p for p, _n in kjv_acc[s].most_common(12)],
-            'ylt': [p for p, _n in ylt_acc[s].most_common(12)],
+            # Retain 48, not 12: api_word cleans the lists (CR-1/CR-3)
+            # and slices to 12, so legitimate phrases backfill.
+            'kjv': [p for p, _n in kjv_acc[s].most_common(48)],
+            'ylt': [p for p, _n in ylt_acc[s].most_common(48)],
         }
     _GREEK_PHRASES = out
     return out
@@ -2597,8 +2720,8 @@ def api_word(strongs):
             'greek': surf['surface'] if surf else None,
             'lemma': entry.get('lemma'),
             'gloss': entry.get('gloss', ''),
-            'kjv_phrases': gph.get('kjv', []),
-            'ylt_phrases': gph.get('ylt', []),
+            'kjv_phrases': _clean_phrases(gph.get('kjv', []), s)[:12],
+            'ylt_phrases': _clean_phrases(gph.get('ylt', []), s)[:12],
             'ylt_computed': True,
             'greek_lexicon': 'derived from LXX word data (most '
                              'frequent lemma/gloss per Strong\'s '
@@ -2661,8 +2784,8 @@ def api_word(strongs):
         'morph': w['morph'],
         'root': w['base_word'],
         'variants': agg[:12],
-        'kjv_phrases': kjv_lp.get(lk, [])[:12],
-        'ylt_phrases': ylt_lp.get(lk, [])[:12],
+        'kjv_phrases': _clean_phrases(kjv_lp.get(lk, []), s)[:12],
+        'ylt_phrases': _clean_phrases(ylt_lp.get(lk, []), s)[:12],
         'ylt_computed': True,
         'occurrence_count': occ,
         'occurrences': [
