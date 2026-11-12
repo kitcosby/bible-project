@@ -1,7 +1,9 @@
 # MCP Gateway — Phase 4 Completion Report (2026-11-12)
 
-**Status: COMPLETE, with one acceptance item left for the ChatGPT session
-itself (first live tool call — see below).**
+**Status: CONNECTED — FIRST TOOL INVOCATION PENDING (label adopted
+2026-11-12 from GPT's PR #31 review; the connection itself is complete —
+acceptance criterion 8 of 9, the first live tool call from a ChatGPT
+conversation, remains open for the ChatGPT session itself — see below).**
 
 Phase 4 = register the Lampy MCP gateway in ChatGPT as a plugin and
 complete the OAuth connection. For most of 2026-11-12 this was believed
@@ -71,3 +73,57 @@ superseded by this observed result for this account.
   subscription; flagged for reconciliation, immaterial to this result.
 - Phase 5 (write tools / bounded command execution) remains
   **unauthorized** and unbuilt.
+
+## Addendum — PR #31 review remediation round (2026-11-12)
+
+GPT's independent review of PR #31 returned REQUEST CHANGES: three new
+findings (F6–F8), a concurrency concern in `authorize_complete`, the
+status label adopted above, and a request to inspect the approval watch.
+Muse verified every claim against the deployed source before acting;
+Kit approved the round ("Apply the remediation round now", ~08:18 PST).
+All four code items are FIXED and deployed (detail in the OAuth audit,
+addendum of the same date):
+
+- **F6 (fs_search denylist bypass) — CONFIRMED, sharper than reported.**
+  The old grep-based search excluded only `.git`, `*.env`, and
+  `tokens.json`, while `/opt/bible/website/secret.key` (the Flask site's
+  secret key file, deny-class for `fs_read`) sits under a searchable
+  root. No exposure is known: `fs_search` had only ever been run by
+  Muse's own batteries, and ChatGPT has not yet executed a tool. Fix:
+  search now traverses with exactly the `fs_read` rule (denied
+  components pruned, denied filenames skipped, no symlinks).
+- **F7 (git_diff option injection) — CONFIRMED.** The ref regex allowed
+  a leading `-`; the pair `ref_a=--output`, `ref_b=<path>` would have
+  git write the diff to a file as the gateway user. Fix: leading-dash
+  refs rejected and every ref resolved to a verified commit SHA via
+  `git rev-parse` before any diff runs.
+- **F8 (unescaped client_name) — CONFIRMED.** The registration-supplied
+  client name was interpolated raw into the authorization page. Fix:
+  `html.escape` at render; regression-tested with a `<script>` payload.
+- **Concurrency — CONFIRMED (small).** `authorize_complete` checked the
+  request status outside its lock on a stale snapshot; two concurrent
+  completions could have minted two codes (both still client + PKCE +
+  redirect bound, single-use). Fix: check-and-issue is now one critical
+  section with an atomic approved→completed transition; a second
+  completion returns an "already completed" page and no code (this also
+  resolves the F5 wording nit).
+- **Approval watch — GPT's premise corrected.** The watch never matched
+  on client_name; its criteria were redirect_uri + scope, recorded
+  verbatim in the OAuth audit addendum. It was one-shot and is deleted.
+
+Disclosure: during deployment, Muse's first edit inserted the new
+helper functions between two `@mcp.tool` decorators and their
+functions, leaving `fs_search` and `git_diff` unregistered for a few
+minutes (and two helpers registered in their place). The remediation
+battery's positive controls caught it — the first run scored 16/20 with
+several vacuous negative passes, which were rejected as evidence; the
+decorators were corrected, a registry precondition was added to the
+battery, and the re-run is clean. No external calls occurred in that
+window (the audit log shows only the battery's own attempts).
+
+Verification after the fix (gateway pid 134345, RUNNING):
+`remediation_test.py` **21/21**; `test_client.py` **23/23**;
+`oauth_test.py` **16/16**; `f3_negative_test.py` **7/7**. Deployed
+SHA-256: `gateway.py` 1c271a2ca72745b1649e61fbf92f5fbf4ac401205ae2cc34716a132822ab9e40,
+`oauth_as.py` 3e7499867df8da6309329f99e2a2230dd79627305a0459f17483a0d8f69ee0fc
+(local and remote identical). Criterion 8 remains the one open item.

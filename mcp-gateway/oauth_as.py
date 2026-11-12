@@ -15,6 +15,7 @@ design. Access tokens are issued into the gateway's existing token store
 import base64
 import hashlib
 import hmac
+import html
 import json
 import os
 import secrets
@@ -222,7 +223,7 @@ async def authorize(request: Request):
         }
         _save(PENDING_FILE, "requests", pending)
     body = (
-        f"<p><b>{client['client_name']}</b> is asking to connect to the "
+        f"<p><b>{html.escape(client['client_name'])}</b> is asking to connect to the "
         f"Lampy Bible gateway (scope: {scope}).</p>"
         f"<p>Request ID: <b style='font-size:1.3em'>{req_id}</b></p>"
         "<p>The owner approves requests out of band. Once approved, use "
@@ -235,29 +236,39 @@ async def authorize(request: Request):
 
 async def authorize_complete(request: Request):
     req_id = request.query_params.get("req", "")
+    # The whole check-and-issue runs inside one critical section: the
+    # status is re-read and transitioned atomically, so two concurrent
+    # completions of one approved request can never mint two codes
+    # (the earlier version checked the status outside the lock on a
+    # stale snapshot - a TOCTOU race).
     with LOCK:
         pending = _load(PENDING_FILE, "requests")
         rec = pending.get(req_id)
-    if rec is None:
-        return HTMLResponse(_page("Unknown request",
-                                  "<p>No such request ID.</p>"), status_code=404)
-    if time.time() - rec["created"] > 1800:
-        return HTMLResponse(_page("Request expired",
-                                  "<p>Start the connection again.</p>"),
-                            status_code=400)
-    if rec["status"] == "denied":
-        return HTMLResponse(_page("Request denied",
-                                  "<p>The owner denied this request.</p>"),
-                            status_code=403)
-    if rec["status"] != "approved":
-        body = (
-            f"<p>Request <b>{req_id}</b> is still awaiting owner approval.</p>"
-            f"<p><a href='/oauth/authorize/complete?req={req_id}'>"
-            "Check again</a></p>"
-        )
-        return HTMLResponse(_page("Still pending", body))
-    code = secrets.token_urlsafe(32)
-    with LOCK:
+        if rec is None:
+            return HTMLResponse(_page("Unknown request",
+                                      "<p>No such request ID.</p>"),
+                                status_code=404)
+        if time.time() - rec["created"] > 1800:
+            return HTMLResponse(_page("Request expired",
+                                      "<p>Start the connection again.</p>"),
+                                status_code=400)
+        if rec["status"] == "denied":
+            return HTMLResponse(_page("Request denied",
+                                      "<p>The owner denied this request.</p>"),
+                                status_code=403)
+        if rec["status"] == "completed":
+            return HTMLResponse(_page(
+                "Already completed",
+                "<p>This request was already completed. Return to the "
+                "app to finish connecting.</p>"))
+        if rec["status"] != "approved":
+            body = (
+                f"<p>Request <b>{req_id}</b> is still awaiting owner approval.</p>"
+                f"<p><a href='/oauth/authorize/complete?req={req_id}'>"
+                "Check again</a></p>"
+            )
+            return HTMLResponse(_page("Still pending", body))
+        code = secrets.token_urlsafe(32)
         codes = _load(CODES_FILE, "codes")
         codes[_sha(code)] = {
             "client_id": rec["client_id"],
@@ -270,10 +281,12 @@ async def authorize_complete(request: Request):
         _save(CODES_FILE, "codes", codes)
         pending[req_id]["status"] = "completed"
         _save(PENDING_FILE, "requests", pending)
-    sep = "&" if "?" in rec["redirect_uri"] else "?"
-    url = f"{rec['redirect_uri']}{sep}code={code}"
-    if rec["state"]:
-        url += f"&state={rec['state']}"
+        redirect_uri = rec["redirect_uri"]
+        state = rec["state"]
+    sep = "&" if "?" in redirect_uri else "?"
+    url = f"{redirect_uri}{sep}code={code}"
+    if state:
+        url += f"&state={state}"
     return RedirectResponse(url, status_code=302)
 
 

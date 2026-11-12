@@ -22,6 +22,7 @@ product's plan entitlement, not on this code.
 | `test_client.py` | Local battery for the gateway tools (23 checks) |
 | `oauth_test.py` | Simulated-client OAuth battery: DCR → authorize → owner approval → token exchange → MCP call → refresh rotation → reuse negatives (16 checks) |
 | `f3_negative_test.py` | Regression test for the F3 fix: `redirect_uri` is required at token exchange (RFC 6749 §4.1.3); omission and mismatch are rejected, the correct value succeeds (7 checks) |
+| `remediation_test.py` | Regression battery for the PR #31 review remediation: F6 search/read boundary canaries, F7 git option-injection rejections, F8 client-name escaping, and single-code completion under the atomic authorize_complete (21 checks) |
 | `docs/` | Phase 2, 3, and 4 completion reports and the 2026-11-12 OAuth audit with its review addenda |
 
 ## Tools (all read-only, annotated `readOnlyHint: true`)
@@ -66,6 +67,7 @@ On the deployment host, as the gateway user:
 python test_client.py        # 23/23 expected
 python oauth_test.py         # 16/16 expected
 python f3_negative_test.py   # 7/7 expected
+python remediation_test.py   # 21/21 expected
 ```
 
 All three batteries passed on the deployed code on 2026-11-12, including

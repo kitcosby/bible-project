@@ -235,21 +235,67 @@ def fs_read(root: str, subpath: str) -> dict:
     return {"root": root, "subpath": subpath, "content": text}
 
 
+def _denied_name(name):
+    return name == ".git" or bool(DENY_COMPONENT.search(name))
+
+
+def _searchable_files(base):
+    """Yield the files under base that fs_read would be allowed to open:
+    no denied path component (the same DENY_COMPONENT rule fs_read
+    enforces), no .git, and no symlinks. This keeps the fs_search
+    boundary identical to the fs_read boundary (finding F6)."""
+    if os.path.isfile(base):
+        yield str(base)
+        return
+    for dirpath, dirnames, filenames in os.walk(str(base)):
+        dirnames[:] = sorted(
+            d for d in dirnames
+            if not _denied_name(d)
+            and not os.path.islink(os.path.join(dirpath, d))
+        )
+        for name in sorted(filenames):
+            if _denied_name(name):
+                continue
+            fpath = os.path.join(dirpath, name)
+            if not os.path.islink(fpath):
+                yield fpath
+
+
 @mcp.tool(annotations=RO)
 def fs_search(root: str, pattern: str, subpath: str = "") -> dict:
     """Search file contents (regex) under an allowlisted root.
-    Returns at most 200 matching lines; .git and denied names excluded."""
+    Returns at most 200 matching lines in grep -n format. Traversal
+    applies exactly the fs_read denylist, so files fs_read would refuse
+    (secret/credential/env/key material) are never searched."""
     target = safe_path(root, subpath)
-    res = run_fixed(
-        [
-            "grep", "-rInE", "--exclude-dir=.git", "--exclude=*.env",
-            "--exclude=tokens.json", "--", pattern, str(target),
-        ],
-        timeout=30, max_lines=200,
-    )
+    try:
+        rx = re.compile(pattern)
+    except re.error as e:
+        raise ValueError(f"invalid regex: {e}")
+    matches = []
+    truncated = False
+    for fpath in _searchable_files(target):
+        try:
+            if os.path.getsize(fpath) > 1024 * 1024:
+                continue
+            with open(fpath, "rb") as f:
+                raw = f.read()
+        except OSError:
+            continue
+        if b"\x00" in raw[:8192]:
+            continue  # binary file, like grep -I
+        text = raw.decode("utf-8", errors="replace")
+        for lineno, line in enumerate(text.splitlines(), 1):
+            if rx.search(line):
+                matches.append(f"{fpath}:{lineno}:{line[:1000]}")
+                if len(matches) >= 200:
+                    truncated = True
+                    break
+        if truncated:
+            break
     audit({"kind": "tool", "tool": "fs_search", "root": root})
-    return {"root": root, "subpath": subpath, "matches": res["stdout"],
-            "truncated": res["truncated"]}
+    return {"root": root, "subpath": subpath,
+            "matches": "\n".join(matches), "truncated": truncated}
 
 
 def _repo_path(repo):
@@ -289,15 +335,44 @@ def git_branches(repo: str) -> dict:
     return {"repo": repo, **res}
 
 
+def _resolve_ref(path, ref):
+    """Resolve a user-supplied ref to a verified commit SHA, or raise.
+    Refs are never passed to git unresolved: a leading-dash ref would be
+    parsed by git as an option (e.g. --output writes a file), so the
+    only values that ever reach a git command line are hex SHAs
+    (finding F7)."""
+    if not ref or ref.startswith("-") or \
+            not re.fullmatch(r"[A-Za-z0-9._/\-^~]+", ref):
+        raise ValueError(f"suspicious ref: {ref!r}")
+    res = run_fixed(
+        ["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"],
+        cwd=path,
+    )
+    sha = (res["stdout"] or "").strip()
+    if res["exit_code"] != 0 or not re.fullmatch(r"[0-9a-f]{40}", sha):
+        raise ValueError(f"unresolvable ref: {ref!r}")
+    return sha
+
+
+def _resolve_diff_spec(path, ref_a, ref_b):
+    if ref_b:
+        return [_resolve_ref(path, ref_a), _resolve_ref(path, ref_b)]
+    if "..." in ref_a:
+        a, _, b = ref_a.partition("...")
+        return [f"{_resolve_ref(path, a)}...{_resolve_ref(path, b)}"]
+    if ".." in ref_a:
+        a, _, b = ref_a.partition("..")
+        return [f"{_resolve_ref(path, a)}..{_resolve_ref(path, b)}"]
+    return [_resolve_ref(path, ref_a)]
+
+
 @mcp.tool(annotations=RO)
 def git_diff(repo: str, ref_a: str = "HEAD", ref_b: str = "") -> dict:
     """Diff of a gateway repo clone: ref_a..ref_b, or working tree vs ref_a
-    when ref_b is empty. Output capped at 400 lines."""
+    when ref_b is empty. Output capped at 400 lines. Refs are resolved to
+    commit SHAs before use (see _resolve_ref)."""
     path = _repo_path(repo)
-    for ref in (ref_a, ref_b):
-        if ref and not re.fullmatch(r"[A-Za-z0-9._/\-^~]+", ref):
-            raise ValueError(f"suspicious ref: {ref!r}")
-    argv = ["git", "diff", "--stat", ref_a] + ([ref_b] if ref_b else [])
+    argv = ["git", "diff", "--stat"] + _resolve_diff_spec(path, ref_a, ref_b)
     res = run_fixed(argv, cwd=path)
     audit({"kind": "tool", "tool": "git_diff", "repo": repo})
     return {"repo": repo, **res}

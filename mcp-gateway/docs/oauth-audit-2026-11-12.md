@@ -211,3 +211,94 @@ fix: mcp-gateway RUNNING, pid 129257 -> 131312. Verification:
 - Phase 2 local battery re-run: 23/23 PASS.
 F3 is CLOSED. F2 remains staged as the mandatory precondition for any
 multi-resource/multi-AS expansion (assessment in the review addendum).
+
+## Addendum 2026-11-12 (remediation) — PR #31 review findings F6–F8 and the authorize_complete race: all FIXED
+
+GPT's independent review of PR #31 (GitHub source, not summaries)
+returned REQUEST CHANGES with three new findings beyond F1–F5, a
+concurrency concern, and an approval-watch inspection request. Muse
+verified each against the deployed source; Kit approved the remediation
+round on 2026-11-12 (~08:18 PST). All four code items are fixed,
+deployed, and regression-tested. Verification (gateway pid 134345):
+new `remediation_test.py` 21/21 PASS; regression `test_client.py`
+23/23, `oauth_test.py` 16/16, `f3_negative_test.py` 7/7. Deployed
+SHA-256: gateway.py
+1c271a2ca72745b1649e61fbf92f5fbf4ac401205ae2cc34716a132822ab9e40,
+oauth_as.py 3e7499867df8da6309329f99e2a2230dd79627305a0459f17483a0d8f69ee0fc
+(local == remote for both).
+
+- **F6 — fs_search bypassed the fs_read denylist (High, CONFIRMED).**
+  fs_read enforces DENY_COMPONENT on every path component (env /
+  secret / credential / .key / .pem / id_* / .password / .cred /
+  tokens.json); the grep-based fs_search excluded only .git, *.env and
+  tokens.json. Live consequence: /opt/bible/website/secret.key and
+  /opt/bible/website-debug/secret.key (Flask secret key files) sit
+  under searchable roots and would have been returned line-by-line to
+  any token holder. No exposure is known (fs_search had only been run
+  by Muse's batteries; ChatGPT has executed no tool yet). Fix:
+  fs_search now walks in-process via _searchable_files(), applying the
+  identical rule — denied directory components prune descent, denied
+  filenames are skipped, symlinks are never followed, binary and
+  >1 MiB files skipped; output format unchanged (path:line:text, 200
+  lines). Regression: canary files (a secret.key name, a .env.local
+  name, a file inside a secrets-named directory) planted in a gateway
+  clone are invisible to search while a control file is found, and
+  broad searches of both live website trees return no line sourced
+  from either secret.key file.
+- **F7 — git_diff option injection (High, CONFIRMED).** The ref
+  validator's character class permitted a leading hyphen; git would
+  parse such a "ref" as an option, and ref_a="--output" with
+  ref_b=<path> writes the diff to that path as the gateway user — a
+  write primitive in a read-only tool. Fix: refs beginning with "-" are
+  rejected, and every ref (including both sides of ".." / "..."
+  ranges) is resolved with `git rev-parse --verify <ref>^{commit}`
+  before use; only verified 40-hex SHAs ever reach the diff command.
+  Regression: both --output forms are rejected, no file is created,
+  plain and range diffs still work.
+- **F8 — unescaped client_name on the authorization page (High,
+  CONFIRMED).** DCR accepts an arbitrary client_name (public
+  registration), and the authorize handler interpolated it into HTML
+  with no escaping anywhere in the file — a stored-XSS vector on the
+  approval page (impact bounded: the origin holds no session or cookie,
+  and consent is out-of-band, so the realistic harm is page spoofing).
+  Fix: html.escape() on the client name at render. Regression: a client
+  registered as `<script>alert(1)</script>` renders escaped
+  (&lt;script&gt;...) and never raw.
+- **authorize_complete TOCTOU (CONFIRMED, small).** The handler loaded
+  the pending record under LOCK, released it, checked status on the
+  stale snapshot, and only then minted a code and marked the request
+  completed in a second critical section; two concurrent completions
+  could each mint a code for one approved request (codes remain bound
+  to the same client, PKCE challenge and redirect URI, and single-use,
+  which bounds the impact). Fix: the whole read-check-transition-issue
+  sequence now runs inside one LOCK section; status "completed" is
+  terminal, and a repeat completion returns an "already completed"
+  page with no code — which also resolves the F5 wording nit.
+  Regression: double completion yields exactly one code, and that code
+  exchanges normally.
+- **Approval watch — inspection result.** GPT asked to inspect the
+  Phase 4 approval automation, concerned it might identify ChatGPT by
+  its self-supplied client_name. It did not. The one-shot cron
+  `mcp-phase4-approval-watch` (created 2026-11-12 ~06:58 PST, deleted
+  after it fired) approved a pending request ONLY when BOTH held:
+  (1) redirect_uri starts with `https://chatgpt.com/`, and (2) the
+  requested scope is a subset of {read, offline_access}. Unmatched
+  pending requests were reported to the owner, never approved; two or
+  more simultaneous matches meant approve none and report ambiguity.
+  client_name played no part. Defense in depth, for the record:
+  approval alone issues nothing — the code is delivered only to the
+  client's registered redirect URI (exact match enforced at authorize),
+  and redemption requires that client's secret, the PKCE verifier, and
+  (since the F3 fix) the exact redirect_uri. The watch approved exactly
+  one request (3FRAUN, ChatGPT's registration) and no longer exists;
+  any future registration is approved manually via gw_admin.py.
+
+Deployment disclosure: Muse's first remediation edit placed two
+helper functions between @mcp.tool decorators and their functions,
+leaving fs_search and git_diff unregistered for a few minutes. The new
+battery's positive controls exposed it (first run 16/20; several
+negative checks had passed vacuously against unknown-tool errors and
+were rejected as evidence). The decorators were corrected, a registry
+precondition (the tools must be listed) was added to the battery, and
+the clean 21/21 above is the re-run. No external calls occurred in the
+window.
