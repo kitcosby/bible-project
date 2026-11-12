@@ -22,7 +22,7 @@ product's plan entitlement, not on this code.
 | `test_client.py` | Local battery for the gateway tools (23 checks) |
 | `oauth_test.py` | Simulated-client OAuth battery: DCR → authorize → owner approval → token exchange → MCP call → refresh rotation → reuse negatives (16 checks) |
 | `f3_negative_test.py` | Regression test for the F3 fix: `redirect_uri` is required at token exchange (RFC 6749 §4.1.3); omission and mismatch are rejected, the correct value succeeds (7 checks) |
-| `docs/` | Phase 2 and Phase 3 completion reports and the 2026-11-12 OAuth audit with its review addenda |
+| `docs/` | Phase 2, 3, and 4 completion reports and the 2026-11-12 OAuth audit with its review addenda |
 
 ## Tools (all read-only, annotated `readOnlyHint: true`)
 
