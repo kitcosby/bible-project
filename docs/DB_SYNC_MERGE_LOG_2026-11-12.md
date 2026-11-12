@@ -80,3 +80,53 @@ Additional checks:
 1. Decide whether `bible_reconcile_20261111` is a retained audit/archive database or an intended query target. Only if it is intended for vector search should its missing IVFFlat index be considered.
 2. Decide whether the rollback snapshot should remain accessible to the read-only application role. It is currently SELECT-readable but not writable/deletable by that role; no access change has been made.
 3. Continue Git branch reconciliation separately. Several historical branches have diverged substantially from `master`; they must be reviewed by unique commits and file-level conflicts rather than merged wholesale.
+
+
+## PostgreSQL dump reconciliation — search staging (2026-11-12)
+
+### Dump validation
+
+- Source archive: `/root/backups/2026-11-08-incident/bible-2026-11-11.dump`.
+- Format: PostgreSQL custom archive; 257 MB; created 2026-11-11 22:10:53 PST; 508 TOC entries.
+- SHA-256: `5c62529cecc10d67e1cc0eaa2be94be20bbd346c4fcfa372f915006e5e150547`.
+- Restored successfully to isolated database `bible_dump_audit_20261112`; no live database was restored over or replaced.
+- The dump contains 49 public base tables and 11 `ai` schema tables.
+- All 49 public tables in the dump have identical full-content fingerprints and row counts to the live canonical `bible` database. No canonical `bible` table needed an update from this dump.
+
+### Search-stage reconciliation
+
+Target: `bible_search_stage_20261109`. The live application continues to use `bible_search_prod_20261111`; the production search database and canonical `bible` database were not modified by this operation.
+
+The staging database had 47 of the dump's 49 public tables. The two absent tables are `greek_verses_embedding_store` and `hebrew_verses_embedding_store`; they were not added to the separate Hebrew spelling-variant search staging database. Four stage-specific tables were retained: `hebrew_vowel_variant_group`, `hebrew_vowel_variant_member`, `word_variant_embedding_meta`, and `word_variant_embeddings`.
+
+Eight shared tables required reconciliation. A persistent pre-update snapshot was created in schema `pgdump_sync_rollback_20261112` before any change. The snapshot contains all eight original tables and their original row counts.
+
+| Table | Dump rows | Stage before | Missing from stage | Changed common rows | Stage after |
+|---|---:|---:|---:|---:|---:|
+| `strongs` | 19,127 | 19,058 | 69 | 0 | 19,127 |
+| `strongs_components` | 3,922 | 3,783 | 139 | 0 | 3,922 |
+| `verses` | 31,311 | 31,311 | 0 | 7 hidden-flag values | 31,311 |
+| `words` | 264,217 | 264,217 | 0 | 1,781 | 264,217 |
+| `ylt_renderings` | 357,574 | 358,391 | 91 | 267 | 358,482 |
+| `word_alignment` | 836,290 | 836,290 | 0 | 996 | 836,290 |
+| `lexicon_found_verse` | 262,802 | 262,802 | 74 | 0 | 262,876 |
+| `lexicon_ylt_rendering` | 234,131 | 234,091 | 40 | 440 | 234,131 |
+
+**Merge semantics:** source rows were inserted or updated to match the dump; no stage-only rows were deleted. This deliberately retains 908 stage-only `ylt_renderings` rows and 74 stage-only `lexicon_found_verse` rows. The dump's `verses.hidden` column was added to staging as `integer NOT NULL DEFAULT 0`; seven verses have `hidden=1`.
+
+### Post-sync verification
+
+- All source rows in all eight reconciled tables now match the dump exactly, including schema and primary keys.
+- The other 39 shared public tables were already content-identical to the dump. Thus all 47 public tables shared with staging now contain the complete dump data; the two documented stage-only supersets remain additive.
+- Rollback snapshot counts were checked: `strongs` 19,058; `strongs_components` 3,783; `verses` 31,311; `words` 264,217; `ylt_renderings` 358,391; `word_alignment` 836,290; `lexicon_found_verse` 262,802; `lexicon_ylt_rendering` 234,091.
+- Referential-integrity checks returned zero orphan references for `word_alignment.ylt_rendering_id`, `ylt_renderings.word_id`, and `words.verse_id`.
+- Stage-specific Hebrew variant data remains present: 3,349 groups, 7,148 members, 528,565 embedding rows, and 14 metadata rows. The IVFFlat cosine index with `lists=512` remains present.
+- All compared static `ai` metadata tables matched the dump, including `ai.vectorizer`, pgai migration/version metadata, and vectorizer progress. `ai.vectorizer_worker_process` differed (18 dump rows vs 13 staging rows) and was intentionally not synchronized because it represents runtime worker state, not canonical corpus data.
+
+### Scope boundaries
+
+- No rows or schema in canonical `bible` were changed.
+- No rows or schema in live `bible_search_prod_20261111` were changed.
+- No `bible_app` database or app-owned data was included.
+- No stage-specific Hebrew variant groups, members, embeddings, or embedding metadata were overwritten or deleted.
+- The isolated restore `bible_dump_audit_20261112` and rollback schema `pgdump_sync_rollback_20261112` are retained as audit/rollback evidence.
