@@ -355,3 +355,21 @@ c16302e8d512b357c9879cfff80a77b57cd1484f9544ea217c2ff60bf245421d
   STANDING POLICY, stated at GPT's recommendation and already in
   effect: automatic approval is retired; every future registration is
   approved manually by the owner via gw_admin.py.
+
+## Closing note 2026-11-12 — repeated-parameter edge case FIXED before merge
+
+GPT's merge approval for PR #31 noted one non-blocking edge case: the
+new callback builder converted the redirect URI's query pairs to a
+dict, collapsing repeated parameters (tenant=a&tenant=b would keep
+only one). Kit directed that it be fixed before merging ("Fix the edge
+case first, then merge"). The builder now keeps the parse_qsl output
+as a list of pairs, replaces only the code/state pairs, and urlencodes
+the list, so repeated and unrelated parameters survive intact.
+Regression: remediation_test.py RP checks (a registered redirect
+carrying ?tenant=a&tenant=b&keep=1 completes with tenant=['a','b'],
+keep=1, and exactly one fresh code) — battery now 32/32 PASS;
+oauth_test.py 16/16 and f3_negative_test.py 7/7 unchanged. Deployed
+oauth_as.py SHA-256:
+32058a6fbc6704af187a0e9750a16cdaae7dbadb32155f5b52ebe4844ffa06ae
+(gateway pid 136117). Filed as GitHub issue #32 and closed by this fix.
+With this, PR #31 has no open findings of any severity.

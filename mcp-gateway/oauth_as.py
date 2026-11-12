@@ -301,18 +301,22 @@ async def authorize_complete(request: Request):
         redirect_uri = rec["redirect_uri"]
         state = rec["state"]
     # Build the callback with proper query encoding, preserving any
-    # parameters the registered redirect URI already carries. The
-    # stored state is client-supplied: it must be echoed identically
-    # after parsing, never concatenated raw - a state containing & or
-    # = would otherwise inject extra parameters into the callback.
+    # parameters the registered redirect URI already carries -
+    # including repeated ones, so the query is handled as a list of
+    # pairs, never a dict. The stored state is client-supplied: it must
+    # be echoed identically after parsing, never concatenated raw - a
+    # state containing & or = would otherwise inject extra parameters
+    # into the callback. Any pre-existing code/state pairs in the
+    # registered URI are replaced by the fresh values.
     parts = urllib.parse.urlsplit(redirect_uri)
-    params = dict(urllib.parse.parse_qsl(parts.query,
-                                         keep_blank_values=True))
-    params["code"] = code
+    pairs = [(k, v) for k, v in urllib.parse.parse_qsl(
+        parts.query, keep_blank_values=True)
+        if k not in ("code", "state")]
+    pairs.append(("code", code))
     if state:
-        params["state"] = state
+        pairs.append(("state", state))
     url = urllib.parse.urlunsplit(
-        parts._replace(query=urllib.parse.urlencode(params)))
+        parts._replace(query=urllib.parse.urlencode(pairs)))
     return RedirectResponse(url, status_code=302)
 
 

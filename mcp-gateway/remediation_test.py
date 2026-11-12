@@ -16,7 +16,9 @@ Covers:
   must be echoed identically after parsing, with exactly one code
   parameter in the callback; redirect registration must accept http
   only for parsed loopback hosts (localhost / 127.0.0.1), never for
-  prefix lookalikes such as localhost.evil.example.
+  prefix lookalikes such as localhost.evil.example; and repeated
+  query parameters already present in a registered redirect URI must
+  survive the callback intact.
 
 Runs on Lampy as mcpgw against http://127.0.0.1:8765.
 """
@@ -303,6 +305,38 @@ def final_revision_checks():
            reg_status("http://127.0.0.1:9000/cb") == 201)
     record("LH plain http non-loopback still refused",
            reg_status("http://evil.example.com/cb") == 400)
+
+    # ---- Repeated redirect parameters must survive the callback
+    probe_redirect = ("https://chatgpt.com/connector/oauth/probe"
+                      "?tenant=a&tenant=b&keep=1")
+    status, _, body = req("POST", BASE + "/oauth/register", data={
+        "client_name": "Remediation Repeated Params",
+        "redirect_uris": [probe_redirect],
+        "grant_types": ["authorization_code"],
+        "response_types": ["code"]})
+    reg = json.loads(body) if status == 201 else {}
+    cid3 = reg.get("client_id", "")
+    verifier3 = secrets.token_urlsafe(48)
+    challenge3 = b64url(hashlib.sha256(verifier3.encode()).digest())
+    q3 = urllib.parse.urlencode({
+        "response_type": "code", "client_id": cid3,
+        "redirect_uri": probe_redirect, "scope": "read", "state": "edge",
+        "code_challenge": challenge3, "code_challenge_method": "S256",
+    })
+    status, _, body = req("GET", BASE + "/oauth/authorize?" + q3)
+    m = re.search(r"Request ID: <b[^>]*>([A-Z2-9]{6})</b>", body)
+    req_id3 = m.group(1) if m else ""
+    subprocess.run(ADMIN + ["approve", req_id3],
+                   capture_output=True, text=True)
+    s, h, _ = req("GET", BASE + f"/oauth/authorize/complete?req={req_id3}")
+    loc = h.get("Location", "") if h else ""
+    qs = urllib.parse.parse_qs(urllib.parse.urlparse(loc).query)
+    record("RP completion redirects", s == 302, f"status={s}")
+    record("RP repeated tenant params both preserved",
+           qs.get("tenant") == ["a", "b"], f"tenant={qs.get('tenant')}")
+    record("RP unrelated param and fresh code/state intact",
+           qs.get("keep") == ["1"] and len(qs.get("code", [])) == 1
+           and qs.get("state") == ["edge"])
 
 
 def main():
