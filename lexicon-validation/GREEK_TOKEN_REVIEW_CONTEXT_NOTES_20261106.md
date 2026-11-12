@@ -93,3 +93,17 @@ The original 39-row set now contains **31 pending rows and eight proposed rows**
 ## Correction of six stored review rationales
 
 A final cross-check of the database notes against the exact Greek sequence found six misleading rationales: Luke 2:34 (τῷ is in ἐν τῷ Ἰσραήλ, not “his mother”); Acts 26:20 (τῆς is in τῆς μετανοίας, not a possessive); and four articles in 2 Corinthians 7:12 (the articular infinitive, “our diligence”, the qualifying phrase “on your behalf”, and “before God”). The stored notes and matching review reasons were corrected in shadow only. All six alignment statuses remain not_expressed with unresolved confidence, and all six token-review rows remain pending. See [FUNCTION_NOTE_CORRECTIONS_20261106.md](FUNCTION_NOTE_CORRECTIONS_20261106.md). No endpoint or review decision was changed.
+
+
+## Follow-up dispositions after the original contextual notes (2026-11-06)
+
+The original 39-case note set was a snapshot: eight proposed token-review rows and 31 pending rows. A later full-context pass revisited the eleven alignment rows that were still marked unresolved.
+
+- Eight are now classified `not_expressed` with high or moderate confidence: Matthew 4:13 τήν; Luke 4:16 τήν; Acts 19:27 τό; Acts 22:25 εἰ and καί; Colossians 4:10 ὁ; James 4:15 τοῦ; Revelation 7:2 αὐτοῖς.
+- Philippians 4:2 τὸ now has a candidate relationship to YLT “the” in “the same”, but the YLT token's legacy Greek position points to φρονεῖν. It is marked `legacy_overlap_review`; neither association is overwritten.
+- Acts 15:32 δέ remains unresolved because δὲ καί has joint discourse/additive force.
+- Acts 21:8 περί remains unresolved because οἱ περὶ τὸν Παῦλον is rendered idiomatically as “Paul and his company”, with no safe isolated English preposition token.
+
+The Greek token-review table does not support a `not_expressed` status. The eight alignment dispositions therefore remain `pending_review` in that separate table, with reasons explaining the contextual classification. This is a schema limitation and must not be mistaken for eight linguistically unresolved alignments.
+
+The original 39-case set now has eight proposed rows, one legacy-overlap row, and 30 pending token-review rows. The current all-verse Greek pending queue has 31 rows because it also includes the Romans 16:27 article added in the later five-verse sequence work. See [the eleven-case disposition report](ELEVEN_PENDING_FUNCTION_WORD_REVIEW_20261106.md) and [its CSV ledger](ELEVEN_FUNCTION_WORD_CASE_DISPOSITIONS_20261106.csv).

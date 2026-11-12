@@ -21,6 +21,7 @@ CREATE TABLE verses(
   book_id   INTEGER NOT NULL REFERENCES books(book_id),
   chapter   INTEGER NOT NULL,
   verse     INTEGER NOT NULL,
+  hidden    INTEGER NOT NULL DEFAULT 0,  -- 1 = retained in the grid but never rendered (2026-11-11, issue #23 shells)
   UNIQUE(book_id, chapter, verse)
 );
 -- verses = UNION of (book,chapter,verse) from words, ylt_verses, kjv_words,
@@ -278,3 +279,247 @@ CREATE TABLE morph_variants(
   PRIMARY KEY(word_id, variant_seq)
 );
 CREATE INDEX idx_morph_variants_word ON morph_variants(word_id);
+
+-- =====================================================================
+-- Greek / LXX extension + witness apparatus (added 2026-11-12, §14).
+-- These 22 tables complete the corpus schema: with the 24 above,
+-- schema_v2.sql now defines all 46 corpus tables. Derived from a dual
+-- inventory of the SQLite build corpus (bible_v2.db, the store of truth
+-- for these tables' DDL) and the PostgreSQL `bible` catalog
+-- (information_schema / pg_indexes), cross-checked column-by-column.
+-- Review notes (2026-11-12):
+--   * Unlike the core schema above, the Greek/LXX families declare NO
+--     foreign keys in the corpus; their references (corpus_verse_id ->
+--     verses, gnt_verse_id, book_id, osis) hold by builder convention.
+--     verse_notes and witness_verses are the exceptions (FK declared).
+--   * PostgreSQL types map INTEGER -> integer, TEXT -> text,
+--     TIMESTAMP -> timestamp without time zone; column names and
+--     nullability agree across both stores for all 22 tables.
+--   * PostgreSQL divergences (documented, NOT repaired here): the
+--     secondary indexes marked (*) exist in the corpus but were not
+--     carried into PostgreSQL, and the lxx_crosswalk primary key was
+--     likewise not carried into PostgreSQL.
+--   * gntb_alignment / gnts_alignment and the gntb_/gnts_ YLT rendering
+--     tables carry no primary key in either store (gnt_ TR has one) —
+--     an as-built asymmetry of the bridge builders, recorded as-is.
+-- =====================================================================
+
+-- Septuagint (built by build_lxx.py; Theodotion Daniel is primary,
+-- the Old Greek rides as the alternate tradition).
+CREATE TABLE lxx_books(
+  osis       TEXT PRIMARY KEY,     -- OSIS book code
+  lxx_order  INTEGER,
+  name       TEXT,
+  mt_book_id INTEGER,              -- -> books.book_id, by convention
+  tradition  TEXT,
+  note       TEXT
+);
+
+CREATE TABLE lxx_verses(
+  verse_id INTEGER PRIMARY KEY,    -- LXX-side verse id space
+  osis     TEXT,                   -- -> lxx_books.osis, by convention
+  chapter  INTEGER,
+  verse    INTEGER,
+  text     TEXT
+);
+CREATE INDEX idx_lxx_verses_ref ON lxx_verses(osis, chapter, verse);  -- (*) PG lacks
+
+CREATE TABLE lxx_words(
+  verse_id  INTEGER NOT NULL,      -- -> lxx_verses.verse_id, by convention
+  position  INTEGER NOT NULL,
+  surface   TEXT,
+  lemma     TEXT,
+  strongs   TEXT,                  -- G-number where assigned (93.3% of words)
+  gloss     TEXT,
+  bol_gloss TEXT,
+  translit  TEXT,
+  sp        TEXT,                  -- speech part
+  morph     TEXT,
+  ps        TEXT,                  -- person
+  gn        TEXT,                  -- gender
+  nu        TEXT,                  -- number
+  tense     TEXT,
+  mood      TEXT,
+  voice     TEXT,
+  case_     TEXT,
+  degree    TEXT,
+  PRIMARY KEY(verse_id, position)
+);
+CREATE INDEX idx_lxx_words_strongs ON lxx_words(strongs);  -- (*) PG lacks
+CREATE INDEX idx_lxx_words_lemma ON lxx_words(lemma);      -- (*) PG lacks
+
+-- MT <-> LXX verse mapping (numbering-v1: same / mt_only / lxx_only).
+CREATE TABLE lxx_crosswalk(
+  mt_verse_id  INTEGER,            -- -> verses.verse_id, by convention
+  lxx_verse_id INTEGER,            -- -> lxx_verses.verse_id, by convention
+  osis         TEXT,
+  relation     TEXT,
+  basis        TEXT,
+  PRIMARY KEY(osis, relation, mt_verse_id, lxx_verse_id)  -- not carried into PG
+);
+
+-- Greek NT, Textus Receptus (primary Greek text; built by build_nt.py,
+-- bridge by build_nt_align.py). Robinson pipe-variant parsing caveat:
+-- 261 variant groups in the source are not yet modeled here.
+CREATE TABLE gnt_books(
+  book_id INTEGER PRIMARY KEY,
+  code    TEXT,
+  name    TEXT,
+  note    TEXT
+);
+
+CREATE TABLE gnt_verses(
+  gnt_verse_id    INTEGER PRIMARY KEY,
+  corpus_verse_id INTEGER,         -- -> verses.verse_id, by convention
+  book_id         INTEGER,         -- -> gnt_books.book_id, by convention
+  chapter         INTEGER,
+  verse           INTEGER,
+  text            TEXT
+);
+CREATE INDEX idx_gnt_verses_ref ON gnt_verses(book_id, chapter, verse);  -- (*) PG lacks
+
+CREATE TABLE gnt_words(
+  gnt_verse_id INTEGER NOT NULL,   -- -> gnt_verses.gnt_verse_id, by convention
+  position     INTEGER NOT NULL,
+  surface      TEXT,
+  beta         TEXT,               -- beta-code form
+  strongs      TEXT,
+  strongs_aux  TEXT,
+  morph        TEXT,               -- Robinson morphology code
+  PRIMARY KEY(gnt_verse_id, position)
+);
+CREATE INDEX idx_gnt_words_strongs ON gnt_words(strongs);  -- (*) PG lacks
+
+CREATE TABLE gnt_alignment(
+  corpus_verse_id INTEGER NOT NULL,
+  kjv_pos         INTEGER NOT NULL,
+  gnt_position    INTEGER NOT NULL,
+  PRIMARY KEY(corpus_verse_id, kjv_pos, gnt_position)
+);
+
+CREATE TABLE gnt_ylt_renderings(
+  gnt_verse_id INTEGER NOT NULL,
+  gnt_position INTEGER NOT NULL,
+  ylt_word     TEXT,
+  ylt_word_pos INTEGER NOT NULL,
+  label        TEXT,
+  PRIMARY KEY(gnt_verse_id, gnt_position, ylt_word_pos)
+);
+
+-- Per-verse tradition comparison summary vs TR (build_gnt_variants.py).
+CREATE TABLE gnt_variants(
+  corpus_verse_id INTEGER,
+  tradition       TEXT,            -- byzantine | sblgnt
+  status          TEXT,
+  basis           TEXT,
+  detail          TEXT
+);
+CREATE INDEX idx_gntvar ON gnt_variants(corpus_verse_id, tradition);  -- (*) PG lacks
+
+-- Greek NT, Byzantine / Robinson-Pierpont (built by build_gnt_variants.py,
+-- bridge by build_gntb_bridge.py). Mirrors the TR shape minus beta/aux.
+CREATE TABLE gntb_books(
+  book_id INTEGER PRIMARY KEY,
+  code    TEXT,
+  name    TEXT,
+  note    TEXT
+);
+
+CREATE TABLE gntb_verses(
+  gnt_verse_id    INTEGER PRIMARY KEY,
+  corpus_verse_id INTEGER,
+  book_id         INTEGER,
+  chapter         INTEGER,
+  verse           INTEGER,
+  text            TEXT
+);
+CREATE INDEX idx_gntb_ref ON gntb_verses(book_id, chapter, verse);  -- (*) PG lacks
+
+CREATE TABLE gntb_words(
+  gnt_verse_id INTEGER NOT NULL,
+  position     INTEGER NOT NULL,
+  surface      TEXT,
+  strongs      TEXT,
+  morph        TEXT,
+  PRIMARY KEY(gnt_verse_id, position)
+);
+
+CREATE TABLE gntb_alignment(      -- no PK in either store (see header)
+  corpus_verse_id INTEGER,
+  kjv_pos         INTEGER,
+  gntb_position   INTEGER
+);
+
+CREATE TABLE gntb_ylt_renderings(  -- no PK in either store (see header)
+  gntb_verse_id INTEGER,
+  gntb_position INTEGER,
+  ylt_word      TEXT,
+  ylt_word_pos  INTEGER,
+  label         TEXT
+);
+
+-- Greek NT, SBLGNT / MorphGNT (built by build_gnt_variants.py, bridge by
+-- build_gnts_bridge.py). Words carry lemma + normalized form instead of
+-- a Strong's number, per MorphGNT.
+CREATE TABLE gnts_books(
+  book_id INTEGER PRIMARY KEY,
+  code    TEXT,
+  name    TEXT,
+  note    TEXT
+);
+
+CREATE TABLE gnts_verses(
+  gnt_verse_id    INTEGER PRIMARY KEY,
+  corpus_verse_id INTEGER,
+  book_id         INTEGER,
+  chapter         INTEGER,
+  verse           INTEGER,
+  text            TEXT
+);
+CREATE INDEX idx_gnts_ref ON gnts_verses(book_id, chapter, verse);  -- (*) PG lacks
+
+CREATE TABLE gnts_words(
+  gnt_verse_id INTEGER NOT NULL,
+  position     INTEGER NOT NULL,
+  surface      TEXT,
+  norm         TEXT,
+  lemma        TEXT,
+  morph        TEXT,
+  PRIMARY KEY(gnt_verse_id, position)
+);
+
+CREATE TABLE gnts_alignment(       -- no PK in either store (see header)
+  corpus_verse_id INTEGER,
+  kjv_pos         INTEGER,
+  gnts_position   INTEGER
+);
+
+CREATE TABLE gnts_ylt_renderings(  -- no PK in either store (see header)
+  gnts_verse_id INTEGER,
+  gnts_position INTEGER,
+  ylt_word      TEXT,
+  ylt_word_pos  INTEGER,
+  label         TEXT
+);
+
+-- Witness apparatus (Peshitta-first; built by build_notes_syr.py and the
+-- witness loaders). Text columns are per-witness by convention: text_syr
+-- holds the witness's text (Syriac for the Peshitta rows).
+CREATE TABLE witness_verses(
+  verse_id      INTEGER NOT NULL REFERENCES verses(verse_id),
+  witness       TEXT NOT NULL,     -- peshitta | ...
+  words         INTEGER NOT NULL,  -- word count of the witness text
+  text_syr      TEXT,
+  text_translit TEXT,
+  PRIMARY KEY(verse_id, witness)
+);
+
+CREATE TABLE verse_notes(
+  verse_id   INTEGER NOT NULL REFERENCES verses(verse_id),
+  witness    TEXT NOT NULL,
+  note_kind  TEXT NOT NULL,        -- e.g. no_counterpart
+  note_text  TEXT NOT NULL,
+  basis      TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(verse_id, witness, note_kind)
+);

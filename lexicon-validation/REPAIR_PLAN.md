@@ -79,10 +79,3 @@ A production migration requires:
 ## Recompute policy
 
 No full lexicon recomputation is planned. Repairs should be limited to affected mapping rows or API presentation, preserving existing computed artifacts and provenance.
-
-
-## 2026-11-06 — Variant-aware rebuild gate
-
-**Isolated test gate: passed for source-resolved verses. Production gate: still blocked.** The test database `bible_greek_bridge_test_20261106` contains a shadow `variant_rebuild_test` schema only. The rebuild selected 242 individual variant groups deterministically; 19 groups across 17 references remain unresolved and are preserved without active bridge mappings. The two known out-of-range cases are repaired in the shadow sequence. Ten legacy-only Colossians 4:18 edges were identified as subscription/colophon mappings outside the CrossWire OSIS verse body and excluded from the shadow bridge.
-
-Do not migrate to production until the 17 unresolved references and the Colossians 4:18 colophon exclusion are reviewed. The YLT rendering edge set is unchanged on resolved verses, so a separate YLT realignment is not justified by this test.

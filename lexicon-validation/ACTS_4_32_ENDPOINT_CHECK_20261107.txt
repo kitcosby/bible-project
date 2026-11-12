@@ -1,0 +1,6 @@
+Acts 4:32 endpoint audit: PASS
+proposed phrase-member endpoints: 10
+alignment-level not_expressed: 1 (who)
+legacy overlap preserved: 1 (he ← αὐτῷ candidate)
+variant group 44:4 selection preserved: ('A', 'inherited_provisional')
+production baseline unchanged: {'gnt_words': 141009, 'gnt_ylt_renderings': 143227, 'ylt_verses': 31102, 'ylt_verses_embedding_store': 31102, 'non_null_embeddings': 31102}

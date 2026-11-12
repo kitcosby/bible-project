@@ -1,7 +1,7 @@
 # YLT–Greek Alignment Field Guide
 
 **Status:** Working research guide; not all alignments are finalized.  
-**Prepared:** 2026-11-06  
+**Prepared:** 2026-11-06; updated 2026-11-07  
 **Scope:** YLT token ↔ Greek token alignment review in the isolated Robinson/YLT profile shadow.
 
 ## Purpose
@@ -94,7 +94,7 @@ Greek conjunctions can be paired, layered, or rendered idiomatically.
 ### 6. Prepositions and phrase boundaries
 
 - **Acts 10:38:** ὑπὸ τοῦ διαβόλου = “by the devil”; article and noun are separate components of the prepositional phrase.
-- **Acts 21:8:** εἰς τὸν οἶκον = “into the house”; distinguish preposition, article, and noun.
+- **Acts 21:8:** εἰς τὸν οἶκον = “into the house”; distinguish preposition, article, and noun. The earlier phrase οἱ περὶ τὸν Παῦλον is rendered “Paul and his company”: οἱ περὶ jointly contribute to “company”, Παῦλον maps to “Paul”, and τὸν has no separate English article. The phrase-member candidates for οἱ and περί are retained in legacy-overlap review because the legacy “company” token points to positions [7,8] (τὸν Παῦλον); see the [Acts 21:8 phrase report](ACTS_21_8_PAUL_COMPANY_PHRASE_REVIEW_20261107.md).
 - **2 Peter 2:9:** εἰς ἡμέραν = “to a day”; distinguish this preposition from the later infinitive τηρεῖν, “to keep”.
 - **Romans 16:20:** ἐν τάχει is the idiom “quickly”. The preposition ἐν and noun τάχει jointly express one English adverb; the shadow review now proposes a phrase-member link from ἐν to the same YLT token already linked to τάχει.
 - **Luke 2:39:** ἅπαντα τὰ κατὰ τὸν νόμον κυρίου is rendered “all things, according to the Law of the Lord”. The article τὰ substantivizes the following phrase; YLT “things” is a phrase-level rendering, not a lexical gloss for the article alone.
@@ -125,11 +125,56 @@ A proposed alignment must target the correct profile-specific sequence. The 2 Co
 
 ## Review queue versus alignment-row status
 
-The review queue and alignment table are separate status layers. A Greek token can have a corresponding unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. In this audit, all 39 original queue entries had matching alignment rows, but their confidence was unresolved. That is a deliberate signal that the current non-link classification is provisional, not a settled decision. When a proposal is made, the alignment row and the corresponding token-review row should be updated together and validated. Do not infer finality from not_expressed when confidence remains unresolved.
+The review queue and alignment table are separate status layers. A Greek token can have an unaligned_greek row in ylt_greek_alignment marked not_expressed or unresolved while its gnt_token_review row remains pending_review. The token-review schema has no not_expressed value, so pending_review may persist after the alignment-level disposition has been contextually reviewed. The v16 state had 32 token-table pending rows: 31 alignment-level not_expressed dispositions (26 high confidence, five moderate) and one unresolved case, Acts 15:32 position-2 particle. The stable καί at position 3 is proposed to YLT “and”; the YLT-specific review now favors branch A=τε for position 2 → “also”, with moderate confidence: “Judas also and Silas” is a better fit for τε καί, and Stephanus 1550 and Beza 1598 both read τε. The YLT candidate sequence still inherits B provisionally from the KJV candidate; this is not a YLT editorial decision. Keep A as a proposal pending confirmation of Young’s exact Greek exemplar and shadow dependency review. Acts 21:8 περί now has a phrase-member candidate within the larger οἱ περὶ τὸν Παῦλον → “Paul and his company” group; two phrase members remain in legacy-overlap review. The [2026-11-07 disposition audit](GREEK_TOKEN_ALIGNMENT_DISPOSITION_AUDIT_20261107.md) and [dual-status export](GREEK_TOKEN_ALIGNMENT_DISPOSITION_QUEUE_20261107.csv) record both layers. Do not interpret the token-table pending count as the count of unresolved alignments; likewise, do not infer finality from not_expressed when confidence remains unresolved.
+
+## Latest disposition update (2026-11-07)
+
+Twenty additional alignment rows that had provisional not_expressed status and unresolved confidence were reviewed in full context. Eighteen are now high-confidence and two moderate-confidence. A subsequent audit found four Greek token-review rows marked proposed without matching alignment endpoints; these were reconciled using full-verse context. Acts 21:8 gained a phrase group for οἱ περὶ τὸν Παῦλον → “Paul and his company”, with two legacy-overlap members; the first εἰς is aligned to “to” and the second to “into”. The subsequent Acts 15:32, Revelation 9:20, Acts 19:27, 1 Corinthians 5:11, and Acts 26:20 passes bring the current alignment set to 43 not_expressed dispositions (30 high, thirteen moderate) and one unresolved case. The Greek token-review table now reports 32 pending rows: 31 have alignment-level not_expressed dispositions and one (Acts 15:32 δέ) remains unresolved. The token table has no not_expressed status, so these are status-layer distinctions, not 32 undecided alignments. The YLT token-review queue is now 437 pending, with 422 generic discovery rows and fifteen annotated grammatical/variant cases. No production rows or embeddings were changed.
+
+## Hebrew vowel-only variants
+
+**Required linking rule:** Hebrew word forms that have the same consonantal spelling and differ only in vocalization (vowel points / niqqud) must be linked together as a textual/orthographic variant group. Do not treat them as unrelated words merely because their normalized vocalized strings differ.
+
+Apply this rule with the following safeguards:
+
+1. Preserve each exact source form, including its vowel points, in the raw source record. Never overwrite one vocalization with another or strip niqqud from the authoritative display text.
+2. Compare the consonantal skeleton separately from vocalization. If the consonants are identical and the difference is only vowel points, create or retain a shared variant relationship with the exact vocalized forms as separate branches/readings.
+3. Do not merge the forms into one lexical entry or assume they have identical morphology, pronunciation, sense, or translation. Vowel differences can distinguish stem, inflection, person, number, gender, state, or lexical interpretation.
+4. Keep lemma, morphology, lexical gloss, and translation alignment attached to the correct vocalized branch. A shared consonantal spelling is evidence for grouping, not proof of semantic equivalence.
+5. Do not classify a difference as vowel-only if it changes a consonant letter, including a mater lectionis (ו, י, ה, or א where functioning as a consonantal spelling element), or if it reflects a different consonantal reading. Those require a separate orthographic/textual-variant assessment.
+6. Keep cantillation marks and other non-vowel pointing distinctions separate from the vowel-only comparison. Record the normalization policy used by the source/parser so that niqqud, cantillation, and consonantal letters are not conflated.
+7. Distinguish a vocalization difference from qere/ketiv, ketiv/qere annotations, or a manuscript spelling difference. These may be related textual phenomena but are not automatically vowel-only variants.
+8. Validate that grouping is reversible: each branch must reconstruct its exact source spelling, and the original source string and provenance must remain recoverable.
+
+**Minimum deterministic validation:** for each candidate pair, compare Unicode-normalized Hebrew strings; derive a consonant-only key using a documented, Hebrew-aware removal of niqqud marks (not indiscriminate deletion of all combining marks); require exact equality of the consonantal sequence; then confirm that the source strings differ only in the permitted vowel-point code points. Flag rather than auto-group pairs involving changed letters, meteg/cantillation-only changes, malformed Unicode, or ambiguous source normalization. Unicode normalization must not reorder or erase Hebrew letters.
+
+**Data-model implication:** represent the shared variant group and its distinct vocalized branches explicitly. Keep token/lemma records and downstream morphology/alignment branch-aware. This is a linking relationship, not a lossy normalization or a global instruction to collapse all Hebrew forms sharing consonants.
+
+This rule applies to Hebrew source data and does not alter the Greek Robinson variant workflow. Before applying it to an existing Hebrew corpus, audit the parser's current treatment of niqqud and Unicode normalization, enumerate candidate pairs, and validate representative edge cases (including mater lectionis, dagesh, sheva, qamats/qatan, holam, and qere/ketiv) before any database writes.
+
+**2026-11-07 source-code audit result:** the OSHB parser preserves the pointed source text but its unpointed projection keeps only U+05D0–U+05EA, thereby dropping vowel points, cantillation, and all other non-letter marks together. The spelling-variant builder handles v1-medial versus academic-final spelling conventions and surface anomalies; it does not create vowel-only links. The qere builder already stores ketiv/qere as a distinct textual apparatus and must remain separate. The existing word_variants key is per word_id and has no cross-occurrence group identifier, so it cannot cleanly connect multiple corpus word IDs sharing the same consonants. The assembler's consonantal key also folds final forms; do not reuse it for strict vowel-only comparison.
+
+**Implementation consequence:** first run a read-only inventory on canonical pointed words and OSHB pointed words as separate source populations. Existing root_vowel already groups distinct exact pointed strings beneath each (root, form), but it does not classify vowel-only differences and is scoped by existing root/form assignments. The inventory must cross-reference those IDs before proposing any new group/member relation. Strict matching must remove only the enumerated vowel-point code points, retain dagesh, meteg, shin/sin dots, cantillation, separators, matres lectionis, and final forms, and require exact equality of everything else. Do not overload qere or spelling-convention rows. See [the Hebrew vowel-only variant audit](HEBREW_VOWEL_VARIANT_AUDIT_20261107.md). No corpus-wide candidate inventory or database write has yet been performed.
 
 ## Variant groups and paratext
 
-The 19 YLT-profile variant groups initially marked unresolved have now been classified: five verse-text groups were selected against the stored YLT wording, thirteen epistle subscriptions/colophons were marked not applicable to verse alignment, and Revelation 7:3 remains unresolved because YLT does not distinguish the present from aorist subjunctive. The raw Robinson branch payloads remain preserved. The five branch decisions are in the selection ledger, but their six affected verse references (the five selected verses plus Revelation 7:3) are not yet materialized in the current 116-verse sequence fixture. Do not align against them until the sequence is built and validated. See [YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md) and [the machine-readable snapshot](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv).
+The 19 YLT-profile variant groups initially marked unresolved have now been classified: five verse-text groups were selected against the stored YLT wording, thirteen epistle subscriptions/colophons were marked not applicable to verse alignment, and Revelation 7:3 remains unresolved because YLT does not distinguish the present from aorist subjunctive. The raw Robinson branch payloads remain preserved. The five selected verse-text groups have now been materialized in the shadow sequence for John 8:6, Acts 3:3, Romans 16:27, Ephesians 6:24, and 1 John 2:23. The 1 John 2:23 branch-B clause adds eight tokens; the other four selections are already present in the base sequence or select an empty branch. Revelation 7:3 remains unmaterialized pending a textual decision. See [YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md), [the machine-readable snapshot](YLT_VARIANT_SELECTIONS_CURRENT_20261106.csv), and [the materialization report](FIVE_VERSE_SEQUENCE_MATERIALIZATION_20261106.md).
+
+## Variant-dependent particle case: Acts 15:32
+
+The YLT wording is “Judas also and Silas”. Robinson variant group 44:19 contains branch A τε and branch B δέ. The Robinson source is unselected; CrossWire/KJV selected B algorithmically, and the YLT candidate inherited B provisionally. This inherited sequence is not a YLT editorial decision. The καί at position 3 is stable in both branches and is proposed to YLT “and” (token 3). The YLT-specific review now favors branch A=τε for position 2 → “also” with moderate confidence, based on the wording and pre-1888 Stephanus/Beza edition evidence. The exact exemplar remains unidentified; the current inherited shadow branch B has not yet been changed pending dependency review. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+
+## Proposed-alignment counts across status layers
+
+The Greek token-review table’s proposed_alignment_count should agree with the number of proposed alignment endpoints for that Greek token; the latest validator checks this and found no remaining mismatches. Do not apply the same row-count assumption blindly to YLT tokens: a single YLT token may represent a multi-token Greek phrase. For example, YLT “quickly” in Romans 16:20 is represented by the two Greek phrase members ἐν and τάχει within one phrase group.
+
+## YLT-side pending queue stratification
+
+The current YLT token-review queue has 437 pending tokens across 116 verses. Of these, 422 retain the generic “No direct proposal identified” reason and fifteen have explicit corner-case notes: 1 John 2:23 “he”; Acts 15:32 “also”; Romans 16:27 “the”/“be”; Revelation 9:20 “are”; Acts 19:27 “the” and two instances of “is”; 1 Corinthians 5:11 “[him]” and “a”; Acts 26:20 “to” and “those” in the expanded Jerusalem phrase; Revelation 7:2 “the”/“a”; and Acts 4:32 “who”. The YLT review schema has no not_expressed or unresolved status, so these fifteen remain pending with their rationale preserved.
+
+Four additional YLT token rows that already had proposed alignment endpoints were reconciled from pending_review to proposed: 1 Corinthians 13:2 “the” → τὰ; Acts 5:12 “through” → διά; Acts 26:20 “those” → τοῖς; Matthew 2:23 “that” → τό (moderate-confidence phrase member). No alignment rows were created in that status-only reconciliation.
+
+The highest-frequency pending surfaces are “to” (45) and “the” (31), followed by “may” (21), “did” (17), “a” (16), “was” (16), “having” (15), “is” (14), and “of” (11). Review by surface is only a batching aid: “to” may be a preposition, infinitive marker, purpose construction, or English syntactic expansion. See the [YLT pending queue stratification](YLT_TOKEN_PENDING_QUEUE_STRATIFICATION_20261107.md) and [current 431-row CSV](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv).
 
 ## Database design recommendations
 
@@ -149,22 +194,89 @@ The [267-position function-word review milestone](FUNCTION_WORD_ALIGNMENT_MILEST
 
 ## Current audit snapshot
 
-As of 2026-11-06:
+As of 2026-11-07:
 
 - 37 legacy-overlap cases were reconciled.
 - 20 positional-divergence cases received contextual classification; no production or legacy rows were changed.
 - Four shadow alignment proposals were corrected in the earlier overlap review (Matthew 10:25; Luke 1:26; Acts 21:8, two tokens).
-- The original 39-row Greek-token review set now has 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals).
-- Current shadow review counts: 521 proposed, 20 not_expressed, and 11 unresolved alignment rows; 479 proposed, 31 pending, and 25 legacy-overlap rows in the Greek-token review table.
-- The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved.
-- The five selected verse-text branches and the unresolved Revelation 7:3 case are not materialized in the current 116-verse sequence fixture. Do not align against those six references until the selected sequences are built and validated.
-- 502 YLT token review cases remain pending.
-- The full shadow validator passed at the last recorded checkpoint; production counts and embeddings were unchanged.
+- At the historical post-eight-proposal snapshot, the original 39-case Greek-token subset had 31 pending rows and eight proposed alignments (three high-confidence function-word proposals and five moderate-confidence phrase-member proposals). This is not the current all-verse queue.
+- Historical shadow alignment counts at the milestone after the Acts 15:32 and initial Revelation 9:20 reviews: 581 proposed, 33 not_expressed (28 high confidence, five moderate), one unresolved, and six legacy_overlap_review rows; 521 proposed, 33 pending, and 31 legacy-overlap rows in the Greek-token review table. These counts were superseded by later case reviews and the v16 validation.
+- V16 YLT token review counts after Acts 4:32: 583 proposed, 437 pending, 47 legacy-overlap review, and 2,104 legacy-only.
+- The 19 YLT-profile variant groups that were unresolved at the start of the review have been classified: five verse-text branches selected against the stored YLT and now materialized, 13 subscription/colophon groups marked not applicable to verse alignment, and one verse-text group (Revelation 7:3) remains unresolved and unmaterialized.
+- The five new sequence materializations add 95 YLT tokens and 77 Greek words. Their 45 contextual pair candidates produced 42 proposals, three retained legacy-overlap cases, and one Greek article classified not separately expressed; fourteen phrase groups preserve the non-one-to-one relationships.
+- Three YLT tokens and one Greek token remain pending in the five new verses. The earlier eleven-case follow-up classified eight Greek function words as not separately expressed and identified one further legacy overlap in Philippians 4:2. The subsequent 20-case confidence review raised the not_expressed set to 29 (24 high, five moderate). The later occurrence audit reconciled four proposed-status rows without endpoints and added the Acts 21:8 phrase group. Acts 15:32 now has a stable καί → “and” proposal while δέ remains unresolved. At that historical milestone, Revelation 9:20 added 11 phrase groups and 16 alignment rows (15 proposed, one not_expressed), bringing the total to 33 not_expressed (28 high, five moderate), one unresolved (Acts 15:32 δέ), and six legacy-overlap alignment rows. Subsequent cases raised the v16 totals to 43 not_expressed, eleven legacy-overlap, and one unresolved. The current v16 shadow validator passed after the Acts 4:32 review; see [latest validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt). Production counts and all 31,102 stored embeddings were unchanged.
 
-See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the 31-row pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
+See [the case index](GREEK_ALIGNMENT_CASE_INDEX.md) for the 20 reviewed cases, the original 39-case subset, the current 32-row Greek pending queue, the separate 267-position function-word review, and the [YLT variant-selection case index](YLT_VARIANT_SELECTION_CASE_INDEX_20261106.md).
 
 ## Non-goals and cautions
 
 This guide is not a new lexicon or a replacement for the source text. It does not establish a preferred Greek textual reading, claim that every Greek token needs an English rendering, or authorize changes to production tables, embeddings, vectorizer, API, or deployment. It does not turn Strong's/morphology agreement into proof of occurrence identity.
 
 The governing principle is conservative: preserve evidence, represent phrase and grammar relationships honestly, and leave genuine uncertainty visible.
+
+
+## YLT-token review queue: phrase expansion examples (2026-11-07)
+
+Historical queue snapshot after 1 Corinthians 5:11: 464 YLT tokens: 454 generic “no direct proposal identified” rows and ten annotated grammatical/variant cases (Acts 15:32 “also”; Romans 16:27 supplied “be” and “the”; 1 John 2:23 supplied “he”; Revelation 9:20 supplied “are”; Acts 19:27 supplied “the” and two instances of “is”; 1 Corinthians 5:11 bracketed “[him]” and supplied “a”). The generic rows remain unadjudicated; do not classify them as not_expressed merely because no proposal is recorded. The Revelation 9:20 “are” token has an alignment-level not_expressed disposition but remains pending in the token-review table because that table lacks this status.
+
+Before its phrase review, Revelation 9:20 was the densest pending verse (16 tokens). Its case report illustrates one Greek finite verb rendered “did reform”; one subjunctive rendered “may bow before”; five Greek article-plus-adjective phrases rendered “those of [material]”; a supplied English copula “are”; and three English infinitive markers “to”. These require phrase-aware modeling, not fabricated Greek tokens or forced one-to-one glosses. The 2026-11-07 shadow implementation added 11 phrase groups and 16 alignment rows (15 proposed, one not_expressed); see the v10 final validator and Revelation 9:20 case report. The verse now has only one token still pending at token-review level (“are”). Acts 19:27 adds a second dense phrase case: “is in danger”, “for us”, “of coming”, “for nothing”, “to be reckoned”, “and also”, “about to be brought down”, and “doth worship” require phrase-aware mapping. The corrected εἰς→“for” candidate and retained “be” legacy overlap are documented in the [Acts 19:27 case report](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+
+## Variant-sensitive phrase case (2026-11-07)
+
+Acts 15:32 now has a stable proposal for Greek καί at position 3 → YLT “and” (token 3), because that καί is present in both Robinson branches. The branch-specific particle at position 2 (A=τε, B=δέ) remains unresolved; YLT “also” does not independently establish which branch Young used. See the [Acts 15:32 variant review](ACTS_15_32_DE_KAI_VARIANT_ALIGNMENT_REVIEW_20261107.md).
+
+
+## Revelation 9:20 dense phrase case (2026-11-07)
+
+The 16 YLT tokens that were pending in Revelation 9:20 are now dispositioned: 15 proposed phrase-member endpoints and one alignment-level not_expressed copula (“are”). The five substantival article-plus-adjective phrases “those of [material]” are modeled as phrase groups, with existing legacy links preserved. See the [case report](REVELATION_9_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md) and the [latest v16 validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+
+
+## Acts 19:27: infinitive chain and phrase-level alignment (2026-11-07)
+
+F. F. Bruce’s grammatical discussion (Acts, p. 415) parses ἐλθεῖν, λογισθῆναι, and μέλλειν as infinitives dependent on κινδυνεύει, with καθαιρεῖσθαι dependent on μέλλειν. This explains why YLT’s English auxiliaries and infinitive markers cannot be treated as independent Greek words. The case also exposes a shadow candidate error: εἰς οὐδέν is “for/as nothing”, not the English infinitive marker “to”. The candidate was corrected from YLT token 26 to token 29; the former now participates in “to be reckoned”.
+
+A legacy association from μέλλειν to YLT “be” is retained as an overlap while a contextual proposal links that “be” to λογισθῆναι. Robinson variant group 44:22 (A=δέ, B=τε) affects the “and also” phrase; the YLT sequence inherits A provisionally, so the phrase remains variant-dependent. See the [Acts 19:27 case report](ACTS_19_27_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+
+## 1 Corinthians 5:11: branch-sensitive subjunctive and phrase expansion (2026-11-07)
+
+Robinson group 46:2 has A=ἤ (G2228, particle “or”) and B=ᾖ (G1510, present active subjunctive 3sg of εἰμί). The YLT phrase “may be a whoremonger” directly supports B; SBLGNT and Scrivener 1894 also include ᾖ. The YLT profile now proposes B while the CrossWire/KJV profile remains on A. This is not a proven Young source reading. The phrase report documents the evidence, the legacy “be” association, and the ten new phrase-member proposals. See [FIRST_CORINTHIANS_5_11_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md](FIRST_CORINTHIANS_5_11_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md). The independent post-application audit verified 11 unique proposed endpoints (ten phrase-member rows and one content-word row), plus two supplied English tokens ([him] and “a”) with alignment-level not_expressed dispositions. Only Greek position 11 → YLT “may” carries direct group 46:2 dependency; the legacy “be” link remains. See [VALIDATION_APPLIED_1CORINTHIANS_5_11_PROPOSALS_20261107.md](VALIDATION_APPLIED_1CORINTHIANS_5_11_PROPOSALS_20261107.md).
+
+
+## Acts 26:20: finite-verb variant and expanded Jerusalem phrase (2026-11-07)
+
+Robinson group 44:36 has A=ἀπαγγέλλων (present active participle) and B=ἀπήγγελλον (imperfect active indicative, first-person singular). YLT “I was preaching” strongly supports branch B; the Cambridge commentary and SBL/WH/UBS witnesses also read the finite form. The YLT profile now proposes B, while the KJV candidate profile remains A. The same case distinguishes the dative place-name Ἱεροσολύμοις (“at Jerusalem”) from YLT’s expanded “to those in Jerusalem”: “in” is a phrase member, while “to” and “those” are alignment-level not_expressed. See [ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md](ACTS_26_20_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md). The applied proposals were independently validated: nine phrase-member endpoints are unique, while YLT “to” and “those” in “to those in Jerusalem” are supplied English expansions over the dative place-name Ἱεροσολύμοις. Exactly three alignments at Greek position 18 depend on branch 44:36 (YLT “I was preaching”). See [VALIDATION_APPLIED_ACTS_26_20_PROPOSALS_20261107.md](VALIDATION_APPLIED_ACTS_26_20_PROPOSALS_20261107.md).
+
+
+## Revelation 9:20: branch-conditioned dependency (2026-11-07)
+
+Robinson group 66:18 offers οὔτε (A) versus οὐ (B). Both alternatives are one token, so the sequence changes only at Greek position 13 and no later positions shift. The 15 phrase-member proposals for “did reform”, “may bow before”, the five “those of [material]” phrases, and the three infinitive phrases remain positionally stable under either branch. Only the alignment of YLT “neither” at token 13 is directly variant-dependent.
+
+An audit found that the initial dependency metadata had been assigned backwards: 15 later phrase rows carried 66:18 while the position-13 row did not. The shadow database was corrected; exactly one alignment row now carries direct dependency group 66:18. The YLT profile now proposes branch A (οὔτε) for group 66:18, replacing the inherited branch B. The overall sequence remains provisional because other variant groups still inherit candidate readings. Do not confuse this global provisional sequence status with direct token-level sensitivity. See the [variant-dependency audit](REVELATION_9_20_VARIANT_DEPENDENCY_AUDIT_20261107.md) and [latest v16 full validation](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+
+
+## Revelation 7:2 phrase and variant update (2026-11-07)
+
+The YLT candidate profile now proposes branch B for Robinson group 66:8: ἀναβαίνοντα, present active participle, for YLT “going up”. Stephanus 1550 and Beza 1598 read branch A ἀναβάντα, while Scrivener 1894 and several other witnesses read branch B; Young’s preface does not identify the exact Received Text edition. Keep the YLT branch selection proposed, not final. Seven phrase groups and a cross-verse λέγων→“saying” anchor were added. The review includes 11 proposed rows, two supplied English articles marked alignment-level not_expressed, and three preserved legacy overlaps. See the [Revelation 7:2 case report](REVELATION_7_2_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+Revelation 7:3 group 66:9 remains unresolved: σφραγίζωμεν (present subjunctive) versus σφραγίσωμεν (aorist subjunctive). YLT “till we may seal” does not discriminate reliably. The YLT candidate sequence contains only the stable cross-verse anchor at position 1; it does not materialize the remainder of 7:3 while the variant is unresolved.
+
+The v16 milestone validator passed with 2,445 Greek sequence words, 88 alignment groups, and 684 alignment rows; this was superseded by v17. Production counts and all 31,102 stored embeddings remain unchanged. See [v16 validation output](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+
+
+## Acts 4:32 phrase and variant update (2026-11-07)
+
+The Acts 4:32 review added eight phrase groups and ten proposed phrase-member endpoints. It treats “of the multitude” as a genitive phrase, “those who did believe” as an articular aorist participle, the two explicit Greek articles ἡ as the source of YLT “the”, “was saying” as a phrase rendering of imperfect ἔλεγεν, “had” as a contextual rendering of ὑπαρχόντων, “to them” as the dative αὐτοῖς, and “in common” as an English idiom for κοινά. English “who” is supplied relative syntax and has an alignment-level not_expressed disposition. The possible αὐτῷ→“he” endpoint is recorded only as legacy_overlap_review; the original legacy links are preserved. See the [Acts 4:32 case report](ACTS_4_32_DENSE_PHRASE_ALIGNMENT_CASE_20261107.md).
+
+Robinson group 44:4 retains branch A / inherited_provisional (οὐδέ versus elided οὐδ). The YLT “not one” wording does not distinguish them. External edition comparison also shows variants beyond group 44:4, including ἡ articles, ἅπαντα/πάντα, αὐτῷ/αὐτῶν, and ἔλεγεν/ἔλεγον; those are not silently treated as branches of this parser group.
+
+The current v16 validator passes with 2,445 sequence words, 88 alignment groups, and 684 alignment rows. Current status totals are 629 proposed, 43 not_expressed (30 high, 13 moderate), 11 legacy_overlap_review, and one unresolved. Production counts and all 31,102 stored embeddings remain unchanged. See [v16 validation output](FINAL_VALIDATION_AFTER_ACTS_4_32_20261107.txt).
+
+## Current v17 state — Acts 21:8 included
+
+The latest full validator is [v17](FINAL_VALIDATION_AFTER_ACTS21_8_V17.txt), with reproducible script [validate_ylt_lexicon_shadow_v17.py](validate_ylt_lexicon_shadow_v17.py). It passes with 2,445 Greek sequence words, 94 alignment groups, and 695 alignment rows. Current alignment statuses: 635 proposed, 47 not_expressed, twelve legacy_overlap_review, and one unresolved. YLT token review: 590 proposed, 431 pending_review, 47 legacy_overlap_review, and 2,103 legacy_only. Greek token review: 553 proposed, 32 pending_review, and 35 legacy_overlap_review.
+
+The current 261-row YLT variant-selection ledger has 219 inherited_provisional, ten proposed, 17 reviewed_against_translation, 14 not_applicable_to_verse_alignment, and one unresolved selection. Acts 21:8 group 44:26 is proposed as branch B for YLT “we came”; the exact Received Text edition Young used remains unconfirmed. The branch choice directly affects only Greek position 9 → “came” and the supplied subject “we” disposition. Seven phrase groups are recorded in Acts 21:8, including the retained Paul/company group; four English expansions or inflectional subjects are alignment-level not_expressed. Four of those YLT tokens remain token-table pending because the YLT token-review schema has no not_expressed status.
+
+The [current 431-row YLT pending queue](YLT_TOKEN_REVIEW_QUEUE_CURRENT_20261107.csv) has been refreshed. The queue-stratification report contains the v17 top surface counts; its book-level table and earlier 422-generic/15-annotated split remain historical v16 snapshots pending a complete re-stratification. See the [Acts 21:8 case report](ACTS_21_8_BRANCH_B_AND_PHRASE_ALIGNMENT_20261107.md) and [v17 validator output](FINAL_VALIDATION_AFTER_ACTS21_8_V17.txt).

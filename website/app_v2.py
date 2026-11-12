@@ -27,7 +27,13 @@ What changed vs app.py:
 """
 import html
 import os
+import base64
+import json
+import time
 import re
+import hmac
+import secrets
+from datetime import timedelta
 import psycopg2
 import psycopg2.extras
 import psycopg2.errors
@@ -42,9 +48,33 @@ PG_HOST = os.environ.get('PG_HOST', '/tmp')
 PG_USER = os.environ.get('PG_USER', 'postgres')
 BIBLE_DB = os.environ.get('BIBLE_DB', 'bible')
 APP_DB = os.environ.get('APP_DB', 'bible_app')
+# Optional connection URLs make the corpus and application databases
+# independently deployable. Keep these values in the process environment or
+# a secret manager; never commit them or log them.
+BIBLE_DATABASE_URL = os.environ.get('BIBLE_DATABASE_URL')
+BIBLE_APP_DATABASE_URL = os.environ.get('BIBLE_APP_DATABASE_URL')
+BIBLE_VARIANT_SEARCH_DATABASE_URL = os.environ.get('BIBLE_VARIANT_SEARCH_DATABASE_URL')
 SCHEMA = os.path.join(BASE, 'schema.sql')
 
 app = Flask(__name__)
+
+@app.after_request
+def _variant_search_no_store(response):
+    # Search responses, including validation and failure responses, must not
+    # be retained by browsers, proxies, or service-worker integrations.
+    if request.path == '/api/search/variants':
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+
+# Browser-session defaults. Set BIBLEAPP_COOKIE_SECURE=1 behind HTTPS.
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=os.environ.get('BIBLEAPP_COOKIE_SECURE', '0').lower()
+        in ('1', 'true', 'yes', 'on'),
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
+    SESSION_REFRESH_EACH_REQUEST=False,
+)
 
 
 def _load_secret():
@@ -63,7 +93,10 @@ def _load_secret():
     return key
 
 
-app.secret_key = _load_secret()
+SESSION_SECRET = os.environ.get('BIBLEAPP_SESSION_SECRET')
+if SESSION_SECRET and len(SESSION_SECRET.encode('utf-8')) < 32:
+    raise RuntimeError('BIBLEAPP_SESSION_SECRET must be at least 32 bytes')
+app.secret_key = SESSION_SECRET or _load_secret()
 
 # ---------------------------------------------------------------- mount prefix
 class PrefixMiddleware:
@@ -108,15 +141,43 @@ def bible():
     so row['col'] access works as before. Kit 2026-10-01's fold_finals is
     now a native PL/pgSQL function in the database."""
     if 'bible' not in g:
-        con = psycopg2.connect(dbname=BIBLE_DB, host=PG_HOST, user=PG_USER)
+        if BIBLE_DATABASE_URL:
+            con = psycopg2.connect(
+                BIBLE_DATABASE_URL, connect_timeout=10,
+                application_name='bibleapp-corpus')
+        else:
+            con = psycopg2.connect(
+                dbname=BIBLE_DB, host=PG_HOST, user=PG_USER,
+                connect_timeout=10, application_name='bibleapp-corpus')
         g.bible = PGWrapper(con)
     return g.bible
+
+
+def variant_search_db():
+    """Read-only, separately deployable database containing the Hebrew
+    spelling-variant vector index. This is optional; passage search continues
+    to use the primary corpus database."""
+    if not BIBLE_VARIANT_SEARCH_DATABASE_URL:
+        raise RuntimeError('Hebrew variant embedding search is not configured')
+    if 'variant_search_db' not in g:
+        con = psycopg2.connect(
+            BIBLE_VARIANT_SEARCH_DATABASE_URL, connect_timeout=10,
+            application_name='bibleapp-variant-search')
+        g.variant_search_db = PGWrapper(con)
+    return g.variant_search_db
 
 def appdb():
     """Application database (PostgreSQL `bible_app`): user accounts,
     translations, lemma defaults, reading positions."""
     if 'appdb' not in g:
-        con = psycopg2.connect(dbname=APP_DB, host=PG_HOST, user=PG_USER)
+        if BIBLE_APP_DATABASE_URL:
+            con = psycopg2.connect(
+                BIBLE_APP_DATABASE_URL, connect_timeout=10,
+                application_name='bibleapp-authoring')
+        else:
+            con = psycopg2.connect(
+                dbname=APP_DB, host=PG_HOST, user=PG_USER,
+                connect_timeout=10, application_name='bibleapp-authoring')
         db = PGWrapper(con)
         # migration: lemma defaults for sticky choices (2026-09-30);
         # idempotent so existing databases pick it up.
@@ -184,7 +245,7 @@ def appdb():
 
 @app.teardown_appcontext
 def close_dbs(exc):
-    for k in ('bible', 'appdb'):
+    for k in ('bible', 'appdb', 'variant_search_db'):
         con = g.pop(k, None)
         if con is not None:
             con.close()
@@ -194,13 +255,31 @@ def book_name(n):
     r = bible().execute('SELECT name_en FROM books WHERE book_id=%s', (n,)).fetchone()
     return r['name_en'] if r else f'Book {n}'
 
+BUILTIN_TRANSLATION_IDS = (1, 2)  # KJV and Young's; public corpus resources, never editable.
+
+def accessible_translation(tid):
+    """Return a built-in read-only translation or the current user's own translation."""
+    try:
+        tid = int(tid)
+    except (TypeError, ValueError):
+        return None
+    row = appdb().execute(
+        'SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    if not row:
+        return None
+    owner_id = row['owner_id']
+    if owner_id is None:
+        expected_name = {1: 'KJV', 2: "Young's"}.get(tid)
+        return row if expected_name and row['name'] == expected_name else None
+    user = current_user()
+    if not user or int(owner_id) != int(user['user_id']):
+        return None
+    return row
+
+
 def current_translation():
     tid = request.args.get('t')
-    if tid and tid.isdigit():
-        r = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
-        if r:
-            return r
-    return None
+    return accessible_translation(tid) if tid and tid.isdigit() else None
 
 
 # ---------------------------------------------------------------- user accounts
@@ -213,17 +292,284 @@ def current_user():
         (uid,)).fetchone()
 
 
+def csrf_token():
+    """Return the session-bound CSRF token, creating it when needed."""
+    token = session.get('_csrf_token')
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session['_csrf_token'] = token
+    return token
+
+
+def _csrf_valid():
+    expected = session.get('_csrf_token', '')
+    supplied = (request.headers.get('X-CSRF-Token')
+                or request.form.get('csrf_token', ''))
+    return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
+def _allowed_auth_origin():
+    """Return an explicitly allowed browser Origin, or None."""
+    origin = request.headers.get('Origin', '').rstrip('/')
+    if not origin:
+        return None
+    configured = [x.strip().rstrip('/') for x in
+                  os.environ.get('BIBLEAPP_ALLOWED_ORIGINS', '').split(',')
+                  if x.strip()]
+    if configured:
+        return origin if origin in configured else None
+    # Safe same-origin default for local/single-origin deployments.
+    return origin if origin == request.host_url.rstrip('/') else None
+
+
+def _auth_cors(response, origin):
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Vary'] = 'Origin'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
+
+def _identity_token(user_id):
+    """Mint a five-minute HS256 token for the Express API; secret is env-only."""
+    secret = os.environ.get('BIBLEAPP_IDENTITY_TOKEN_SECRET', '')
+    if len(secret.encode('utf-8')) < 32:
+        raise RuntimeError('BIBLEAPP_IDENTITY_TOKEN_SECRET must be at least 32 bytes')
+    now = int(time.time())
+    def enc(value):
+        return base64.urlsafe_b64encode(
+            json.dumps(value, separators=(',', ':')).encode('utf-8')
+        ).rstrip(b'=').decode('ascii')
+    header = enc({'alg': 'HS256', 'typ': 'JWT'})
+    payload = enc({
+        'iss': 'bibleapp-flask',
+        'aud': 'bibleapp-api',
+        'sub': str(int(user_id)),
+        'iat': now,
+        'exp': now + 300,
+        'jti': secrets.token_urlsafe(16),
+    })
+    signing_input = header + '.' + payload
+    signature = hmac.new(secret.encode('utf-8'),
+                         signing_input.encode('ascii'), 'sha256').digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b'=').decode('ascii')
+    return signing_input + '.' + encoded_signature
+
+
+
+def _auth_json_origin():
+    """Require an explicitly allowed Origin for browser auth mutations."""
+    origin = _allowed_auth_origin()
+    if not origin:
+        return None
+    return origin
+
+
+def _auth_json_preflight(origin, methods='POST, OPTIONS'):
+    response = Response(status=204)
+    response.headers['Access-Control-Allow-Methods'] = methods
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+    response.headers['Access-Control-Max-Age'] = '300'
+    return _auth_cors(response, origin)
+
+
+def _auth_json_error(message, status, origin):
+    return _auth_cors(jsonify({'error': message}), origin), status
+
+
+def _auth_json_payload():
+    if not request.is_json:
+        return None
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
+
+
+def _auth_json_user(user):
+    return {
+        'user_id': int(user['user_id']),
+        'username': user['username'],
+        'display_name': user.get('display_name') or user['username'],
+    }
+
+
+@app.route('/api/auth/bootstrap', methods=['GET', 'OPTIONS'])
+def api_auth_bootstrap():
+    """Create a pre-auth session and CSRF token for the PWA login flow."""
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin, 'GET, POST, OPTIONS')
+    user = current_user()
+    payload = {
+        'csrf_token': csrf_token(),
+        'authenticated': bool(user),
+        'user': _auth_json_user(user) if user else None,
+    }
+    return _auth_cors(jsonify(payload), origin)
+
+
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
+def api_auth_login():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str) or not password:
+        return _auth_json_error('Username and password are required', 400, origin)
+    db = appdb()
+    row = db.execute(
+        'SELECT * FROM user_accounts WHERE username=%s AND is_active=1',
+        (username,)).fetchone()
+    if not row or not check_password_hash(row['password_hash'], password):
+        return _auth_json_error('Incorrect username or password', 401, origin)
+    session.clear()
+    session['user_id'] = row['user_id']
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (row['user_id'],))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin)
+
+
+@app.route('/api/auth/signup', methods=['POST', 'OPTIONS'])
+def api_auth_signup():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    payload = _auth_json_payload()
+    if payload is None:
+        return _auth_json_error('JSON object required', 400, origin)
+    username = str(payload.get('username') or '').strip()
+    password = payload.get('password')
+    if not username or not isinstance(password, str):
+        return _auth_json_error('Username and password are required', 400, origin)
+    if len(password) < 12 or len(password) > 1024:
+        return _auth_json_error(
+            'Use a password or passphrase between 12 and 1024 characters',
+            400, origin)
+    db = appdb()
+    try:
+        cur = db.execute(
+            'INSERT INTO user_accounts(username, password_hash, display_name) '
+            'VALUES(%s,%s,%s) RETURNING user_id',
+            (username, generate_password_hash(password), username))
+        new_uid = cur.fetchone()['user_id']
+        db.commit()
+    except psycopg2.IntegrityError:
+        db.rollback()
+        return _auth_json_error('That username is taken', 409, origin)
+    session.clear()
+    session['user_id'] = new_uid
+    session.permanent = True
+    rotated_csrf = csrf_token()
+    db.execute("UPDATE user_accounts SET last_login_at=now() WHERE user_id=%s",
+               (new_uid,))
+    db.commit()
+    user = current_user()
+    return _auth_cors(jsonify({
+        'authenticated': True,
+        'user': _auth_json_user(user),
+        'csrf_token': rotated_csrf,
+    }), origin), 201
+
+
+@app.route('/api/auth/logout', methods=['POST', 'OPTIONS'])
+def api_auth_logout():
+    origin = _auth_json_origin()
+    if not origin:
+        return _auth_json_error('Origin not allowed', 403, None)
+    if request.method == 'OPTIONS':
+        return _auth_json_preflight(origin)
+    if not _csrf_valid():
+        return _auth_json_error('CSRF validation failed', 400, origin)
+    session.clear()
+    rotated_csrf = csrf_token()
+    return _auth_cors(jsonify({
+        'authenticated': False,
+        'user': None,
+        'csrf_token': rotated_csrf,
+    }), origin)
+
+
+@app.route('/api/auth/csrf', methods=['GET', 'OPTIONS'])
+def api_auth_csrf():
+    origin = _allowed_auth_origin()
+    if request.headers.get('Origin') and not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        if origin:
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+            response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    return _auth_cors(jsonify({'csrf_token': csrf_token()}), origin)
+
+
+@app.route('/api/auth/token', methods=['POST', 'OPTIONS'])
+def api_auth_token():
+    origin = _allowed_auth_origin()
+    if not origin:
+        return jsonify({'error': 'Origin not allowed'}), 403
+    if request.method == 'OPTIONS':
+        response = Response(status=204)
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
+        response.headers['Access-Control-Max-Age'] = '300'
+        return _auth_cors(response, origin)
+    user = current_user()
+    if not user:
+        return _auth_cors(jsonify({'error': 'Authentication required'}), origin), 401
+    if not _csrf_valid():
+        return _auth_cors(jsonify({'error': 'CSRF validation failed'}), origin), 400
+    try:
+        token = _identity_token(user['user_id'])
+    except RuntimeError:
+        return _auth_cors(jsonify({'error': 'Identity service unavailable'}), origin), 503
+    return _auth_cors(jsonify({
+        'access_token': token,
+        'token_type': 'Bearer',
+        'expires_in': 300,
+    }), origin)
+
+
 def _auth_form(action, legend):
     return f'''<h2>{legend}</h2>
 <form method="post" action="{u(action)}">
-<label>Username: <input type="text" name="username"></label><br>
-<label>Password: <input type="password" name="password"></label><br>
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
+<label>Username: <input type="text" name="username" autocomplete="username"></label><br>
+<label>Password: <input type="password" name="password" autocomplete="current-password"></label><br>
 <button type="submit">{legend}</button></form>'''
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        if not _csrf_valid():
+            return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         db = appdb()
@@ -231,9 +577,9 @@ def signup():
             return render('Sign up',
                           '<p>Username and password are required.</p>'
                           + _auth_form('/signup', 'Sign up'))
-        if len(password) < 4:
+        if len(password) < 12 or len(password) > 1024:
             return render('Sign up',
-                          '<p>Password must be at least 4 characters.</p>'
+                          '<p>Use a password or passphrase between 12 and 1024 characters.</p>'
                           + _auth_form('/signup', 'Sign up'))
         try:
             cur = db.execute(
@@ -247,7 +593,10 @@ def signup():
             return render('Sign up',
                           '<p>That username is taken.</p>'
                           + _auth_form('/signup', 'Sign up'))
+        session.clear()
         session['user_id'] = new_uid
+        session.permanent = True
+        csrf_token()  # rotate the pre-authentication token at the login boundary
         db.execute("UPDATE user_accounts SET last_login_at=now()"
                    ' WHERE user_id=%s', (new_uid,))
         db.commit()
@@ -258,6 +607,8 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        if not _csrf_valid():
+            return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         db = appdb()
@@ -268,7 +619,10 @@ def login():
             return render('Login',
                           '<p>Incorrect username or password.</p>'
                           + _auth_form('/login', 'Login'))
+        session.clear()
         session['user_id'] = row['user_id']
+        session.permanent = True
+        csrf_token()  # rotate the pre-authentication token at the login boundary
         db.execute("UPDATE user_accounts SET last_login_at=now()"
                    ' WHERE user_id=%s', (row['user_id'],))
         db.commit()
@@ -276,9 +630,11 @@ def login():
     return render('Login', _auth_form('/login', 'Login'))
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id', None)
+    if not _csrf_valid():
+        return render('Security check failed', '<p>Please reload the page and try again.</p>'), 400
+    session.clear()
     return redirect(u('/'))
 
 # ---------------------------------------------------------------- choice index: 1 byte per word
@@ -310,8 +666,7 @@ def read_choices(tid):
     return data
 
 def write_choice(tid, word_id, val):
-    """Kit 2026-10-09: UPSERT into word_choice; val=0 deletes the row
-    (sparse = default)."""
+    """Write within the caller's transaction; authorization and commit belong to the route."""
     val = val & 0xFF
     db = appdb()
     if val == 0:
@@ -323,7 +678,6 @@ def write_choice(tid, word_id, val):
                       ON CONFLICT (translation_id, word_id)
                       DO UPDATE SET choice=excluded.choice''',
                    (tid, word_id, val))
-    db.commit()
 
 def other_options(tid):
     return appdb().execute(
@@ -609,7 +963,9 @@ NAV = '''
  | <a href="{{u0}}/variants">Word variants</a>
  | <a href="{{u0}}/translations">My translations</a>
 {% if user %} | logged in as <b>{{user['display_name'] or user['username']}}</b>
- (<a href="{{u0}}/logout">logout</a>)
+ <form method="post" action="{{u0}}/logout" style="display:inline">
+ <input type="hidden" name="csrf_token" value="{{csrf_token}}">
+ <button type="submit">logout</button></form>
 {% else %} | <a href="{{u0}}/login">login</a> | <a href="{{u0}}/signup">sign up</a>{% endif %}
 {% if trans %} | working on translation: <b>{{trans['name']}}</b>
   (<a href="{{u0}}/translations?t={{trans['translation_id']}}">switch</a>){% endif %}
@@ -636,6 +992,7 @@ a{color:#5a3c0a}
 def render(title, body, trans=None):
     return render_template_string(PAGE, title=title, body=body, trans=trans,
                                    user=current_user(),
+                                   csrf_token=csrf_token(),
                                    u0=request.script_root or '',
                                    tile=u('/papyrus-tile.png'))
 
@@ -666,9 +1023,12 @@ def get_reading_position():
         r = appdb().execute(
             'SELECT book_id, chapter, translation_id FROM reading_position WHERE user_id=%s',
             (u['user_id'],)).fetchone()
-        if r:
+        if r and accessible_translation(r['translation_id']):
             return (r['book_id'], r['chapter'], r['translation_id'])
-    return tuple(session.get('reading_position', ())) or None
+    pos = tuple(session.get('reading_position', ())) or None
+    if pos and len(pos) == 3 and accessible_translation(pos[2]):
+        return pos
+    return None
 
 def save_reading_position(n, c, tid):
     u = current_user()
@@ -728,7 +1088,7 @@ def books():
 def book(n):
     trans = current_translation()
     chaps = bible().execute('''SELECT DISTINCT v.chapter FROM verses v
-        WHERE v.book_id=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND v.hidden=0 AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.chapter''', (n,)).fetchall()
     items = ''.join(f'<li><a href="{u("/chapter/" + str(n) + "/" + str(c["chapter"]) + tqs(trans))}">'
                     f'Chapter {c["chapter"]}</a></li>' for c in chaps)
@@ -741,7 +1101,7 @@ def tqs(trans):
 def chapter(n, c):
     trans = current_translation()
     verses = bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND v.chapter=%s AND v.hidden=0 AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
     items = ''.join(
         f'<li><a href="{u("/verse/" + str(n) + "/" + str(c) + "/" + str(v["verse"]) + tqs(trans))}">Verse {v["verse"]}</a></li>'
@@ -773,8 +1133,9 @@ def verse(n, c, v):
             sel = ' selected' if i == cur else ''
             opts.append(f'<option value="{i}"{sel}>{html.escape(label)}</option>')
         ctl = ''
-        if trans:
+        if trans and trans['owner_id'] is not None:
             ctl = f'''<form method="post" action="{u("/choice" + tqs(trans))}" style="display:inline">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
 <input type="hidden" name="word_id" value="{wid}">
 <input type="hidden" name="next" value="/verse/{n}/{c}/{v}{tqs(trans)}">
 <select name="item">{"".join(opts)}</select>
@@ -792,16 +1153,32 @@ def verse(n, c, v):
 
 @app.route('/choice', methods=['POST'])
 def choice():
-    """Save one byte: the selected drop-down item number for the word.
-    A non-empty other_txt adds a new multi-value Other option first.
-    A non-default choice also becomes the new lemma default (forward-only)
-    for the rest of the text for that word's lemma (see record_lemma_default)."""
-    trans = current_translation()
-    if not trans:
-        return 'No translation selected', 400
-    tid = trans['translation_id']
-    wid = int(request.form['word_id'])
+    """Save a word choice only for a translation owned by the authenticated account."""
+    user = current_user()
+    if not user:
+        return 'Authentication required', 401
+    if not _csrf_valid():
+        return 'Security check failed', 400
+    raw_tid = request.args.get('t', '')
+    if not raw_tid.isdigit():
+        return 'Translation not found', 404
+    tid = int(raw_tid)
+    try:
+        wid = int(request.form.get('word_id', ''))
+    except ValueError:
+        return 'Invalid word_id', 400
+    if not 1 <= wid <= N_WORDS:
+        return 'Invalid word_id', 400
+
     db = appdb()
+    # Lock the translation row so ownership cannot change between authorization
+    # and the choice/option/lemma-default writes in this transaction.
+    trans = db.execute(
+        'SELECT * FROM translation WHERE translation_id=%s FOR UPDATE',
+        (tid,)).fetchone()
+    if not trans or trans['owner_id'] is None or int(trans['owner_id']) != int(user['user_id']):
+        return 'Translation not found', 404
+
     new_other = request.form.get('other_txt', '').strip()
     others = other_options(tid)
     if new_other:
@@ -812,8 +1189,8 @@ def choice():
             idx = max([o['idx'] for o in others] + [0]) + 1
             db.execute('INSERT INTO other_option(translation_id, idx, text) VALUES (%s,%s,%s)',
                        (tid, idx, new_other))
-            db.commit()
             others = other_options(tid)
+
     w = word_with_lex(wid)
     if not w:
         return 'Unknown word', 404
@@ -830,7 +1207,6 @@ def choice():
             item = 0
     write_choice(tid, wid, item)
     # Kit's translation-source integer: 1=KJV, 2=Young's, 3=user-defined.
-    # Source 3 links to other_option via other_option_id.
     src, ooid = None, None
     if 0 < item < len(items):
         label = items[item][0]
@@ -848,10 +1224,16 @@ def choice():
     db.commit()
     return redirect(u(request.form.get('next', '/')))
 
+
 @app.route('/translations', methods=['GET', 'POST'])
 def translations():
     db = appdb()
+    user = current_user()
     if request.method == 'POST':
+        if not user:
+            return 'Authentication required', 401
+        if not _csrf_valid():
+            return 'Security check failed', 400
         name = request.form.get('name', '').strip() or 'Untitled'
         desc = request.form.get('description', '').strip()
         urow = db.execute('SELECT user_id FROM app_user LIMIT 1').fetchone()
@@ -860,11 +1242,10 @@ def translations():
             uid = cur.fetchone()['user_id']
         else:
             uid = urow['user_id']
-        owner = current_user()
         cur = db.execute(
             'INSERT INTO translation(user_id, name, description, owner_id)'
             ' VALUES(%s,%s,%s,%s) RETURNING translation_id',
-            (uid, name, desc, owner['user_id'] if owner else None))
+            (uid, name, desc, user['user_id']))
         new_tid = cur.fetchone()['translation_id']
         db.commit()
         return redirect(u(f'/translations?t={new_tid}'))
@@ -872,7 +1253,12 @@ def translations():
     rows = db.execute('''SELECT t.*, a.display_name AS owner_name
         FROM translation t LEFT JOIN user_accounts a
           ON a.user_id=t.owner_id
-        ORDER BY t.updated_at DESC''').fetchall()
+        WHERE (t.owner_id IS NULL AND
+               ((t.translation_id=1 AND t.name='KJV') OR
+                (t.translation_id=2 AND t.name='Young''s')))
+           OR t.owner_id=%s
+        ORDER BY t.updated_at DESC''',
+        (user['user_id'] if user else -1,)).fetchall()
     items = []
     for r in rows:
         tid = r['translation_id']
@@ -880,19 +1266,24 @@ def translations():
             'SELECT COUNT(*) c FROM word_choice WHERE translation_id=%s',
             (tid,)).fetchone()['c']
         n_other = db.execute('SELECT COUNT(*) c FROM other_option WHERE translation_id=%s', (tid,)).fetchone()['c']
-        owner_txt = (f' by {html.escape(r["owner_name"])}'
-                     if r['owner_name'] else '')
+        owner_txt = (' (built-in; read-only)'
+                     if r['owner_id'] is None and tid in BUILTIN_TRANSLATION_IDS
+                     else (f' by {html.escape(r["owner_name"])}'
+                           if r['owner_name'] else ''))
         items.append(
             f'<li><a href="{u("/verse/1/1/1?t=" + str(tid))}">{html.escape(r["name"])}</a>'
             f' <span style="color:#666">{html.escape(r["description"])}'
             f' (updated {r["updated_at"]}; {n_chosen} words chosen, {n_other} Other options)'
             f'{owner_txt}</span>'
             f' | <a href="{u("/export/" + str(tid))}">export</a></li>')
-    body = f'''<ul>{"".join(items)}</ul>
-<h2>New translation</h2>
-<form method="post"><input type="text" name="name" placeholder="name">
+    create_form = (f'''<h2>New translation</h2>
+<form method="post">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
+<input type="text" name="name" placeholder="name">
 <input type="text" name="description" placeholder="description">
 <button type="submit">create</button></form>'''
+        if user else '<p><a href="' + u('/login') + '">Log in</a> to create your own translation.</p>')
+    body = f'<ul>{"".join(items)}</ul>{create_form}'
     return render('My translations', body, trans)
 
 # ---------------------------------------------------------------- clean reading
@@ -913,9 +1304,9 @@ line-height:1.9;font-size:1.3em;color:#1a1a1a;background:#fdfbf5}
 
 @app.route('/reading/<int:tid>/<int:n>/<int:c>/<int:v>')
 def reading(tid, n, c, v):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    trans = accessible_translation(tid)
     if not trans:
-        return 'Unknown translation', 404
+        return 'Translation not found', 404
     choices = read_choices(tid)
     others = other_options(tid)
     words = bible().execute(f'''SELECT {WORD_COLS} {WORD_JOINS}
@@ -956,7 +1347,7 @@ padding:10px 20px;text-decoration:none;color:#5a3c0a}
 
 def _chapter_verses(n, c):
     return bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS
+        WHERE v.book_id=%s AND v.chapter=%s AND v.hidden=0 AND EXISTS
         (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
 
@@ -965,7 +1356,7 @@ def _chapter_bounds(n, c):
     books = [r['book_id'] for r in bible().execute(
         'SELECT book_id FROM books ORDER BY book_id').fetchall()]
     chaps = [r['chapter'] for r in bible().execute(
-        'SELECT DISTINCT chapter FROM verses WHERE book_id=%s ORDER BY chapter', (n,)).fetchall()]
+        'SELECT DISTINCT chapter FROM verses WHERE book_id=%s AND hidden=0 ORDER BY chapter', (n,)).fetchall()]
     bi, ci = books.index(n), chaps.index(c)
     prev = (books[bi - 1], _last_chapter(books[bi - 1])) if ci == 0 and bi > 0 else \
            (n, chaps[ci - 1]) if ci > 0 else None
@@ -982,7 +1373,7 @@ def _chapter_bounds(n, c):
     return prev, nxt
 
 def _last_chapter(n):
-    r = bible().execute('SELECT MAX(chapter) AS mc FROM verses WHERE book_id=%s', (n,)).fetchone()
+    r = bible().execute('SELECT MAX(chapter) AS mc FROM verses WHERE book_id=%s AND hidden=0', (n,)).fetchone()
     return r['mc'] or 1
 
 @app.route('/read')
@@ -995,11 +1386,13 @@ def read_default():
 
 @app.route('/read/<int:n>/<int:c>')
 def read_chapter(n, c):
-    trans = current_translation()
-    if not trans:
-        # default to KJV (translation_id 1)
-        trans = appdb().execute(
-            'SELECT * FROM translation WHERE translation_id=1').fetchone()
+    if 't' in request.args:
+        trans = current_translation()
+        if not trans:
+            return 'Translation not found', 404
+    else:
+        # KJV is a built-in public read-only corpus resource.
+        trans = accessible_translation(1)
     if not trans:
         return 'No translations available', 500
     tid = trans['translation_id']
@@ -1029,7 +1422,14 @@ def read_chapter(n, c):
             if nxt else '<span></span>')
     nav += '</div>'
     # translation picker
-    alltrans = appdb().execute('SELECT translation_id, name FROM translation ORDER BY translation_id').fetchall()
+    user = current_user()
+    alltrans = appdb().execute('''SELECT translation_id, name FROM translation
+        WHERE (owner_id IS NULL AND
+               ((translation_id=1 AND name='KJV') OR
+                (translation_id=2 AND name='Young''s')))
+           OR owner_id=%s
+        ORDER BY translation_id''',
+        (user['user_id'] if user else -1,)).fetchall()
     opts = ''.join(f'<option value="{t["translation_id"]}"{" selected" if t["translation_id"] == tid else ""}>'
                    f'{html.escape(t["name"])}</option>' for t in alltrans)
     picker = (f'<div class="trans-picker"><label>Translation: '
@@ -1047,9 +1447,9 @@ def read_chapter(n, c):
 
 @app.route('/export/<int:tid>')
 def export(tid):
-    trans = appdb().execute('SELECT * FROM translation WHERE translation_id=%s', (tid,)).fetchone()
+    trans = accessible_translation(tid)
     if not trans:
-        return 'Unknown translation', 404
+        return 'Translation not found', 404
     choices = read_choices(tid)
     others = other_options(tid)
     b = bible()
@@ -1295,7 +1695,7 @@ def papyrus_tile():
     with open(p, 'rb') as f:
         return Response(f.read(), mimetype='image/png')
 
-_WORDS_EXIST = ('AND (EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
+_WORDS_EXIST = ('AND vv.hidden = 0 AND (EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
                 ' OR EXISTS (SELECT 1 FROM gnt_verses gv'
                 ' WHERE gv.corpus_verse_id=vv.verse_id))')
 
@@ -1845,6 +2245,127 @@ def _greek_lex():
 _GREEK_PHRASES = None
 
 
+# ---------------------------------------------------------------------------
+# Word-page rendering-list cleanup (QA audit 2026-11-11, defects CR-1/CR-3).
+#
+# The aggregated phrase lists behind /api/word carried ~19.5% noise
+# (graded sample, n=430): the phrase builders shed a clause's function
+# words onto content words, so cards offered "of", "that", "If", "who"
+# as renderings of G2424 and 12/12 debris for H3068. Two display-layer
+# rules, applied ONLY at the /api/word serve sites (the editor's
+# drop-down indices are stored choice bytes and must never shift):
+#   CR-1  drop a phrase made only of closed-class function tokens,
+#         unless the Strong's itself is a function-class lexeme
+#         (kai -> "and" is a real rendering; David -> "of" is not).
+#   CR-3  drop a phrase that merely repeats a shorter token block
+#         ("Holy holy holy", "month the month") -- one occurrence's
+#         phrase absorbing its neighbours; the single form is listed
+#         on its own line.
+# Function-class lexemes are derived from the corpus itself (>=90% of a
+# Strong's occurrences carry a function part of speech: OSHB head POS
+# for Hebrew/Aramaic, Robinson morph class for Greek), cached per DB
+# like the phrase maps. Some ambiguous English tokens are deliberately
+# NOT treated as function words because they carry content for real
+# lexemes: "one" (numerals), "said"/"saith" (H559), "do" (G4160,
+# H6213), "will" (G2307/G2309), "behold" (G2657).
+_FUNC_TOKENS = frozenset("""
+a an the of to in on for by with from at into unto upon over under
+through against among between before after about as and or but that if
+when while because than he she it they we you i him her them us me his hers
+its their our your my mine who whom whose which this these those
+himself herself itself themselves is are was were be been being am
+does did have has had shall would can could may might must let not no
+even also then there here so yet now thee thou thy thine ye o oh per
+via toward towards within without beside besides off up down out away
+since until till lest either neither both each every any some none
+nor""".split())
+_DUP_JOINERS = frozenset({'and', 'the', 'to'})
+_OT_FUNC_POS = frozenset('CRTPDS')
+_NT_FUNC_CLASS = frozenset({
+    'CONJ', 'PREP', 'PRT', 'ADV', 'P', 'T', 'D', 'C', 'COND', 'K', 'S',
+    'I', 'Q', 'R', 'X', 'INJ'})
+_FUNCTION_LEXEMES = {}
+
+
+def _phrase_tokens(phrase):
+    return [t for t in re.split(r"[^a-z']+", phrase.lower())
+            if t and t != "'"]
+
+
+def _oshb_head_pos(pattern):
+    """Head part of speech of an OSHB morph pattern: the main segment's
+    POS letter, skipping prefix clitics and stopping at a suffix."""
+    head = None
+    for seg in pattern[1:].split('/'):
+        if not seg:
+            continue
+        letter = seg[0]
+        if letter == 'S':
+            break
+        if letter in 'VNAPD':
+            head = letter
+        elif head is None:
+            head = letter
+    return head
+
+
+def _function_lexemes(db=None):
+    if BIBLE_DB not in _FUNCTION_LEXEMES:
+        db = db or bible()
+        counts = {}
+        for row in db.execute(
+                'SELECT w.strongs AS s, mp.pattern AS p, COUNT(*) AS n '
+                'FROM words w JOIN morph_patterns mp '
+                'ON mp.pattern_id = w.morph_pattern_id '
+                'WHERE w.strongs IS NOT NULL AND mp.pattern IS NOT NULL '
+                'GROUP BY w.strongs, mp.pattern'):
+            head = _oshb_head_pos(row['p'])
+            if head:
+                c = counts.setdefault(row['s'], [0, 0])
+                c[1] += row['n']
+                if head in _OT_FUNC_POS:
+                    c[0] += row['n']
+        for row in db.execute(
+                'SELECT strongs AS s, morph AS m, COUNT(*) AS n '
+                'FROM gnt_words WHERE strongs IS NOT NULL '
+                'AND morph IS NOT NULL GROUP BY strongs, morph'):
+            c = counts.setdefault(row['s'], [0, 0])
+            c[1] += row['n']
+            if row['m'].split('-')[0] in _NT_FUNC_CLASS:
+                c[0] += row['n']
+        _FUNCTION_LEXEMES[BIBLE_DB] = {
+            s for s, (f, t) in counts.items() if t and f / t >= 0.9}
+    return _FUNCTION_LEXEMES[BIBLE_DB]
+
+
+def _is_dup_phrase(phrase):
+    t = [x for x in _phrase_tokens(phrase) if x not in _DUP_JOINERS]
+    n = len(t)
+    if n < 2:
+        return False
+    for m in range(1, n // 2 + 1):
+        if n % m == 0 and t == t[:m] * (n // m):
+            return True
+    return False
+
+
+def _clean_phrases(phrases, strongs):
+    """CR-1/CR-3 filter for one word-page rendering list. Order and the
+    surviving phrases are untouched; callers slice to 12 afterwards so
+    deeper legitimate phrases backfill the freed slots."""
+    func = strongs in _function_lexemes()
+    out = []
+    for p in phrases:
+        if _is_dup_phrase(p):
+            continue
+        if not func:
+            t = _phrase_tokens(p)
+            if t and all(x in _FUNC_TOKENS for x in t):
+                continue
+        out.append(p)
+    return out
+
+
 def _greek_phrases():
     """Strong's -> {'kjv': [phrases by frequency], 'ylt': [...]} for NT
     words, aggregated corpus-wide from the CrossWire alignment (KJV)
@@ -1893,8 +2414,10 @@ def _greek_phrases():
     out = {}
     for s in set(kjv_acc) | set(ylt_acc):
         out[s] = {
-            'kjv': [p for p, _n in kjv_acc[s].most_common(12)],
-            'ylt': [p for p, _n in ylt_acc[s].most_common(12)],
+            # Retain 48, not 12: api_word cleans the lists (CR-1/CR-3)
+            # and slices to 12, so legitimate phrases backfill.
+            'kjv': [p for p, _n in kjv_acc[s].most_common(48)],
+            'ylt': [p for p, _n in ylt_acc[s].most_common(48)],
         }
     _GREEK_PHRASES = out
     return out
@@ -1983,6 +2506,25 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
             if not vr:
                 greek_words_variants[key] = None
                 continue
+            # The tradition's own phrases, from its alignment bridge
+            # ({tbl}_alignment -> KJV words; {tbl}_ylt_renderings ->
+            # computed Young's), mirroring the TR construction above.
+            tal = {}
+            for r in b.execute(
+                    f'SELECT a.{tbl}_position AS pos, k.kjv_word '
+                    f'FROM {tbl}_alignment a '
+                    'JOIN kjv_words k ON k.verse_id=a.corpus_verse_id '
+                    'AND k.kjv_pos=a.kjv_pos WHERE a.corpus_verse_id=%s '
+                    f'ORDER BY a.{tbl}_position, k.kjv_pos', (verse_id,)):
+                tal.setdefault(r['pos'], []).append(r['kjv_word'])
+            tyl = {}
+            for r in b.execute(
+                    f'SELECT {tbl}_position AS pos, ylt_word '
+                    f'FROM {tbl}_ylt_renderings '
+                    f'WHERE {tbl}_verse_id=%s '
+                    f'ORDER BY {tbl}_position, ylt_word_pos',
+                    (vr['gnt_verse_id'],)):
+                tyl.setdefault(r['pos'], []).append(r['ylt_word'])
             if key == 'byz':
                 rows = b.execute(
                     'SELECT position, surface, strongs, morph '
@@ -1992,7 +2534,10 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
                     {'pos': w['position'], 'greek': w['surface'],
                      'translit': None, 'strongs': w['strongs'],
                      'morph': w['morph'], 'lemma': None,
-                     'gloss': lex.get(w['strongs'], {}).get('gloss', '')}
+                     'gloss': lex.get(w['strongs'], {}).get('gloss', ''),
+                     'kjv': ' '.join(tal.get(w['position'], [])) or None,
+                     'ylt': ' '.join(tyl.get(w['position'], [])) or None,
+                     'ylt_computed': True}
                     for w in rows]
             else:
                 rows = b.execute(
@@ -2003,7 +2548,10 @@ def _api_verse_nt(n, c, v, vrow, with_variants=True):
                     {'pos': w['position'], 'greek': w['surface'],
                      'translit': None, 'strongs': None,
                      'morph': w['morph'], 'lemma': w['lemma'],
-                     'gloss': lemma_gloss.get(w['lemma'], '')}
+                     'gloss': lemma_gloss.get(w['lemma'], ''),
+                     'kjv': ' '.join(tal.get(w['position'], [])) or None,
+                     'ylt': ' '.join(tyl.get(w['position'], [])) or None,
+                     'ylt_computed': True}
                     for w in rows]
     return {
         'book_id': n, 'book_name': book_name(n), 'chapter': c,
@@ -2172,8 +2720,8 @@ def api_word(strongs):
             'greek': surf['surface'] if surf else None,
             'lemma': entry.get('lemma'),
             'gloss': entry.get('gloss', ''),
-            'kjv_phrases': gph.get('kjv', []),
-            'ylt_phrases': gph.get('ylt', []),
+            'kjv_phrases': _clean_phrases(gph.get('kjv', []), s)[:12],
+            'ylt_phrases': _clean_phrases(gph.get('ylt', []), s)[:12],
             'ylt_computed': True,
             'greek_lexicon': 'derived from LXX word data (most '
                              'frequent lemma/gloss per Strong\'s '
@@ -2236,8 +2784,8 @@ def api_word(strongs):
         'morph': w['morph'],
         'root': w['base_word'],
         'variants': agg[:12],
-        'kjv_phrases': kjv_lp.get(lk, [])[:12],
-        'ylt_phrases': ylt_lp.get(lk, [])[:12],
+        'kjv_phrases': _clean_phrases(kjv_lp.get(lk, []), s)[:12],
+        'ylt_phrases': _clean_phrases(ylt_lp.get(lk, []), s)[:12],
         'ylt_computed': True,
         'occurrence_count': occ,
         'occurrences': [
@@ -2245,6 +2793,41 @@ def api_word(strongs):
              'verse': r['verse'],
              'ref': f"{book_name(r['book_id'])} {r['chapter']}:{r['verse']}"}
             for r in occ_rows]})
+
+
+@app.route('/api/word-options')
+def api_word_options():
+    """Return legacy dropdown phrase groups for a bounded set of Hebrew word IDs.
+
+    This is a public, read-only corpus endpoint. It deliberately returns the
+    lemma key as well as phrase groups so clients can preserve root-code
+    fallback semantics for Hebrew words without a Strong's identifier.
+    """
+    raw_ids = (request.args.get('wordIds') or '').split(',')
+    if not raw_ids or len(raw_ids) > 100 or any(not x.isdigit() for x in raw_ids):
+        return _api_json({'error': 'wordIds must contain 1–100 numeric IDs'}, 400)
+    word_ids = sorted({int(x) for x in raw_ids})
+    if not word_ids or any(not 1 <= wid <= N_WORDS for wid in word_ids):
+        return _api_json({'error': 'wordIds contains an out-of-range word ID'}, 400)
+
+    db = bible()
+    rows = db.execute(
+        f'SELECT {WORD_COLS} {WORD_JOINS} WHERE w.word_id = ANY(%s) ORDER BY w.word_id',
+        (word_ids,)).fetchall()
+    kjv_lp, _, ylt_lp, _ = lemma_phrases(db)
+    response = _api_json({
+        'words': [{
+            'wid': row['word_id'],
+            'lemma': lemma_key(row),
+            'strongs': row['strongs'],
+            'kjv_phrases': kjv_lp.get(lemma_key(row), [])[:N_PHRASES],
+            'ylt_phrases': ylt_lp.get(lemma_key(row), [])[:N_PHRASES],
+        } for row in rows]
+    })
+    # The byte choice index depends on the exact phrase ordering. Do not let
+    # browser or service-worker caches serve an older ordering to an editor.
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 @app.route('/api/search')
@@ -2285,6 +2868,167 @@ def api_search():
          'score': round(float(r['score']), 4),
          'snippet': r['chunk'], 'source': 'ylt-computed'}
         for r in rows])
+
+
+@app.route('/api/search/variants')
+def api_search_variants():
+    """Search reconstructed Hebrew spelling-variant embeddings.
+
+    The index is separate from the YLT verse index. It contains one 768-dim
+    vector per spelling-variant key and is queried only when the deployment
+    explicitly configures BIBLE_VARIANT_SEARCH_DATABASE_URL.
+    """
+    import json as _json
+    import unicodedata
+    import urllib.request
+
+    q = (request.args.get('q') or '').strip()
+    if not q:
+        return _api_json({'error': 'q required'}, 400)
+
+    # Embeddings were built from unpointed letters. Strip Hebrew combining
+    # marks so pointed user input is embedded in the same representation.
+    normalized_q = ''.join(
+        ch for ch in unicodedata.normalize('NFKC', q)
+        if unicodedata.category(ch) != 'Mn').strip()
+    if not any('\u05D0' <= ch <= '\u05EA' or '\u05F0' <= ch <= '\u05F4'
+               for ch in normalized_q):
+        return _api_json({'error': 'Hebrew spelling query required'}, 400)
+
+    try:
+        limit = max(1, min(25, int(request.args.get('limit', 10))))
+    except ValueError:
+        limit = 10
+
+    if not BIBLE_VARIANT_SEARCH_DATABASE_URL:
+        return _api_json({'error': 'Hebrew variant search is not configured'}, 503)
+
+    # Exact matching is independent of Ollama. Query PostgreSQL first so a
+    # temporary embedding-service outage does not hide known spellings.
+    try:
+        db = variant_search_db()
+        db.execute('SET ivfflat.probes = 16')
+
+        select_fields = """
+            v.word_id, v.variant_seq,
+            COALESCE(NULLIF(v.letters, ''), NULLIF(v.unpointed, ''),
+                     NULLIF(v.variant_text, ''), w.pointed) AS spelling,
+            v.letters, v.unpointed, v.variant_text, v.variant_kind,
+            v.source AS variant_source, v.witness, v.convention,
+            v.variant_type, v.basis,
+            w.pointed, w.strongs, w.word_pos,
+            vv.book_id, vv.chapter, vv.verse, bk.name_en
+        """
+        joins = """
+            FROM word_variants v
+            JOIN words w ON w.word_id = v.word_id
+            JOIN verses vv ON vv.verse_id = w.verse_id
+            JOIN books bk ON bk.book_id = vv.book_id
+        """
+        exact_rows = db.execute(
+            'SELECT ' + select_fields + joins + """
+            WHERE v.variant_kind = 'spelling'
+              AND (v.letters = %s OR v.unpointed = %s
+                   OR v.variant_text = %s
+                   OR (COALESCE(v.letters, '') = ''
+                       AND COALESCE(v.unpointed, '') = ''
+                       AND COALESCE(v.variant_text, '') = ''
+                       AND w.pointed = %s))
+            ORDER BY v.word_id, v.variant_seq
+            LIMIT %s
+            """,
+            (normalized_q, normalized_q, normalized_q, normalized_q, limit)
+        ).fetchall()
+    except Exception:
+        return _api_json({'error': 'Hebrew variant search unavailable'}, 503)
+
+    semantic_rows = []
+    semantic_unavailable = False
+    try:
+        req = urllib.request.Request(
+            'http://127.0.0.1:11434/api/embeddings',
+            data=_json.dumps({
+                'model': 'nomic-embed-text:latest',
+                'prompt': normalized_q,
+            }).encode(),
+            headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            emb = _json.loads(resp.read())['embedding']
+        if len(emb) != 768:
+            raise ValueError('unexpected embedding dimensions')
+        vec = '[' + ','.join(repr(float(x)) for x in emb) + ']'
+        semantic_rows = db.execute(
+            'SELECT ' + select_fields + """,
+                1 - (e.embedding <=> %s::vector) AS score
+            FROM word_variant_embeddings e
+            JOIN word_variants v
+              ON v.word_id = e.word_id AND v.variant_seq = e.variant_seq
+            JOIN words w ON w.word_id = v.word_id
+            JOIN verses vv ON vv.verse_id = w.verse_id
+            JOIN books bk ON bk.book_id = vv.book_id
+            WHERE v.variant_kind = 'spelling'
+            ORDER BY e.embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (vec, vec, limit * 3)
+        ).fetchall()
+    except Exception as exc:
+        semantic_unavailable = True
+        if not exact_rows:
+            if isinstance(exc, ValueError):
+                return _api_json({'error': 'unexpected embedding dimensions'}, 502)
+            return _api_json({'error': 'Hebrew variant embedding search unavailable'}, 503)
+
+    results = []
+    seen = set()
+
+    def pack(row, match_type, score=None):
+        spelling = row['spelling'] or ''
+        return {
+            'word_id': row['word_id'],
+            'variant_seq': row['variant_seq'],
+            'spelling': spelling,
+            'letters': row['letters'],
+            'unpointed': row['unpointed'],
+            'variant_text': row['variant_text'],
+            'pointed': row['pointed'],
+            'strongs': row['strongs'],
+            'word_pos': row['word_pos'],
+            'book_id': row['book_id'],
+            'chapter': row['chapter'],
+            'verse': row['verse'],
+            'ref': f"{row['name_en']} {row['chapter']}:{row['verse']}",
+            'score': (round(float(score), 4) if score is not None else None),
+            'match_type': match_type,
+            'source': 'hebrew-variant-embedding',
+            'variant_source': row['variant_source'],
+            'witness': row['witness'],
+            'convention': row['convention'],
+            'variant_type': row['variant_type'],
+            'basis': row['basis'],
+            'snippet': spelling,
+        }
+
+    for row in exact_rows:
+        key = (row['word_id'], row['spelling'])
+        if key not in seen:
+            results.append(pack(row, 'exact'))
+            seen.add(key)
+
+    for row in semantic_rows:
+        key = (row['word_id'], row['spelling'])
+        if key not in seen:
+            results.append(pack(row, 'embedding', row['score']))
+            seen.add(key)
+        if len(results) >= limit:
+            break
+
+    response = _api_json(results[:limit])
+    if semantic_unavailable:
+        response.headers['X-Hebrew-Semantic-Search'] = 'unavailable'
+        response.headers['Access-Control-Expose-Headers'] = 'X-Hebrew-Semantic-Search'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 @app.route('/interlinear')
@@ -2379,8 +3123,9 @@ def interlinear(n, c, v):
         for i, (label, text) in enumerate(items):
             s = ' selected' if i == cur else ''
             topts.append(f'<option value="{i}"{s}>{html.escape(label)}</option>')
-        if trans:
+        if trans and trans['owner_id'] is not None:
             tctl = (f'''<form method="post" action="{u("/choice" + t_qs)}" style="display:inline">
+<input type="hidden" name="csrf_token" value="{html.escape(csrf_token(), quote=True)}">
 <input type="hidden" name="word_id" value="{wid}">
 <input type="hidden" name="next" value="/interlinear/{n}/{c}/{v}{t_qs}{wv_qs}">
 <select name="item" class="tr-sel">{"".join(topts)}</select>
