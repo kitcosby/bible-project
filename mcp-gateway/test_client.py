@@ -68,8 +68,8 @@ async def main():
             await session.initialize()
             tools = await session.list_tools()
             names = sorted(t.name for t in tools.tools)
-            record("tools/list returns the 11 read tools",
-                   len(names) == 11, ", ".join(names))
+            record("tools/list returns all 14 tools (11 read + 3 write)",
+                   len(names) == 14, ", ".join(names))
 
             async def call(name, args):
                 return await session.call_tool(name, args)

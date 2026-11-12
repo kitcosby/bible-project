@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Lampy MCP gateway - Phase 2 (local, read-only).
+"""Lampy MCP gateway - Phases 2-5.
 
 Serves a Streamable HTTP MCP endpoint on 127.0.0.1 only, authenticated by
 opaque bearer tokens from a local token store (hashed, scoped, revocable).
-Every tool is read-only. All calls are audit-logged without secrets.
+The Phase 2 read tools are open to any read-scope token. Phase 5 adds
+fs_write / fs_edit / exec_run for tokens carrying the "write" scope: file
+writes are confined to the write roots under the same denylist as reads,
+and execution runs as root via a single setuid-launched helper - the
+general-access path the owner granted so the connected agent can work in
+the Lampy environment and run the project's test suites through this
+gateway. All calls are audit-logged without secrets.
 
 Design notes (requirements doc 2026-11-12):
 - SEC-1: binds localhost; exposure is a separate phase.
@@ -16,6 +22,8 @@ Design notes (requirements doc 2026-11-12):
   server-side) plus a statement filter here as defense in depth.
 - SEC-5: audit JSONL at /home/mcpgw/logs/audit.jsonl.
 """
+import asyncio
+import base64
 import hashlib
 import hmac
 import json
@@ -70,6 +78,16 @@ DENY_COMPONENT = re.compile(
     re.IGNORECASE,
 )
 MAX_READ_BYTES = 256 * 1024
+WRITE_ROOTS = {
+    **ROOTS,
+    "stage": Path("/opt/stage"),
+    "bible-app-api": Path("/opt/bible-app-api"),
+}
+MAX_WRITE_BYTES = 1024 * 1024
+# The distro ships no sudo: the privileged path is a setuid launcher
+# (root:root 4755) that refuses every caller except mcpgw and execs the
+# root-owned helper. See root_helper_launcher.c / root_helper.py.
+ROOT_HELPER = "/usr/local/bin/mcpgw-root-helper"
 
 
 # ---------------------------------------------------------------- audit
@@ -142,10 +160,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
 
 # ---------------------------------------------------------------- helpers
-def safe_path(root_name, subpath):
-    if root_name not in ROOTS:
-        raise ValueError(f"unknown root {root_name!r}; choose from {sorted(ROOTS)}")
-    root = ROOTS[root_name].resolve()
+def safe_path(root_name, subpath, roots=None):
+    roots = ROOTS if roots is None else roots
+    if root_name not in roots:
+        raise ValueError(
+            f"unknown root {root_name!r}; choose from {sorted(roots)}")
+    root = roots[root_name].resolve()
     target = (root / subpath).resolve() if subpath else root
     if not target.is_relative_to(root):
         raise ValueError("path escapes the allowlisted root")
@@ -507,6 +527,136 @@ def svc_probe() -> dict:
                 "by-word/238432"
             ),
         },
+    }
+
+
+# ---------------------------------------------------------------- Phase 5
+# Write + execution tools. These exist so the connected agent can do real
+# work in the Lampy environment through this gateway - edit code, run the
+# project's test suites, administer services - instead of through a
+# separate remote-desktop tunnel. They require the "write" scope on the
+# caller's token; the read tools above never do. File operations stay
+# inside WRITE_ROOTS under the same denylist as reads; execution is
+# delegated to a root helper reachable from this process only through a
+# setuid launcher that accepts no caller but mcpgw.
+WR = {"readOnlyHint": False, "destructiveHint": True, "openWorldHint": False}
+
+
+def _current_scopes():
+    """Scopes of the token on the in-flight request, as the
+    AuthMiddleware recorded them. Fail closed: no context, no scopes."""
+    try:
+        request = mcp.get_context().request_context.request
+        return list(getattr(request.state, "scopes", []) or [])
+    except Exception:  # noqa: BLE001 - fail closed on any doubt
+        return []
+
+
+def _require_write():
+    scopes = _current_scopes()
+    if "write" not in scopes:
+        raise ValueError(
+            "this tool requires the 'write' scope "
+            f"(token scopes: {scopes or 'none'})"
+        )
+
+
+def _root_helper(req, timeout=40):
+    proc = subprocess.run(
+        [ROOT_HELPER],
+        input=json.dumps(req), capture_output=True, text=True,
+        timeout=timeout,
+    )
+    if proc.returncode != 0:
+        raise ValueError(
+            f"root helper failed (exit {proc.returncode}): "
+            f"{(proc.stderr or '').strip()[:300]}"
+        )
+    try:
+        res = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        raise ValueError("root helper returned unparseable output")
+    if not res.get("ok"):
+        raise ValueError(res.get("error", "root helper error"))
+    return res
+
+
+@mcp.tool(annotations=WR)
+async def fs_write(root: str, subpath: str, content: str) -> dict:
+    """Create or overwrite a UTF-8 text file inside a writable root
+    (projects, bible-website, bible-data, stage, bible-app-api), making
+    parent directories as needed. Max 1 MB. Secret-shaped paths are
+    denied by the same rule as reads. Requires the 'write' scope."""
+    _require_write()
+    safe_path(root, subpath, roots=WRITE_ROOTS)
+    data = content.encode("utf-8")
+    if len(data) > MAX_WRITE_BYTES:
+        raise ValueError("content larger than the 1 MB write cap")
+    res = await asyncio.to_thread(
+        _root_helper,
+        {"op": "write", "root": root, "subpath": subpath,
+         "content_b64": base64.b64encode(data).decode()},
+    )
+    audit({"kind": "tool", "tool": "fs_write", "root": root,
+           "subpath": subpath, "bytes": res["bytes"]})
+    return {"root": root, "subpath": subpath, "bytes": res["bytes"],
+            "path": res["path"]}
+
+
+@mcp.tool(annotations=WR)
+async def fs_edit(root: str, subpath: str, old: str, new: str) -> dict:
+    """Replace the single occurrence of `old` with `new` in a text file
+    inside a writable root. Refuses when `old` occurs zero times or more
+    than once, so an edit can never land ambiguously. Requires the
+    'write' scope."""
+    _require_write()
+    safe_path(root, subpath, roots=WRITE_ROOTS)
+    if not old:
+        raise ValueError("old must be non-empty")
+    if len(new.encode("utf-8")) > MAX_WRITE_BYTES:
+        raise ValueError("replacement larger than the 1 MB write cap")
+    res = await asyncio.to_thread(
+        _root_helper,
+        {"op": "edit", "root": root, "subpath": subpath,
+         "old": old, "new": new},
+    )
+    audit({"kind": "tool", "tool": "fs_edit", "root": root,
+           "subpath": subpath})
+    return {"root": root, "subpath": subpath, "bytes": res["bytes"],
+            "path": res["path"]}
+
+
+@mcp.tool(annotations=WR)
+async def exec_run(command: str, cwd_root: str = "projects",
+                   cwd_subpath: str = "",
+                   timeout_seconds: int = 120) -> dict:
+    """Run a shell command (bash) as root on Lampy, in a working
+    directory inside a writable root (default: the projects root).
+    This is the gateway's general-access path: run the project's test
+    suites, build, restart services, inspect anything the read tools
+    cannot reach. Output is capped; the command and its exit code are
+    audit-logged. Requires the 'write' scope."""
+    _require_write()
+    if not command or not command.strip():
+        raise ValueError("command must be non-empty")
+    if len(command) > 20000:
+        raise ValueError("command larger than the 20 KB cap")
+    safe_path(cwd_root, cwd_subpath, roots=WRITE_ROOTS)
+    timeout = max(5, min(int(timeout_seconds), 600))
+    res = await asyncio.to_thread(
+        _root_helper,
+        {"op": "exec", "command": command, "cwd_root": cwd_root,
+         "cwd_subpath": cwd_subpath, "timeout": timeout},
+        timeout + 30,
+    )
+    audit({"kind": "tool", "tool": "exec_run", "command": command[:300],
+           "cwd_root": cwd_root, "cwd_subpath": cwd_subpath,
+           "exit_code": res["exit_code"]})
+    return {
+        "exit_code": res["exit_code"], "timed_out": res["timed_out"],
+        "stdout": res["stdout"], "stderr": res["stderr"],
+        "stdout_truncated": res["stdout_truncated"],
+        "stderr_truncated": res["stderr_truncated"], "cwd": res["cwd"],
     }
 
 

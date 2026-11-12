@@ -38,7 +38,7 @@ ORIGIN = os.environ.get(
     "MCPGW_PUBLIC_ORIGIN", "https://lampy.taila7a335.ts.net"
 ).rstrip("/")
 RESOURCE = ORIGIN + "/mcp"
-SCOPES = ["read", "offline_access"]
+SCOPES = ["read", "write", "offline_access"]
 LOCK = threading.Lock()
 REQ_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 
@@ -61,7 +61,17 @@ def _sha(text):
 
 
 # ------------------------------------------------------------------ tokens
-def issue_access_token(client_label, expires_in=3600):
+def issue_access_token(client_label, scopes=None, expires_in=3600):
+    # The token carries the scopes the owner approved for the grant
+    # (offline_access is a grant property, not a token scope). A write
+    # grant implies read; an empty grant degrades to read, never to
+    # scopeless.
+    token_scopes = [s for s in (scopes or ["read"])
+                    if s != "offline_access"]
+    if "write" in token_scopes and "read" not in token_scopes:
+        token_scopes.insert(0, "read")
+    if not token_scopes:
+        token_scopes = ["read"]
     secret = secrets.token_urlsafe(32)
     token_id = secrets.token_hex(4)
     with LOCK:
@@ -74,7 +84,7 @@ def issue_access_token(client_label, expires_in=3600):
                 "id": token_id,
                 "label": client_label,
                 "sha256": _sha(secret),
-                "scopes": ["read"],
+                "scopes": token_scopes,
                 "created": int(time.time()),
                 "expires": int(time.time()) + expires_in,
                 "revoked": False,
@@ -195,7 +205,7 @@ async def register(request: Request):
             "grant_types": ["authorization_code", "refresh_token"],
             "response_types": ["code"],
             "token_endpoint_auth_method": "client_secret_basic",
-            "scope": "read offline_access",
+            "scope": "read write offline_access",
         },
         status_code=201,
     )
@@ -372,12 +382,15 @@ async def token(request: Request):
                 )
             rec["used"] = True
             _save(CODES_FILE, "codes", codes)
-        access = issue_access_token(f"oauth:{_client['client_name']}")
+        access_scopes = [s for s in rec["scope"].split()
+                         if s != "offline_access"]
+        access = issue_access_token(f"oauth:{_client['client_name']}",
+                                    scopes=access_scopes)
         resp = {
             "access_token": access,
             "token_type": "Bearer",
             "expires_in": 3600,
-            "scope": "read",
+            "scope": " ".join(access_scopes) or "read",
         }
         if "offline_access" in rec["scope"].split():
             resp["refresh_token"] = issue_refresh_token(client_id, rec["scope"])
@@ -391,13 +404,16 @@ async def token(request: Request):
                 return JSONResponse({"error": "invalid_grant"}, status_code=400)
             rec["revoked"] = True
             _save(REFRESH_FILE, "tokens", store)
-        access = issue_access_token(f"oauth:{_client['client_name']}")
+        access_scopes = [s for s in rec["scope"].split()
+                         if s != "offline_access"]
+        access = issue_access_token(f"oauth:{_client['client_name']}",
+                                    scopes=access_scopes)
         return JSONResponse(
             {
                 "access_token": access,
                 "token_type": "Bearer",
                 "expires_in": 3600,
-                "scope": "read",
+                "scope": " ".join(access_scopes) or "read",
                 "refresh_token": issue_refresh_token(client_id, rec["scope"]),
             }
         )
@@ -424,7 +440,7 @@ COMPENSATION = {
 AGENT_CARD = {
     "name": "Lampy Bible MCP Gateway",
     "description": (
-        "Read-only MCP server (Streamable HTTP) for the Bible project: "
+        "OAuth-gated MCP server (Streamable HTTP) for the Bible project: "
         "owner-authorized access to the project's PostgreSQL Bible corpus, "
         "its git repositories, and service health probes, hosted on the "
         "owner's machine (Lampy). This endpoint speaks MCP only, not A2A; "
@@ -478,9 +494,11 @@ AGENT_CARD = {
             "id": "project-files-and-git",
             "name": "Project files and git",
             "description": (
-                "Read-only listing, reading, and search of the gateway's "
-                "own project clones and website roots, plus git status, "
-                "log, branches, and diff."
+                "Listing, reading, and search of the gateway's own "
+                "project clones and website roots, plus git status, "
+                "log, branches, and diff. Tokens granted the write scope "
+                "can also write and edit files and run commands (the "
+                "project's test suites) in the Lampy environment."
             ),
             "tags": ["mcp", "files", "git", "read-only"],
         },

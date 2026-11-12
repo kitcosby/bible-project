@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Gateway token administration (run on Lampy as root or mcpgw).
 
-  gw_admin.py mint <label> [--days N]   print a new token ONCE
+  gw_admin.py mint <label> [--days N] [--scopes read,write]
+                                        print a new token ONCE
   gw_admin.py list                      ids, labels, scopes, status (no secrets)
   gw_admin.py revoke <token-id>         mark a token revoked
+  gw_admin.py grant <token-id> <scope>  add a scope (read|write) to a token
 
 Tokens are stored hashed (sha256 of the secret part) in
 /home/mcpgw/secrets/tokens.json; the plaintext exists only at mint time.
@@ -29,14 +31,14 @@ def save(data):
     STORE.chmod(0o600)
 
 
-def mint(label, days):
+def mint(label, days, scopes=None):
     secret = secrets.token_urlsafe(32)
     token_id = secrets.token_hex(4)
     rec = {
         "id": token_id,
         "label": label,
         "sha256": hashlib.sha256(secret.encode()).hexdigest(),
-        "scopes": ["read"],
+        "scopes": scopes or ["read"],
         "created": int(time.time()),
         "expires": int(time.time()) + days * 86400 if days else None,
         "revoked": False,
@@ -92,6 +94,22 @@ def set_pending(req_id, status):
     print(f"request {req_id} -> {status}")
 
 
+def grant(token_id, scope):
+    if scope not in ("read", "write"):
+        print("scope must be read or write")
+        return
+    data = load()
+    hit = False
+    for rec in data["tokens"]:
+        if rec["id"] == token_id:
+            scopes = rec.setdefault("scopes", [])
+            if scope not in scopes:
+                scopes.append(scope)
+            hit = True
+    save(data)
+    print("granted" if hit else "no such token id")
+
+
 def revoke(token_id):
     data = load()
     hit = False
@@ -110,13 +128,19 @@ if __name__ == "__main__":
         sys.exit(2)
     if args[0] == "mint":
         days = 0
+        scopes = None
         if "--days" in args:
             days = int(args[args.index("--days") + 1])
-        mint(args[1], days)
+        if "--scopes" in args:
+            scopes = [s for s in
+                      args[args.index("--scopes") + 1].split(",") if s]
+        mint(args[1], days, scopes)
     elif args[0] == "list":
         list_tokens()
     elif args[0] == "revoke":
         revoke(args[1])
+    elif args[0] == "grant":
+        grant(args[1], args[2])
     elif args[0] == "pending":
         list_pending()
     elif args[0] == "approve":
