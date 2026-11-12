@@ -406,6 +406,12 @@ erDiagram
         string text
         string created_at
     }
+    GNT_BOOKS {
+        int book_id PK
+        string code
+        string name
+        string note
+    }
     GNT_VERSES {
         int gnt_verse_id PK
         int corpus_verse_id FK
@@ -430,6 +436,12 @@ erDiagram
         int ylt_word_pos
         string ylt_word
     }
+    GNTB_BOOKS {
+        int book_id PK
+        string code
+        string name
+        string note
+    }
     GNTB_VERSES {
         int gnt_verse_id PK
         int corpus_verse_id FK
@@ -452,6 +464,12 @@ erDiagram
         int gntb_position
         int ylt_word_pos
         string ylt_word
+    }
+    GNTS_BOOKS {
+        int book_id PK
+        string code
+        string name
+        string note
     }
     GNTS_VERSES {
         int gnt_verse_id PK
@@ -506,6 +524,25 @@ erDiagram
         int verse_id PK_FK
         string chunk
         vector embedding
+    }
+    HEBREW_VERSES_EMBEDDING_STORE {
+        int verse_id PK_FK
+        string chunk
+        vector embedding
+    }
+    GREEK_VERSES_EMBEDDING_STORE {
+        int verse_id PK_FK
+        string chunk
+        vector embedding
+    }
+    HEBREW_VOWEL_VARIANT_GROUP {
+        int group_id PK
+    }
+    HEBREW_VOWEL_VARIANT_MEMBER {
+        int group_id FK
+        int root_id
+        int root_form_seq
+        int vowel_seq
     }
     BOOKS ||--o{ VERSES : contains
     VERSES ||--o{ WORDS : contains
@@ -573,9 +610,17 @@ erDiagram
     LXX_VERSES ||--o{ LXX_WORDS : contains
     LXX_WORDS }o--|o STRONGS : tagged_with
     VERSES ||--|| YLT_VERSES_EMBEDDING_STORE : embedded_as
+    VERSES ||--|| HEBREW_VERSES_EMBEDDING_STORE : embedded_as
+    VERSES ||--|| GREEK_VERSES_EMBEDDING_STORE : embedded_as
+    GNT_BOOKS ||--o{ GNT_VERSES : contains
+    GNTB_BOOKS ||--o{ GNTB_VERSES : contains
+    GNTS_BOOKS ||--o{ GNTS_VERSES : contains
+    HEBREW_VOWEL_VARIANT_GROUP ||--o{ HEBREW_VOWEL_VARIANT_MEMBER : has_members
 ```
 
 Notes on the ERD: composite primary keys (`ROOT_FORM`, `ROOT_VOWEL`, `LEXICON` and its children, `GLOSSES`, `WORD_VARIANTS`, `MORPH_VARIANTS`, `STRONGS_COMPONENTS`, `WORD_CHOICE` (translation_id, word_id), `LEMMA_DEFAULT` (translation_id, lemma), `WITNESS_VERSES`, `VERSE_NOTES`) are declared in `schema_v2.sql` or in the `app_v2.py` migration DDL quoted in the Grounding notes; the `PK`/`FK` marks above show membership, not single-column keys. `YLT_VERSES.verse_id` is both PK and FK to `VERSES`. `WORD_CHOICE.choice` is CHECK-constrained 1–255 and sparse: an absent row means choice 0 (2026-10-09, replacing the byte files). The `TRANSLATION }o--o{ WORDS : targets` link is logical, not a declared FK — since 2026-10-09 the corpus lives in the PostgreSQL `bible` database and website data in the PostgreSQL `bible_app` database; the SQLite file `bible_v2.db` remains the build corpus the variant builders write, synced to PostgreSQL by `export_sync.py`. The Greek extension tables (2026-11-04/07) key off the corpus grid: each tradition's verses carry both their own `gnt_verse_id` and the `corpus_verse_id` of the shared `VERSES` row, and each tradition's alignment/rendering tables mirror the TR shape (`gntb_` Byzantine, `gnts_` SBLGNT; SBLGNT words carry `lemma` instead of a Strong's number, per MorphGNT). `LXX_WORDS` attributes beyond the verse link are representative (see Grounding notes). The embedding store is a pgvector table in the PostgreSQL `bible` database, keyed by `verse_id`, written by the vectorizer and read only by `/api/search`.
+
+**Estates (2026-11-12 census).** The diagram spans four estates with different synchronization domains; only the first is governed by `schema_v2.sql`. (1) *Corpus estate* — the 46 corpus tables (SQLite build corpus `bible_v2.db`, synced to the PostgreSQL `bible` database); as of 2026-11-12 `schema_v2.sql` defines all 46. (2) *Authoring estate* — `bible_app` (`APP_USER`, `TRANSLATION`, `WORD_CHOICE`, `OTHER_OPTION`, `LEMMA_DEFAULT`, `READING_POSITION`, `USER_ACCOUNTS`), documented with the BibleApp repository, deliberately outside corpus synchronization. (3) *Embedding estate* — the three pgvector verse stores in PostgreSQL `bible` (YLT written by the pgai vectorizer; the Hebrew and Greek stores written by the language-store builder, Ollama `nomic-embed-text`; provenance spot-test passed 2026-11-12, issue #26). (4) *Frozen shadow estate* — database `bible_hebrew_variant_shadow_20261107`, a 2026-11-07 snapshot whose `HEBREW_VOWEL_VARIANT_GROUP` / `HEBREW_VOWEL_VARIANT_MEMBER` tables back the variant API; its runtime invariants are calibrated to the snapshot, so it is excluded from synchronization by design. **WORD_NOTES disposition:** `WORD_NOTES` appears in no store (corpus, PostgreSQL, or shadow) as of the 2026-11-12 census — it is a planned entity, retained in the diagram as such; the live note apparatus is `VERSE_NOTES` / `WITNESS_VERSES`.
 
 ## Grounding notes
 
