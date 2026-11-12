@@ -1,0 +1,657 @@
+{
+  "status": "reviewed_proposal_only_not_applied",
+  "target_profile": "YLT",
+  "overrides": [
+    {
+      "book": "MR",
+      "reference": "8:24",
+      "groups": [
+        12,
+        13
+      ],
+      "current_candidate": [
+        "A",
+        "B"
+      ],
+      "proposed_ylt_profile": [
+        "A",
+        "A"
+      ],
+      "status": "proposed_ylt_profile_only_not_applied",
+      "reason": "Stored YLT explicitly translates a second seeing verb (I see); current candidate omits orw and has no Greek rendering row for the second I see phrase. Consulted external apparatus reports the principal witness clusters as both oti+orw or omission of both.",
+      "production_status": "unchanged"
+    },
+    {
+      "book": "2CO",
+      "reference": "7:12",
+      "groups": [
+        4,
+        5
+      ],
+      "current_candidate": [
+        "A",
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B",
+        "B"
+      ],
+      "status": "proposed_ylt_profile_only_not_applied",
+      "reason": "Stored YLT says our diligence in your behalf, corresponding to hēmōn ... hymōn. Current A/A is hymōn ... hēmōn and maps YLT our to Greek υμων (G4771). KJV English also says our care for you; Scrivener TR 1894 has B/B. CrossWire lemma.TR metadata encodes A/A, demonstrating source-profile divergence.",
+      "production_status": "unchanged"
+    }
+  ],
+  "control_cases": [
+    {
+      "book": "JAS",
+      "reference": "4:13",
+      "groups": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "current_candidate": [
+        "A",
+        "A",
+        "A",
+        "A"
+      ],
+      "ylt_assessment": "A choices agree with YLT wording (and; we will go; will pass; traffic and make gain). KJV English has or where CrossWire lemma.TR maps kai, illustrating that a KJV alignment profile and a YLT profile can differ."
+    },
+    {
+      "book": "COL",
+      "reference": "2:13",
+      "groups": [
+        3,
+        4
+      ],
+      "current_candidate": [
+        "A",
+        "B"
+      ],
+      "ylt_assessment": "Candidate choice matches YLT wording, including forgiven you."
+    },
+    {
+      "book": "2PE",
+      "reference": "1:1",
+      "groups": [
+        1,
+        2
+      ],
+      "current_candidate": [
+        "A",
+        "A"
+      ],
+      "ylt_assessment": "Candidate omits the optional duplicate hmwn; stored YLT has a single our God."
+    },
+    {
+      "book": "AC",
+      "reference": "7:16",
+      "groups": [
+        6,
+        7,
+        8
+      ],
+      "current_candidate": [
+        "A",
+        "A",
+        "A"
+      ],
+      "ylt_assessment": "Name spellings align with YLT transliterations; primarily orthographic."
+    },
+    {
+      "book": "COL",
+      "reference": "4:10-18",
+      "groups": [
+        5,
+        6
+      ],
+      "current_candidate": [
+        "A",
+        "A"
+      ],
+      "ylt_assessment": "Main text retained; subscription excluded from verse words; Barnabas genitive matches YLT context."
+    }
+  ],
+  "candidate_overrides": [
+    {
+      "book": "1CO",
+      "reference": "15:31",
+      "groups": [
+        6
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “the glorying of you” corresponds to ὑμετέραν (B, your). A ἡμετέραν means our. NA, WH, Byzantine and KJV-side comparisons support B; a TR minority reading has A.",
+      "source_urls": [
+        "https://www.cnbible.com/texts/1_corinthians/15-31.htm",
+        "https://lemma.gebible.app/v/1-corinthians/15/31"
+      ],
+      "confidence": "high",
+      "review_status": "translation_and_major_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "2JO",
+      "reference": "1:3",
+      "groups": [
+        1
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “with you” corresponds to μεθ’ ὑμῶν (B), not μεθ’ ἡμῶν (A, with us). Scrivener 1894 and a minority of witnesses support B; Nestle/WH/SBL and most cited early witnesses support A. Keep this as a translation-specific profile choice.",
+      "source_urls": [
+        "https://mail.openbible.com/text/2_john/1-3.htm",
+        "https://lemma.gebible.app/v/2-john/1/3"
+      ],
+      "confidence": "high_for_ylt_alignment_textual_support_mixed",
+      "review_status": "translation_supported_witness_review_required",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "2CO",
+      "reference": "11:10",
+      "groups": [
+        7
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “shall not be stopped” corresponds to φραγήσεται (branch B; φράσσω, stop/fence), not σφραγίζεται (branch A; seal). NA/WH/Byzantine and Scrivener-derived comparisons print φραγήσεται; one commentary notes σφραγίζεται in the TR as a possible conjecture.",
+      "source_urls": [
+        "https://www.cnbible.com/texts/2_corinthians/11-10.htm",
+        "https://lemma.gebible.app/v/2-corinthians/11/10"
+      ],
+      "confidence": "high",
+      "review_status": "translation_and_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "AC",
+      "reference": "21:8",
+      "groups": [
+        26
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT explicitly says “we came,” matching ἤλθομεν (B, first-person plural) rather than ἦλθον (A, third-person plural). The YLT also renders the phrase “Paul and his company”; printed editions differ in whether οἱ περὶ τὸν Παῦλον occurs together with each verb form. Scrivener 1894 gives the combination οἱ περὶ τὸν Παῦλον ἤλθομεν, while other TR/Byzantine witnesses combine the extra phrase with ἦλθον. Preserve the witness bundle; do not infer an unattested synthetic reading.",
+      "confidence": "high_with_witness_bundle_caveat",
+      "review_status": "translation_supported_witness_bundle_review_required",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "AC",
+      "reference": "26:20",
+      "groups": [
+        36
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “I was preaching” corresponds to ἀπήγγελλον (B, imperfect active first-person singular). Branch A ἀπαγγέλλων is a masculine nominative participle. NA/WH and Vaticanus evidence support B; TR/Byzantine tradition has A.",
+      "confidence": "high",
+      "review_status": "translation_and_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "LU",
+      "reference": "8:31",
+      "groups": [
+        17
+      ],
+      "current_candidate": [
+        "B"
+      ],
+      "proposed_ylt_profile": [
+        "A"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT reads “he was calling on him,” singular, matching A παρεκάλει (3rd singular imperfect). Current B παρεκάλουν is 3rd plural. Most TR editions and Byzantine text have the singular; Scrivener 1894 is an exception with the plural.",
+      "confidence": "high",
+      "review_status": "translation_and_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "2JO",
+      "reference": "1:5",
+      "groups": [
+        2
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "A"
+      ],
+      "status": "retracted_after_grammatical_review",
+      "reason": "YLT “not as writing to thee” does not establish a Greek participle. A γράφω is the finite first-person verb “I write” and is syntactically natural after “I beseech thee”; English gerund phrasing is not proof of B γράφων. Do not apply B.",
+      "confidence": "medium_that_previous_B_proposal_was_unsupported",
+      "review_status": "retain_current_candidate_pending_syntax_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "RE",
+      "reference": "11:2",
+      "groups": [
+        20
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “the court that is without the sanctuary” corresponds to ἔξωθεν (B, outside), not ἔσωθεν (A, within). NA/WH/Byzantine and the majority of listed editions support B; Scrivener TR has A.",
+      "source_urls": [
+        "https://lemma.gebible.app/v/revelation/11/2"
+      ],
+      "confidence": "high",
+      "review_status": "translation_and_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "RE",
+      "reference": "16:5",
+      "groups": [
+        28
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “who shalt be” corresponds to ὁ ἐσόμενος (B), not ὁ ὅσιος (A, holy). The future participle is associated with Beza/received-text tradition; major critical and Byzantine editions support ὁ ὅσιος. This is a YLT translation-profile choice, not a claim that B is the earliest reading.",
+      "source_urls": [
+        "https://mail.openbible.com/text/revelation/16-5.htm",
+        "https://www.textus-receptus.com/wiki/Revelation_16%3A5"
+      ],
+      "confidence": "high_for_ylt_alignment_not_textual_priority",
+      "review_status": "translation_supported_received_text_profile_distinction",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "LU",
+      "reference": "6:9",
+      "groups": [
+        12
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “I will question you something” favors the indefinite τι (B, Strong’s 5100) rather than interrogative τί (A, Strong’s 5101). Confirm the Robinson analysis and syntactic case before finalizing.",
+      "confidence": "medium_high",
+      "review_status": "translation_supported_lexical_morphology_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "RE",
+      "reference": "7:2",
+      "groups": [
+        8
+      ],
+      "current_candidate": [
+        "A"
+      ],
+      "proposed_ylt_profile": [
+        "B"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "reason": "YLT “another messenger going up” corresponds naturally to present participle ἀναβαίνοντα (B), whereas A ἀναβάντα is aorist participle (“having gone up”). The critical Greek text comparison prints B. English aspect alone is not conclusive.",
+      "confidence": "medium_high",
+      "review_status": "translation_and_edition_supported_pending_final_apparatus_review",
+      "production_status": "not_applied"
+    },
+    {
+      "book": "AC",
+      "reference": "7:26",
+      "groups": [
+        9
+      ],
+      "current_candidate": [
+        "B"
+      ],
+      "proposed_ylt_profile": [
+        "A"
+      ],
+      "status": "translation_supported_candidate_pending_apparatus_review",
+      "confidence": "medium_high",
+      "review_status": "translation_supported_pending_source_edition_identification",
+      "reason": "YLT reads “On the succeeding day, also”; branch A is τε, while current B is δέ. The YLT Greek comparison page gives Τῇ τε ἐπιούσῃ. This is a plausible YLT-profile override, but identify Young’s exact Greek source edition before finalizing.",
+      "source_urls": [
+        "https://bibelvers.no/en/youngs-literal-translation/acts/7/26"
+      ],
+      "production_status": "not_applied"
+    }
+  ],
+  "coverage_audit": {
+    "status": "candidate_shadow_audit_only",
+    "packet_components": 108,
+    "packet_verse_references": 116,
+    "ylt_tokens_counted": 3076,
+    "rendering_rows": 2490,
+    "unique_ylt_positions_with_rendering": 2101,
+    "ylt_positions_without_rendering": 975,
+    "coverage_percent": 68.3,
+    "ylt_positions_mapped_to_multiple_greek_positions": 389,
+    "verses_with_at_least_one_unrendered_ylt_position": 115,
+    "method": "Whitespace tokenization after stripping punctuation, matching the builder’s tokenize() function.",
+    "interpretation": "The bridge is YLT→KJV word alignment followed by inherited KJV→Greek positions. These rows are not independent YLT lexical evidence. Missing YLT tokens may reflect translation divergence; a mapped row does not validate the Greek association."
+  },
+  "manual_review_notes": [
+    {
+      "book": "AC",
+      "reference": "26:18",
+      "group": 35,
+      "decision": "not_proposed_as_override",
+      "reason": "The affected token is at the beginning of the clause and substitutes tou (infinitive marker, “to turn”) with kai (“and”), not the later kai before tēs exousias. YLT “to turn [them] from darkness” supports the current A reading. The earlier apparent support for B confused this group with a different conjunction later in the verse."
+    },
+    {
+      "book": "RE",
+      "reference": "9:20",
+      "group": 18,
+      "decision": "unresolved",
+      "reason": "The group changes ou (not) to oute (neither/nor) before metenoēsan. YLT “neither did reform” may be idiomatic English for the negative clause rather than evidence for oute. The existing rendering table does not map this YLT word to the group token. Do not override without apparatus/context review."
+    }
+  ],
+  "held_unresolved": [
+    {
+      "book": "AC",
+      "reference": "15:32",
+      "group": 19,
+      "current_candidate": "B",
+      "alternatives": {
+        "A": "τε",
+        "B": "δέ"
+      },
+      "reason": "YLT “Judas also and Silas” does not uniquely decide τε versus δέ; both can be rendered with connective force. Printed editions differ (Nestle/WH/Byzantine use τε; Scrivener TR uses δέ). Retain unresolved pending source-edition identification."
+    },
+    {
+      "book": "AC",
+      "reference": "19:27",
+      "group": 22,
+      "current_candidate": "A",
+      "alternatives": {
+        "A": "δέ",
+        "B": "τε"
+      },
+      "reason": "YLT “and also her greatness” is compatible with the broader connective sequence; English does not isolate this particle reliably. Do not override from word matching alone."
+    }
+  ],
+  "branch_change_triage": {
+    "components": 108,
+    "raw_groups": 118,
+    "classification_counts": {
+      "primary_strongs_change": 39,
+      "surface_spelling_change": 38,
+      "morphology_or_auxiliary_change": 34,
+      "presence_absence": 4,
+      "token_count_change": 3
+    },
+    "method": "Compare source branch payloads by parsed token count, primary Strong’s value, morphology/auxiliary fields, and surface form. This is mechanical classification only, not a textual verdict."
+  },
+  "last_review_scope": "All 108 low-margin components; 118 branch groups; 116 YLT verse contexts. No production or candidate DB updates.",
+  "review_summary": {
+    "proposed_ylt_profile_changes": [
+      {
+        "book": "MR",
+        "reference": "8:24",
+        "groups": [
+          12,
+          13
+        ],
+        "from": [
+          "A",
+          "B"
+        ],
+        "to": [
+          "A",
+          "A"
+        ],
+        "confidence": "medium",
+        "note": "Second “I see” supports orw; apparatus grouping requires witness review."
+      },
+      {
+        "book": "2CO",
+        "reference": "7:12",
+        "groups": [
+          4,
+          5
+        ],
+        "from": [
+          "A",
+          "A"
+        ],
+        "to": [
+          "B",
+          "B"
+        ],
+        "confidence": "high",
+        "note": "Our ... your pronoun sequence."
+      },
+      {
+        "book": "1CO",
+        "reference": "15:31",
+        "groups": [
+          6
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high",
+        "note": "Your glorying."
+      },
+      {
+        "book": "2JO",
+        "reference": "1:3",
+        "groups": [
+          1
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high_for_YLT_alignment",
+        "note": "With you; textual support is mixed."
+      },
+      {
+        "book": "2CO",
+        "reference": "11:10",
+        "groups": [
+          7
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high",
+        "note": "Shall not be stopped."
+      },
+      {
+        "book": "AC",
+        "reference": "21:8",
+        "groups": [
+          26
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high_with_witness_bundle_caveat",
+        "note": "We came; preserve the companion phrase witness combination."
+      },
+      {
+        "book": "AC",
+        "reference": "26:20",
+        "groups": [
+          36
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high",
+        "note": "I was preaching."
+      },
+      {
+        "book": "LU",
+        "reference": "8:31",
+        "groups": [
+          17
+        ],
+        "from": [
+          "B"
+        ],
+        "to": [
+          "A"
+        ],
+        "confidence": "high",
+        "note": "He was calling (singular)."
+      },
+      {
+        "book": "RE",
+        "reference": "11:2",
+        "groups": [
+          20
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high",
+        "note": "Outer court outside the sanctuary."
+      },
+      {
+        "book": "RE",
+        "reference": "16:5",
+        "groups": [
+          28
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "high_for_YLT_alignment_not_textual_priority",
+        "note": "Who shalt be; TR/Beza versus ὅσιος in critical/Byzantine texts."
+      },
+      {
+        "book": "LU",
+        "reference": "6:9",
+        "groups": [
+          12
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "medium_high",
+        "note": "Something (indefinite pronoun)."
+      },
+      {
+        "book": "RE",
+        "reference": "7:2",
+        "groups": [
+          8
+        ],
+        "from": [
+          "A"
+        ],
+        "to": [
+          "B"
+        ],
+        "confidence": "medium_high",
+        "note": "Going up (present participle)."
+      },
+      {
+        "book": "AC",
+        "reference": "7:26",
+        "groups": [
+          9
+        ],
+        "from": [
+          "B"
+        ],
+        "to": [
+          "A"
+        ],
+        "confidence": "medium_high",
+        "note": "Also on the succeeding day (τε)."
+      }
+    ],
+    "retracted_hypotheses": [
+      {
+        "book": "AC",
+        "reference": "26:18",
+        "previous_proposal": "B",
+        "retained": "A",
+        "reason": "The disputed token is τοῦ vs καί before ἐπιστρέψαι; YLT “to turn” supports the infinitive marker A."
+      },
+      {
+        "book": "2JO",
+        "reference": "1:5",
+        "previous_proposal": "B",
+        "retained": "A",
+        "reason": "English “as writing” does not prove a Greek participle; γράφω finite first person is syntactically natural."
+      }
+    ],
+    "not_overridden": [
+      {
+        "book": "AC",
+        "reference": "15:32",
+        "reason": "τε vs δέ cannot be decided from the English “Judas also and Silas” alone; retain unresolved."
+      },
+      {
+        "book": "AC",
+        "reference": "19:27",
+        "reason": "δέ vs τε connective nuance is not uniquely recoverable from YLT English; retain current candidate pending review."
+      }
+    ]
+  }
+}

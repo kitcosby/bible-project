@@ -1,0 +1,64 @@
+{
+  "first_variant": {
+    "upstream_keys": 7956,
+    "port_keys": 7956,
+    "union_compared_after_RE_exclusion": 7955,
+    "common_keys": 7954,
+    "exact_common_sequences": 7954,
+    "different_common_sequences": 0,
+    "only_upstream_keys": [
+      [
+        42,
+        17,
+        36
+      ]
+    ],
+    "empty_only_upstream_keys": [
+      [
+        42,
+        17,
+        36
+      ]
+    ],
+    "nonempty_only_upstream_keys": [],
+    "only_port_keys": [],
+    "nonempty_only_port_keys": [],
+    "excluded_RE_refs": [
+      [
+        66,
+        17,
+        7
+      ],
+      [
+        66,
+        17,
+        8
+      ]
+    ]
+  },
+  "second_variant": {
+    "upstream_keys": 7948,
+    "port_keys": 7949,
+    "union_compared_after_RE_exclusion": 7947,
+    "common_keys": 7947,
+    "exact_common_sequences": 7947,
+    "different_common_sequences": 0,
+    "only_upstream_keys": [],
+    "empty_only_upstream_keys": [],
+    "nonempty_only_upstream_keys": [],
+    "only_port_keys": [],
+    "nonempty_only_port_keys": [],
+    "excluded_RE_refs": [
+      [
+        66,
+        17,
+        7
+      ],
+      [
+        66,
+        17,
+        8
+      ]
+    ]
+  }
+}
