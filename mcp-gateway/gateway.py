@@ -239,9 +239,14 @@ def fs_list(root: str, subpath: str = "") -> dict:
 
 
 @mcp.tool(annotations=RO)
-def fs_read(root: str, subpath: str) -> dict:
+def fs_read(root: str, subpath: str) -> str:
     """Read a UTF-8 text file (max 256 KB) inside an allowlisted root.
-    Secret-shaped files (.env, keys, credential stores) are denied."""
+    Secret-shaped files (.env, keys, credential stores) are denied.
+
+    Returns the file content as a plain string. (Changed 2026-11-12 from
+    a {root, subpath, content} dict: ChatGPT's connector surfaced the
+    structured result to the agent as an empty object {}, which blocked
+    read-dependent workflows; plain text content is surfaced correctly.)"""
     target = safe_path(root, subpath)
     if not target.is_file():
         raise ValueError(f"not a file: {subpath}")
@@ -252,7 +257,7 @@ def fs_read(root: str, subpath: str) -> dict:
     except UnicodeDecodeError:
         raise ValueError("not a UTF-8 text file")
     audit({"kind": "tool", "tool": "fs_read", "root": root, "subpath": subpath})
-    return {"root": root, "subpath": subpath, "content": text}
+    return text
 
 
 def _denied_name(name):
