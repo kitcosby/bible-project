@@ -1,9 +1,9 @@
 # MCP Gateway — Phase 4 Completion Report (2026-11-12)
 
-**Status: CONNECTED — FIRST TOOL INVOCATION PENDING (label adopted
-2026-11-12 from GPT's PR #31 review; the connection itself is complete —
-acceptance criterion 8 of 9, the first live tool call from a ChatGPT
-conversation, remains open for the ChatGPT session itself — see below).**
+**Status: COMPLETE — all nine acceptance criteria met. The first live
+tool call from a ChatGPT conversation was executed 2026-11-12
+08:27–08:28 PST and verified independently in the gateway audit log
+(closing addendum at the end of this report).**
 
 Phase 4 = register the Lampy MCP gateway in ChatGPT as a plugin and
 complete the OAuth connection. For most of 2026-11-12 this was believed
@@ -127,3 +127,28 @@ Verification after the fix (gateway pid 134345, RUNNING):
 SHA-256: `gateway.py` 1c271a2ca72745b1649e61fbf92f5fbf4ac401205ae2cc34716a132822ab9e40,
 `oauth_as.py` 3e7499867df8da6309329f99e2a2230dd79627305a0459f17483a0d8f69ee0fc
 (local and remote identical). Criterion 8 remains the one open item.
+
+## Closing addendum — criterion 8 executed (2026-11-12)
+
+The one outstanding acceptance criterion is now met. At Kit's direction
+("Run the first Lampy tool call from this session", ~08:27 PST), the
+signed-in ChatGPT session (kitcosby@gmail.com) opened a new conversation
+(https://chatgpt.com/c/6af5e8ff-95b0-83e8-91fa-e6822a7f57be), attached
+the Lampy plugin, and sent: "Use the Lampy plugin: list the databases
+you can access." ChatGPT invoked the plugin with no consent prompt and
+no error; its activity line read "Listed available PostgreSQL
+databases" and it reported all six allowlisted databases reachable
+with live table counts: bible 54, bible_app 7,
+bible_search_prod_20261111 7, bible_search_stage_20261109 56,
+bible_reconcile_20261111 56, bible_hebrew_variant_shadow_20261107 54.
+
+Independent gateway-side verification: `/home/mcpgw/logs/audit.jsonl`
+records exactly one `pg_databases` tool execution at
+2026-11-12T16:28:03.601Z (08:28:03 PST), inside the browser run window
+(16:27–16:28 UTC), with no Muse battery active at that time (the last
+battery tool entry is 16:23:00Z). The result ChatGPT displayed matches
+the tool's live output exactly.
+
+**Phase 4 is COMPLETE: 9 of 9 acceptance criteria.** The gateway is in
+regular read-only use by the connected ChatGPT account. Phase 5 (write
+tools / bounded command execution) remains unauthorized.
