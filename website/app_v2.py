@@ -1088,7 +1088,7 @@ def books():
 def book(n):
     trans = current_translation()
     chaps = bible().execute('''SELECT DISTINCT v.chapter FROM verses v
-        WHERE v.book_id=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND v.hidden=0 AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.chapter''', (n,)).fetchall()
     items = ''.join(f'<li><a href="{u("/chapter/" + str(n) + "/" + str(c["chapter"]) + tqs(trans))}">'
                     f'Chapter {c["chapter"]}</a></li>' for c in chaps)
@@ -1101,7 +1101,7 @@ def tqs(trans):
 def chapter(n, c):
     trans = current_translation()
     verses = bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
+        WHERE v.book_id=%s AND v.chapter=%s AND v.hidden=0 AND EXISTS (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
     items = ''.join(
         f'<li><a href="{u("/verse/" + str(n) + "/" + str(c) + "/" + str(v["verse"]) + tqs(trans))}">Verse {v["verse"]}</a></li>'
@@ -1347,7 +1347,7 @@ padding:10px 20px;text-decoration:none;color:#5a3c0a}
 
 def _chapter_verses(n, c):
     return bible().execute('''SELECT v.verse FROM verses v
-        WHERE v.book_id=%s AND v.chapter=%s AND EXISTS
+        WHERE v.book_id=%s AND v.chapter=%s AND v.hidden=0 AND EXISTS
         (SELECT 1 FROM words w WHERE w.verse_id=v.verse_id)
         ORDER BY v.verse''', (n, c)).fetchall()
 
@@ -1356,7 +1356,7 @@ def _chapter_bounds(n, c):
     books = [r['book_id'] for r in bible().execute(
         'SELECT book_id FROM books ORDER BY book_id').fetchall()]
     chaps = [r['chapter'] for r in bible().execute(
-        'SELECT DISTINCT chapter FROM verses WHERE book_id=%s ORDER BY chapter', (n,)).fetchall()]
+        'SELECT DISTINCT chapter FROM verses WHERE book_id=%s AND hidden=0 ORDER BY chapter', (n,)).fetchall()]
     bi, ci = books.index(n), chaps.index(c)
     prev = (books[bi - 1], _last_chapter(books[bi - 1])) if ci == 0 and bi > 0 else \
            (n, chaps[ci - 1]) if ci > 0 else None
@@ -1373,7 +1373,7 @@ def _chapter_bounds(n, c):
     return prev, nxt
 
 def _last_chapter(n):
-    r = bible().execute('SELECT MAX(chapter) AS mc FROM verses WHERE book_id=%s', (n,)).fetchone()
+    r = bible().execute('SELECT MAX(chapter) AS mc FROM verses WHERE book_id=%s AND hidden=0', (n,)).fetchone()
     return r['mc'] or 1
 
 @app.route('/read')
@@ -1695,7 +1695,7 @@ def papyrus_tile():
     with open(p, 'rb') as f:
         return Response(f.read(), mimetype='image/png')
 
-_WORDS_EXIST = ('AND (EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
+_WORDS_EXIST = ('AND vv.hidden = 0 AND (EXISTS (SELECT 1 FROM words w WHERE w.verse_id=vv.verse_id)'
                 ' OR EXISTS (SELECT 1 FROM gnt_verses gv'
                 ' WHERE gv.corpus_verse_id=vv.verse_id))')
 
