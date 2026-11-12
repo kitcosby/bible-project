@@ -302,3 +302,56 @@ were rejected as evidence). The decorators were corrected, a registry
 precondition (the tools must be listed) was added to the battery, and
 the clean 21/21 above is the re-run. No external calls occurred in the
 window.
+
+## Addendum 2026-11-12 (final revision) — state encoding, localhost validation, and an audit limitation
+
+GPT's re-review of the remediation commit accepted F6/F7/F8 and the
+concurrency fix, accepted Phase 4 as complete (9/9) on the
+audit-log-correlated criterion-8 evidence, and raised two smaller
+items plus a documentation point. Muse verified both items against
+the source (both confirmed), Kit approved the final revision, and both
+are fixed and deployed. Verification (gateway pid 135555):
+remediation_test.py extended to 29 checks, 29/29 PASS; oauth_test.py
+16/16; f3_negative_test.py 7/7. test_client.py was not re-run this
+round: gateway.py is byte-identical (the revision touches oauth_as.py
+only). Deployed oauth_as.py SHA-256:
+c16302e8d512b357c9879cfff80a77b57cd1484f9544ea217c2ff60bf245421d
+(local == remote).
+
+- **State parameter echoed without encoding (medium, FIXED).**
+  authorize_complete built the callback by concatenating the stored,
+  client-supplied state raw (`&state=` + state). A state containing &
+  or = would inject extra parameters into the client's callback. The
+  callback is now built with urlsplit/parse_qsl/urlencode, preserving
+  any parameters already present in the registered redirect URI, so
+  the state is echoed identically after parsing. Regression: a state
+  of `x&code=FORGED y+z` round-trips exactly, and the callback carries
+  exactly one code parameter — the real one.
+- **Redirect registration accepted prefix-lookalike loopback hosts
+  (low-medium, FIXED).** The validator used
+  `uri.startswith("http://localhost")`, which also accepts
+  http://localhost.evil.example and the userinfo form
+  http://localhost@evil.example (whose host is evil.example).
+  Registration now parses each URI: https for any host, http only when
+  the parsed hostname is localhost, 127.0.0.1, or ::1. Regression:
+  both lookalikes refused with 400; localhost:8765 and 127.0.0.1:9000
+  accepted; plain http for non-loopback still refused. (The authorize
+  step's exact-match against registered URIs already limited the
+  practical risk; this closes the validator itself.)
+- **Documentation consistency (FIXED).** The Phase 4 completion
+  report's acceptance table row 8 now records criterion 8 as passed
+  (executed 2026-11-12 08:28:03 PST, audit-log confirmed), matching
+  its closing addendum.
+- **AUDIT LIMITATION — approval-watch provenance.** The one-shot
+  approval watch that approved ChatGPT's registration (3FRAUN) was a
+  scheduled-job body; it was deleted after it fired, and its source is
+  not preserved in this repository or elsewhere inspectable. Its
+  matching criteria (redirect_uri prefix https://chatgpt.com/ AND
+  scope subset of {read, offline_access}; unmatched requests reported,
+  never approved; multiple matches = approve none) are recorded from
+  the creation-turn record and the Phase 4 report, and cannot be
+  independently re-verified from source. This is recorded as an audit
+  limitation, not a vulnerability: the mechanism no longer exists.
+  STANDING POLICY, stated at GPT's recommendation and already in
+  effect: automatic approval is retired; every future registration is
+  approved manually by the owner via gw_admin.py.

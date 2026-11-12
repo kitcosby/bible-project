@@ -58,7 +58,7 @@ superseded by this observed result for this account.
 | 5 | Read-only authorization completed | ✅ scope read (+offline_access for refresh) |
 | 6 | Access token validated | ✅ issued and held by ChatGPT |
 | 7 | All 11 MCP tools discovered | ✅ listed by name in ChatGPT |
-| 8 | At least one read-only tool successfully executed | ⏳ pending — first invocation from a ChatGPT conversation; Muse will confirm from the gateway audit log |
+| 8 | At least one read-only tool successfully executed | ✅ passed — pg_databases executed from a ChatGPT conversation 2026-11-12 08:28:03 PST and confirmed in the gateway audit log (closing addendum) |
 | 9 | No standing unauthenticated access introduced | ✅ nothing was opened; opportunistic scans of the public address (/.env.dev, /config) were 401'd during the same window |
 
 ## Notes

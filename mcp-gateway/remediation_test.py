@@ -12,6 +12,11 @@ Covers:
   authorization page.
 - Concurrency: completing an approved request twice must issue exactly
   one authorization code; the single code still exchanges normally.
+- Final revision: a hostile OAuth state value (containing & and =)
+  must be echoed identically after parsing, with exactly one code
+  parameter in the callback; redirect registration must accept http
+  only for parsed loopback hosts (localhost / 127.0.0.1), never for
+  prefix lookalikes such as localhost.evil.example.
 
 Runs on Lampy as mcpgw against http://127.0.0.1:8765.
 """
@@ -253,9 +258,57 @@ def oauth_checks():
            f"status={status}")
 
 
+def final_revision_checks():
+    # ---- State encoding: hostile state must round-trip identically
+    cid, _ = register("Remediation State Echo")
+    evil_state = "x&code=FORGED y+z"
+    verifier = secrets.token_urlsafe(48)
+    challenge = b64url(hashlib.sha256(verifier.encode()).digest())
+    q = urllib.parse.urlencode({
+        "response_type": "code", "client_id": cid, "redirect_uri": REDIRECT,
+        "scope": "read", "state": evil_state,
+        "code_challenge": challenge, "code_challenge_method": "S256",
+    })
+    status, _, body = req("GET", BASE + "/oauth/authorize?" + q)
+    m = re.search(r"Request ID: <b[^>]*>([A-Z2-9]{6})</b>", body)
+    req_id = m.group(1) if m else ""
+    subprocess.run(ADMIN + ["approve", req_id],
+                   capture_output=True, text=True)
+    s, h, _ = req("GET", BASE + f"/oauth/authorize/complete?req={req_id}")
+    loc = h.get("Location", "") if h else ""
+    qs = urllib.parse.parse_qs(urllib.parse.urlparse(loc).query)
+    record("ST completion redirects with a code",
+           s == 302 and bool(qs.get("code")), f"status={s}")
+    record("ST exactly one code param, and it is not the forged one",
+           len(qs.get("code", [])) == 1 and qs["code"][0] != "FORGED")
+    record("ST hostile state echoed identically after parsing",
+           qs.get("state") == [evil_state], f"state={qs.get('state')}")
+
+    # ---- Localhost validation: parsed loopback hosts only
+    def reg_status(uri):
+        status, _, _ = req("POST", BASE + "/oauth/register", data={
+            "client_name": "Remediation Redirect Probe",
+            "redirect_uris": [uri],
+            "grant_types": ["authorization_code"],
+            "response_types": ["code"]})
+        return status
+
+    record("LH http://localhost.evil.example refused",
+           reg_status("http://localhost.evil.example/cb") == 400)
+    record("LH http://localhost@evil.example refused",
+           reg_status("http://localhost@evil.example/cb") == 400)
+    record("LH http://localhost:8765 accepted",
+           reg_status("http://localhost:8765/cb") == 201)
+    record("LH http://127.0.0.1:9000 accepted",
+           reg_status("http://127.0.0.1:9000/cb") == 201)
+    record("LH plain http non-loopback still refused",
+           reg_status("http://evil.example.com/cb") == 400)
+
+
 def main():
     asyncio.run(mcp_checks())
     oauth_checks()
+    final_revision_checks()
     passed = sum(1 for _, ok in RESULTS if ok)
     print(f"SUMMARY: {passed}/{len(RESULTS)} passed")
     sys.exit(0 if passed == len(RESULTS) else 1)

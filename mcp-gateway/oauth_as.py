@@ -21,6 +21,7 @@ import os
 import secrets
 import threading
 import time
+import urllib.parse
 from pathlib import Path
 
 from starlette.requests import Request
@@ -137,6 +138,22 @@ async def authorization_server(request: Request):
     )
 
 
+def _redirect_uri_ok(uri):
+    """https for any host; http only for true loopback hosts. Parsing
+    (not a prefix check) is required: "http://localhost" as a prefix
+    also matches http://localhost.evil.example and the userinfo trick
+    http://localhost@evil.example, whose host is not loopback."""
+    try:
+        parts = urllib.parse.urlsplit(uri)
+    except ValueError:
+        return False
+    if parts.scheme == "https":
+        return bool(parts.hostname)
+    if parts.scheme == "http":
+        return parts.hostname in ("localhost", "127.0.0.1", "::1")
+    return False
+
+
 async def register(request: Request):
     try:
         body = await request.json()
@@ -150,10 +167,10 @@ async def register(request: Request):
             status_code=400,
         )
     for uri in redirect_uris:
-        if not (uri.startswith("https://") or uri.startswith("http://localhost")):
+        if not _redirect_uri_ok(uri):
             return JSONResponse(
                 {"error": "invalid_redirect_uri",
-                 "error_description": "https required (localhost excepted)"},
+                 "error_description": "https required (loopback http excepted)"},
                 status_code=400,
             )
     client_id = "mcpgwc_" + secrets.token_hex(8)
@@ -283,10 +300,19 @@ async def authorize_complete(request: Request):
         _save(PENDING_FILE, "requests", pending)
         redirect_uri = rec["redirect_uri"]
         state = rec["state"]
-    sep = "&" if "?" in redirect_uri else "?"
-    url = f"{redirect_uri}{sep}code={code}"
+    # Build the callback with proper query encoding, preserving any
+    # parameters the registered redirect URI already carries. The
+    # stored state is client-supplied: it must be echoed identically
+    # after parsing, never concatenated raw - a state containing & or
+    # = would otherwise inject extra parameters into the callback.
+    parts = urllib.parse.urlsplit(redirect_uri)
+    params = dict(urllib.parse.parse_qsl(parts.query,
+                                         keep_blank_values=True))
+    params["code"] = code
     if state:
-        url += f"&state={state}"
+        params["state"] = state
+    url = urllib.parse.urlunsplit(
+        parts._replace(query=urllib.parse.urlencode(params)))
     return RedirectResponse(url, status_code=302)
 
 
