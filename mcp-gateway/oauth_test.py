@@ -175,7 +175,7 @@ def main():
     try:
         n_tools, text = asyncio.run(mcp_probe(tok.get("access_token", "")))
         record("OAuth access token -> MCP tools + query",
-               n_tools == 11 and "31311" in text,
+               n_tools == 14 and "31311" in text,
                f"tools={n_tools} verses_row={text[:40]}")
     except Exception as e:  # noqa: BLE001
         record("OAuth access token -> MCP tools + query", False, str(e)[:120])
@@ -196,7 +196,7 @@ def main():
            status == 400 and "invalid_grant" in body)
     try:
         n_tools, _ = asyncio.run(mcp_probe(tok2.get("access_token", "")))
-        record("refreshed access token works", n_tools == 11)
+        record("refreshed access token works", n_tools == 14)
     except Exception as e:  # noqa: BLE001
         record("refreshed access token works", False, str(e)[:120])
 
