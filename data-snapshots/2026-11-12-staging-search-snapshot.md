@@ -33,7 +33,15 @@ The checksum above was computed against the source file on Lampy. Verify it agai
 
 This repository commit records the snapshot identity and verification instructions. The 1.4 GB binary is intentionally not committed to Git history. It must be attached as a GitHub Release asset (or stored in another explicitly approved large-artifact store) and the uploaded asset re-hashed against the SHA-256 above.
 
-**Release asset status: pending.** The available GitHub connection in this session supports repository file/commit operations and read-only release inspection, but does not expose release creation or binary asset upload. No claim is made that the dump itself has been uploaded to GitHub.
+**Release asset status: uploaded and verified (2026-11-12).**
+
+- Release: https://github.com/kitcosby/bible-project/releases/tag/staging-snapshot-2026-11-12
+- Tag: `staging-snapshot-2026-11-12`, targeting commit `0efec41a80b2e8f751734c47ce7d076badc6fa85`
+- Asset: `bible_search_stage_20261109_20261112.dump` (asset id 739308886)
+- Asset download URL: https://github.com/kitcosby/bible-project/releases/download/staging-snapshot-2026-11-12/bible_search_stage_20261109_20261112.dump
+- Asset size: 1,489,597,846 bytes — exact match to the source file on Lampy.
+- Verification: the GitHub API asset record reports digest `sha256:501e87f49995e0bc5d13b6d9c98e918a3729f5620f32d988823ea2875e988c92`, an exact match to the source SHA-256 recorded above. Upload completed 2026-11-12T12:32:47Z; the source dump on Lampy was not modified or deleted.
+- Remaining limitations: this remains a staging snapshot, not a production export. Its Greek verse embeddings are incomplete (250 of 31,311 rows) and its Hebrew count and other known-state notes above stand as recorded at checkpoint time. The distinctions in the section above (including sample-based vector finiteness and the reconciliation database's separate IVFFlat matter) still apply.
 
 ## Restore verification
 
