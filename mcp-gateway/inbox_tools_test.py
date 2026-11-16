@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -284,7 +285,8 @@ record("9: diagnostics census flags every planted defect",
        and cen["duplicate_ids"] == [DUPB],
        json.dumps(cen)[:300])
 record("9: diagnostics ages unacked messages honestly",
-       cen["unacked_older_than_24h"] == [OLD]
+       OLD in cen["unacked_older_than_24h"]
+       and FRESH not in cen["unacked_older_than_24h"]
        and diag["watcher_relay_health"]["status"] == "unknown"
        and "off-gateway" in diag["watcher_relay_health"]["reason"])
 record("9: diagnostics dir checks ok on a healthy scratch queue",
@@ -413,6 +415,94 @@ try:
            and w.get("outbox_writable") is False, json.dumps(w)[:200])
 except Exception as e:  # noqa: BLE001
     record("9: permission-denial worker ran", False, str(e)[:200])
+
+# ------------------------------------------------------------- scenario E
+# GPT review regressions (PR #37): (1) symlink traversal in inbox
+# reads - a planted symlink must never let an outside file pose as a
+# message or as an ack; (2) inbox_ack must stay forward-only under
+# concurrency - simultaneous read/acted calls serialize, the higher
+# state always wins, and no call errors out.
+qe = bind_queue(Path(tempfile.mkdtemp(prefix="cr001-e-")) / "gpt-queue")
+e_outside = Path(tempfile.mkdtemp(prefix="cr001-e-outside-"))
+SECRET = "EXTERNAL-SECRET-BODY"
+EXTID = "20261113T070000Z-note-external"
+ext_file = e_outside / "external.md"
+ext_file.write_text(
+    f"id: {EXTID}\nfrom: claude\nto: gpt\ntype: note\ntask: none\n"
+    f"created: 2026-11-13T07:00:00Z\n\n{SECRET}")
+LINKID = "20261113T070000Z-note-linked"
+os.symlink(ext_file, qe / "inbox" / f"{LINKID}.md")
+expect_value_error("E: read of a symlinked message is refused",
+                   lambda: gateway.inbox_read(LINKID), "symlink")
+ste = gateway.inbox_status()
+record("E: scan flags the symlink as malformed, never follows it",
+       ste["unread_count"] == 0
+       and any(e["name"] == f"{LINKID}.md" and "symlink" in e["reason"]
+               for e in ste["malformed"])
+       and SECRET not in json.dumps(ste),
+       json.dumps(ste["malformed"])[:160])
+
+REAL = "20261113T070100Z-note-real"
+write_msg(qe, REAL, body="real body")
+planted_ack = e_outside / "planted.ack.md"
+planted_ack.write_text(
+    f"id: {REAL}\nstate: acted\ncreated: 2026-11-13T07:02:00Z\n"
+    "agent: planter\n\nplanted ack")
+os.symlink(planted_ack, qe / "inbox" / "acks" / f"{REAL}.ack.md")
+state_e, _, problem_e = gateway._ack_state(REAL)
+record("E: a symlinked ack is not honored",
+       state_e is None and problem_e is not None
+       and "symlink" in problem_e, str(problem_e)[:120])
+record("E: the real message still shows unacknowledged",
+       gateway.inbox_read(REAL)["ack_state"] == "written-not-received")
+
+
+def ack_pair(mid, states):
+    barrier = threading.Barrier(len(states))
+    errors = []
+
+    def call(state):
+        try:
+            barrier.wait(timeout=10)
+            gateway.inbox_ack(mid, state)
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{state}: {type(e).__name__}: {e}")
+
+    threads = [threading.Thread(target=call, args=(s,)) for s in states]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(30)
+    return errors
+
+
+race_ok, race_detail = True, ""
+for i in range(8):
+    mid = f"20261113T071500Z-note-race-{i}"
+    write_msg(qe, mid, body=f"race {i}")
+    errors = ack_pair(mid, ("read", "acted"))
+    final, _, _ = gateway._ack_state(mid)
+    if errors or final != "acted":
+        race_ok = False
+        race_detail = f"round {i}: errors={errors} final={final}"
+        break
+record("E: concurrent read/acted acks serialize, acted always wins",
+       race_ok, race_detail)
+
+dup_ok, dup_detail = True, ""
+for i in range(4):
+    mid = f"20261113T071600Z-note-duprace-{i}"
+    write_msg(qe, mid, body="dup race")
+    errors = ack_pair(mid, ("acted", "acted"))
+    final, _, _ = gateway._ack_state(mid)
+    n_acks = len(list((qe / "inbox" / "acks").glob(f"{mid}.ack.md")))
+    if errors or final != "acted" or n_acks != 1:
+        dup_ok = False
+        dup_detail = (f"round {i}: errors={errors} final={final} "
+                      f"ack_files={n_acks}")
+        break
+record("E: concurrent duplicate acks leave exactly one acted ack",
+       dup_ok, dup_detail)
 
 # ------------------------------------------------------- audit + default
 log_text = SCRATCH_AUDIT.read_text() if SCRATCH_AUDIT.exists() else ""

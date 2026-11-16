@@ -24,13 +24,17 @@ Design notes (requirements doc 2026-11-12):
 """
 import asyncio
 import base64
+import errno
+import fcntl
 import hashlib
 import hmac
 import json
 import os
 import re
 import socket
+import stat
 import subprocess
+import tempfile
 import time
 import urllib.request
 import urllib.error
@@ -731,18 +735,60 @@ def _parse_header(text):
     raise ValueError("no blank line separating header from body")
 
 
-def _parse_message_file(path, stem):
-    """Validate one inbox message file. Returns (message dict, None) or
-    (None, reason). The dict carries header fields plus body; ack state
-    is attached by the caller."""
+def _read_regular_nofollow(dir_path, name):
+    """Read one file inside a trusted directory without ever following
+    a symlink at the leaf, and without a check/use race: the directory
+    is pinned by an fd and the leaf is opened relative to it with
+    O_NOFOLLOW, so the entry whose type is checked on the opened fd is
+    the entry whose bytes are read. Returns (bytes, None) or
+    (None, reason), where reason is "missing", "is a symlink",
+    "not a regular file", the read-cap reason, or
+    "unreadable: ..."."""
     try:
-        if path.stat().st_size > MAX_READ_BYTES:
-            return None, f"larger than the {MAX_READ_BYTES} byte read cap"
-        text = path.read_bytes().decode("utf-8")
-    except UnicodeDecodeError:
-        return None, "not UTF-8 text"
+        dfd = os.open(dir_path, os.O_RDONLY | os.O_DIRECTORY)
+    except FileNotFoundError:
+        return None, "missing"
     except OSError as e:
         return None, f"unreadable: {e.strerror or e}"
+    try:
+        try:
+            fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=dfd)
+        except FileNotFoundError:
+            return None, "missing"
+        except OSError as e:
+            if e.errno == errno.ELOOP:
+                return None, "is a symlink"
+            return None, f"unreadable: {e.strerror or e}"
+        try:
+            st = os.fstat(fd)
+            if not stat.S_ISREG(st.st_mode):
+                return None, "not a regular file"
+            if st.st_size > MAX_READ_BYTES:
+                return None, (f"larger than the {MAX_READ_BYTES} "
+                              "byte read cap")
+            chunks = []
+            while True:
+                chunk = os.read(fd, 1 << 20)
+                if not chunk:
+                    break
+                chunks.append(chunk)
+            return b"".join(chunks), None
+        finally:
+            os.close(fd)
+    finally:
+        os.close(dfd)
+
+
+def _parse_message_bytes(data, stem):
+    """Validate one inbox message from its raw bytes. Returns
+    (message dict, None) or (None, reason). The dict carries header
+    fields plus body; ack state is attached by the caller."""
+    if len(data) > MAX_READ_BYTES:
+        return None, f"larger than the {MAX_READ_BYTES} byte read cap"
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return None, "not UTF-8 text"
     try:
         header, body = _parse_header(text)
     except ValueError as e:
@@ -770,12 +816,15 @@ def _ack_state(message_id):
     'read' / 'acted' / None (no valid ack). A malformed ack yields
     state None plus a problem description - the message then counts as
     unacknowledged, the conservative state."""
-    path = ACKS_DIR / f"{message_id}.ack.md"
-    if not path.is_file():
-        return None, None, None
+    data, reason = _read_regular_nofollow(
+        ACKS_DIR, f"{message_id}.ack.md")
+    if data is None:
+        if reason == "missing":
+            return None, None, None
+        return None, None, f"unparseable ack: {reason}"
     try:
-        header, _ = _parse_header(path.read_bytes().decode("utf-8"))
-    except (OSError, UnicodeDecodeError, ValueError) as e:
+        header, _ = _parse_header(data.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as e:
         return None, None, f"unparseable ack: {e}"
     if header.get("id") != message_id:
         return None, None, "ack header id does not match filename"
@@ -792,21 +841,38 @@ def _scan_inbox():
     non-.md leftovers are not message candidates here - diagnostics
     reports those separately. Never raises on bad content."""
     messages, malformed = [], []
-    if not INBOX_DIR.is_dir():
+    try:
+        entries = sorted(os.scandir(INBOX_DIR), key=lambda e: e.name)
+    except OSError:
         return messages, malformed
-    for p in sorted(INBOX_DIR.iterdir()):
-        if not p.is_file() or p.name in ("LEDGER.md", "README.md"):
+    for entry in entries:
+        name = entry.name
+        if name in ("LEDGER.md", "README.md"):
             continue
-        if not p.name.endswith(".md"):
+        if not name.endswith(".md"):
             continue
-        stem = p.name[:-3]
+        stem = name[:-3]
+        if entry.is_symlink():
+            # Symlinks are never followed (GPT review, PR #37): a
+            # planted link must not let an outside file pose as a
+            # message. Reported, never silently dropped.
+            malformed.append({"name": name,
+                              "reason": "is a symlink; symlinks are "
+                                        "never followed"})
+            continue
+        if not entry.is_file(follow_symlinks=False):
+            continue
         if not MESSAGE_ID_RE.fullmatch(stem):
-            malformed.append({"name": p.name,
+            malformed.append({"name": name,
                               "reason": "filename is not a valid message id"})
             continue
-        msg, reason = _parse_message_file(p, stem)
+        data, reason = _read_regular_nofollow(INBOX_DIR, name)
+        if data is None:
+            malformed.append({"name": name, "reason": reason})
+            continue
+        msg, reason = _parse_message_bytes(data, stem)
         if msg is None:
-            malformed.append({"name": p.name, "reason": reason})
+            malformed.append({"name": name, "reason": reason})
             continue
         state, _, _ = _ack_state(stem)
         msg["ack_state"] = state
@@ -819,10 +885,14 @@ def _load_message(message_id):
     invalid id, an unknown id, and a malformed file."""
     if not MESSAGE_ID_RE.fullmatch(message_id or ""):
         raise ValueError(f"invalid message id: {message_id!r}")
-    path = INBOX_DIR / f"{message_id}.md"
-    if not path.is_file():
-        raise ValueError(f"unknown message id: {message_id}")
-    msg, reason = _parse_message_file(path, message_id)
+    data, reason = _read_regular_nofollow(
+        INBOX_DIR, f"{message_id}.md")
+    if data is None:
+        if reason == "missing":
+            raise ValueError(f"unknown message id: {message_id}")
+        raise ValueError(
+            f"message {message_id} cannot be read: {reason}")
+    msg, reason = _parse_message_bytes(data, message_id)
     if msg is None:
         raise ValueError(f"message {message_id} is malformed: {reason}")
     return msg
@@ -877,38 +947,67 @@ def inbox_ack(message_id: str, state: str) -> dict:
     if state not in ACK_STATES:
         raise ValueError(f"state must be one of {list(ACK_STATES)}")
     _load_message(message_id)  # must exist and be well-formed
-    existing, hdr, _ = _ack_state(message_id)
-    if existing is not None and ACK_RANK[existing] >= ACK_RANK[state]:
-        audit({"kind": "tool", "tool": "inbox_ack", "id": message_id,
-               "state": existing, "updated": False})
-        return {"id": message_id, "state": existing,
-                "created": hdr.get("created"),
-                "agent": hdr.get("agent", "unknown"), "updated": False}
-    agent = _current_token_id() or "gpt"
-    created = _iso_z(datetime.now(timezone.utc))
-    content = (
-        f"id: {message_id}\nstate: {state}\ncreated: {created}\n"
-        f"agent: {agent}\n\n"
-        "Acknowledged via the Lampy plugin inbox_ack tool.\n"
-    )
-    tmp = ACKS_DIR / f".{message_id}.ack.{os.getpid()}.tmp"
+    # Serialize the state transition per message, across threads and
+    # processes (GPT review, PR #37): hold an flock on a per-message
+    # lock file while the current state is re-read and the new ack is
+    # published, so a lower state can never win a race against a
+    # higher one and concurrent calls cannot collide on a temp name.
+    # The lock file (.ack.lock) is channel furniture; the diagnostics
+    # census skips it by name.
     try:
         ACKS_DIR.mkdir(parents=True, exist_ok=True)
-        with open(tmp, "w") as f:
-            f.write(content)
-        os.replace(tmp, ACKS_DIR / f"{message_id}.ack.md")
+        lock_fd = os.open(ACKS_DIR / f".{message_id}.ack.lock",
+                          os.O_CREAT | os.O_RDWR, 0o644)
     except OSError as e:
-        try:
-            tmp.unlink()
-        except OSError:
-            pass
         raise ValueError(
             f"cannot write ack for {message_id}: {e.strerror or e} "
             f"(acks dir: {ACKS_DIR})")
-    audit({"kind": "tool", "tool": "inbox_ack", "id": message_id,
-           "state": state, "updated": True})
-    return {"id": message_id, "state": state, "created": created,
-            "agent": agent, "updated": True}
+    try:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        existing, hdr, _ = _ack_state(message_id)
+        if existing is not None and ACK_RANK[existing] >= ACK_RANK[state]:
+            audit({"kind": "tool", "tool": "inbox_ack", "id": message_id,
+                   "state": existing, "updated": False})
+            return {"id": message_id, "state": existing,
+                    "created": hdr.get("created"),
+                    "agent": hdr.get("agent", "unknown"),
+                    "updated": False}
+        agent = _current_token_id() or "gpt"
+        created = _iso_z(datetime.now(timezone.utc))
+        content = (
+            f"id: {message_id}\nstate: {state}\ncreated: {created}\n"
+            f"agent: {agent}\n\n"
+            "Acknowledged via the Lampy plugin inbox_ack tool.\n"
+        )
+        tmp = None
+        try:
+            # Unique exclusive temp creation: no two calls, in any
+            # thread or process, ever share a temp name.
+            tfd, tmp = tempfile.mkstemp(
+                prefix=f".{message_id}.ack.", suffix=".tmp",
+                dir=ACKS_DIR)
+            with os.fdopen(tfd, "w") as f:
+                f.write(content)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, ACKS_DIR / f"{message_id}.ack.md")
+            tmp = None
+        except OSError as e:
+            raise ValueError(
+                f"cannot write ack for {message_id}: {e.strerror or e} "
+                f"(acks dir: {ACKS_DIR})")
+        finally:
+            if tmp is not None:
+                try:
+                    os.unlink(tmp)
+                except OSError:
+                    pass
+        audit({"kind": "tool", "tool": "inbox_ack", "id": message_id,
+               "state": state, "updated": True})
+        return {"id": message_id, "state": state, "created": created,
+                "agent": agent, "updated": True}
+    finally:
+        os.close(lock_fd)  # closing the fd releases the flock
 
 
 @mcp.tool(annotations=WR)
@@ -1037,6 +1136,8 @@ def _message_census():
         for p in sorted(ACKS_DIR.iterdir()):
             if not p.is_file():
                 continue
+            if p.name.endswith(".ack.lock"):
+                continue  # per-message ack lock files are furniture
             if not p.name.endswith(".ack.md"):
                 issues.append({
                     "name": f"acks/{p.name}",
@@ -1060,6 +1161,8 @@ def _message_census():
                 continue
             if p.name in ("LEDGER.md", "README.md"):
                 continue
+            if p.is_symlink():
+                continue  # never follow a symlink, even to count ids
             try:
                 header, _ = _parse_header(
                     p.read_bytes().decode("utf-8"))
