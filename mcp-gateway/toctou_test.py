@@ -25,6 +25,9 @@ Coverage:
   9  traversal / unknown-root parity refusals
   10 legitimate in-root mid-path symlink still followed
   11 symlink loop refused (bounded expansions)
+  12 replacement never preserves setuid/setgid/sticky bits - the
+     preserved mode is masked to 0o777 in both write and edit paths
+     (GPT review on PR #36)
 
 Prints one line per check and a SUMMARY; exit 1 on any failure.
 """
@@ -339,6 +342,35 @@ def run(h):
     record("11 symlink loop refused promptly (bounded expansions)",
            r.get("ok") is False and time.time() - start < 20,
            str(r)[:140])
+
+    # ---- 12. special bits never preserved (GPT review, PR #36) -----------
+    su = root / "su.txt"
+    su.write_text("v1\n")
+    os.chmod(su, 0o4755)
+    r = h.write("su.txt", "v2\n")
+    record("12 write replacement drops the setuid bit (mode masked)",
+           r.get("ok") is True
+           and stat.S_IMODE(su.stat().st_mode) == 0o755
+           and su.read_text() == "v2\n",
+           str(r)[:120])
+    sg = root / "sg.txt"
+    sg.write_text("alpha\n")
+    os.chmod(sg, 0o2755)
+    r = h.edit("sg.txt", "alpha", "beta")
+    record("12 edit replacement drops the setgid bit (mode masked)",
+           r.get("ok") is True
+           and stat.S_IMODE(sg.stat().st_mode) == 0o755
+           and sg.read_text() == "beta\n",
+           str(r)[:120])
+    st = root / "st.txt"
+    st.write_text("v1\n")
+    os.chmod(st, 0o1755)
+    r = h.write("st.txt", "v2\n")
+    record("12 write replacement drops the sticky bit (mode masked)",
+           r.get("ok") is True
+           and stat.S_IMODE(st.stat().st_mode) == 0o755
+           and st.read_text() == "v2\n",
+           str(r)[:120])
 
 
 if __name__ == "__main__":

@@ -323,7 +323,10 @@ def op_write(req):
                 if stat.S_ISDIR(st.st_mode):
                     fail("target is a directory")
                 fail(f"not a file: {res.display_path(name)}")
-            mode = stat.S_IMODE(st.st_mode)
+            # Mask to 0o777: S_IMODE would also preserve setuid,
+            # setgid and sticky bits, which a root writer must never
+            # carry onto a replacement file (GPT review, PR #36).
+            mode = stat.S_IMODE(st.st_mode) & 0o777
         if fd is not None:
             os.close(fd)
             fd = None
@@ -373,7 +376,8 @@ def op_edit(req):
         if stat.S_ISLNK(lst.st_mode) or \
                 (lst.st_dev, lst.st_ino) != (st.st_dev, st.st_ino):
             fail("target changed while it was being read; refusing")
-        _atomic_write(res.dir_fd, name, data, stat.S_IMODE(st.st_mode))
+        _atomic_write(res.dir_fd, name, data,
+                      stat.S_IMODE(st.st_mode) & 0o777)  # mask: see op_write
         reply({"ok": True, "bytes": len(data),
                "path": res.display_path(name)})
     finally:
