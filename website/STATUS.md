@@ -379,3 +379,36 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   SB4+SB3s awaits Kit's ruling. YLT remains COMPUTED best-effort, NOT
   authoritative; 'computed' labels unchanged; website still opens the
   DB read-only.
+
+## 2026-11-19 — YLT-REPAIR-R2 APPLIED: span-boundary repair SB4+SB3s (re-gated on current data)
+
+- Baseline re-measured first (post-conflate table, Nov-5 numbers not
+  trusted): `bible_v2.db` md5 `ac05de153179ba9770bb7f016faf90a3`;
+  `ylt_renderings` 357,574 rows; Hebrew words hit 176,470 / 262,136
+  (67.3200%; denominator re-measured, Nov-5's 262,062 superseded);
+  YLT token positions 346,020 / 602,067 (57.4720%); lexicon 98,090
+  groups / 234,131 rows.
+- Re-gate on current data: shipped baseline expanded P 0.7937 /
+  R 0.5126, round-1 subset P 0.8017 / R 0.5039, H3068 drift 0.
+  SB4+SB3s RE-PASS: expanded P 0.7979 / R 0.5378, round-1 subset
+  P 0.8055 / R 0.5325, drift 0 (passes both the Nov-5 floors
+  0.7873 / 0.7984 and the current-baseline precision comparison).
+- Applied via new `apply_ylt_span_repair.py` (prototype rule code
+  verbatim; insert-only; H3068 guard; blank-Strong's never claimed).
+  Backup `bible_v2.db.bak-ylt-span-pre`. Trial on a copy first —
+  copy readback reproduced the prototype scores exactly. Real run
+  identical: SB4 9,739 + SB3s 2,569 = +12,308 rows, −0 removed
+  (row- and pair-level verified against the backup).
+- After: `ylt_renderings` 369,882 rows; Hebrew words hit 177,504 /
+  262,136 (67.7145%); YLT token positions 358,328 / 602,067
+  (59.5163%). `lexicon_ylt_rendering` rebuilt (procedure first proven
+  to reproduce the pre-change lexicon exactly, 0 differing rows) →
+  98,376 groups / 243,415 rows. `PRAGMA quick_check` ok; FK check on
+  both YLT tables 0 rows. New operating point: expanded 0.7979 /
+  0.5378, round-1 subset 0.8055 / 0.5325, drift 0. New DB md5
+  `295bcfbe61a4070fa66789b379d98fe1`.
+- PG sync PREPARED only: `export_sync.py` CSVs verified equal to
+  SQLite (ylt_renderings 369,882; lexicon_ylt_rendering 243,415).
+  The PostgreSQL load is a separate ship step, NOT done here.
+  YLT remains COMPUTED best-effort, NOT authoritative; 'Young's
+  (computed)' labels unchanged; website still opens the DB read-only.

@@ -188,6 +188,18 @@ YLT renderings were rebuilt from it, and both tables were synced to the
 website database. YLT remains computed best-effort, NOT authoritative — see
 `NOTATION_LEDGER.md` §10 for the full record.
 
+**YLT span-boundary repair applied (2026-11-19, YLT-REPAIR-R2).** The
+gate-passed SB4+SB3s repair (round 2) was re-gated on the current
+post-conflate table and applied to `bible_v2.db` via
+`apply_ylt_span_repair.py` (insert-only, H3068 guard): +12,308 rows,
+−0 removed — `ylt_renderings` is now **369,882 rows**, Hebrew words hit
+177,504/262,136 (67.7145%), YLT token positions 358,328/602,067
+(59.5163%); `lexicon_ylt_rendering` rebuilt to 98,376 groups / 243,415
+rows. New operating point: expanded gold precision 0.7979 / recall
+0.5378, round-1 subset 0.8055 / 0.5325, H3068 drift 0. PG sync CSVs
+prepared and verified; the PostgreSQL load is a separate ship step.
+YLT remains computed best-effort, NOT authoritative.
+
 ## Website (built 2026-09-22, Flask + SQLite)
 
 - Over each Hebrew word: a drop-down box for choosing that word's rendering.
