@@ -412,3 +412,47 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   The PostgreSQL load is a separate ship step, NOT done here.
   YLT remains COMPUTED best-effort, NOT authoritative; 'Young's
   (computed)' labels unchanged; website still opens the DB read-only.
+
+## 2026-11-20 — YLT-REPAIR-R3 APPLIED: displaced repair D1s+J3068b (gate pass)
+
+- Re-census first (no prior numbers trusted): live `bible_v2.db` md5
+  `295bcfbe61a4070fa66789b379d98fe1` reproduces the 2026-11-19 record
+  exactly — `ylt_renderings` 369,882 rows; Hebrew words hit 177,504 /
+  262,136 (67.7145%); YLT token positions 358,328 / 602,067
+  (59.5163%); expanded gold 0.7979 / 0.5378, round-1 subset 0.8055 /
+  0.5325, H3068 drift 0. The 458 missed gold pairs classify as
+  displaced 171, remaining span-boundary 281, unbridgeable
+  (blank Strong's) 6; 337 held by no word, 121 held by another.
+- New prototype `ylt_r3_repair_proto.py` (insert-only, H3068 guard,
+  blank-Strong's never claimed, lemma-evidence stem match): D1, D1c,
+  D2, D2a, D3, SB5 (fired 0), SB6, SB7 and unguarded J3068 (drift 1
+  on Isa 53:10) all FAILED the gate and are recorded in
+  `NOTATION_LEDGER.md` §10. Winning combo D1s (strict displaced
+  claim: no other unrendered eligible word evidence-matches the
+  token) + J3068b ('Jehovah'-token claim for an unrendered H3068
+  word, adjacency-guarded) GATE-PASS on both halves — expanded
+  P 0.7979 → 0.8012, R 0.5378 → 0.5570; round-1 subset P 0.8055 →
+  0.8092, R 0.5325 → 0.5506; drift 0. Each rule also passes alone.
+- Applied via new `apply_ylt_r3_repair.py` (prototype code verbatim;
+  live re-gate before write). Backup `bible_v2.db.bak-ylt-r3-pre`.
+  Trial on a copy first — copy readback reproduced the prototype
+  scores exactly; lexicon procedure proven to reproduce the
+  pre-change lexicon exactly (SHA-256 identical) before the rebuild.
+  Real run identical: D1s 11,668 + J3068b 1,989 = +13,657 rows,
+  −0 removed (row- and pair-level verified; 0 added pairs at a
+  backup-held position).
+- After: `ylt_renderings` 383,539 rows; Hebrew words hit 188,788 /
+  262,136 (72.0191%); YLT token positions 371,985 / 602,067
+  (61.7847%). `lexicon_ylt_rendering` rebuilt → 101,400 groups /
+  247,690 rows. `PRAGMA quick_check` ok; FK check on both YLT
+  tables 0 rows. New operating point read back from the written
+  table: expanded 0.8012 / 0.5570, round-1 0.8092 / 0.5506, drift 0.
+  New DB md5 `59987d91a760ac6d8574776fc88d4680`. Post-repair census:
+  439 missed gold pairs remain (displaced 140, span-boundary 293 —
+  up from 281 by reclassification of partially repaired words —
+  unbridgeable 6).
+- PG sync PREPARED only: `export_sync.py` CSVs verified equal to
+  SQLite (ylt_renderings 383,539; lexicon_ylt_rendering 247,690).
+  The PostgreSQL load is a separate ship step, NOT done here.
+  YLT remains COMPUTED best-effort, NOT authoritative; 'Young's
+  (computed)' labels unchanged; website still opens the DB read-only.
