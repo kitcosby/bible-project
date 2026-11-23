@@ -1,0 +1,1009 @@
+{
+ "_meta": {
+  "basis": "content-v1 gate adjudication, trial runs 1-4",
+  "date": "2026-11-21",
+  "purpose": "Verse pairs proposed by build_lxx_realign.py's scorer and REJECTED at the 2026-11-21 hand-adjudication gate (Hebrew pointed text read against the Greek verse text, U-9 spot-check pattern). The builder bans these (osis, mt_ref, lxx_ref) pairs at candidate stage; everything else about the run is algorithmic. Never add a pair here without a text-read reason.",
+  "r2_note": "2026-11-22 (LXX-REALIGN-R2): 135 further pairs appended, each rejected at the content-v2 hand-adjudication gate (Hebrew pointed text read against the Greek verse text) with its text-read reason in the entry. Entries carry round='content-v2 gate adjudication, 2026-11-22'."
+ },
+ "exclusions": [
+  {
+   "lxx_ref": "39:28",
+   "mt_ref": "29:21",
+   "osis": "Jer",
+   "reason": "MT is the Ahab/Zedekiah false-prophet oracle; the Greek verse is Jer 32:28's content (the city given into the hand of the king of Babylon, who shall take it). Shared Babylon/king/hand vocabulary only."
+  },
+  {
+   "lxx_ref": "37:24",
+   "mt_ref": "48:30",
+   "osis": "Jer",
+   "reason": "MT: 'I know his wrath... his lies shall not so effect it'. The Greek verse is Jer 30:24's content (the LORD's fierce anger shall not return until he has performed the purpose of his heart). Shared wrath vocabulary only."
+  },
+  {
+   "lxx_ref": "30:32",
+   "mt_ref": "50:30",
+   "osis": "Jer",
+   "reason": "Parallel formula verse: MT 49:26 and MT 50:30 are near-identical in Hebrew (differ only in the divine title). The Greek verse sits in the LXX 30 block (= MT 49 zone), so the content match cannot be attributed to 50:30; pairing either would be a guess."
+  },
+  {
+   "lxx_ref": "28:49",
+   "mt_ref": "51:47",
+   "osis": "Jer",
+   "reason": "MT 51:47 is the graven-images judgment; the Greek verse is the tail of MT 51:49 ('at Babylon shall fall the slain of all the earth'). Adjacent-verse capture."
+  },
+  {
+   "lxx_ref": "45:8",
+   "mt_ref": "51:56",
+   "osis": "Jer",
+   "reason": "MT: the spoiler against Babylon, her mighty men taken, bows broken. The Greek verse is narrative ('he came out and spoke to the king') with only generic come/go tokens shared. Clearly unrelated."
+  },
+  {
+   "lxx_ref": "39:30",
+   "mt_ref": "52:2",
+   "osis": "Jer",
+   "reason": "MT: 'he did evil in the eyes of the LORD, according to all Jehoiakim had done'. The Greek verse is Jer 32:30's content (sons of Israel and Judah doing evil from their youth). Formulaic 'evil in my eyes' overlap only."
+  },
+  {
+   "lxx_ref": "32:9",
+   "mt_ref": "25:10",
+   "osis": "Prov",
+   "reason": "MT: 'lest he who hears reproach you, and your infamy turn not away'. That content stands at LXX 32:10 ('lest your friend reproach you...'); LXX 32:9 ('withdraw backwards, do not despise') is a different saying. Off-by-one capture."
+  },
+  {
+   "lxx_ref": "45:8",
+   "mt_ref": "29:16",
+   "osis": "Jer",
+   "reason": "Trial-5 re-pairing of the same Greek narrative fragment banned at 51:56 ('he came out and spoke to the king and said'). MT 29:16 is the oracle against the king on David's throne and the people in the city; only generic king/say tokens are shared."
+  },
+  {
+   "lxx_ref": "28:49",
+   "mt_ref": "37:10",
+   "osis": "Jer",
+   "reason": "Trial-5 re-pairing of the Greek verse banned at 51:47 (the tail of MT 51:49, 'in Babylon shall fall the slain of all the earth'). MT 37:10 is the Chaldean-army verse (wounded men rising to burn the city); shared wounded/fall vocabulary only."
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:19",
+   "lxx_ref": "54:17",
+   "reason": "MT is Psalm 107's cry-from-trouble verse; the Greek verse is Ps 55:17 ('I cried to God and the LORD heeded me'). Formulaic cry vocabulary only.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:23",
+   "lxx_ref": "103:23",
+   "reason": "MT is the seafarers verse (down to the sea in ships, work in the waters); the Greek verse is Ps 104:23 ('man goes out to his work until evening'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:26",
+   "lxx_ref": "134:6",
+   "reason": "MT 'they go up to the heavens, down to the abyss, their soul melts'; the Greek verse is Ps 135:6 ('whatever the LORD willed he did in heaven, earth, seas and abysses'). Heaven/sea/abyss vocabulary only.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:30",
+   "lxx_ref": "138:10",
+   "reason": "MT 'he guides them to their desired harbor'; the Greek verse is Ps 139:10 ('your hand shall guide me, your right hand shall retain me'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:37",
+   "lxx_ref": "43:12",
+   "reason": "MT 'they sow fields and plant vineyards and make fruit of income'; the Greek verse is Ps 44:12 ('you gave us as sheep for eating and scattered us among the nations'). Sow/scatter false friend; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:39",
+   "lxx_ref": "43:7",
+   "reason": "MT 'they are diminished and bowed down through closure, evil and grief'; the Greek verse is Ps 44:7 ('not in my bow did I hope, nor shall my broadsword save me'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "107:43",
+   "lxx_ref": "48:21",
+   "reason": "MT 'whoever is wise shall observe these and understand the LORD's kindnesses'; the Greek verse is Ps 49:21 ('a man in honor who does not comprehend is compared to the unintelligent livestock'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "109:11",
+   "lxx_ref": "36:21",
+   "reason": "MT 'let the creditor ensnare all that he has; let strangers plunder his toil'; the Greek verse is Ps 37:21 ('the sinful borrows and does not repay; the just has compassion and gives'). Lending vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "109:13",
+   "lxx_ref": "134:13",
+   "reason": "MT 'may his latter end be cut off; in the next generation may his name be blotted out'; the Greek verse is Ps 135:13 ('LORD, your name is into the age; your remembrance into generation and generation'). Opposite sense; name/generation formula only.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "109:21",
+   "lxx_ref": "117:11",
+   "reason": "MT 'but you, God the LORD, deal with me for your name's sake; your kindness is good, snatch me away'; the Greek verse is Ps 118:11 ('they surrounded me; in the name of the LORD I was assisted'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "109:9",
+   "lxx_ref": "93:6",
+   "reason": "MT 'may his sons be bereaved orphans and his wife a widow'; the Greek verse is Ps 94:6 ('they kill the widow and the proselyte and murder the orphaned'). Widow/orphan vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "116:3",
+   "lxx_ref": "113:25",
+   "reason": "MT 'the cords of death surrounded me; the pains of Sheol and affliction found me'; the Greek verse is LXX 113:25 = MT 115:17 ('not the dead shall praise you, LORD, nor all who descend into Hades'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "116:6",
+   "lxx_ref": "118:67",
+   "reason": "MT 'the LORD guards the simple; I was brought low and he saved me'; the Greek verse is Ps 119:67 ('before I was humbled I made a false note; through this your declaration I guarded'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "116:7",
+   "lxx_ref": "48:19",
+   "reason": "MT 'return, my soul, to your repose, for the LORD treated you well'; the Greek verse is Ps 49:19 ('his soul in his life shall be commended'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "116:9",
+   "lxx_ref": "70:20",
+   "reason": "MT 'I shall walk before the LORD in the earth of the living'; the Greek verse is Ps 71:20 ('you showed me many pressures and turned and made me alive from the abysses of the earth'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:11",
+   "lxx_ref": "118:161",
+   "reason": "MT 'your word I hid in my heart that I might not sin against you'; the Greek verse is LXX 118:161 = MT 119:161 ('rulers hunted me gratuitously; from your words my heart was intimidated'). Different verse of the same psalm.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:115",
+   "lxx_ref": "117:8",
+   "reason": "MT 'depart from me, evildoers, and I shall guard my God's commands'; the Greek verse is LXX 117:8 = MT 118:8 ('good to persuade in the LORD rather than persuade in a man'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:14",
+   "lxx_ref": "15:11",
+   "reason": "MT 'in the road of your testimonies I was bright as over all wealth'; the Greek verse is Ps 16:11 ('you made known to me ways of life; you shall fulfill me with celebration with your face'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:148",
+   "lxx_ref": "118:147",
+   "reason": "MT 'my eyes sprang forth before the night watches to ponder your word'; the Greek verse is LXX 118:147 = MT 119:147 ('I sprang forth in wrong time and cried; in your words I hoped'). Adjacent-verse capture.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:153",
+   "lxx_ref": "118:143",
+   "reason": "MT 'see my depression and pull me off, for I did not mislay your direction'; the Greek verse is LXX 118:143 = MT 119:143 ('pressure and compulsion found me; your injunctions are my attention'). Different verse of the same psalm.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:19",
+   "lxx_ref": "16:14",
+   "reason": "MT 'I am a sojourner in the earth; do not hide your commands from me'; the Greek verse is Ps 17:14 ('LORD, from few from the earth divide them in their life; with your hidden things their stomach is filled'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:22",
+   "lxx_ref": "43:14",
+   "reason": "MT 'roll contumely and disrespect from above me, for I guarded your testimonies'; the Greek verse is Ps 44:14 ('you put us as disgrace to our neighbors, scorn and mockery to those circling us'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:33",
+   "lxx_ref": "24:12",
+   "reason": "MT 'LORD, point out to me the road of your enactments and I shall guard it to the heel'; the Greek verse is Ps 25:12 ('who is the man who fears the LORD? he shall legislate for him in the way he chose'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:65",
+   "lxx_ref": "118:71",
+   "reason": "MT 'good you made with your servant, LORD, by your word'; the Greek verse is LXX 118:71 = MT 119:71 ('good for me that you humbled me, that I might learn your justifications'). Different verse of the same psalm.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:67",
+   "lxx_ref": "77:32",
+   "reason": "MT 'before I was depressed I strayed; at this time I guard your word'; the Greek verse is Ps 78:32 ('in all this they sinned yet and did not believe in his wonders'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "119:9",
+   "lxx_ref": "104:45",
+   "reason": "MT 'how shall the boy keep his road? by guarding by your word'; the Greek verse is Ps 105:45 ('that they may guard his justifications and seek out his law thoroughly'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "124:6",
+   "lxx_ref": "118:141",
+   "reason": "MT 'blessed be the LORD who did not give us as something torn to their teeth'; the Greek verse is LXX 118:141 = MT 119:141 ('I am young and set at naught; your justifications I did not forget'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "130:8",
+   "lxx_ref": "105:48",
+   "reason": "MT 'he shall sever Israel from all his perversity'; the Greek verse is LXX 105:48 = MT 106:48 ('commended be the LORD the God of Israel from the age and until the age; all the populace shall state it'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "139:21",
+   "lxx_ref": "88:24",
+   "reason": "MT 'shall I not hate those who hate you, LORD, and cut at your opponents?'; the Greek verse is Ps 89:24 ('I will cut up his enemies from before him'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "145:11",
+   "lxx_ref": "23:10",
+   "reason": "MT 'the glory of your rule they shall state; your force they shall speak'; the Greek verse is Ps 24:10 ('who is this king of glory? the LORD of the powers'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "145:13",
+   "lxx_ref": "67:33",
+   "reason": "MT 'your rule is a rule of all ages; your rule is in every generation'; the Greek verse is Ps 68:33 ('the kingdoms of the earth, sing to God; sing psalms to the LORD'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "145:15",
+   "lxx_ref": "103:27",
+   "reason": "Parallel-verse capture: MT 145:15 and MT 104:27 are near-identical ('the eyes of all look toward you; you give them their nourishment in its time'); the Greek verse ('all look toward you in expectation; you give their nourishment opportune') is MT 104:27's counterpart (LXX 103:27). Pairing it to 145:15 would misattribute the parallel.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "147:13",
+   "lxx_ref": "117:20",
+   "reason": "MT 'he fastened the bolts of your openings and blessed your sons in your center'; the Greek verse is Ps 118:20 ('this is the gate of the LORD; the just shall enter in it'). Gate vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "147:14",
+   "lxx_ref": "101:15",
+   "reason": "MT 'he puts your border in safety; with the fat of wheat he sates you'; the Greek verse is Ps 102:15 ('he was satisfied with the stones... and had compassion on the dust'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "147:16",
+   "lxx_ref": "67:15",
+   "reason": "MT 'he gives snow as wool; he scatters frost as ashes'; the Greek verse is Ps 68:15 ('when the heavenly king snowed upon Selmon'). Snow vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "147:18",
+   "lxx_ref": "103:30",
+   "reason": "MT 'he sends his word and dissolves them; he blows his wind, waters flow'; the Greek verse is Ps 104:30 ('send forth your spirit and they are created; you renew the face of the earth'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "18:38",
+   "lxx_ref": "43:17",
+   "reason": "MT 'I ran after my haters and reached them and did not turn back until their end'; the Greek verse is Ps 44:17 ('from the voice of disparagement and random talk, from the face of the enemy and chaser-out'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "19:14",
+   "lxx_ref": "117:3",
+   "reason": "MT is the presumptuous-sins verse ('also from the arrogant restrain your servant... then I shall be complete and clean from great revolt'); the Greek verse is LXX 117:3 = MT 118:3 ('state, in fact, house of Aaron: his mercy is good into the age'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "19:15",
+   "lxx_ref": "113:16",
+   "reason": "MT 'let the sayings of my mouth and the murmuring of my heart be a delight before you, LORD, my redeemer'; the Greek verse is LXX 113:16 = MT 115:8 ('like them shall become their makers and all who persuade in them'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "25:16",
+   "lxx_ref": "9:31",
+   "reason": "MT 'turn toward me and be gracious, for I am depressed and alone'; the Greek verse is LXX 9:31 (the trap verse of the MT 10 block: 'in the trap, in humiliation he stoops and falls'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "25:18",
+   "lxx_ref": "87:16",
+   "reason": "MT 'see my depression and toil and lift all my offences'; the Greek verse is Ps 88:16 ('beggarly am I and in labor from my youth; lifted up, I was humbled and in great doubt'). Labor/lift vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "25:21",
+   "lxx_ref": "110:8",
+   "reason": "MT 'uprightness and the right shall guard me, for I bind myself to you'; the Greek verse is Ps 111:8 ('steadfast into the age of the age, made in truth and straightness'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "31:13",
+   "lxx_ref": "20:11",
+   "reason": "MT 'I am mislaid from the heart as one dead; I exist as something prepared lost'; the Greek verse is Ps 21:11 ('their fruit from the earth you shall lose and their seed from the sons of man'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "35:15",
+   "lxx_ref": "117:24",
+   "reason": "MT 'in my limping they brightened and gathered; smiters gathered above me and I did not know'; the Greek verse is LXX 117:24 = MT 118:24 ('this is the day the LORD made; jump for joy and celebrate in it'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "35:19",
+   "lxx_ref": "138:21",
+   "reason": "MT 'let not my haters brighten over me in untruth, who hate me gratis'; the Greek verse is LXX 138:21 = MT 139:21 ('did I not hate those who hate you, LORD, and melt out over your enemies?'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "35:21",
+   "lxx_ref": "134:16",
+   "reason": "MT 'they broadened their mouth above me; they said Aha, aha, our eye has seen'; the Greek verse is Ps 135:16 ('a mouth they have and do not talk; eyes they have and do not view'). Mouth/eye vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "37:40",
+   "lxx_ref": "142:9",
+   "reason": "MT 'the LORD surrounds them and slips them out from the morally wrong; he saves them for they fled to him for protection'; the Greek verse is Ps 143:9 ('extract me from my enemies, LORD, for to you I fled for refuge'). Refuge vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "38:16",
+   "lxx_ref": "70:12",
+   "reason": "MT 'for I wait on you, LORD; you shall pay attention, Lord my God'; the Greek verse is Ps 71:12 ('the God, do not lengthen from me; my God, pay attention to my help'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "41:14",
+   "lxx_ref": "103:33",
+   "reason": "MT is the book doxology ('kneel to the LORD, the God of Israel, from the age and until the age; sure, sure'); the Greek verse is Ps 104:33 ('sing to the LORD in my life; play to my God till I belong'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "45:16",
+   "lxx_ref": "67:30",
+   "reason": "MT 'in blithesomeness they shall be led... they shall come into the king's large public building'; the Greek verse is Ps 68:30 ('from your sanctuary in Jerusalem kings shall carry you a present'). King/temple vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "45:17",
+   "lxx_ref": "82:11",
+   "reason": "MT 'under your fathers shall exist your sons; you shall place them as head persons in all the earth'; the Greek verse is Ps 83:11 ('utterly ruined in Endor; they happened as dung for the earth'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "46:11",
+   "lxx_ref": "36:35",
+   "reason": "MT 'slacken and know that I am God; I shall be high among the nations, high in the earth'; the Greek verse is Ps 37:35 ('I viewed the irreverent elevated on high and lifted up as the cedars of Lebanon'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "51:13",
+   "lxx_ref": "103:29",
+   "reason": "Parallel-verse capture: MT 51:13 ('throw me not from your face; take not your sacred wind from me') and MT 104:29 ('you turn away your face, they are troubled; you take away their wind') share face/spirit/take vocabulary; the Greek verse is MT 104:29's counterpart (LXX 103:29). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "51:15",
+   "lxx_ref": "36:18",
+   "reason": "MT 'I will learn those who break away your roads; criminals shall turn back to you'; the Greek verse is Ps 37:18 ('the LORD knows the journey of the blameless; their inheritance shall be into the age'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "51:20",
+   "lxx_ref": "151:5",
+   "reason": "MT 'make Zion well in your delight; build the walls of Jerusalem'; the Greek verse is Ps 151:5 ('my brothers were fine and great, and the LORD was not satisfied in them'). Psalm 151 has no MT counterpart; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "52:9",
+   "lxx_ref": "61:11",
+   "reason": "MT 'lo, the man who did not put God as his fortified place but was stout in abundance of wealth'; the Greek verse is Ps 62:11 ('hope not in injury and yearn not for booty; if wealth flows, do not add your heart'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "56:14",
+   "lxx_ref": "87:15",
+   "reason": "MT 'you snatched my self from death and my foot from a push, to walk before God in the light of life'; the Greek verse is Ps 88:15 ('why, LORD, do you thrust away my soul and turn away your face from me?'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "60:11",
+   "lxx_ref": "76:21",
+   "reason": "MT 'who shall guide me to the city of enclosure, who to Edom?'; the Greek verse is Ps 77:21 ('he guided as sheep his populace in the hand of Moses and Aaron'). Guide vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "66:10",
+   "lxx_ref": "67:31",
+   "reason": "MT 'you examined us, God; you fused us as silver is fused'; the Greek verse is Ps 68:31 (the beast-of-the-reed verse with its assayed silver pieces). Silver/test vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "66:14",
+   "lxx_ref": "58:13",
+   "reason": "MT 'which my lips rent and my mouth spoke in my narrowness'; the Greek verse is Ps 59:13 ('sin of his mouth, word of his lips; let them be taken in their pride'). Mouth/lip vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:15",
+   "lxx_ref": "43:11",
+   "reason": "MT 'snatch me from the mud and let me not sink; snatch me from my haters and the waters'; the Greek verse is Ps 44:11 ('you turned us into the back from our enemies; our haters ransacked'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:18",
+   "lxx_ref": "43:16",
+   "reason": "MT 'do not hide your face from your servant, for I am in narrowness'; the Greek verse is Ps 44:16 ('whole the day my reproach is opposite me; the shame of my face covered me'). Face/cover vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:19",
+   "lxx_ref": "70:10",
+   "reason": "MT 'approach my self and redeem it; because of my haters sever me'; the Greek verse is Ps 71:10 ('my enemies said of me; those guarding my soul deliberated on him'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:22",
+   "lxx_ref": "101:10",
+   "reason": "MT 'they gave a poisonous plant as my food; in my thirst they made me quaff vinegar'; the Greek verse is Ps 102:10 ('ashes as bread I swallowed; my drink I mixed with weeping'). Food/drink vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:29",
+   "lxx_ref": "87:12",
+   "reason": "MT 'may they be blotted from the book of the living and not be graved with the just'; the Greek verse is Ps 88:12 ('shall anyone describe in the grave your mercy and your truth in destruction?'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:31",
+   "lxx_ref": "138:17",
+   "reason": "MT 'I will make clear God's appellation with a song and make him large with praise'; the Greek verse is Ps 139:17 ('very honored are your friends, God; their origins have dominion very much'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:36",
+   "lxx_ref": "67:21",
+   "reason": "MT 'God shall save Zion and build the cities of Judah'; the Greek verse is Ps 68:21 ('the God our God of saving; the LORD's is the crossroad of death'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:7",
+   "lxx_ref": "118:56",
+   "reason": "MT 'let not those who bind themselves to you be shamed through me, Lord God of the mass'; the Greek verse is LXX 118:56 = MT 119:56 ('this happened to me because I sought out your justifications thoroughly'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "69:8",
+   "lxx_ref": "151:7",
+   "reason": "MT 'above you I lifted contumely; disgrace covered my face'; the Greek verse is Ps 151:7 (David draws the short sword, beheads, and 'lifted disgrace from the sons of Israel'). Psalm 151 has no MT counterpart; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "71:21",
+   "lxx_ref": "70:7",
+   "reason": "MT 'increase my greatness and revolve and comfort me'; the Greek verse is LXX 70:7 = MT 71:7 ('as an omen I happened to the many; you are my helper dominant'). Different verse of the same psalm.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "74:13",
+   "lxx_ref": "32:16",
+   "reason": "MT 'you broke up the sea in your strength; you burst the heads of the monsters in the waters'; the Greek verse is Ps 33:16 ('a king is not saved through much power; a giant is not saved in multitude of force'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "74:15",
+   "lxx_ref": "67:27",
+   "reason": "MT 'you cleft a fountain and a stream; you dried the streams of permanence'; the Greek verse is Ps 68:27 ('in assembly commend God, the LORD, from the well of Israel'). Fountain vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "74:16",
+   "lxx_ref": "138:12",
+   "reason": "MT 'yours is the day, yours also the night; you established the luminary and the sun'; the Greek verse is Ps 139:12 ('dark shall not be darkened from you; night as day shall be enlightened'). Day/night/light vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "74:22",
+   "lxx_ref": "93:8",
+   "reason": "MT 'rise, God, plead your contest; remember the stupid one's contumely all the day'; the Greek verse is Ps 94:8 ('comprehend, in fact, senseless in the populace; stupid ones, some time sense'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:14",
+   "lxx_ref": "104:39",
+   "reason": "Parallel-verse capture: MT 78:14 ('he guided them in a cloud daily and all night in illumination of fire') and MT 105:39 ('he spread a cloud into a covering and fire to enlighten the night') are parallels; the Greek verse's 'opened and spread out a cloud into a covering' is MT 105:39's counterpart (LXX 104:39). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:15",
+   "lxx_ref": "76:17",
+   "reason": "MT 'he cleft rocks in the open field and made them quaff as abysses in abundance'; the Greek verse is Ps 77:17 ('waters viewed you, God; waters viewed you and feared; abysses were troubled'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:17",
+   "lxx_ref": "70:14",
+   "reason": "MT 'they added yet to sin against him, to make the elevation bitter in aridity'; the Greek verse is Ps 71:14 ('I through all hope and add in all your singing praise'). Shared 'add' only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:19",
+   "lxx_ref": "113:10",
+   "reason": "MT 'they said against God: can God set a table in the open field?'; the Greek verse is LXX 113:10 = MT 115:2 ('lest the nations say: where is their God?'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:20",
+   "lxx_ref": "104:41",
+   "reason": "Parallel-verse capture: MT 78:20 ('lo, he struck the rock and waters flowed freely and streams gushed') and MT 105:41 ('he rent the cliff and water flowed; they traveled in waterless river') are parallels; the Greek verse is MT 105:41's counterpart (LXX 104:41). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "78:21",
+   "lxx_ref": "113:14",
+   "reason": "MT 'the LORD heard intelligently and crossed over; fire caught against Jacob and anger ascended against Israel'; the Greek verse is LXX 113:14 = MT 115:6 ('an ear they have and do not hear; a nose they have and do not smell'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "81:10",
+   "lxx_ref": "151:6",
+   "reason": "MT 'there shall not exist in you a foreign strength; do not depress yourself to a foreign god'; the Greek verse is Ps 151:6 (David 'came out into meeting the foreigner'). Psalm 151 has no MT counterpart; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "81:13",
+   "lxx_ref": "36:15",
+   "reason": "MT 'I sent them away in the obstinacy of their heart; they walk in their purposes'; the Greek verse is Ps 37:15 ('their broadsword shall come into their heart; their bow shall be fractured'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "81:17",
+   "lxx_ref": "64:14",
+   "reason": "MT 'he made them eat the fat of wheat; with honey from the rock I sate you'; the Greek verse is Ps 65:14 ('the rams of the sheep dress in; the hollows multiply wheat and cry'). Wheat vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "86:14",
+   "lxx_ref": "70:13",
+   "reason": "MT 'God, the arrogant rose above me; a stated assemblage of the fearful searched out my self'; the Greek verse is Ps 71:13 ('shame and cease the calumniators of my soul; drape shame and reproach the seekers of bad for me'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "89:34",
+   "lxx_ref": "118:114",
+   "reason": "MT 'my kindness I shall not crush from him nor cheat in my firmness'; the Greek verse is LXX 118:114 = MT 119:114 ('my helper and my protector are you; into your word I hoped'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "89:53",
+   "lxx_ref": "9:24",
+   "reason": "MT is the book doxology ('kneel to the LORD into permanence; sure, sure'); the Greek verse is LXX 9:24 ('the sinful is applauded in the longings of his soul'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "92:10",
+   "lxx_ref": "142:12",
+   "reason": "MT 'lo, your haters, LORD, lo, your haters perish; all makers of nothingness break through'; the Greek verse is Ps 143:12 ('in your mercy utterly ruin my enemies and lose all who press my soul'). Enemy/perish vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "92:11",
+   "lxx_ref": "151:4",
+   "reason": "MT 'you made my horn high as a wild bull's; I overflow with verdant grease'; the Greek verse is Ps 151:4 ('he sent forth his messenger and lifted me from the sheep of my father and anointed me in his anointing oil'). Psalm 151 has no MT counterpart; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "92:6",
+   "lxx_ref": "118:47",
+   "reason": "MT 'how large are your actions, LORD; your contrivances are very deep'; the Greek verse is LXX 118:47 = MT 119:47 ('I was concerned with your injunctions, which I love vehemently'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "92:8",
+   "lxx_ref": "118:124",
+   "reason": "MT 'the morally wrong bud as grass and all makers of nothingness twinkle... to be desolated as far as permanence'; the Greek verse is LXX 118:124 = MT 119:124 ('make with your subject down by your mercy; teach me your justifications'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "97:12",
+   "lxx_ref": "118:94",
+   "reason": "MT 'brighten up, just ones, in the LORD; give thanks to the memento of his sacredness'; the Greek verse is LXX 118:94 = MT 119:94 ('yours am I; save me, for I sought out your justifications'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "99:8",
+   "lxx_ref": "117:23",
+   "reason": "MT 'the LORD our God, you paid attention to them; you were a God lifting for them and grudging their exploits'; the Greek verse is LXX 117:23 = MT 118:23 ('from the LORD this happened and is wonderful in our eyes'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Ps",
+   "mt_ref": "99:9",
+   "lxx_ref": "67:25",
+   "reason": "MT 'make the LORD our God high and depress yourselves at his sacred mountain, for the LORD our God is sacred'; the Greek verse is Ps 68:25 ('observe the travels of God, the travels of my God the king in the holy'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "10:6",
+   "lxx_ref": "27:34",
+   "reason": "MT 'a nonentity is as you, LORD; large are you and large your appellation in force'; the Greek verse is LXX 27:34 = MT 50:34 ('their ransom is forceful; the LORD almighty is his appellation; judging he shall judge their opponent'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "11:7",
+   "lxx_ref": "39:22",
+   "reason": "MT 'I duplicated testimony to your fathers in the day of ascending them from the earth of Egypt'; the Greek verse is LXX 39:22 = MT 32:22 ('he gave them this earth which I swore to their fathers, an earth flowing milk and honey'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "25:21",
+   "lxx_ref": "47:11",
+   "reason": "MT is the cup-list verse 'Edom and Moab and the sons of Ammon'; the Greek verse names the Judeans in the earth of Moab, among the sons of Ammon and in Idumea and in all the earth -- the MT 40:11 content. Nation-list vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "25:23",
+   "lxx_ref": "38:40",
+   "reason": "MT 'Dedan, Tema, Buz and all who chop off the corner'; the Greek verse is the Jerusalem topography verse (Hasaremoth, to the Kedron river, to the corner of the horse gate east, the LORD's sanctuary) = MT 31:40 content. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "25:25",
+   "lxx_ref": "28:28",
+   "reason": "MT 'all the kings of Zimri, all the kings of Elam, all the kings of Madai'; the Greek verse is LXX 28:28 = MT 51:28 ('hallow against her the nations, the king of the Medes and all the earth'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "25:29",
+   "lxx_ref": "39:34",
+   "reason": "MT 'lo, on the city over which my appellation is called I begin to make bad'; the Greek verse is LXX 39:34 = MT 32:34 (the defilement put in the household 'invoked by my appellation, in uncleanness'). Name/city formula only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "25:37",
+   "lxx_ref": "30:27",
+   "reason": "MT 'the homes of safety are dumb from the face of the burning of the LORD's anger'; the Greek verse is a camel/foraging/livestock verse of the MT 49 block (LXX 30:27). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "29:13",
+   "lxx_ref": "43:24",
+   "reason": "MT 'you shall search me out and find me when you seek me with all your heart'; the Greek verse is a narrative verse of the MT 36 block ('not seek and not rend the clothing; the king and the child hear all these words'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "29:17",
+   "lxx_ref": "39:24",
+   "reason": "MT 'thus says the LORD of the mass: lo, I send away on them drought, hunger and pestilence and give them as the fig'; the Greek verse is LXX 39:24 (the city taken and given into the hand of the Chaldeans) = MT 32:24 zone. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "29:29",
+   "lxx_ref": "43:15",
+   "reason": "MT 'Zephaniah the officiating one called out this in the ear of Jeremiah the prophet'; the Greek verse is LXX 43:15 ('he spoke again; read into our ears; Baruch read') = MT 36:15 zone. Read/ear vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "2:1",
+   "lxx_ref": "45:20",
+   "reason": "MT is the formula superscription 'the word of the LORD existed to me, to say'; the Greek verse is a long narrative verse of LXX 45 (MT 38 block) about Jeremiah, betrayal and hearing the word of the LORD. Formulaic word-of-the-LORD capture; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "30:22",
+   "lxx_ref": "38:33",
+   "reason": "MT 'you shall exist to me as a populace and I shall exist to you as God'; the Greek verse is LXX 38:33 = MT 31:33 ('this is the covenant I shall make through with the household of Israel... giving my laws'). Covenant formula only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "32:10",
+   "lxx_ref": "39:25",
+   "reason": "MT is the deed-signing verse (graved in a scroll, closed it up, witnesses, suspended silver in scales); the Greek verse is LXX 39:25 = MT 32:25, where the same acts are recounted in speech ('he declared to me: acquire for yourself a field for silver, write a scroll and seal it'). Recount capture; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "32:2",
+   "lxx_ref": "45:28",
+   "reason": "MT is the siege verse (the force of the king of Babel cramping Jerusalem; Jeremiah restricted in the yard of the jail in the king of Judah's household); the Greek verse is LXX 45:28 = MT 38:28 ('Jeremiah sat in the courtyard of the prison until the time Jerusalem was taken'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "34:13",
+   "lxx_ref": "38:31",
+   "reason": "MT 'thus says the LORD God of Israel: I cut a compact with your fathers in the day...'; the Greek verse is LXX 38:31 = MT 31:31 ('behold, days come, claims the LORD, and I shall make through with the household of Israel and Judah an innovative covenant'). Covenant formula only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "36:16",
+   "lxx_ref": "45:24",
+   "reason": "MT 'it existed, when they heard all the words, they were startled, man to his associate, and said to Baruch...'; the Greek verse is LXX 45:24 ('the king said: the man does not know from these words, and you shall not die'). Narrative vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "37:10",
+   "lxx_ref": "45:18",
+   "reason": "MT is the wounded-Chaldeans verse (strike the force of the Kasdites; each stabbed man rises in his tent and feeds the city on fire); the Greek verse is LXX 45:18 = MT 38:18 ('give this city into the hand of the Chaldeans and burn it in fire; you shall not save'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "46:21",
+   "lxx_ref": "39:33",
+   "reason": "MT 'also her men at wages in her midst are as stall calves; they turned, they fled together, they did not stand'; the Greek verse is LXX 39:33 (a return/back/teach/dawn verse of the MT 32 block). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "46:24",
+   "lxx_ref": "39:21",
+   "reason": "MT 'the daughter of Egypt is ashamed; she is given into the hand of the people of the north'; the Greek verse is LXX 39:21 = MT 32:21 ('I lead out your populace Israel from the earth of Egypt in signs and omens, in a dominant hand and a high arm'). Egypt/hand vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "46:4",
+   "lxx_ref": "45:12",
+   "reason": "MT is the battle-array verse (yoke the horses, ascend the steeds, place the helmets, polish the lances, put on coats of mail); the Greek verse is a narrative verse of LXX 45 ('put under the cord and make, Jeremiah, so'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "46:9",
+   "lxx_ref": "28:21",
+   "reason": "MT 'ascend, horses; be clear, vehicles; go out, powerful ones; Cush and Put manipulating the shield'; the Greek verse is LXX 28:21 = MT 51:21 ('disperse in you horse and rider; disperse in you chariot and rider'). Horse/chariot vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "48:30",
+   "lxx_ref": "39:37",
+   "reason": "MT 'I know, claims the LORD, his outburst of passion; his brags are not so, they did not so make'; the Greek verse is LXX 39:37 = MT 32:37 ('behold, I gather him from all the earth who I sowed abroad there in my passion and provocation'). Wrath vocabulary only; different verse (round 1 likewise banned another 48:30 pairing).",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "48:35",
+   "lxx_ref": "39:29",
+   "reason": "MT 'I will make Moab repose, claims the LORD, who ascends the elevation and smokes to his gods'; the Greek verse is LXX 39:29 = MT 32:29 (the Chaldeans battle in this city and burn it and the households where smoke was burned). Burn/smoke vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "49:34",
+   "lxx_ref": "28:59",
+   "reason": "MT is the Elam superscription ('who existed the word of the LORD to Jeremiah the prophet on Elam, in the first of the rule of Zedekiah king of Judah'); the Greek verse is LXX 28:59 = MT 51:59 ('the word the LORD directed to Jeremiah the prophet to say to Saraias son of Nerias... when he traveled from Sedekias'). Superscription formula only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "49:36",
+   "lxx_ref": "45:8",
+   "reason": "MT 'I will go/come on Elam four winds from the four terminations of the sky and toss them'; the Greek verse is the narrative fragment LXX 45:8 ('he came out toward him and talked to the king and said'), already banned twice in round 1 against other MT verses. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "49:38",
+   "lxx_ref": "45:10",
+   "reason": "MT 'I will put my throne in Elam and lose king and head persons from there, claims the LORD'; the Greek verse is LXX 45:10 (the Abdemelech narrative: 'direct the king... take into your hand from here thirty persons') = MT 38:10 zone. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "50:16",
+   "lxx_ref": "28:49",
+   "reason": "MT 'cut off the sower from Babel and the sickle-manipulator in harvest time; from the face of the drought of the rager each shall turn to his populace'; the Greek verse is LXX 28:49 ('in Babylon shall fall the wounded one of all the earth'), the tail of MT 51:49 -- already banned in round 1 against MT 51:47 and MT 37:10. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "50:17",
+   "lxx_ref": "28:34",
+   "reason": "MT 'a flock member scattered is Israel; lions pushed him off; first the king of Ashshur ate; the hinder one, Nebuchadnezzar king of Babel, bound him fast'; the Greek verse is LXX 28:34 = MT 51:34 ('consume me, apportion me... Nabouchodonosor king of Babylon swallowed me as a dragon'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "50:21",
+   "lxx_ref": "45:27",
+   "reason": "MT is the Merathajim/Pekod oracle ('ascend on the earth of Merathajim and on Pekod; parch and seclude after them, claims the LORD; make by all I constituted you'); the Greek verse is a narrative verse of LXX 45 (all the rulers come to Jeremiah and question him). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "50:22",
+   "lxx_ref": "28:55",
+   "reason": "Parallel-verse capture: MT 50:22 ('a voice of battle in the earth and a great fracture') and MT 51:55 ('the LORD utterly ruined Babylon and destroyed from her a great voice; a sound as of much water') are parallels; the Greek verse is MT 51:55's counterpart (LXX 28:55). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "50:44",
+   "lxx_ref": "28:38",
+   "reason": "Parallel-verse capture: MT 50:44 ('lo, as a lion he ascends from the swelling of the Jordan to the habitation of permanence') and MT 51:38 ('at once together as a lion they raise up, and as a cub of a lion') share the lion figure; the Greek verse is MT 51:38's counterpart (LXX 28:38). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "51:45",
+   "lxx_ref": "45:17",
+   "reason": "MT 'cause to go out from the bisection, my populace, and each man save his self from the burning of the LORD's anger'; the Greek verse is LXX 45:17 = MT 38:17 ('Jeremiah said so; the LORD says: if you come out to the leader of the king of Babylon you shall live'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "51:48",
+   "lxx_ref": "38:35",
+   "reason": "MT 'the sky and the earth and all in them shall sing over Babel, for spoilers come from the north'; the Greek verse is LXX 38:35 (elevate the sky into the hanging; humble the ground of the earth down below) = MT 31:35 zone. Heaven/earth vocabulary only; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "52:2",
+   "lxx_ref": "28:24",
+   "reason": "MT 'he made bad in the eyes of the LORD by all Jehojakim had made'; the Greek verse is LXX 28:24 = MT 51:24 ('I repay Babylon and all the settlers of the Chaldeans all their badness they made in Sion down by your eyes'). Formulaic evil-in-the-eyes capture; different verse (round 1 banned two other MT 52:2 pairings).",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Jer",
+   "mt_ref": "52:3",
+   "lxx_ref": "47:10",
+   "reason": "MT 'through the anger of the LORD it existed in Jerusalem and Judah until he threw them from above his face'; the Greek verse is LXX 47:10 = MT 40:10 ('behold, I settle next to you in Massepha, standing down by the face of the Chaldeans'). Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "16:1",
+   "lxx_ref": "35:25",
+   "reason": "MT 'man's are the arrangements of the heart; from the LORD is the tongue's reply'; the Greek verse (LXX 35:25) reads of a man not to be filled judging pointlessly. No content match beyond man/LORD tokens; different saying.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "18:24",
+   "lxx_ref": "36:5",
+   "reason": "MT 'a man of associates ruins himself; there is a lover adhering closer than a brother'; the Greek verse (LXX 36:5) reads of one who prepares a net in the face of his own friend and drapes his own foot. Friend vocabulary only; different saying.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "22:6",
+   "lxx_ref": "32:9",
+   "reason": "MT 'train the boy on the mouth of his road; also when he is old he shall not turn off from it'; the Greek verse is LXX 32:9 ('depart into the back; do not despise'), the verse round 1's ban record identifies as a different saying in the Prov 25:10 adjudication. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "25:6",
+   "lxx_ref": "33:18",
+   "reason": "MT 'do not swell up before a king; in the place of the great do not stand'; the Greek verse (LXX 33:18) reads of a healing word cast forth meeting a person. No content match; different saying.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "25:9",
+   "lxx_ref": "35:13",
+   "reason": "MT 'your contest contest with your associate; the session of another do not denude'; the Greek verse (LXX 35:13) reads of concealing the irreverence of oneself and expounding conviction. Different saying.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "28:20",
+   "lxx_ref": "32:4",
+   "reason": "MT 'a man of firmness is abundant in benedictions; who presses to be made rich shall not be made clean'; the Greek verse (LXX 32:4) reads of beating disreputable silver money and cleansing all at once -- a refining saying. Different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  },
+  {
+   "osis": "Prov",
+   "mt_ref": "28:22",
+   "lxx_ref": "35:20",
+   "reason": "MT 'he palpitates to wealth, a man of a bad eye; he does not know that lack will come to him'; the Greek verse is LXX 35:20, whose content ('a trustworthy man is much acclaimed; the bad shall not be unavenged') is MT 28:20's saying. Adjacent-saying capture; different verse.",
+   "round": "content-v2 gate adjudication, 2026-11-22"
+  }
+ ]
+}

@@ -111,6 +111,25 @@ alignment-unverified pairs remain a documented residual. Verified exactly:
 against the OSHB XML, and a second run is idempotent (byte-identical
 `word_variants` content hash). See `NOTATION_LEDGER.md` §10.
 
+**LXX crosswalk content realignment (2026-11-21, LXX-REALIGN).**
+`lxx_crosswalk` in `bible_v2.db` gained 551 content-based pairings
+(basis `content-v1`, relation `same`) for the structurally divergent
+books, built by `build_lxx_realign.py` from gloss-token content
+evidence only — the numbering-v1 rows (24,273 = 21,468 same / 1,554
+mt_only / 1,251 lxx_only) are untouched, and the new rows sit beside
+them. Psalms: 406 of 787 mt_only verses paired (residual 381 MT / 386
+LXX); Jeremiah: 39 of 245 (residual 206 / 138); Proverbs: 106 of 162
+(residual 56 / 32) — all 106 Proverbs pairings fall in the displaced
+block MT 25–29 → LXX 32–36, Jeremiah's oracle block pairs MT 46–51 →
+LXX 25–32, and Ps 151 correctly receives no pairing. Every Jeremiah
+pairing and samples of the Psalms/Proverbs pairings were hand-read
+against the Hebrew and Greek texts before application; nine false
+proposals are banned by name in `lxx_realign_exclusions.json`. The
+residual stays unpaired by design (counterparts consumed by
+numbering rows, verses absent from the other tradition, or evidence
+below threshold). No laptop/PostgreSQL ship in this round. See
+`NOTATION_LEDGER.md` §10 (LXX-REALIGN).
+
 ### v2 normalization (2026-09-28, implementation draft under Kit's authorization)
 
 `schema_v2.md` (design) + `schema_v2.sql` (DDL) + `migrate_v2.py` (migration, 66.9 s)
