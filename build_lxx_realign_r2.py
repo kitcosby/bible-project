@@ -24,7 +24,7 @@ Candidate classes:
     `lxx_realign_exclusions.json` with its text-read reason.
   * consumed-counterpart candidates -- a residual MT orphan whose
     best-scoring LXX verse in the whole book is already consumed by a
-    numbering-v1 'same' row (or a content-v1 row), scoring >= 0.16 and
+    numbering-v1 'same' row (or a content-v1/content-v2 row), scoring >= 0.16 and
     beating its best residual candidate by > 0.03. These are REPORTED
     ONLY (see --consumed PATH): numbering-v1 rows are never modified,
     and no content-v2 row may point at a consumed verse (the apply
@@ -36,8 +36,11 @@ Writes: INSERT-only into `lxx_crosswalk`, relation 'same', basis
 accepted pair must be a generated proposal, must pass a mechanical
 re-check against the evidence function (score > 0), must not be
 banned, and both ids must be residual orphans of the same book.
-Idempotent: refuses to run on a DB that already carries content-v2
-rows.
+Idempotence (revised 2026-11-24, gate pass 2): a DB already carrying
+content-v2 rows is NOT refused; those pairs are treated as
+already-paired and excluded from the residual pool, so a further
+gate pass proposes and applies only over the still-unpaired
+residual. The 30 pairs applied 2026-11-22 stay untouched.
 
 Usage:
   python3 build_lxx_realign_r2.py --db DB --propose \
@@ -65,13 +68,16 @@ CONSUMED_MARGIN = 0.03
 
 def residual_pools(db, bd, osis):
     """(residual mt index list, residual lx index list) into bd's
-    orphan sequences: numbering-v1 orphans not paired by content-v1."""
+    orphan sequences: numbering-v1 orphans not paired by content-v1
+    or by an earlier content-v2 gate pass. Gate-2 fix (2026-11-24):
+    existing content-v2 pairs are treated as already-paired and
+    excluded from the residual pool, instead of aborting the run."""
     paired_mt = {r[0] for r in db.execute(
         "SELECT mt_verse_id FROM lxx_crosswalk WHERE osis=? "
-        "AND basis='content-v1'", (osis,))}
+        "AND basis IN ('content-v1','content-v2')", (osis,))}
     paired_lx = {r[0] for r in db.execute(
         "SELECT lxx_verse_id FROM lxx_crosswalk WHERE osis=? "
-        "AND basis='content-v1'", (osis,))}
+        "AND basis IN ('content-v1','content-v2')", (osis,))}
     res_mt = [i for i, (_, _, v) in enumerate(bd.mt) if v not in paired_mt]
     res_lx = [j for j, (_, _, v) in enumerate(bd.lx) if v not in paired_lx]
     return res_mt, res_lx
@@ -261,9 +267,13 @@ def main():
         "SELECT COUNT(*) FROM lxx_crosswalk WHERE basis='content-v2'"
     ).fetchone()[0]
     if existing:
-        print(f"ABORT: {existing} content-v2 rows already present "
-              f"(idempotence guard)", file=sys.stderr)
-        return 1
+        # Gate-2 fix (2026-11-24): a further gate pass is legitimate.
+        # Existing content-v2 pairs are already-paired: residual_pools
+        # excluded both ids from the proposal pool above, so no gate
+        # pair can duplicate or overwrite them (insert-only still).
+        print(f"note: {existing} content-v2 rows already present; "
+              f"treating them as already-paired (excluded from the "
+              f"residual pool)")
 
     with open(args.gate, encoding='utf-8') as f:
         gate = json.load(f)

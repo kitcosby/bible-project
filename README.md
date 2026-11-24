@@ -130,6 +130,25 @@ numbering rows, verses absent from the other tradition, or evidence
 below threshold). No laptop/PostgreSQL ship in this round. See
 `NOTATION_LEDGER.md` §10 (LXX-REALIGN).
 
+**LXX crosswalk content realignment, round 2 (2026-11-22 / 2026-11-24,
+LXX-REALIGN-R2).** A second content pass (`build_lxx_realign_r2.py`,
+round-1 evidence function verbatim, lowered proposal gate, every
+proposal hand-read against the Hebrew and Greek texts) added 34
+pairings (basis `content-v2`: Ps 9, Jer 17, Prov 8) — 30 in pass 1
+(2026-11-22) and 4 Jeremiah pairings in pass 2 (2026-11-24:
+49:32→30:27, 50:44→27:44, 51:38→28:38, 51:55→28:55). Crosswalk now
+24,858 rows. Cumulative paired share of the three books' orphans:
+Psalms 415/787 MT and 415/792 LXX; Jeremiah 56/245 MT and 56/177 LXX;
+Proverbs 114/162 MT and 114/138 LXX. Final residual: Ps 372/377,
+Jer 189/121, Prov 48/24 — documented remainder (consumed counterparts
+in `lxx_realign_r2_consumed.tsv`, 452 rows, report-only; verses absent
+from the other tradition; below evidence), never forced. 244 rejected
+round-2 proposals are banned by name in `lxx_realign_exclusions.json`.
+Verified by SQL EXCEPT identity against the pre-pass backup (all other
+tables unchanged; exactly the new rows added); `quick_check` ok.
+Local DB only — no laptop/PostgreSQL ship. See `NOTATION_LEDGER.md`
+§10 (LXX-REALIGN-R2).
+
 ### v2 normalization (2026-09-28, implementation draft under Kit's authorization)
 
 `schema_v2.md` (design) + `schema_v2.sql` (DDL) + `migrate_v2.py` (migration, 66.9 s)
