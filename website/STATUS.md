@@ -347,6 +347,28 @@ Corpus `bible.db` stays READ-ONLY. Website storage:
   authorization; PG counts are the one remaining step.
 - Committed locally only — GitHub push held for the Sunday weekly push.
 
+## 2026-11-24 — LXX-REALIGN-R2: LXX crosswalk content realignment round 2 (SQLite; PG ship pending)
+
+- Pass 1 (2026-11-22, recorded retroactively — it was in the DB but
+  undocumented): +30 `content-v2` pairings (Ps 9, Jer 13, Prov 8).
+- Pass 2 (2026-11-24): builder guard fixed (existing `content-v2`
+  pairs treated as already-paired instead of aborting); 113 residual
+  proposals regenerated and ALL hand-read against the Hebrew and
+  Greek texts — 109 rejected and banned with reasons in
+  `lxx_realign_exclusions.json`, 4 accepted (Jer 49:32→30:27,
+  50:44→27:44, 51:38→28:38, 51:55→28:55), trial-applied on a copy
+  first, then insert-only to `bible_v2.db`.
+- Crosswalk now 24,858 rows (numbering-v1 24,273 + content-v1 551 +
+  content-v2 34). Cumulative paired shares: Ps 415/787 MT, 415/792
+  LXX; Jer 56/245 MT, 56/177 LXX; Prov 114/162 MT, 114/138 LXX.
+  Final residual: Ps 372/377, Jer 189/121, Prov 48/24 (documented
+  remainder; consumed-counterpart report refreshed, 452 rows).
+- Verified: SQL EXCEPT identity both ways for all other tables vs
+  the pre-pass backup; exactly the 4 new rows added; 0 banned pairs;
+  `PRAGMA quick_check` ok. Local DB only — no laptop/PostgreSQL ship
+  and no GitHub push (Kit's separate authorization). YLT 'computed'
+  honesty labels unchanged; website still opens the DB read-only.
+
 ## 2026-11-05 — YLT-REPAIR-R2: gold expansion + span-boundary prototype (gate pass on a copy; NOT applied)
 
 - Gold set `eval/ylt_gold.tsv` expanded 30 → 42 verses (335 → 438 words,
